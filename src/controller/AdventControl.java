@@ -23,17 +23,17 @@ public class AdventControl
 	private boolean dragon;
 	private boolean troll;
 	private int plant;
-//	private String beforeTurnBeforeLast;
-//	private String turnBeforeLast;
-//	private String turnLast;
-	
-	
+	//	private String beforeTurnBeforeLast;
+	//	private String turnBeforeLast;
+	//	private String turnLast;
+
+
 	public AdventControl()
 	{
 		frame = new AdventureFrame(this);
-//		beforeTurnBeforeLast = "";
-//		turnBeforeLast = "";
-//		turnLast = "";
+		//		beforeTurnBeforeLast = "";
+		//		turnBeforeLast = "";
+		//		turnLast = "";
 		currentLocation = Location.ROAD;
 		previousLocation = null;
 		brief = false;
@@ -48,7 +48,7 @@ public class AdventControl
 		plant = 0;
 		currentLocation.setUp();
 	}
-	
+
 
 	public AdventControl(int num)
 	{
@@ -61,7 +61,7 @@ public class AdventControl
 		snake = true;
 		crystalBridge = false;
 	}
-	
+
 	public String determineAction(String input) 
 	{
 		String output = null;
@@ -89,7 +89,6 @@ public class AdventControl
 			{
 				output = "Just yes or no, please.";
 			}
-			
 		}
 		else
 		{
@@ -106,11 +105,11 @@ public class AdventControl
 		System.out.println("current " + currentLocation);
 		return output;
 	}
-	
+
 	public String determineAction(String input1, String input2) 
 	{
 		String output = null;
-		
+
 		if(beginning)
 		{
 			output = "Just yes or no, please.";
@@ -119,24 +118,24 @@ public class AdventControl
 		{
 			if(hash.isAction(input1))
 			{
-				
+
 			}
 			else if(hash.isAction(input2))
 			{
-				
+
 			}
 			else
 			{
 				output = nonsense();
 			}
 		}
-		
+
 		return output;
 	}
-	
+
 	private String attemptMovement(String input)
 	{
-		String output = null;
+		String output = "";
 		boolean haveGold = (hash.objectIsHere(GameObjects.GOLD, Location.INHAND));
 		boolean haveEmerald = (hash.objectIsHere(GameObjects.EMERALD, Location.INHAND));
 		boolean haveClam = (hash.objectIsHere(GameObjects.CLAM, Location.INHAND));
@@ -167,6 +166,67 @@ public class AdventControl
 			{
 				output = "I don't know how to apply that word here.";
 			}
+		}
+		else if(locationResult.equals(Location.CRACK))
+		{
+			output = "That crack is far too small for you to follow.";
+		}
+		else if(locationResult.equals(Location.NECK))
+		{
+			output = "You are at the bottom of the pit with a broken neck.";
+			//
+			// implement death here
+			//
+		}
+		else if(locationResult.equals(Location.LOSE))
+		{
+			output = "You didn't make it.";
+			//
+			// implement death here
+			//
+		}
+		else if(locationResult.equals(Location.CANT))
+		{
+			output = "The dome is unclimbable.";
+		}
+		else if(locationResult.equals(Location.CLIMB))
+		{
+			setLocation(Location.NARROW);
+			output = "You clamber up the plant and scurry through the hole at the top.\n" + hash.getDescription(currentLocation, brief);
+		}
+		else if(locationResult.equals(Location.CHECK))
+		{
+			if(plant < 1)
+			{
+				output = "There is nothing here to climb. Use \"UP\" or \"OUT\" to leave the pit.";
+			}
+			else
+			{
+				setLocation(Location.WEST2PIT);
+				output = "You have climbed up the plant and out of the pit.\n" + hash.getDescription(currentLocation, brief);
+			}
+		}
+		else if(locationResult.equals(Location.SNAKED))
+		{
+			output = "You can't get by the snake.";
+		}
+		else if(locationResult.equals(Location.THRU))
+		{
+			setLocation(Location.WESTMIST);
+			output = "You have crawled through a very low wide passage parallel to and north of the Hall of Mists.\n" + hash.getDescription(currentLocation, brief);
+		}
+		else if(locationResult.equals(Location.DUCK))
+		{
+			setLocation(Location.WESTFISSURE);
+			output = "You have crawled through a very low wide passage parallel to and north of the Hall of Mists.\n" + hash.getDescription(currentLocation, brief);
+		}
+		else if(locationResult.equals(Location.SEWER))
+		{
+			output = "The stream flows out through a pair of 1-foot-diameter sewer pipes.\nIt would be advisable to use the exit.";
+		}
+		else if(locationResult.equals(Location.UPNOUT))
+		{
+			output = "There is nothing here to climb. Use \"UP\" or \"OUT\" to leave the pit.";
 		}
 		else if(locationResult.equals(Location.REMARK))
 		{
@@ -232,18 +292,21 @@ public class AdventControl
 			{
 				output = "That dragon looks rather nasty. You'd best not try to get by.";
 			}
+			else
+			{
+				output = "You can not do that.";
+			}
 		}
 		else
 		{
-			previousLocation = currentLocation;
-			currentLocation = locationResult;
+			setLocation(locationResult);
 			if(!canISee(currentLocation))
 			{
 				//HAVE THEM MAYBE FALL INTO A PIT HERE
 				boolean pitifulDeath = fallInPit();
 				if(pitifulDeath)
 				{
-					
+
 				}
 				else
 				{
@@ -255,19 +318,25 @@ public class AdventControl
 				output = hash.getDescription(currentLocation, brief);
 			}
 		}
-		
-		
+
+
 		return output;
 	}
 	
-//	private String orderLog(String log)
-//	{
-//		this.beforeTurnBeforeLast = turnBeforeLast;
-//		this.turnBeforeLast = turnLast;
-//		this.turnLast = log;
-//		return null;
-//	}
-	
+	private void setLocation(Location newLocation)
+	{
+		previousLocation = currentLocation;
+		currentLocation = newLocation;
+	}
+
+	//	private String orderLog(String log)
+	//	{
+	//		this.beforeTurnBeforeLast = turnBeforeLast;
+	//		this.turnBeforeLast = turnLast;
+	//		this.turnLast = log;
+	//		return null;
+	//	}
+
 	private String nonsense()
 	{
 		String output = null;
@@ -282,11 +351,11 @@ public class AdventControl
 		}
 		else
 		{
-			output = "";
+			output = "You're not making any sense!";
 		}
 		return output;
 	}
-	
+
 	private boolean canISee(Location here)
 	{
 		boolean canSee = false;
@@ -306,15 +375,15 @@ public class AdventControl
 		System.out.println(currentLocation);
 		return canSee;
 	}
-	
+
 	private boolean fallInPit()
 	{
 		boolean pitifulDeath = false;
-		
+
 		return pitifulDeath;
 	}
-	
-	
+
+
 }
 
 
