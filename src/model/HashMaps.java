@@ -753,6 +753,8 @@ public class HashMaps
 	
 	public String getDescription(Location here, boolean breif)
 	{
+		
+		
 		String description = null;
 		if(!breif && longDescription.containsKey(here) && !beenHere(here))
 		{

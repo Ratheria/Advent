@@ -65,7 +65,7 @@ public enum Location
 	public boolean dontNeedLamp(Location here)
 	{
 		boolean need = false;
-		if(outside(here)||here == PROOM||here == VIEW)
+		if(outside(here)||here == PROOM||here == VIEW||here == NEEND||here == SWEND)
 		{
 			need = true;
 		}
@@ -1881,6 +1881,53 @@ public enum Location
 				}
 				break;	
 				
+			case FBARR:
+				switch(destination)
+				{
+					case WEST: next = LIME; break;
+					case UP: next = LIME; break;
+					case FORK: next = FORK; break;
+					case EAST: next = FBARR; break;
+					case IN: next = FBARR; break;
+					case BARREN: next = FBARR; break;
+					case ENTER: next = FBARR; break;
+					case VIEW: next = VIEW; break;
+					default: next = THEVOID; break;
+				}
+				break;	
+				
+			case BARR:
+				switch(destination)
+				{
+					case WEST: next = FBARR; break;
+					case OUT: next = FBARR; break;
+					case FORK: next = FORK; break;
+					case VIEW: next = VIEW; break;
+					default: next = THEVOID; break;
+				}
+				break;	
+				
+			case NEEND:
+				switch(destination)
+				{
+					case SOUTHWEST: next = SWEND; break;
+					default: next = THEVOID; break;
+				}
+				break;	
+				
+			case SWEND:
+				switch(destination)
+				{
+					case NORTHEAST: next = NEEND; break;
+//					case DOWN: next = GRATE_RMK; break;
+					default: next = THEVOID; break;
+				}
+				break;	
+				
+				
+				
+				
+			default: next = REMARK; break;
 				
 				
 		}
