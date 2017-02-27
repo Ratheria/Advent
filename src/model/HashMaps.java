@@ -4,7 +4,10 @@
 
 package model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 public class HashMaps 
 {
@@ -127,7 +130,6 @@ public class HashMaps
 		movement.put("reser", Movement.RESERVOIR);
 		movement.put("fork", Movement.FORK);
 		
-		objects.put("all", GameObjects.ALL);
 		objects.put("key", GameObjects.KEYS);
 		objects.put("keys", GameObjects.KEYS);
 		objects.put("lamp", GameObjects.LAMP);
@@ -726,6 +728,282 @@ public class HashMaps
 	public Location getObjectLocation(GameObjects object)
 	{
 		return objectLocation.get(object);
+	}
+	
+	public ArrayList<GameObjects> objectsHere(Location here)
+	{
+		ArrayList<GameObjects> result = null;
+		if(objectLocation.containsValue(here))
+		{
+			result = new ArrayList<GameObjects>();
+			if(objectIsHere(GameObjects.KEYS, here))
+			{
+				result.add(GameObjects.KEYS);
+			}
+			else if(objectIsHere(GameObjects.LAMP, here))
+			{
+				result.add(GameObjects.LAMP);
+			}
+			else if(objectIsHere(GameObjects.GRATE, here))
+			{
+				result.add(GameObjects.GRATE);
+			}
+			else if(objectIsHere(GameObjects.GRATE_, here))
+			{
+				result.add(GameObjects.GRATE_);
+			}
+			else if(objectIsHere(GameObjects.CAGE, here))
+			{
+				result.add(GameObjects.CAGE);
+			}
+			else if(objectIsHere(GameObjects.ROD, here))
+			{
+				result.add(GameObjects.ROD);
+			}
+			else if(objectIsHere(GameObjects.ROD2, here))
+			{
+				result.add(GameObjects.ROD2);
+			}
+			else if(objectIsHere(GameObjects.TREADS, here))
+			{
+				result.add(GameObjects.LAMP);
+			}
+			else if(objectIsHere(GameObjects.TREADS_, here))
+			{
+				result.add(GameObjects.BIRD);
+			}
+			else if(objectIsHere(GameObjects.BIRD, here))
+			{
+				result.add(GameObjects.DOOR);
+			}
+			else if(objectIsHere(GameObjects.DOOR, here))
+			{
+				result.add(GameObjects.PILLOW);
+			}
+			else if(objectIsHere(GameObjects.PILLOW, here))
+			{
+				result.add(GameObjects.SNAKE);
+			}
+			else if(objectIsHere(GameObjects.SNAKE, here))
+			{
+				result.add(GameObjects.CRYSTAL);
+			}
+			else if(objectIsHere(GameObjects.CRYSTAL, here))
+			{
+				result.add(GameObjects.CRYSTAL_);
+			}
+			else if(objectIsHere(GameObjects.CRYSTAL_, here))
+			{
+				result.add(GameObjects.TABLET);
+			}
+			else if(objectIsHere(GameObjects.TABLET, here))
+			{
+				result.add(GameObjects.CLAM);
+			}
+			else if(objectIsHere(GameObjects.CLAM, here))
+			{
+				result.add(GameObjects.OYSTER);
+			}
+			else if(objectIsHere(GameObjects.OYSTER, here))
+			{
+				result.add(GameObjects.MAG);
+			}
+			else if(objectIsHere(GameObjects.MAG, here))
+			{
+				result.add(GameObjects.DWARF);
+			}
+			else if(objectIsHere(GameObjects.DWARF, here))
+			{
+				result.add(GameObjects.KNIFE);
+			}
+			else if(objectIsHere(GameObjects.KNIFE, here))
+			{
+				result.add(GameObjects.FOOD);
+			}
+			else if(objectIsHere(GameObjects.FOOD, here))
+			{
+				result.add(GameObjects.BOTTLE);
+			}
+			else if(objectIsHere(GameObjects.BOTTLE, here))
+			{
+				result.add(GameObjects.WATER);
+			}
+			else if(objectIsHere(GameObjects.WATER, here))
+			{
+				result.add(GameObjects.OIL);
+			}
+			else if(objectIsHere(GameObjects.OIL, here))
+			{
+				result.add(GameObjects.MIRROR);
+			}
+			else if(objectIsHere(GameObjects.MIRROR, here))
+			{
+				result.add(GameObjects.MIRROR_);
+			}
+			else if(objectIsHere(GameObjects.MIRROR_, here))
+			{
+				result.add(GameObjects.PLANT);
+			}
+			else if(objectIsHere(GameObjects.PLANT, here))
+			{
+				result.add(GameObjects.PLANT2);
+			}
+			else if(objectIsHere(GameObjects.PLANT2, here))
+			{
+				result.add(GameObjects.PLANT2_);
+			}
+			else if(objectIsHere(GameObjects.PLANT2_, here))
+			{
+				result.add(GameObjects.STALACTITE);
+			}
+			else if(objectIsHere(GameObjects.STALACTITE, here))
+			{
+				result.add(GameObjects.SHADOW);
+			}
+			else if(objectIsHere(GameObjects.SHADOW, here))
+			{
+				result.add(GameObjects.SHADOW_);
+			}
+			else if(objectIsHere(GameObjects.SHADOW_, here))
+			{
+				result.add(GameObjects.SHADOW_);
+			}
+			else if(objectIsHere(GameObjects.AXE, here))
+			{
+				result.add(GameObjects.AXE);
+			}
+			else if(objectIsHere(GameObjects.ART, here))
+			{
+				result.add(GameObjects.ART);
+			}
+			else if(objectIsHere(GameObjects.PIRATE, here))
+			{
+				result.add(GameObjects.PIRATE);
+			}
+			else if(objectIsHere(GameObjects.DRAGON, here))
+			{
+				result.add(GameObjects.DRAGON);
+			}
+			else if(objectIsHere(GameObjects.DRAGON_, here))
+			{
+				result.add(GameObjects.DRAGON_);
+			}
+			else if(objectIsHere(GameObjects.BRIDGE, here))
+			{
+				result.add(GameObjects.BRIDGE);
+			}
+			else if(objectIsHere(GameObjects.BRIDGE_, here))
+			{
+				result.add(GameObjects.BRIDGE_);
+			}
+			else if(objectIsHere(GameObjects.TROLL, here))
+			{
+				result.add(GameObjects.TROLL);
+			}
+			else if(objectIsHere(GameObjects.TROLL_, here))
+			{
+				result.add(GameObjects.TROLL_);
+			}
+			else if(objectIsHere(GameObjects.TROLL2, here))
+			{
+				result.add(GameObjects.TROLL2);
+			}
+			else if(objectIsHere(GameObjects.TROLL2_, here))
+			{
+				result.add(GameObjects.TROLL2_);
+			}
+			else if(objectIsHere(GameObjects.BEAR, here))
+			{
+				result.add(GameObjects.BEAR);
+			}
+			else if(objectIsHere(GameObjects.MESSAGE, here))
+			{
+				result.add(GameObjects.MESSAGE);
+			}
+			else if(objectIsHere(GameObjects.GEYSER, here))
+			{
+				result.add(GameObjects.GEYSER);
+			}
+			else if(objectIsHere(GameObjects.PONY, here))
+			{
+				result.add(GameObjects.PONY);
+			}
+			else if(objectIsHere(GameObjects.BATTERIES, here))
+			{
+				result.add(GameObjects.BATTERIES);
+			}
+			else if(objectIsHere(GameObjects.MOSS, here))
+			{
+				result.add(GameObjects.MOSS);
+			}
+			else if(objectIsHere(GameObjects.GOLD, here))
+			{
+				result.add(GameObjects.GOLD);
+			}
+			else if(objectIsHere(GameObjects.DIAMONDS, here))
+			{
+				result.add(GameObjects.DIAMONDS);
+			}
+			else if(objectIsHere(GameObjects.SILVER, here))
+			{
+				result.add(GameObjects.SILVER);
+			}
+			else if(objectIsHere(GameObjects.JEWELS, here))
+			{
+				result.add(GameObjects.JEWELS);
+			}
+			else if(objectIsHere(GameObjects.COINS, here))
+			{
+				result.add(GameObjects.COINS);
+			}
+			else if(objectIsHere(GameObjects.CHEST, here))
+			{
+				result.add(GameObjects.CHEST);
+			}
+			else if(objectIsHere(GameObjects.EGGS, here))
+			{
+				result.add(GameObjects.EGGS);
+			}
+			else if(objectIsHere(GameObjects.TRIDENT, here))
+			{
+				result.add(GameObjects.TRIDENT);
+			}
+			else if(objectIsHere(GameObjects.VASE, here))
+			{
+				result.add(GameObjects.VASE);
+			}
+			else if(objectIsHere(GameObjects.EMERALD, here))
+			{
+				result.add(GameObjects.EMERALD);
+			}
+			else if(objectIsHere(GameObjects.PYRAMID, here))
+			{
+				result.add(GameObjects.PYRAMID);
+			}
+			else if(objectIsHere(GameObjects.PEARL, here))
+			{
+				result.add(GameObjects.PEARL);
+			}
+			else if(objectIsHere(GameObjects.RUG, here))
+			{
+				result.add(GameObjects.RUG);
+			}
+			else if(objectIsHere(GameObjects.RUG_, here))
+			{
+				result.add(GameObjects.RUG_);
+			}
+			else if(objectIsHere(GameObjects.SPICES, here))
+			{
+				result.add(GameObjects.SPICES);
+			}
+			else if(objectIsHere(GameObjects.CHAIN, here))
+			{
+				result.add(GameObjects.CHAIN);
+			}
+	
+			
+		}
+		return result;
 	}
 	
 	public boolean objectIsHere(GameObjects object, Location here)

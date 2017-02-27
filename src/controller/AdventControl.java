@@ -1,6 +1,9 @@
 package controller;
 
 import model.Location;
+
+import java.util.ArrayList;
+
 import model.GameObjects;
 import model.HashMaps;
 import model.Movement;
@@ -132,6 +135,13 @@ public class AdventControl
 
 		return output;
 	}
+	
+	private String listItemsHere()
+	{
+		String output = "";
+		ArrayList<GameObjects> objects = hash.objectsHere(currentLocation);
+		return output;
+	}
 
 	private String attemptMovement(String input)
 	{
@@ -228,6 +238,11 @@ public class AdventControl
 		{
 			output = "There is nothing here to climb. Use \"UP\" or \"OUT\" to leave the pit.";
 		}
+		else if(locationResult.equals(Location.DIDIT))
+		{
+			setLocation(Location.WEST2PIT);
+			output = "You have climbed up the plant and out of the pit.\n" + hash.getDescription(currentLocation, brief);
+		}
 		else if(locationResult.equals(Location.REMARK))
 		{
 			if(currentLocation.equals(Location.SLIT)||currentLocation.equals(Location.WET))
@@ -291,6 +306,10 @@ public class AdventControl
 			else if(currentLocation.equals(Location.SCAN1)||currentLocation.equals(Location.SCAN3))
 			{
 				output = "That dragon looks rather nasty. You'd best not try to get by.";
+			}
+			else if(currentLocation.equals(Location.VIEW))
+			{
+				output = "Don't be ridiculous!";
 			}
 			else
 			{

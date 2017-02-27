@@ -1849,8 +1849,9 @@ public enum Location
 					case SOUTH: next = WARM; break;
 					case PASSAGE: next = WARM; break;
 					case OUT: next = WARM; break;
-					case FORK: next = FORK; break;
-					//DOWN AND JUMP ARE DEFAULT MESSAGE EAT (?)
+					case FORK: next = REMARK; break;
+					case DOWN: next = REMARK; break;
+					case JUMP: next = FORK; break;
 					default: next = THEVOID; break;
 				}
 				break;	
