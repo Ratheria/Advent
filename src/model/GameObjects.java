@@ -28,5 +28,98 @@ public enum GameObjects
 		return treasure;
 	}
 
+	public String getItemDescription(Location location, GameObjects object, 
+			boolean light, boolean grate)
+	{
+		String output = "";
+		switch(object)
+		{
+			case KEYS:
+				if(location == Location.INHAND)
+				{
+					output = new String("\n\tSet of keys");
+				}
+				else
+				{
+					output = new String("\n\tThere are some keys on the ground here.");
+				}
+				break;
+				
+			case LAMP:
+				if(location == Location.INHAND)
+				{
+					output = new String("\n\tBrass lantern");
+				}
+				else
+				{
+					if(light)
+					{
+						output = new String("\n\tThere is a lamp shining nearby.");
+					}
+					else
+					{
+						output = new String("\n\tThere is a shiny brass lamp nearby.");
+					}
+				}
+				break;
+				
+			case GRATE:
+				if(grate)
+				{
+					output = new String("\n\tThe grate is open.");
+				}
+				else
+				{
+					output = new String("\n\tThe grate is locked.");	
+				}
+				break;
+				
+			case GRATE_:
+				if(grate)
+				{
+					output = new String("\n\tThe grate is open.");
+				}
+				else
+				{
+					output = new String("\n\tThe grate is locked.");	
+				}
+				break;
+				
+			case CAGE:
+				if(location == Location.INHAND)
+				{
+					output = new String("\n\tWicker cage");
+				}
+				else
+				{
+					output = new String("\n\tThere is a small wicker cage discarded nearby.");
+				}
+				break;
+				
+			case ROD:
+				if(location == Location.INHAND)
+				{
+					output = new String("Black rod");
+				}
+				else
+				{
+					output = new String("A three foot black rod with a rusty star on an end lies nearby.");
+				}
+				break;				
+				
+			case ROD2:
+				if(location == Location.INHAND)
+				{
+					output = new String("Black rod");
+				}
+				else
+				{
+					output = new String("A three foot black rod with a rusty mark on an end lies nearby.");
+				}
+				break;
+				
+		}
+		return output;
+	}
 }
 

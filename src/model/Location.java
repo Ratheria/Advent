@@ -73,7 +73,7 @@ public enum Location
 	}
 	
 	public Location moveTo(Movement destination, Location here, boolean grate,
-			boolean gold, boolean bridge, boolean snake, boolean emerald, boolean clam, 
+			boolean gold, boolean crystalBridge, boolean snake, boolean emerald, boolean clam, 
 			boolean oyster, int plant, boolean oilDoor, boolean dragon, boolean troll,
 			boolean trollHere)
 	{
@@ -415,21 +415,21 @@ public enum Location
 					case HALL: next = EASTMIST; break;
 					case EAST: next = EASTMIST; break;
 					case JUMP:
-						if(bridge)
+						if(crystalBridge)
 						{	next = REMARK;	}
 						else
 						{	next = THEVOID;	}
 						break;
 					case FORWARD:
-						if(!bridge)
+						if(!crystalBridge)
 						{	next = LOSE;	}
 						else
 						{	next = THEVOID;	}
 						break;
-					case OVER: next = westRemark(bridge); break;
-					case ACROSS: next = westRemark(bridge); break;
-					case WEST: next = westRemark(bridge); break;
-					case CROSS: next = westRemark(bridge); break;
+					case OVER: next = westRemark(crystalBridge); break;
+					case ACROSS: next = westRemark(crystalBridge); break;
+					case WEST: next = westRemark(crystalBridge); break;
+					case CROSS: next = westRemark(crystalBridge); break;
 					default: next = THEVOID; break;
 				}
 				break;
@@ -440,16 +440,16 @@ public enum Location
 					case NORTH: next = THRU; break;
 					case WEST: next = WESTMIST; break;
 					case JUMP:
-						if(bridge)
+						if(crystalBridge)
 						{	next = REMARK;	}
 						else
 						{	next = THEVOID;	}
 						break;
-					case FORWARD: next = eastRemark(bridge); break;
-					case OVER: next = eastRemark(bridge); break;
-					case ACROSS: next = eastRemark(bridge); break;
-					case EAST: next = eastRemark(bridge); break;
-					case CROSS: next = eastRemark(bridge); break;
+					case FORWARD: next = eastRemark(crystalBridge); break;
+					case OVER: next = eastRemark(crystalBridge); break;
+					case ACROSS: next = eastRemark(crystalBridge); break;
+					case EAST: next = eastRemark(crystalBridge); break;
+					case CROSS: next = eastRemark(crystalBridge); break;
 					default: next = THEVOID; break;
 				}
 				break;
@@ -1772,25 +1772,25 @@ public enum Location
 					case NORTHEAST: next = CORR; break;
 					case UP: next = SWSIDE; break;
 					case OVER:
-						if(troll && !trollHere)
+						if(trollHere)
 						{	next = TROLL;	}
 						else
 						{	next = REMARK;	}
 						break;
 					case ACROSS:
-						if(troll && !trollHere)
+						if(trollHere)
 						{	next = TROLL;	}
 						else
 						{	next = REMARK;	}
 						break;
 					case CROSS:
-						if(troll && !trollHere)
+						if(trollHere)
 						{	next = TROLL;	}
 						else
 						{	next = REMARK;	}
 						break;
 					case SOUTHWEST:
-						if(troll && !trollHere)
+						if(trollHere)
 						{	next = TROLL;	}
 						else
 						{	next = REMARK;	}

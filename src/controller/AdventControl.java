@@ -16,6 +16,7 @@ public class AdventControl
 	private HashMaps hash = new HashMaps();
 	private Location currentLocation;
 	private Location previousLocation;
+	private GameObjects things;
 	private boolean brief;
 	private boolean beginning;
 	private boolean grateUnlocked;
@@ -39,6 +40,7 @@ public class AdventControl
 		//		turnLast = "";
 		currentLocation = Location.ROAD;
 		previousLocation = null;
+		things = GameObjects.NOTHING;
 		brief = false;
 		beginning = true;
 		grateUnlocked = false;
@@ -50,19 +52,6 @@ public class AdventControl
 		troll = true;
 		plant = 0;
 		currentLocation.setUp();
-	}
-
-
-	public AdventControl(int num)
-	{
-		frame = new AdventureFrame(this);
-		currentLocation = Location.DEBRIS;
-		brief = false;
-		beginning = false;
-		grateUnlocked = false;
-		light = false;
-		snake = true;
-		crystalBridge = false;
 	}
 
 	public String determineAction(String input) 
@@ -140,6 +129,12 @@ public class AdventControl
 	{
 		String output = "";
 		ArrayList<GameObjects> objects = hash.objectsHere(currentLocation);
+		for(GameObjects thing:objects)
+		{
+			output = new String(output + things.getItemDescription(currentLocation, thing, 
+					light, grateUnlocked));
+			System.out.println(thing);
+		}
 		return output;
 	}
 
@@ -150,7 +145,7 @@ public class AdventControl
 		boolean haveEmerald = (hash.objectIsHere(GameObjects.EMERALD, Location.INHAND));
 		boolean haveClam = (hash.objectIsHere(GameObjects.CLAM, Location.INHAND));
 		boolean haveOyster = (hash.objectIsHere(GameObjects.OYSTER, Location.INHAND));
-		boolean trollIsHere = (hash.objectIsHere(GameObjects.TROLL, Location.SWSIDE));
+		boolean trollIsHere = (hash.getObjectLocation(GameObjects.TROLL) == currentLocation || hash.getObjectLocation(GameObjects.TROLL_) == currentLocation);
 		Movement destination = hash.whichMovement(input);
 		Location locationResult = currentLocation.moveTo(destination, currentLocation, grateUnlocked,
 				haveGold, crystalBridge, snake, haveEmerald, haveClam, haveOyster, plant, oilDoor,
@@ -202,7 +197,7 @@ public class AdventControl
 		else if(locationResult.equals(Location.CLIMB))
 		{
 			setLocation(Location.NARROW);
-			output = "You clamber up the plant and scurry through the hole at the top.\n" + hash.getDescription(currentLocation, brief);
+			output = "You clamber up the plant and scurry through the hole at the top.\n" + getDescription(currentLocation, brief);
 		}
 		else if(locationResult.equals(Location.CHECK))
 		{
@@ -213,7 +208,7 @@ public class AdventControl
 			else
 			{
 				setLocation(Location.WEST2PIT);
-				output = "You have climbed up the plant and out of the pit.\n" + hash.getDescription(currentLocation, brief);
+				output = "You have climbed up the plant and out of the pit.\n" + getDescription(currentLocation, brief);
 			}
 		}
 		else if(locationResult.equals(Location.SNAKED))
@@ -223,12 +218,12 @@ public class AdventControl
 		else if(locationResult.equals(Location.THRU))
 		{
 			setLocation(Location.WESTMIST);
-			output = "You have crawled through a very low wide passage parallel to and north of the Hall of Mists.\n" + hash.getDescription(currentLocation, brief);
+			output = "You have crawled through a very low wide passage parallel to and north of the Hall of Mists.\n" + getDescription(currentLocation, brief);
 		}
 		else if(locationResult.equals(Location.DUCK))
 		{
 			setLocation(Location.WESTFISSURE);
-			output = "You have crawled through a very low wide passage parallel to and north of the Hall of Mists.\n" + hash.getDescription(currentLocation, brief);
+			output = "You have crawled through a very low wide passage parallel to and north of the Hall of Mists.\n" + getDescription(currentLocation, brief);
 		}
 		else if(locationResult.equals(Location.SEWER))
 		{
@@ -241,7 +236,7 @@ public class AdventControl
 		else if(locationResult.equals(Location.DIDIT))
 		{
 			setLocation(Location.WEST2PIT);
-			output = "You have climbed up the plant and out of the pit.\n" + hash.getDescription(currentLocation, brief);
+			output = "You have climbed up the plant and out of the pit.\n" + getDescription(currentLocation, brief);
 		}
 		else if(locationResult.equals(Location.REMARK))
 		{
@@ -334,7 +329,7 @@ public class AdventControl
 			}
 			else
 			{
-				output = hash.getDescription(currentLocation, brief);
+				output = getDescription(currentLocation, brief);
 			}
 		}
 
@@ -356,6 +351,13 @@ public class AdventControl
 	//		return null;
 	//	}
 
+	private String getDescription(Location here, boolean breif)
+	{
+		String output = hash.getDescription(here, breif);
+		output = new String(output + listItemsHere());
+		return output;
+	}
+	
 	private String nonsense()
 	{
 		String output = null;
