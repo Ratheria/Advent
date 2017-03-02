@@ -30,7 +30,8 @@ public enum GameObjects
 
 	public String getItemDescription(Location location, GameObjects object, 
 			boolean light, boolean grate, int plant, int bottle, boolean cage, boolean oilDoor,
-			boolean bearAxe)
+			boolean bearAxe, boolean dragon, int bear, boolean usedBatteries, boolean broken,
+			int chain, boolean gold, boolean crystalBridge, boolean collapse)
 	{
 		String output = "";
 		switch(object)
@@ -160,13 +161,20 @@ public enum GameObjects
 				break;			
 				
 			case VASE:
-				if(location == Location.INHAND)
+				if(!broken)
 				{
-					output = new String("\n\tOriental Vase");
+					if(location == Location.INHAND)
+					{
+						output = new String("\n\tMing Vase");
+					}
+					else
+					{
+						output = new String("\n\tThere is a delicate, precious, Ming vase here!");
+					}
 				}
 				else
 				{
-					output = new String("\n\tA small velvet pillow lies on the floor.");
+					output = new String("\n\tThe floor is littered with worthless shards of pottery.");
 				}
 				break;		
 				
@@ -293,6 +301,22 @@ public enum GameObjects
 				}
 				break;
 				
+				
+			case PLANT2_:
+				if(plant == 1)
+				{
+					output = new String("\n\tThe top of a 12-foot-tall beanstalk is poking up out of the west pit.");
+				}
+				else if(plant == 2)
+				{
+					output = new String("\n\tThere is a huge beanstalk growing out of the west pit up to the hole.");
+				}
+				else
+				{
+					output = "";
+				}
+				break;
+				
 			case AXE:
 				if(location == Location.INHAND)
 				{
@@ -311,6 +335,316 @@ public enum GameObjects
 			case ART:
 				//cave art
 				output = new String("\n\t");
+				break;
+				
+			case DRAGON:
+				if(dragon)
+				{
+					output = new String("\n\tA huge green fierce dragon bars the way!");
+				}
+				else
+				{
+					output = new String("\n\tThe body of a huge green dead dragon is lying off to one side.");
+				}
+				break;		
+				
+			case DRAGON_:
+				if(dragon)
+				{
+					output = new String("\n\tA huge green fierce dragon bars the way!");
+				}
+				else
+				{
+					output = new String("\n\tThe body of a huge green dead dragon is lying off to one side.");
+				}
+				break;		
+				
+			case RUG:
+				if(dragon)
+				{
+					output = new String("\n\tThe dragon is sprawled out on a persian rug!");
+				}
+				else if(location == Location.INHAND)
+				{
+					output = new String("\n\tPersian Rug");
+				}
+				else
+				{
+					output = new String("\n\tThere is a persian rug spread out on the floor!");
+				}
+				break;		
+				
+			case BEAR:
+				if(bear == 0)
+				{
+					output = new String("\n\tThere is a tiny little plant in the pit, murmuring \"Water, water, ...\"");
+				}
+				else if(bear == 1)
+				{
+					output = new String("\n\tThere is a 12-foot-tall beanstalk stretching up out of the pit, bellowing \"Water!! Water!!\"");
+				}
+				else if(bear == 2)
+				{
+					output = new String("\n\tThere is a gigantic beanstalk stretching all the way up to the hole.");
+				}
+				else
+				{
+					output = "";
+				}
+				break;
+				
+			case MESSAGE:
+				output = new String("\n\tThere is a message scrawled in the dust in a flowery script, reading:"
+						+ "\n\t\t\"This is not the maze where the pirate leaves his treasure chest.\"");
+				break;
+				
+			case PONY:
+				output = new String("\n\tThere is a massive vending machine here.  The instructions on it read:"
+						+ "\n\t\t\"Drop coins here to receive fresh batteries.\"");
+				break;
+				
+			case BATTERIES:
+				if(!usedBatteries)
+				{
+					output = new String("\n\tThere are fresh batteries here.");
+				}
+				else
+				{
+					output = new String("\n\tSome worn-out batteries have been discarded nearby.");
+				}
+				break;	
+				
+			case MOSS:
+				//moss
+				output = new String("\n\t");
+				break;
+				
+			case GOLD:
+				if(location == Location.INHAND)
+				{
+					output = new String("\n\tLarge Gold Nugget");
+				}
+				else
+				{
+					output = new String("\n\tThere is a large sparkling nugget of gold here!");
+				}
+				break;		
+				
+			case DIAMONDS:
+				if(location == Location.INHAND)
+				{
+					output = new String("\n\tSeveral Diamonds");
+				}
+				else
+				{
+					output = new String("\n\tThere are diamonds here!");
+				}
+				break;		
+				
+			case SILVER:
+				if(location == Location.INHAND)
+				{
+					output = new String("\n\tBars of Silver");
+				}
+				else
+				{
+					output = new String("\n\tThere are bars of silver here!");
+				}
+				break;		
+				
+			case JEWELS:
+				if(location == Location.INHAND)
+				{
+					output = new String("\n\tPrecious Jewelry");
+				}
+				else
+				{
+					output = new String("\n\tThere is precious jewelry here!");
+				}
+				break;		
+
+			case COINS:
+				if(location == Location.INHAND)
+				{
+					output = new String("\n\tRare coins");
+				}
+				else
+				{
+					output = new String("\n\tThere are many coins here!");
+				}
+				break;		
+				
+			case CHEST:
+				if(location == Location.INHAND)
+				{
+					output = new String("\n\tTreasure Chest");
+				}
+				else
+				{
+					output = new String("\n\tThe pirate's treasure chest is here!");
+				}
+				break;		
+				
+			case EGGS:
+				if(location == Location.INHAND)
+				{
+					output = new String("\n\tGolden Eggs");
+				}
+				else
+				{
+					output = new String("\n\tThere is a large nest here, full of golden eggs!");
+				}
+				break;		
+				
+			case TRIDENT:
+				if(location == Location.INHAND)
+				{
+					output = new String("\n\tJeweled Trident");
+				}
+				else
+				{
+					output = new String("\n\tThere is a jewel-encrusted trident here!");
+				}
+				break;			
+				
+			case EMERALD:
+				if(location == Location.INHAND)
+				{
+					output = new String("\n\tEgg-Sized Emerald");
+				}
+				else
+				{
+					output = new String("\n\tThere is an emerald here the size of a plover's egg!");
+				}
+				break;		
+				
+			case PYRAMID:
+				if(location == Location.INHAND)
+				{
+					output = new String("\n\tPlatinum Pyramid");
+				}
+				else
+				{
+					output = new String("\n\tThere is a platinum pyramid here, 8 inches on a side!");
+				}
+				break;		
+				
+			case PEARL:
+				if(location == Location.INHAND)
+				{
+					output = new String("\n\tGlistening Pearl");
+				}
+				else
+				{
+					output = new String("\n\tOff to one side lies a glistening pearl!");
+				}
+				break;		
+				
+			case SPICES:
+				if(location == Location.INHAND)
+				{
+					output = new String("\n\tRare Spices");
+				}
+				else
+				{
+					output = new String("\n\tThere are rare spices here!");
+				}
+				break;		
+				
+			case CHAIN:
+				if(location == Location.INHAND)
+				{
+					output = new String("\n\tGolden Chain");
+				}
+				else
+				{
+					if(chain == 0)
+					{
+						output = new String("\n\tThe bear is locked to the wall with a golden chain!");
+					}
+					else if(chain == 1)
+					{
+						output = new String("\n\tThere is a golden chain lying in a heap on the floor!");
+					}
+					if(chain == 2)
+					{
+						output = new String("\n\tThere is a golden chain locked to the wall!");
+					}
+				}
+				break;		
+				
+			case TREADS:
+				if(!gold)
+				{
+					output = new String("\n\tRough stone steps lead up the dome.");
+				}
+				break;	
+				
+			case TREADS_:
+				if(!gold)
+				{
+					output = new String("\n\tRough stone steps lead down the pit.");
+				}
+				break;	
+				
+			case CRYSTAL:
+				if(crystalBridge)
+				{
+					output = new String("\n\tA crystal bridge now spans the fissure.");
+				}
+				break;	
+				
+			case CRYSTAL_:
+				if(crystalBridge)
+				{
+					output = new String("\n\tA crystal bridge now spans the fissure.");
+				}
+				break;		
+				
+			case BRIDGE:
+				if(!collapse)
+				{
+					output = new String("\n\tA rickety wooden bridge extends across the chasm, vanishing into the mist. \n\tA sign posted on the bridge reads: \n\t\t\"Stop!  Pay Troll!\"");
+				}
+				else
+				{
+					output = new String("\n\tThe wreckage of a bridge (and a dead bear) can be seen at the bottom of the chasm.");
+				}
+				break;	
+				
+			case BRIDGE_:
+				if(!collapse)
+				{
+					output = new String("\n\tA rickety wooden bridge extends across the chasm, vanishing into the mist. \n\tA sign posted on the bridge reads: \n\t\t\"Stop!  Pay Troll!\"");
+				}
+				else
+				{
+					output = new String("\n\tThe wreckage of a bridge (and a dead bear) can be seen at the bottom of the chasm.");
+				}
+				break;	
+				
+			case SHADOW:
+				output = new String("\n\tThe shadowy figure seems to be trying to attract your attention.");
+				break;	
+				
+			case SHADOW_:
+				output = new String("\n\tThe shadowy figure seems to be trying to attract your attention.");
+				break;	
+				
+			case TROLL_:
+				output = new String("\n\tA burly troll stands by the bridge and insists you throw him a treasure before you may cross.");
+				break;	
+				
+			case TROLL:
+				output = new String("\n\tThe troll steps out from beneath the bridge and blocks your way.");
+				break;
+				
+			case TROLL2_:
+				output = new String("\n\tThe troll is nowhere to be seen.");
+				break;	
+				
+			case TROLL2:
+				output = new String("\n\tThe troll is nowhere to be seen.");
 				break;
 				
 		}

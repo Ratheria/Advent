@@ -17,6 +17,7 @@ public class AdventControl
 	private Location currentLocation;
 	private Location previousLocation;
 	private GameObjects things;
+	private boolean dead;
 	private boolean brief;
 	private boolean beginning;
 	private boolean grateUnlocked;
@@ -28,8 +29,15 @@ public class AdventControl
 	private boolean troll;
 	private boolean birdInCage;
 	private boolean bearAxe;
+	private boolean usedBatteries;
+	private boolean broken;
+	private boolean haveGold;
+	private boolean collapse;
+	private int deaths;
 	private int plant;
 	private int bottle;
+	private int bear;
+	private int chain;
 	//	private String beforeTurnBeforeLast;
 	//	private String turnBeforeLast;
 	//	private String turnLast;
@@ -44,6 +52,7 @@ public class AdventControl
 		currentLocation = Location.ROAD;
 		previousLocation = null;
 		things = GameObjects.NOTHING;
+		dead = false;
 		brief = false;
 		beginning = true;
 		grateUnlocked = false;
@@ -55,8 +64,14 @@ public class AdventControl
 		troll = true;
 		birdInCage = false;
 		bearAxe = false;
+		broken = false;
+		haveGold = false;
+		collapse = false;
+		deaths = 0;
 		plant = 0;
 		bottle = 1;
+		bear = 0;
+		chain = 0;
 		currentLocation.setUp();
 	}
 
@@ -65,7 +80,8 @@ public class AdventControl
 		String output = null;
 		if(beginning)
 		{
-			if(input.contains("y"))
+			int answer = askYesNo(input);
+			if(answer == 1)
 			{
 				output = "\tSomewhere nearby is Colossal Cave, where others have found great fortunes in "
 						+ "treasure and gold, though it is rumored that some who enter are never seen "
@@ -78,7 +94,7 @@ public class AdventControl
 						+ hash.getDescription(Location.ROAD, brief);
 				beginning = false;
 			}
-			else if(input.contains("n"))
+			else if(answer == 2)
 			{
 				output = hash.getDescription(Location.ROAD, brief);
 				beginning = false;
@@ -135,19 +151,37 @@ public class AdventControl
 	{
 		String output = "";
 		ArrayList<GameObjects> objects = hash.objectsHere(currentLocation);
-		for(GameObjects thing:objects)
+		if(objects != null)
 		{
-			output = new String(output + things.getItemDescription(currentLocation, thing, 
-					light, grateUnlocked, plant, bottle, birdInCage, oilDoor, bearAxe));
-			System.out.println(thing);
+			for(GameObjects thing:objects)
+			{
+				output = new String(output + things.getItemDescription(currentLocation, thing, 
+						light, grateUnlocked, plant, bottle, birdInCage, oilDoor, bearAxe, dragon,
+						bear, usedBatteries, broken, chain, haveGold, crystalBridge, collapse));
+				System.out.println(thing);
+			}
 		}
 		return output;
+	}
+	
+	private int askYesNo(String input)
+	{
+		int answer = 0;
+		if(input.contains("y"))
+		{
+			answer = 1;
+		}
+		else if(input.contains("n"))
+		{
+			answer = 2;
+		}
+		return answer;
 	}
 
 	private String attemptMovement(String input)
 	{
 		String output = "";
-		boolean haveGold = (hash.objectIsHere(GameObjects.GOLD, Location.INHAND));
+		haveGold = (hash.objectIsHere(GameObjects.GOLD, Location.INHAND));
 		boolean haveEmerald = (hash.objectIsHere(GameObjects.EMERALD, Location.INHAND));
 		boolean haveClam = (hash.objectIsHere(GameObjects.CLAM, Location.INHAND));
 		boolean haveOyster = (hash.objectIsHere(GameObjects.OYSTER, Location.INHAND));
