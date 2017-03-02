@@ -26,7 +26,10 @@ public class AdventControl
 	private boolean oilDoor;
 	private boolean dragon;
 	private boolean troll;
+	private boolean birdInCage;
+	private boolean bearAxe;
 	private int plant;
+	private int bottle;
 	//	private String beforeTurnBeforeLast;
 	//	private String turnBeforeLast;
 	//	private String turnLast;
@@ -50,7 +53,10 @@ public class AdventControl
 		oilDoor = false;
 		dragon = true;
 		troll = true;
+		birdInCage = false;
+		bearAxe = false;
 		plant = 0;
+		bottle = 1;
 		currentLocation.setUp();
 	}
 
@@ -132,7 +138,7 @@ public class AdventControl
 		for(GameObjects thing:objects)
 		{
 			output = new String(output + things.getItemDescription(currentLocation, thing, 
-					light, grateUnlocked));
+					light, grateUnlocked, plant, bottle, birdInCage, oilDoor, bearAxe));
 			System.out.println(thing);
 		}
 		return output;
@@ -201,14 +207,14 @@ public class AdventControl
 		}
 		else if(locationResult.equals(Location.CHECK))
 		{
-			if(plant < 1)
-			{
-				output = "There is nothing here to climb. Use \"UP\" or \"OUT\" to leave the pit.";
-			}
-			else
+			if(plant == 1)
 			{
 				setLocation(Location.WEST2PIT);
 				output = "You have climbed up the plant and out of the pit.\n" + getDescription(currentLocation, brief);
+			}
+			else
+			{
+				output = "There is nothing here to climb. Use \"UP\" or \"OUT\" to leave the pit.";
 			}
 		}
 		else if(locationResult.equals(Location.SNAKED))
@@ -330,6 +336,14 @@ public class AdventControl
 			else
 			{
 				output = getDescription(currentLocation, brief);
+				if(currentLocation.equals(Location.Y2))
+				{
+					if(Math.random() > .74)
+					{
+						//hollow voice
+						output = new String(output + "\n\n");
+					}
+				}
 			}
 		}
 
