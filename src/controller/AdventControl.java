@@ -108,10 +108,7 @@ public class AdventControl
 		{
 			if(hash.isMovement(input))
 			{				
-				if(canISee(currentLocation))
-				{
-					output = attemptMovement(input);
-				}
+				output = attemptMovement(input);
 			}
 		}
 

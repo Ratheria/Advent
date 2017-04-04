@@ -284,6 +284,30 @@ public class HashMaps
 		actions.put("score", ActionWords.SCORE);
 		actions.put("quit", ActionWords.QUIT);
 		
+		mwords.put("abra", MessageWords.MAGIC);
+		mwords.put("abrac", MessageWords.MAGIC);
+		mwords.put("opens", MessageWords.MAGIC);
+		mwords.put("sesam", MessageWords.MAGIC);
+		mwords.put("shaza", MessageWords.MAGIC);
+		mwords.put("hocus", MessageWords.MAGIC);
+		mwords.put("pocus", MessageWords.MAGIC);
+		mwords.put("help", MessageWords.HELP);
+		mwords.put("?", MessageWords.HELP);
+		mwords.put("tree", MessageWords.TREE);
+		mwords.put("trees", MessageWords.TREE);
+		mwords.put("dig", MessageWords.DIG);
+		mwords.put("excav", MessageWords.DIG);
+		mwords.put("lost", MessageWords.LOST);
+		mwords.put("mist", MessageWords.MIST);
+		mwords.put("fuck", MessageWords.CUSS);
+		mwords.put("shit", MessageWords.CUSS);
+		mwords.put("damn", MessageWords.CUSS);
+		mwords.put("dick", MessageWords.CUSS);
+		mwords.put("info", MessageWords.INFO);
+		mwords.put("infor", MessageWords.INFO);
+		mwords.put("swim", MessageWords.SWIM);
+		mwords.put("Denni", MessageWords.DENNIS);
+		
 		firstVisit.put(Location.ROAD, false);
 		firstVisit.put(Location.HILL, false);
 		firstVisit.put(Location.BUILDING, false);
@@ -697,6 +721,21 @@ public class HashMaps
 	public ActionWords whichAction(String input)
 	{
 		return actions.get(input);
+	}
+	
+	public boolean isMessage(String input)
+	{
+		boolean contains = false;
+		if(mwords.containsKey(input))
+		{
+			contains = true;
+		}
+		return contains;
+	}
+	
+	public MessageWords whichMessage(String input)
+	{
+		return mwords.get(input);
 	}
 	
 	public boolean isObject(String input)
