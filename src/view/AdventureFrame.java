@@ -15,11 +15,13 @@ public class AdventureFrame extends JFrame
 	public AdventureFrame(AdventControl base)
 	{
 		this.base = base;
-		this.panel = new AdventPanel(base);
-		this.setContentPane(panel);
-		this.setSize(750, 700);
-		this.setVisible(true);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		panel = new AdventPanel(base);
+		setName("Colossal Cave Adventure");
+		this.setTitle("Adventure!");
+		setContentPane(panel);
+		setSize(750, 700);
+		setVisible(true);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
 }

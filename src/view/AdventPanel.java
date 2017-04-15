@@ -43,15 +43,15 @@ public class AdventPanel extends JPanel
 	{
 		setBorder(null);
 		this.base = base;
-		this.springLayout = new SpringLayout();
-		this.displayLog = new JTextArea();
+		springLayout = new SpringLayout();
+		displayLog = new JTextArea();
 		displayLog.setWrapStyleWord(true);
 		displayLog.setTabSize(4);
 		displayLog.setLineWrap(true);
-		this.inputField = new JTextField();
-		this.scroll = new JScrollPane(displayLog);
-		this.outline = new Color(0, 255, 0);
-		this.scrollBar = scroll.getVerticalScrollBar();
+		inputField = new JTextField();
+		scroll = new JScrollPane(displayLog);
+		outline = new Color(0, 255, 0);
+		scrollBar = scroll.getVerticalScrollBar();
 		
 		
 		setUpPanel();
@@ -62,11 +62,11 @@ public class AdventPanel extends JPanel
 
 	private void setUpPanel() 
 	{
-		this.setLayout(springLayout);
-		this.add(inputField);
-		this.inputField.setColumns(20);
+		setLayout(springLayout);
+		add(inputField);
+		inputField.setColumns(20);
 		inputField.setText("");
-		this.add(scroll);
+		add(scroll);
 		displayLog.setEditable(false);
 		inputField.requestFocusInWindow();
 		UIManager.put("ScrollBarUI", "view.ScrollBarUI");
@@ -130,6 +130,10 @@ public class AdventPanel extends JPanel
 								+ "\n\n" + base.determineAction(first, second));
 						
 					}
+					else if(input.equals("exception"))
+					{
+						displayLog.setText("I beg your pardon?");
+					}
 					else
 					{
 						if(input.length() > 5)
@@ -152,17 +156,24 @@ public class AdventPanel extends JPanel
 	
 	private String removeWhitespace(String input)
 	{
-		while(input.charAt(0)== ' ' && input.length() > 0)
+		try
 		{
-			input = input.substring(1);
-			System.out.println(input);
+			while(input.charAt(0)== ' ' && input.length() > 0)
+			{
+				input = input.substring(1);
+				System.out.println(input);
+			}
+			int lastIndex = input.length() - 1;
+			while(input.charAt(lastIndex)== ' ' && input.length() > 0)
+			{
+				input = input.substring(0, lastIndex);
+				lastIndex--;
+				System.out.println(input);
+			}
 		}
-		int lastIndex = input.length() - 1;
-		while(input.charAt(lastIndex)== ' ' && input.length() > 0)
+		catch(IndexOutOfBoundsException e)
 		{
-			input = input.substring(0, lastIndex);
-			lastIndex--;
-			System.out.println(input);
+			input = new String("exception");
 		}
 		return input;
 	}

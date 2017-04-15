@@ -33,6 +33,7 @@ public class AdventControl
 	private boolean broken;
 	private boolean haveGold;
 	private boolean collapse;
+	private int itemsInHand;
 	private int deaths;
 	private int plant;
 	private int bottle;
@@ -67,6 +68,7 @@ public class AdventControl
 		broken = false;
 		haveGold = false;
 		collapse = false;
+		itemsInHand = 0;
 		deaths = 0;
 		plant = 0;
 		bottle = 1;
@@ -110,8 +112,12 @@ public class AdventControl
 			{				
 				output = attemptMovement(input);
 			}
+			else
+			{
+				output = nonsense();
+			}
 		}
-
+		output = output + checkForHints();
 		System.out.println("previous " + previousLocation);
 		System.out.println("current " + currentLocation);
 		return output;
@@ -140,7 +146,23 @@ public class AdventControl
 				output = nonsense();
 			}
 		}
-
+		output = output + checkForHints();
+		System.out.println("previous " + previousLocation);
+		System.out.println("current " + currentLocation);
+		return output;
+	}
+	
+	private String checkForHints()
+	{
+		String output = new String("");
+		//15
+		//cave - outside
+		//bird - bird
+		//twist - alike 1-14 + dead1 + dead3-7 + dead 9-11
+		//snake - hall of mountain king
+		//wit - wit's end
+		//dark - alcove + plover
+		//
 		return output;
 	}
 	
@@ -178,15 +200,20 @@ public class AdventControl
 	private String attemptMovement(String input)
 	{
 		String output = "";
+		int itemsWOPlover = itemsInHand;
 		haveGold = (hash.objectIsHere(GameObjects.GOLD, Location.INHAND));
 		boolean haveEmerald = (hash.objectIsHere(GameObjects.EMERALD, Location.INHAND));
 		boolean haveClam = (hash.objectIsHere(GameObjects.CLAM, Location.INHAND));
 		boolean haveOyster = (hash.objectIsHere(GameObjects.OYSTER, Location.INHAND));
 		boolean trollIsHere = (hash.getObjectLocation(GameObjects.TROLL) == currentLocation || hash.getObjectLocation(GameObjects.TROLL_) == currentLocation);
 		Movement destination = hash.whichMovement(input);
+		if(hash.getObjectLocation(GameObjects.EMERALD) == Location.INHAND)
+		{
+			itemsWOPlover--;
+		}
 		Location locationResult = currentLocation.moveTo(destination, currentLocation, grateUnlocked,
 				haveGold, crystalBridge, snake, haveEmerald, haveClam, haveOyster, plant, oilDoor,
-				dragon, troll, trollIsHere);
+				dragon, troll, trollIsHere, itemsWOPlover);
 		if(locationResult.equals(Location.THEVOID))
 		{
 			if(destination.equals(Movement.XYZZY)||destination.equals(Movement.PLUGH)||destination.equals(Movement.PLUGH))
@@ -264,7 +291,7 @@ public class AdventControl
 		}
 		else if(locationResult.equals(Location.SEWER))
 		{
-			output = "The stream flows out through a pair of 1-foot-diameter sewer pipes.\nIt would be advisable to use the exit.";
+			output = "The stream flows out through a pair of 1-foot-diameter sewer pipes.\n\nIt would be advisable to use the exit.";
 		}
 		else if(locationResult.equals(Location.UPNOUT))
 		{

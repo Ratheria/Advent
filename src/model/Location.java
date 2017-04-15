@@ -36,10 +36,14 @@ public enum Location
 	
 	public void setUp()
 	{	
+		hasWater.add(ROAD);
 		hasWater.add(BUILDING);
 		hasWater.add(VALLEY);
 		hasWater.add(SLIT);
 		hasWater.add(BUILDING);
+		hasWater.add(WET);
+		hasWater.add(FALLS);
+		hasWater.add(RESER);
 	}
 	
 	public boolean outside(Location here)
@@ -65,7 +69,7 @@ public enum Location
 	public boolean dontNeedLamp(Location here)
 	{
 		boolean need = false;
-		if(outside(here)||here == PROOM||here == VIEW||here == NEEND||here == SWEND)
+		if(outside(here)||here == VIEW||here == NEEND||here == SWEND)
 		{
 			need = true;
 		}
@@ -75,7 +79,7 @@ public enum Location
 	public Location moveTo(Movement destination, Location here, boolean grate,
 			boolean gold, boolean crystalBridge, boolean snake, boolean emerald, boolean clam, 
 			boolean oyster, int plant, boolean oilDoor, boolean dragon, boolean troll,
-			boolean trollHere)
+			boolean trollHere, int itemsInHand)
 	{
 		Location next = null;
 		switch(here)
@@ -861,9 +865,7 @@ public enum Location
 					case EAST: next = EASTMIST; break;
 					case NORTH:
 						if(snake)
-						{
-							next = REMARK;
-						}
+						{	next = REMARK;  }
 						else
 						{	next = NS;	}
 						break;
@@ -1446,8 +1448,26 @@ public enum Location
 				{
 					case NORTHWEST: next = MISTY; break;
 					case CAVERN: next = MISTY; break;
-					case EAST: next = PPASS; break;
-					case PASSAGE: next = PPASS; break;
+					case EAST:
+						if(itemsInHand > 0)
+						{
+							next = REMARK;
+						}
+						else
+						{
+							next = PPASS;
+						}
+						break;
+					case PASSAGE:
+						if(itemsInHand > 0)
+						{
+							next = REMARK;
+						}
+						else
+						{
+							next = PPASS;
+						}
+						break;
 					default: next = THEVOID; break;
 				}
 				break;	
