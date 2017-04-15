@@ -69,7 +69,7 @@ public enum MessageWords
 				break;
 				
 			case DENNIS:
-				result = new String("This is not Thy Dungeonman.");
+				result = new String("Thou cannotst go there. Who do you think thou art? A magistrate?!");
 				break;
 				
 			default:

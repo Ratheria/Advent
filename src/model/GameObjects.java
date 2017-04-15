@@ -399,7 +399,7 @@ public enum GameObjects
 				break;
 				
 			case PONY:
-				output = new String("\n\tThere is a massive vending machine here.  The instructions on it read:"
+				output = new String("\n\tThere is a massive vending machine here.  \nThe instructions on it read:"
 						+ "\n\t\t\"Drop coins here to receive fresh batteries.\"");
 				break;
 				

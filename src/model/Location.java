@@ -1642,6 +1642,7 @@ public enum Location
 			case SWSIDE:
 				switch(destination)
 				{
+// TODO Fix This!!!
 					case SOUTHWEST: next = SCORR; break;
 					case OVER:
 						if(troll && !trollHere)
@@ -1786,7 +1787,7 @@ public enum Location
 				break;	
 				
 			case NESIDE:
-				//MAY BE SCREWY
+// TODO Fix This!!!
 				switch(destination)
 				{
 					case NORTHEAST: next = CORR; break;

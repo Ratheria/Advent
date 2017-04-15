@@ -901,7 +901,7 @@ public class HashMaps
 			firstVisit.replace(here, true);
 		}
 	}
-	
+
 	public String getDescription(Location here, boolean breif)
 	{
 		
