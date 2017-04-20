@@ -1,9 +1,19 @@
+/**
+ * @author Ariana Fairbanks
+ */
+
 package controller;
 
 import model.Location;
-
+import model.MessageWords;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
-
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import model.ActionWords;
 import model.GameObjects;
 import model.HashMaps;
 import model.Movement;
@@ -11,12 +21,13 @@ import view.AdventureFrame;
 
 public class AdventControl 
 {
-	@SuppressWarnings("unused")
-	private AdventureFrame frame;
+	private AdventureFrame frame = new AdventureFrame(this);;
 	private HashMaps hash = new HashMaps();
+	private MessageWords messages;
+	private ActionWords actions;
+	private GameObjects things;
 	private Location currentLocation;
 	private Location previousLocation;
-	private GameObjects things;
 	private boolean dead;
 	private boolean brief;
 	private boolean beginning;
@@ -33,6 +44,8 @@ public class AdventControl
 	private boolean broken;
 	private boolean haveGold;
 	private boolean collapse;
+	private boolean wayIsBlocked;
+	private int turns;
 	private int itemsInHand;
 	private int deaths;
 	private int plant;
@@ -42,16 +55,15 @@ public class AdventControl
 	//	private String beforeTurnBeforeLast;
 	//	private String turnBeforeLast;
 	//	private String turnLast;
-
-
+	
 	public AdventControl()
 	{
-		frame = new AdventureFrame(this);
 		//		beforeTurnBeforeLast = "";
 		//		turnBeforeLast = "";
 		//		turnLast = "";
 		currentLocation = Location.ROAD;
 		previousLocation = null;
+		actions = ActionWords.NOTHING;
 		things = GameObjects.NOTHING;
 		dead = false;
 		brief = false;
@@ -68,6 +80,7 @@ public class AdventControl
 		broken = false;
 		haveGold = false;
 		collapse = false;
+		turns = 0;
 		itemsInHand = 0;
 		deaths = 0;
 		plant = 0;
@@ -75,6 +88,7 @@ public class AdventControl
 		bear = 0;
 		chain = 0;
 		currentLocation.setUp();
+		
 	}
 
 	public String determineAction(String input) 
@@ -108,9 +122,18 @@ public class AdventControl
 		}
 		else
 		{
+			turns++;
 			if(hash.isMovement(input))
 			{				
 				output = attemptMovement(input);
+			}
+			else if(hash.isAction(input))
+			{
+				output = attemptAction(hash.whichAction(input), ActionWords.NOTHING);
+			}
+			else if(hash.isMessage(input))
+			{
+				output = messages.getText(hash.whichMessage(input));
 			}
 			else
 			{
@@ -135,11 +158,11 @@ public class AdventControl
 		{
 			if(hash.isAction(input1))
 			{
-
+				output = attemptAction(hash.whichAction(input1), determineNature(input1));
 			}
 			else if(hash.isAction(input2))
 			{
-
+				output = attemptAction(hash.whichAction(input2), determineNature(input2));
 			}
 			else
 			{
@@ -172,7 +195,7 @@ public class AdventControl
 		ArrayList<GameObjects> objects = hash.objectsHere(currentLocation);
 		if(objects != null)
 		{
-			for(GameObjects thing:objects)
+			for(GameObjects thing : objects)
 			{
 				output = new String(output + things.getItemDescription(currentLocation, thing, 
 						light, grateUnlocked, plant, bottle, birdInCage, oilDoor, bearAxe, dragon,
@@ -196,213 +219,352 @@ public class AdventControl
 		}
 		return answer;
 	}
+	
+	private Object determineNature(String input)
+	{
+		Object result = ActionWords.NOTHING;
+		if(hash.isMovement(input))
+		{
+			result = hash.whichMovement(input);
+		}
+		else if(hash.isObject(input))
+		{
+			result = hash.whichObject(input);
+		}
+		return result;
+	}
 
+	private String attemptAction(ActionWords verb, Object other)
+	{
+		String output = "I'm game. Would you care to explain how?";
+		switch(verb)
+		{
+			case ABSTAIN:
+				break;
+				
+			case TAKE:
+				output = new String("You can't be serious!");
+				if(hash.isObject((String)other))
+				{
+					GameObjects object = hash.whichObject((String)other);
+					if(hash.objectIsHere(object, Location.INHAND))
+					{
+						output = new String("You are already carrying it!");
+					}
+					else if(object == GameObjects.PLANT && hash.objectIsHere(object, currentLocation))
+					{
+						output = new String("The plant has exceptionally deep roots and cannot be pulled free.");
+					}
+					//else if(object == )
+				}
+			break;
+				
+			case DROP:
+				break;
+				
+			case OPEN:
+				break;
+				
+			case CLOSE:
+				break;
+				
+			case ON:
+				break;
+				
+			case OFF:
+				break;
+				
+			case WAVE:
+				break;
+				
+			case CALM:
+				break;
+				
+			case GO:
+				break;
+				
+			case RELAX:
+				break;
+				
+			case POUR:
+				break;
+				
+			case EAT:
+				break;
+				
+			case DRINK:
+				break;
+				
+			case RUB:
+				if(other == GameObjects.LAMP)
+				{	output = new String("Rubbing the electric lamp is not particularly rewarding. Anyway, nothing exciting happens.");	}
+				else
+				{	output = new String("Peculiar. Nothing unexpected happens.");	}
+				break;
+				
+			case TOSS:
+				break;
+				
+			case WAKE:
+				break;
+				
+			case FEED:
+				break;
+				
+			case FILL:
+				break;
+				
+			case BREAK:
+				break;
+				
+			case BLAST:
+				break;
+				
+			case KILL:
+				break;
+				
+			case SAY:
+				break;
+				
+			case READ:
+				break;
+				
+			case FEEFIE:
+				break;
+				
+			case BRIEF:
+				break;
+				
+			case FIND:
+				break;
+				
+			case INVENTORY:
+				break;
+				
+			case SCORE:
+				break;
+				
+			case QUIT:
+				break;
+				
+		}
+		return output;
+	}
+	
 	private String attemptMovement(String input)
 	{
 		String output = "";
-		int itemsWOPlover = itemsInHand;
-		haveGold = (hash.objectIsHere(GameObjects.GOLD, Location.INHAND));
-		boolean haveEmerald = (hash.objectIsHere(GameObjects.EMERALD, Location.INHAND));
-		boolean haveClam = (hash.objectIsHere(GameObjects.CLAM, Location.INHAND));
-		boolean haveOyster = (hash.objectIsHere(GameObjects.OYSTER, Location.INHAND));
-		boolean trollIsHere = (hash.getObjectLocation(GameObjects.TROLL) == currentLocation || hash.getObjectLocation(GameObjects.TROLL_) == currentLocation);
-		Movement destination = hash.whichMovement(input);
-		if(hash.getObjectLocation(GameObjects.EMERALD) == Location.INHAND)
+		if(!wayIsBlocked)
 		{
-			itemsWOPlover--;
-		}
-		Location locationResult = currentLocation.moveTo(destination, currentLocation, grateUnlocked,
-				haveGold, crystalBridge, snake, haveEmerald, haveClam, haveOyster, plant, oilDoor,
-				dragon, troll, trollIsHere, itemsWOPlover);
-		if(locationResult.equals(Location.THEVOID))
-		{
-			if(destination.equals(Movement.XYZZY)||destination.equals(Movement.PLUGH)||destination.equals(Movement.PLUGH))
+			int itemsWOPlover = itemsInHand;
+			haveGold = (hash.objectIsHere(GameObjects.GOLD, Location.INHAND));
+			boolean haveEmerald = (hash.objectIsHere(GameObjects.EMERALD, Location.INHAND));
+			boolean haveClam = (hash.objectIsHere(GameObjects.CLAM, Location.INHAND));
+			boolean haveOyster = (hash.objectIsHere(GameObjects.OYSTER, Location.INHAND));
+			boolean trollIsHere = (hash.getObjectLocation(GameObjects.TROLL) == currentLocation || hash.getObjectLocation(GameObjects.TROLL_) == currentLocation);
+			Movement destination = hash.whichMovement(input);
+			if(hash.getObjectLocation(GameObjects.EMERALD) == Location.INHAND)
 			{
-				output = "Nothing happens.";
+				itemsWOPlover--;
 			}
-			else if(destination.equals(Movement.NORTH) ||
-					destination.equals(Movement.SOUTH) ||
-					destination.equals(Movement.EAST)  ||
-					destination.equals(Movement.WEST)  ||
-					destination.equals(Movement.NORTHEAST)||
-					destination.equals(Movement.NORTHWEST)||
-					destination.equals(Movement.SOUTHEAST)||
-					destination.equals(Movement.SOUTHWEST))
+			Location locationResult = currentLocation.moveTo(destination, currentLocation, grateUnlocked,
+					haveGold, crystalBridge, snake, haveEmerald, haveClam, haveOyster, plant, oilDoor,
+					dragon, troll, trollIsHere, itemsWOPlover);
+			if(locationResult.equals(Location.THEVOID))
 			{
-				output = "There are no exits in that direction.";
+				if(destination.equals(Movement.XYZZY)||destination.equals(Movement.PLUGH)||destination.equals(Movement.PLUGH))
+				{
+					output = "Nothing happens.";
+				}
+				else if(destination.equals(Movement.NORTH) ||
+						destination.equals(Movement.SOUTH) ||
+						destination.equals(Movement.EAST)  ||
+						destination.equals(Movement.WEST)  ||
+						destination.equals(Movement.NORTHEAST)||
+						destination.equals(Movement.NORTHWEST)||
+						destination.equals(Movement.SOUTHEAST)||
+						destination.equals(Movement.SOUTHWEST))
+				{
+					output = "There are no exits in that direction.";
+				}
+				else
+				{
+					output = "I don't know how to apply that word here.";
+				}
 			}
-			else
+			else if(locationResult.equals(Location.CRACK))
 			{
-				output = "I don't know how to apply that word here.";
+				output = "That crack is far too small for you to follow.";
 			}
-		}
-		else if(locationResult.equals(Location.CRACK))
-		{
-			output = "That crack is far too small for you to follow.";
-		}
-		else if(locationResult.equals(Location.NECK))
-		{
-			output = "You are at the bottom of the pit with a broken neck.";
-			//
-			// implement death here
-			//
-		}
-		else if(locationResult.equals(Location.LOSE))
-		{
-			output = "You didn't make it.";
-			//
-			// implement death here
-			//
-		}
-		else if(locationResult.equals(Location.CANT))
-		{
-			output = "The dome is unclimbable.";
-		}
-		else if(locationResult.equals(Location.CLIMB))
-		{
-			setLocation(Location.NARROW);
-			output = "You clamber up the plant and scurry through the hole at the top.\n" + getDescription(currentLocation, brief);
-		}
-		else if(locationResult.equals(Location.CHECK))
-		{
-			if(plant == 1)
+			else if(locationResult.equals(Location.NECK))
+			{
+				output = "You are at the bottom of the pit with a broken neck.";
+				//
+				// implement death here
+				//
+			}
+			else if(locationResult.equals(Location.LOSE))
+			{
+				output = "You didn't make it.";
+				//
+				// implement death here
+				//
+			}
+			else if(locationResult.equals(Location.CANT))
+			{
+				output = "The dome is unclimbable.";
+			}
+			else if(locationResult.equals(Location.CLIMB))
+			{
+				setLocation(Location.NARROW);
+				output = "You clamber up the plant and scurry through the hole at the top.\n" + getDescription(currentLocation, brief);
+			}
+			else if(locationResult.equals(Location.CHECK))
+			{
+				if(plant == 1)
+				{
+					setLocation(Location.WEST2PIT);
+					output = "You have climbed up the plant and out of the pit.\n" + getDescription(currentLocation, brief);
+				}
+				else
+				{
+					output = "There is nothing here to climb. Use \"UP\" or \"OUT\" to leave the pit.";
+				}
+			}
+			else if(locationResult.equals(Location.SNAKED))
+			{
+				output = "You can't get by the snake.";
+			}
+			else if(locationResult.equals(Location.THRU))
+			{
+				setLocation(Location.WESTMIST);
+				output = "You have crawled through a very low wide passage parallel to and north of the Hall of Mists.\n" + getDescription(currentLocation, brief);
+			}
+			else if(locationResult.equals(Location.DUCK))
+			{
+				setLocation(Location.WESTFISSURE);
+				output = "You have crawled through a very low wide passage parallel to and north of the Hall of Mists.\n" + getDescription(currentLocation, brief);
+			}
+			else if(locationResult.equals(Location.SEWER))
+			{
+				output = "The stream flows out through a pair of 1-foot-diameter sewer pipes.\n\nIt would be advisable to use the exit.";
+			}
+			else if(locationResult.equals(Location.UPNOUT))
+			{
+				output = "There is nothing here to climb. Use \"UP\" or \"OUT\" to leave the pit.";
+			}
+			else if(locationResult.equals(Location.DIDIT))
 			{
 				setLocation(Location.WEST2PIT);
 				output = "You have climbed up the plant and out of the pit.\n" + getDescription(currentLocation, brief);
 			}
-			else
+			else if(locationResult.equals(Location.REMARK))
 			{
-				output = "There is nothing here to climb. Use \"UP\" or \"OUT\" to leave the pit.";
-			}
-		}
-		else if(locationResult.equals(Location.SNAKED))
-		{
-			output = "You can't get by the snake.";
-		}
-		else if(locationResult.equals(Location.THRU))
-		{
-			setLocation(Location.WESTMIST);
-			output = "You have crawled through a very low wide passage parallel to and north of the Hall of Mists.\n" + getDescription(currentLocation, brief);
-		}
-		else if(locationResult.equals(Location.DUCK))
-		{
-			setLocation(Location.WESTFISSURE);
-			output = "You have crawled through a very low wide passage parallel to and north of the Hall of Mists.\n" + getDescription(currentLocation, brief);
-		}
-		else if(locationResult.equals(Location.SEWER))
-		{
-			output = "The stream flows out through a pair of 1-foot-diameter sewer pipes.\n\nIt would be advisable to use the exit.";
-		}
-		else if(locationResult.equals(Location.UPNOUT))
-		{
-			output = "There is nothing here to climb. Use \"UP\" or \"OUT\" to leave the pit.";
-		}
-		else if(locationResult.equals(Location.DIDIT))
-		{
-			setLocation(Location.WEST2PIT);
-			output = "You have climbed up the plant and out of the pit.\n" + getDescription(currentLocation, brief);
-		}
-		else if(locationResult.equals(Location.REMARK))
-		{
-			if(currentLocation.equals(Location.SLIT)||currentLocation.equals(Location.WET))
-			{
-				output = "You can't fit through a two-inch slit!";
-			}
-			else if(currentLocation.equals(Location.INSIDE)||currentLocation.equals(Location.OUTSIDE)||currentLocation.equals(Location.DEBRIS)||currentLocation.equals(Location.AWKWARD)||
-					currentLocation.equals(Location.BIRD)||currentLocation.equals(Location.SMALLPIT))
-			{
-				output = "You can't go through a locked steel grate!";
-			}
-			else if(currentLocation.equals(Location.SWSIDE) && destination != Movement.JUMP)
-			{
-				if(troll)
+				if(currentLocation.equals(Location.SLIT)||currentLocation.equals(Location.WET))
 				{
-					output = "The troll refuses to let you cross.";
+					output = "You can't fit through a two-inch slit!";
+				}
+				else if(currentLocation.equals(Location.INSIDE)||currentLocation.equals(Location.OUTSIDE)||currentLocation.equals(Location.DEBRIS)||currentLocation.equals(Location.AWKWARD)||
+						currentLocation.equals(Location.BIRD)||currentLocation.equals(Location.SMALLPIT))
+				{
+					output = "You can't go through a locked steel grate!";
+				}
+				else if(currentLocation.equals(Location.SWSIDE) && destination != Movement.JUMP)
+				{
+					if(troll)
+					{
+						output = "The troll refuses to let you cross.";
+					}
+					else
+					{
+						output = "There is no longer any way across the chasm.";
+					}
+				}
+				else if(currentLocation.equals(Location.NESIDE)||currentLocation.equals(Location.SWSIDE)||currentLocation.equals(Location.EASTFISSURE)||currentLocation.equals(Location.WESTFISSURE))
+				{
+					if(destination.equals(Movement.JUMP))
+					{
+						output = "I respectfully suggest that you go across the bridge instead of jumping.";	
+					}
+					else
+					{
+						output = "There is no way to cross the fissure";
+					}
+				}
+				else if(currentLocation.equals(Location.HALLOFMOUNTAINKING))
+				{
+					output = "You can't get by the snake.";
+				}
+				else if(currentLocation.equals(Location.SHELL))
+				{
+					if(haveClam)
+					{
+						output = "You can't fit this five-foot clam through that little passage!";
+					}
+					else
+					{
+						output = "You can't fit this five-foot oyster through that little passage!";
+					}
+				}
+				else if(currentLocation.equals(Location.WITT)&&destination.equals(Movement.WEST))
+				{
+					output = "You have crawled around in some little holes and found your way blocked by a recent cave-in.\nYou are now back in the main passage.";
+				}
+				else if(currentLocation.equals(Location.WITT)||currentLocation.equals(Location.BEDQUILT)||currentLocation.equals(Location.CHEESE))
+				{
+					output = "You have crawled around in some little holes and wound up back in the main passage.";
+				}
+				else if(currentLocation.equals(Location.IMMENSE))
+				{
+					output = "The door is extremely rusty and refuses to open.";
+				}
+				else if(currentLocation.equals(Location.SCAN1)||currentLocation.equals(Location.SCAN3))
+				{
+					output = "That dragon looks rather nasty. You'd best not try to get by.";
+				}
+				else if(currentLocation.equals(Location.VIEW))
+				{
+					output = "Don't be ridiculous!";
 				}
 				else
 				{
-					output = "There is no longer any way across the chasm.";
+					output = "You can not do that.";
 				}
-			}
-			else if(currentLocation.equals(Location.NESIDE)||currentLocation.equals(Location.SWSIDE)||currentLocation.equals(Location.EASTFISSURE)||currentLocation.equals(Location.WESTFISSURE))
-			{
-				if(destination.equals(Movement.JUMP))
-				{
-					output = "I respectfully suggest that you go across the bridge instead of jumping.";	
-				}
-				else
-				{
-					output = "There is no way to cross the fissure";
-				}
-			}
-			else if(currentLocation.equals(Location.HALLOFMOUNTAINKING))
-			{
-				output = "You can't get by the snake.";
-			}
-			else if(currentLocation.equals(Location.SHELL))
-			{
-				if(haveClam)
-				{
-					output = "You can't fit this five-foot clam through that little passage!";
-				}
-				else
-				{
-					output = "You can't fit this five-foot oyster through that little passage!";
-				}
-			}
-			else if(currentLocation.equals(Location.WITT)&&destination.equals(Movement.WEST))
-			{
-				output = "You have crawled around in some little holes and found your way blocked by a recent cave-in.\nYou are now back in the main passage.";
-			}
-			else if(currentLocation.equals(Location.WITT)||currentLocation.equals(Location.BEDQUILT)||currentLocation.equals(Location.CHEESE))
-			{
-				output = "You have crawled around in some little holes and wound up back in the main passage.";
-			}
-			else if(currentLocation.equals(Location.IMMENSE))
-			{
-				output = "The door is extremely rusty and refuses to open.";
-			}
-			else if(currentLocation.equals(Location.SCAN1)||currentLocation.equals(Location.SCAN3))
-			{
-				output = "That dragon looks rather nasty. You'd best not try to get by.";
-			}
-			else if(currentLocation.equals(Location.VIEW))
-			{
-				output = "Don't be ridiculous!";
 			}
 			else
 			{
-				output = "You can not do that.";
+				setLocation(locationResult);
+				if(!canISee(currentLocation))
+				{
+					//HAVE THEM MAYBE FALL INTO A PIT HERE
+					boolean pitifulDeath = fallInPit();
+					if(pitifulDeath)
+					{
+
+					}
+					else
+					{
+						output = "It is now pitch dark. If you proceed you will likely fall into a pit.";
+					}
+				}
+				else
+				{
+					output = getDescription(currentLocation, brief);
+					if(currentLocation.equals(Location.Y2))
+					{
+						if(Math.random() > .74)
+						{
+							//hollow voice
+							output = new String(output + "\n\nA hollow voice says \"PLUGH\"");
+						}
+					}
+				}
 			}
 		}
 		else
 		{
-			setLocation(locationResult);
-			if(!canISee(currentLocation))
-			{
-				//HAVE THEM MAYBE FALL INTO A PIT HERE
-				boolean pitifulDeath = fallInPit();
-				if(pitifulDeath)
-				{
-
-				}
-				else
-				{
-					output = "It is now pitch dark. If you proceed you will likely fall into a pit.";
-				}
-			}
-			else
-			{
-				output = getDescription(currentLocation, brief);
-				if(currentLocation.equals(Location.Y2))
-				{
-					if(Math.random() > .74)
-					{
-						//hollow voice
-						output = new String(output + "\n\n");
-					}
-				}
-			}
+			output = "";
+			//blocked by dwarf or something
 		}
 
 
@@ -468,6 +630,94 @@ public class AdventControl
 		System.out.println(currentLocation);
 		return canSee;
 	}
+	
+	private boolean loadGame()
+	{
+		boolean result = false;
+		JFileChooser chooser = new JFileChooser();
+	    FileNameExtensionFilter filter = new FileNameExtensionFilter("txt");
+		chooser.setFileFilter(filter);
+		int returnVal = chooser.showOpenDialog(frame);
+		if(returnVal == JFileChooser.APPROVE_OPTION) 
+		{
+			try
+			{
+				BufferedReader reader = new BufferedReader(new FileReader(chooser.getSelectedFile()));
+				int row = -1;
+				String line = updateLine(reader, row);
+				currentLocation = Location.locate[Integer.parseInt(line)];
+					line = updateLine(reader, row);
+				previousLocation = Location.locate[Integer.parseInt(line)];
+					line = updateLine(reader, row);
+				dead = Boolean.parseBoolean(line);
+					line = updateLine(reader, row);
+				brief = Boolean.parseBoolean(line);
+					line = updateLine(reader, row);
+				beginning = Boolean.parseBoolean(line);
+					line = updateLine(reader, row);
+				grateUnlocked = Boolean.parseBoolean(line);
+					line = updateLine(reader, row);
+				crystalBridge = Boolean.parseBoolean(line);
+					line = updateLine(reader, row);
+				light = Boolean.parseBoolean(line);
+					line = updateLine(reader, row);
+				snake = Boolean.parseBoolean(line);
+					line = updateLine(reader, row);
+				oilDoor = Boolean.parseBoolean(line);
+					line = updateLine(reader, row);
+				dragon = Boolean.parseBoolean(line);
+					line = updateLine(reader, row);
+				troll = Boolean.parseBoolean(line);
+					line = updateLine(reader, row);
+				birdInCage = Boolean.parseBoolean(line);
+					line = updateLine(reader, row);
+				bearAxe = Boolean.parseBoolean(line);
+					line = updateLine(reader, row);
+				broken = Boolean.parseBoolean(line);
+					line = updateLine(reader, row);
+				haveGold = Boolean.parseBoolean(line);
+					line = updateLine(reader, row);
+				collapse = Boolean.parseBoolean(line);
+					line = updateLine(reader, row);
+				wayIsBlocked = Boolean.parseBoolean(line);
+					line = updateLine(reader, row);
+				turns = Integer.parseInt(line);
+					line = updateLine(reader, row);
+				itemsInHand = Integer.parseInt(line);
+					line = updateLine(reader, row);
+				deaths = Integer.parseInt(line);
+					line = updateLine(reader, row);
+				plant = Integer.parseInt(line);
+					line = updateLine(reader, row);
+				bottle = Integer.parseInt(line);
+					line = updateLine(reader, row);
+				bear = Integer.parseInt(line);
+					line = updateLine(reader, row);
+				chain = Integer.parseInt(line);
+					line = updateLine(reader, row);
+					
+					
+				//ALL OBJECT LOCATIONS AS WELL
+			}
+			catch(FileNotFoundException e){	}
+			catch(NullPointerException e){	}
+			catch(IOException e){	}
+		}
+		return result;
+	}
+	
+	private String updateLine(BufferedReader reader, int row) throws IOException
+	{
+		row++;
+		return reader.readLine();
+	}
+	
+	private boolean saveGame()
+	{
+		boolean result = false;
+		//TODO
+		return result;
+	}
 
 	private boolean fallInPit()
 	{
@@ -475,6 +725,8 @@ public class AdventControl
 
 		return pitifulDeath;
 	}
+	
+	
 
 
 }

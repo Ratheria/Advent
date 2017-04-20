@@ -204,6 +204,8 @@ public class HashMaps
 		objects.put("plati", GameObjects.PYRAMID);
 		objects.put("pyram", GameObjects.PYRAMID);
 		
+		actions.put("look", ActionWords.LOOK);
+		actions.put("descr", ActionWords.LOOK);
 		actions.put("take", ActionWords.TAKE);
 		actions.put("carry", ActionWords.TAKE);
 		actions.put("keep", ActionWords.TAKE);

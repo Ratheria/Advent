@@ -32,6 +32,7 @@ public enum Location
 	CRACK, NECK, LOSE, CANT, CLIMB, CHECK, SNAKED, THRU, DUCK, SEWER, UPNOUT, DIDIT,
 	PPASS, PDROP, TROLL, REMARK;
 	
+	public static Location[] locate = Location.values();
 	private ArrayList<Location> hasWater = new ArrayList<Location>();
 	
 	public void setUp()
@@ -1645,28 +1646,48 @@ public enum Location
 // TODO Fix This!!!
 					case SOUTHWEST: next = SCORR; break;
 					case OVER:
-						if(troll && !trollHere)
-						{	next = TROLL;	}
+						if(troll)
+						{
+							if(trollHere)
+							{	next = REMARK;	}
+							else
+							{	next = NESIDE;	}
+						}
 						else
-						{	next = REMARK;	}
+						{	next = REMARK;}
 						break;
 					case ACROSS:
-						if(troll && !trollHere)
-						{	next = TROLL;	}
+						if(troll)
+						{
+							if(trollHere)
+							{	next = REMARK;	}
+							else
+							{	next = NESIDE;	}
+						}
 						else
-						{	next = REMARK;	}
+						{	next = REMARK;}
 						break;
 					case CROSS:
-						if(troll && !trollHere)
-						{	next = TROLL;	}
+						if(troll)
+						{
+							if(trollHere)
+							{	next = REMARK;	}
+							else
+							{	next = NESIDE;	}
+						}
 						else
-						{	next = REMARK;	}
+						{	next = REMARK;}
 						break;
 					case NORTHEAST:
-						if(troll && !trollHere)
-						{	next = TROLL;	}
+						if(troll)
+						{
+							if(trollHere)
+							{	next = REMARK;	}
+							else
+							{	next = NESIDE;	}
+						}
 						else
-						{	next = REMARK;	}
+						{	next = REMARK;}
 						break;
 					case JUMP:
 						if(!troll)
@@ -1793,26 +1814,46 @@ public enum Location
 					case NORTHEAST: next = CORR; break;
 					case UP: next = SWSIDE; break;
 					case OVER:
-						if(trollHere)
-						{	next = TROLL;	}
+						if(troll)
+						{
+							if(trollHere)
+							{	next = REMARK;	}
+							else
+							{	next = SWSIDE;	}
+						}
 						else
 						{	next = REMARK;	}
 						break;
 					case ACROSS:
-						if(trollHere)
-						{	next = TROLL;	}
+						if(troll)
+						{
+							if(trollHere)
+							{	next = REMARK;	}
+							else
+							{	next = SWSIDE;	}
+						}
 						else
 						{	next = REMARK;	}
 						break;
 					case CROSS:
-						if(trollHere)
-						{	next = TROLL;	}
+						if(troll)
+						{
+							if(trollHere)
+							{	next = REMARK;	}
+							else
+							{	next = SWSIDE;	}
+						}
 						else
 						{	next = REMARK;	}
 						break;
 					case SOUTHWEST:
-						if(trollHere)
-						{	next = TROLL;	}
+						if(troll)
+						{
+							if(trollHere)
+							{	next = REMARK;	}
+							else
+							{	next = SWSIDE;	}
+						}
 						else
 						{	next = REMARK;	}
 						break;
