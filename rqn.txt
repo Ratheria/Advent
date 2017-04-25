@@ -182,9 +182,9 @@ void vtake(void)
         /*
          special case objects and fixed objects
         */
-        msg = 25;
+        msg = You can't be serious!;
         if (object == PLANT && prop[PLANT] <= 0)
-                msg = 115;
+                msg = The plant has exceptionally deep roots and cannot be pulled free.;
         if (object == BEAR && prop[BEAR] == 1)
                 msg = 169;
         if (object == CHAIN && prop[BEAR] != 0)

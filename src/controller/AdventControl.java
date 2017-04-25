@@ -195,6 +195,7 @@ public class AdventControl
 		ArrayList<GameObjects> objects = hash.objectsHere(currentLocation);
 		if(objects != null)
 		{
+			output = output + "\n";
 			for(GameObjects thing : objects)
 			{
 				output = new String(output + things.getItemDescription(currentLocation, thing, 
@@ -356,20 +357,16 @@ public class AdventControl
 		String output = "";
 		if(!wayIsBlocked)
 		{
-			int itemsWOPlover = itemsInHand;
 			haveGold = (hash.objectIsHere(GameObjects.GOLD, Location.INHAND));
+			boolean haveLamp = hash.getObjectLocation(GameObjects.LAMP) == Location.INHAND;
 			boolean haveEmerald = (hash.objectIsHere(GameObjects.EMERALD, Location.INHAND));
 			boolean haveClam = (hash.objectIsHere(GameObjects.CLAM, Location.INHAND));
 			boolean haveOyster = (hash.objectIsHere(GameObjects.OYSTER, Location.INHAND));
 			boolean trollIsHere = (hash.getObjectLocation(GameObjects.TROLL) == currentLocation || hash.getObjectLocation(GameObjects.TROLL_) == currentLocation);
 			Movement destination = hash.whichMovement(input);
-			if(hash.getObjectLocation(GameObjects.EMERALD) == Location.INHAND)
-			{
-				itemsWOPlover--;
-			}
 			Location locationResult = currentLocation.moveTo(destination, currentLocation, grateUnlocked,
 					haveGold, crystalBridge, snake, haveEmerald, haveClam, haveOyster, plant, oilDoor,
-					dragon, troll, trollIsHere, itemsWOPlover);
+					dragon, troll, trollIsHere, haveLamp);
 			if(locationResult.equals(Location.THEVOID))
 			{
 				if(destination.equals(Movement.XYZZY)||destination.equals(Movement.PLUGH)||destination.equals(Movement.PLUGH))

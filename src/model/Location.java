@@ -70,7 +70,7 @@ public enum Location
 	public boolean dontNeedLamp(Location here)
 	{
 		boolean need = false;
-		if(outside(here)||here == VIEW||here == NEEND||here == SWEND)
+		if(outside(here)||here == VIEW||here == NEEND||here == SWEND||here == PROOM)
 		{
 			need = true;
 		}
@@ -80,7 +80,7 @@ public enum Location
 	public Location moveTo(Movement destination, Location here, boolean grate,
 			boolean gold, boolean crystalBridge, boolean snake, boolean emerald, boolean clam, 
 			boolean oyster, int plant, boolean oilDoor, boolean dragon, boolean troll,
-			boolean trollHere, int itemsInHand)
+			boolean trollHere, boolean haveLamp)
 	{
 		Location next = null;
 		switch(here)
@@ -1450,7 +1450,7 @@ public enum Location
 					case NORTHWEST: next = MISTY; break;
 					case CAVERN: next = MISTY; break;
 					case EAST:
-						if(itemsInHand > 0)
+						if(haveLamp == true)
 						{
 							next = REMARK;
 						}
@@ -1460,7 +1460,7 @@ public enum Location
 						}
 						break;
 					case PASSAGE:
-						if(itemsInHand > 0)
+						if(haveLamp == true)
 						{
 							next = REMARK;
 						}
