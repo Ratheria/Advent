@@ -186,9 +186,9 @@ void vtake(void)
         if (object == PLANT && prop[PLANT] <= 0)
                 msg = The plant has exceptionally deep roots and cannot be pulled free.;
         if (object == BEAR && prop[BEAR] == 1)
-                msg = 169;
+                msg = The bear is still chained to the wall.;
         if (object == CHAIN && prop[BEAR] != 0)
-                msg = 170;
+                msg = The chain is still locked.;
         if (fixed[object]) {
                 rspeak(msg);
                 return;
@@ -204,9 +204,9 @@ void vtake(void)
                                 return;
                         }
                         if (prop[BOTTLE] != 1)
-                                msg = 105;
+                                msg = Your bottle is already full.;
                         if (!toting(BOTTLE))
-                                msg = 104;
+                                msg = You have nothing in which to carry it.;
                         rspeak(msg);
                         return;
                 }
@@ -221,11 +221,11 @@ void vtake(void)
         */
         if (object == BIRD && prop[BIRD] == 0) {
                 if (toting(ROD)) {
-                        rspeak(26);
+                        rspeak(The bird was unafraid when you entered, but as you approach it becomes disturbed and you cannot catch it.);
                         return;
                 }
                 if (!toting(CAGE)) {
-                        rspeak(27);
+                        rspeak(You can catch the bird, but you cannot carry it.);
                         return;
                 }
                 prop[BIRD] = 1;

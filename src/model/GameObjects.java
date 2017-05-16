@@ -4,6 +4,8 @@
 
 package model;
 
+import java.util.ArrayList;
+
 public enum GameObjects 
 {
 
@@ -18,6 +20,39 @@ public enum GameObjects
 	CHEST, EGGS, TRIDENT, VASE, EMERALD, PYRAMID, PEARL, 
 	RUG, RUG_, SPICES, CHAIN;
 
+	private ArrayList<GameObjects> mobileObjects = new ArrayList<GameObjects>();
+	
+	public void setUp()
+	{
+		mobileObjects.add(KEYS);
+		mobileObjects.add(LAMP);
+		mobileObjects.add(CAGE);
+		mobileObjects.add(ROD);
+		mobileObjects.add(ROD2);
+		mobileObjects.add(BIRD);
+		mobileObjects.add(PILLOW);
+		mobileObjects.add(CLAM);
+		mobileObjects.add(OYSTER);
+		mobileObjects.add(MAG);
+		mobileObjects.add(FOOD);
+		mobileObjects.add(BOTTLE);
+		mobileObjects.add(AXE);
+		mobileObjects.add(GOLD);
+		mobileObjects.add(DIAMONDS);
+		mobileObjects.add(SILVER);
+		mobileObjects.add(JEWELS);
+		mobileObjects.add(COINS);
+		mobileObjects.add(CHEST);
+		mobileObjects.add(EGGS);
+		mobileObjects.add(TRIDENT);
+		mobileObjects.add(VASE);
+		mobileObjects.add(EMERALD);
+		mobileObjects.add(PYRAMID);
+		mobileObjects.add(PEARL);
+		mobileObjects.add(SPICES);
+		mobileObjects.add(CHAIN);
+	}
+	
 	public boolean isTreasure(GameObjects thisThing)
 	{
 		boolean treasure = false;
@@ -26,6 +61,16 @@ public enum GameObjects
 			treasure = true;
 		}
 		return treasure;
+	}
+	
+	public boolean canTake(GameObjects thisThing)
+	{
+		boolean result = false;
+		if(mobileObjects.contains(thisThing))
+		{
+			result = true;
+		}
+		return result;
 	}
 
 	public String getItemDescription(Location location, GameObjects object, 

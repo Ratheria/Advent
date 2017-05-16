@@ -88,7 +88,7 @@ public class AdventControl
 		bear = 0;
 		chain = 0;
 		currentLocation.setUp();
-		
+		things.setUp();
 	}
 
 	public String determineAction(String input) 
@@ -252,15 +252,138 @@ public class AdventControl
 					{
 						output = new String("You are already carrying it!");
 					}
-					else if(object == GameObjects.PLANT && hash.objectIsHere(object, currentLocation))
+					else if(object == GameObjects.PLANT && objectIsHere(object))
 					{
 						output = new String("The plant has exceptionally deep roots and cannot be pulled free.");
 					}
-					//else if(object == )
+					else if(object == GameObjects.BEAR && chain == 0)
+					{
+						output = new String("The bear is still chained to the wall.");
+					}
+					else if(object == GameObjects.CHAIN && chain == 2)
+					{
+						output = new String("The chain is still locked.");
+					}
+					else if(object == GameObjects.WATER)
+					{
+						if(hash.objectIsHere(GameObjects.BOTTLE, Location.INHAND))
+						{
+							if(bottle == 0)
+							{
+								if(currentLocation.isWaterHere(currentLocation))
+								{
+									output = new String("You fill the bottle with water.");
+									bottle = 1;
+								}
+							}
+							else
+							{
+								output = new String("Your bottle is already full.");
+							}
+						}
+						else
+						{
+							output = new String("You have nothing in which to carry it.");
+						}
+					}
+					else if(object == GameObjects.OIL)
+					{
+						if(hash.objectIsHere(GameObjects.BOTTLE, Location.INHAND))
+						{
+							if(bottle == 0)
+							{
+								if(Location.EASTPIT == currentLocation)
+								{
+									output = new String("You fill the bottle with oil.");
+									bottle = 2;
+								}
+							}
+							else
+							{
+								output = new String("Your bottle is already full.");
+							}
+						}
+						else
+						{
+							output = new String("You have nothing in which to carry it.");
+						}
+					}
+					else if(itemsInHand >= 7)
+					{
+						output = new String("You can't carry anything more.  You'll have to drop something first.");
+					}
+					else if(object == GameObjects.BIRD && objectIsHere(GameObjects.BIRD))
+					{
+						if(hash.objectIsHere(GameObjects.ROD, Location.INHAND))
+						{
+							output = new String("The bird was unafraid when you entered, but as you approach it becomes disturbed and you cannot catch it.");
+						}
+						else if(!hash.objectIsHere(GameObjects.CAGE, Location.INHAND))
+						{
+							output = new String("You can catch the bird, but you cannot carry it.");
+						}
+					}
+					else if(object == GameObjects.BIRD || object == GameObjects.CAGE)
+					{
+						if(birdInCage)
+						{
+							takeObject(GameObjects.BIRD);
+							takeObject(GameObjects.CAGE);
+							itemsInHand--;
+						}
+					}
+					else if(object == GameObjects.RUG)
+					{
+						if(objectIsHere(GameObjects.RUG) || objectIsHere(GameObjects.RUG_))
+						{
+							takeObject(GameObjects.RUG);
+							hash.voidObject(GameObjects.RUG_);
+						}
+					}
+					else if(object == GameObjects.ROD && !objectIsHere(GameObjects.ROD) && objectIsHere(GameObjects.ROD2))
+					{
+						takeObject(GameObjects.ROD2);
+					}
+					else if(things.canTake(object) && objectIsHere(object))
+					{
+						takeObject(object);
+					}
 				}
 			break;
 				
 			case DROP:
+				
+				GameObjects object = hash.whichObject((String)other);
+				output = new String("");
+				if(isInHand(GameObjects.ROD2) && object == GameObjects.ROD && !isInHand(GameObjects.ROD))
+				{
+					//TODO DYNAMITE
+				}
+				if(isInHand(object))
+				{
+					if(object == GameObjects.CAGE && birdInCage)
+					{
+						dropObject(GameObjects.CAGE);
+						itemsInHand++;
+						dropObject(GameObjects.BIRD);
+					}
+					else if(object == GameObjects.BIRD)
+					{
+						if(objectIsHere(GameObjects.SNAKE))
+						{
+							output = new String("The little bird attacks the green snake, and in an astounding flurry drives the snake away.");
+							birdInCage = false;
+							itemsInHand++;
+							dropObject(GameObjects.BIRD);
+							//voidObject(GameObjects.SNAKE);
+						}
+					}
+				}
+				else
+				{
+					output = new String("You aren't carrying it!");
+				}
+				
 				break;
 				
 			case OPEN:
@@ -615,11 +738,11 @@ public class AdventControl
 		{	
 			canSee = true;
 		}
-		else if(light && hash.objectIsHere(GameObjects.LAMP, Location.INHAND))
+		else if(light && isInHand(GameObjects.LAMP))
 		{
 			canSee = true;
 		}
-		else if(light && hash.objectIsHere(GameObjects.LAMP, currentLocation))
+		else if(light && objectIsHere(GameObjects.LAMP))
 		{
 			canSee = true;
 		}
@@ -723,8 +846,27 @@ public class AdventControl
 		return pitifulDeath;
 	}
 	
-	
+	private void takeObject(GameObjects thing)
+	{
+		hash.takeObject(thing);
+		itemsInHand++;
+	}
 
+	private boolean isInHand(GameObjects thing)
+	{
+		return hash.objectIsHere(thing, Location.INHAND);
+	}
+	
+	private boolean objectIsHere(GameObjects thing)
+	{
+		return hash.objectIsHere(thing, currentLocation);
+	}
+	
+	private void dropObject(GameObjects thing)
+	{
+		hash.dropObject(thing, currentLocation);
+		itemsInHand--;
+	}
 
 }
 

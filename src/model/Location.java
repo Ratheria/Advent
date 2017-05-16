@@ -47,6 +47,16 @@ public enum Location
 		hasWater.add(RESER);
 	}
 	
+	public boolean isWaterHere(Location here)
+	{
+		boolean result = false;
+		if(hasWater.contains(here))
+		{
+			result = true;
+		}
+		return result;
+	}
+	
 	public boolean outside(Location here)
 	{
 		boolean outside = false;
@@ -1456,7 +1466,7 @@ public enum Location
 						}
 						else
 						{
-							next = PPASS;
+							next = PROOM;
 						}
 						break;
 					case PASSAGE:
@@ -1466,7 +1476,17 @@ public enum Location
 						}
 						else
 						{
-							next = PPASS;
+							next = PROOM;
+						}
+						break;
+					case PLOVER:
+						if(haveLamp == true)
+						{
+							next = REMARK;
+						}
+						else
+						{
+							next = PROOM;
 						}
 						break;
 					default: next = THEVOID; break;
@@ -1476,14 +1496,37 @@ public enum Location
 			case PROOM:
 				switch(destination)
 				{
-					case WEST: next = PPASS; break;
-					case PASSAGE: next = PPASS; break;
-					case OUT: next = PPASS; break;
-					case PLOVER:
-						if(emerald)
-						{	next = PDROP;	}
+					case WEST:
+						if(haveLamp == true)
+						{
+							next = REMARK;
+						}
 						else
-						{	next = Y2;}
+						{
+							next = PROOM;
+						}
+						break;
+					case PASSAGE: 
+						if(haveLamp == true)
+						{
+							next = REMARK;
+						}
+						else
+						{
+							next = PROOM;
+						}
+						break;
+					case OUT: 
+						if(haveLamp == true)
+						{
+							next = REMARK;
+						}
+						else
+						{
+							next = PROOM;
+						}
+						break;
+					case PLOVER: next = Y2;
 					case NORTHEAST: next = DROOM; break;
 					case DARK: next = DROOM; break;
 					default: next = THEVOID; break;

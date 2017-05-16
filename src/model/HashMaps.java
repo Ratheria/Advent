@@ -931,4 +931,19 @@ public class HashMaps
 		return description;
 	}
 	
+	public void takeObject(GameObjects thing)
+	{
+		objectLocation.put(thing, Location.INHAND);
+	}
+	
+	public void voidObject(GameObjects thing)
+	{
+		objectLocation.put(thing, Location.THEVOID);
+	}
+	
+	public void dropObject(GameObjects thing, Location here)
+	{
+		objectLocation.put(thing, here);
+	}
+	
 }
