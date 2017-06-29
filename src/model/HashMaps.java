@@ -729,14 +729,29 @@ public class HashMaps
 		return contains;
 	}
 	
+	public boolean isObject(Object input)
+	{
+		return objects.containsValue(input);
+	}
+	
 	public GameObjects whichObject(String input)
 	{
-		return objects.get(input);
+		GameObjects result = GameObjects.NOTHING;
+		if(objects.containsKey(input))
+		{
+			result = objects.get(input);
+		}
+		return result;
 	}
 	
 	public Location getObjectLocation(GameObjects object)
 	{
-		return objectLocation.get(object);
+		Location result = Location.THEVOID;
+		if(objectLocation.containsKey(object))
+		{
+			result = objectLocation.get(object);
+		}
+		return result;
 	}
 	
 	public ArrayList<GameObjects> objectsHere(Location here)

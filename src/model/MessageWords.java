@@ -13,7 +13,7 @@ public enum MessageWords
 
 	public String getText(MessageWords input)
 	{
-		String result = null;
+		String result = "I don't know how.";
 		switch(input)
 		{
 			case MAGIC:

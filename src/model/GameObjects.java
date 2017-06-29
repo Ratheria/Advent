@@ -422,15 +422,15 @@ public enum GameObjects
 			case BEAR:
 				if(bear == 0)
 				{
-					output = new String("\n\tThere is a tiny little plant in the pit, murmuring \"Water, water, ...\"");
+					output = new String("\n\tThere is a ferocious cave bear eyeing you from the far end of the room!");
 				}
 				else if(bear == 1)
 				{
-					output = new String("\n\tThere is a 12-foot-tall beanstalk stretching up out of the pit, bellowing \"Water!! Water!!\"");
+					output = new String("\n\tThere is a gentle cave bear sitting placidly in one corner.");
 				}
 				else if(bear == 2)
 				{
-					output = new String("\n\tThere is a gigantic beanstalk stretching all the way up to the hole.");
+					output = new String("\n\tThere is a contented-looking bear wandering about nearby.");
 				}
 				else
 				{
