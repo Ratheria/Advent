@@ -31,12 +31,14 @@ public class AdventControl
 	private boolean dead;
 	private boolean brief;
 	private boolean beginning;
+	private boolean closed;
 	private boolean grateUnlocked;
 	private boolean crystalBridge;
 	private boolean light;
 	private boolean snake;
 	private boolean oilDoor;
 	private boolean dragon;
+	private boolean dragonQuest;
 	private boolean troll;
 	private boolean birdInCage;
 	private boolean bearAxe;
@@ -47,6 +49,7 @@ public class AdventControl
 	private boolean wayIsBlocked;
 	private int score;
 	private int turns;
+	private int lamp;
 	private int itemsInHand;
 	private int deaths;
 	private int plant;
@@ -71,12 +74,14 @@ public class AdventControl
 		dead = false;
 		brief = false;
 		beginning = true;
+		closed = false;
 		grateUnlocked = false;
 		crystalBridge = false;
 		light = false;
 		snake = true;
 		oilDoor = false;
 		dragon = true;
+		dragonQuest = false;
 		troll = true;
 		birdInCage = false;
 		bearAxe = false;
@@ -85,6 +90,8 @@ public class AdventControl
 		collapse = false;
 		score = 0;
 		turns = 0;
+		lamp = 100;
+		//TODO lamp runs out
 		itemsInHand = 0;
 		deaths = 0;
 		plant = 0;
@@ -124,8 +131,18 @@ public class AdventControl
 				output = "Just yes or no, please.";
 			}
 		}
+		else if(dragonQuest && (input.toLowerCase().contains("yes") || input.equalsIgnoreCase("y")))
+		{
+			//TODO you killed the dragon message
+			dragonQuest = false;
+			dragon = false;
+		}
 		else
 		{
+			if(dragonQuest)
+			{
+				dragonQuest = false;
+			}
 			turns++;
 			if(input.length() > 5)
 			{
@@ -256,399 +273,609 @@ public class AdventControl
 		{
 			output = new String("I don't see any " + alt + ".");
 		}
-		GameObjects object = (GameObjects) other;
 		
-		switch(verb)
+		try
 		{
-			case ABSTAIN:
-				break;
-				
-			case TAKE:
-				output = new String("You can't be serious!");
-				if(!objectIsHere(object))
-				{
-					output = new String("I don't see any " + alt + ".");
-				}
-				if(object == GameObjects.WATER)
-				{
-					if(hash.objectIsHere(GameObjects.BOTTLE, Location.INHAND))
+			GameObjects object = (GameObjects) other;
+			switch(verb)
+			{
+				case ABSTAIN:
+					break;
+					
+				case TAKE:
+					output = new String("You can't be serious!");
+					if(!objectIsHere(object))
 					{
-						if(bottle == 0)
+						output = new String("I don't see any " + alt + ".");
+					}
+					if(object == GameObjects.WATER)
+					{
+						if(hash.objectIsHere(GameObjects.BOTTLE, Location.INHAND))
 						{
-							if(currentLocation.isWaterHere(currentLocation))
+							if(bottle == 0)
 							{
-								output = new String("You fill the bottle with water.");
-								bottle = 1;
+								if(currentLocation.isWaterHere(currentLocation))
+								{
+									output = new String("You fill the bottle with water.");
+									bottle = 1;
+								}
+								else
+								{
+									output = new String("I don't see any water.");
+								}
 							}
 							else
 							{
-								output = new String("I don't see any water.");
+								output = new String("Your bottle is already full.");
 							}
 						}
 						else
 						{
-							output = new String("Your bottle is already full.");
+							output = new String("You have nothing in which to carry it.");
 						}
 					}
-					else
+					else if(object == GameObjects.OIL)
 					{
-						output = new String("You have nothing in which to carry it.");
-					}
-				}
-				else if(object == GameObjects.OIL)
-				{
-					if(hash.objectIsHere(GameObjects.BOTTLE, Location.INHAND))
-					{
-						if(bottle == 0)
+						if(hash.objectIsHere(GameObjects.BOTTLE, Location.INHAND))
 						{
-							if(Location.EASTPIT == currentLocation)
+							if(bottle == 0)
 							{
-								output = new String("You fill the bottle with oil.");
-								bottle = 2;
+								if(Location.EASTPIT == currentLocation)
+								{
+									output = new String("You fill the bottle with oil.");
+									bottle = 2;
+								}
+								else
+								{
+									output = new String("I don't see any oil.");
+								}
 							}
 							else
 							{
-								output = new String("I don't see any oil.");
+								output = new String("Your bottle is already full.");
 							}
 						}
 						else
 						{
-							output = new String("Your bottle is already full.");
+							output = new String("You have nothing in which to carry it.");
 						}
 					}
-					else
+					else if(objectIsPresent(object))
 					{
-						output = new String("You have nothing in which to carry it.");
-					}
-				}
-				else if(objectIsPresent(object))
-				{
-					if(hash.objectIsHere(object, Location.INHAND))
-					{
-						output = new String("You are already carrying it!");
-					}
-					else if(object == GameObjects.PLANT && objectIsHere(object))
-					{
-						output = new String("The plant has exceptionally deep roots and cannot be pulled free.");
-					}
-					else if(object == GameObjects.BEAR && chain == 0)
-					{
-						output = new String("The bear is still chained to the wall.");
-					}
-					else if(object == GameObjects.BEAR && chain != 0)
-					{
-						
-					}
-					else if(object == GameObjects.CHAIN && chain == 2)
-					{
-						output = new String("The chain is still locked.");
-					}
-					else if(itemsInHand >= 7)
-					{
-						output = new String("You can't carry anything more. You'll have to drop something first.");
-					}
-					else if(object == GameObjects.BIRD && objectIsHere(GameObjects.BIRD))
-					{
-						if(hash.objectIsHere(GameObjects.ROD, Location.INHAND))
+						if(hash.objectIsHere(object, Location.INHAND))
 						{
-							output = new String("The bird was unafraid when you entered, but as you approach it becomes disturbed and you cannot catch it.");
+							output = new String("You are already carrying it!");
 						}
-						else if(!hash.objectIsHere(GameObjects.CAGE, Location.INHAND))
+						else if(object == GameObjects.PLANT && objectIsHere(object))
 						{
-							output = new String("You can catch the bird, but you cannot carry it.");
+							output = new String("The plant has exceptionally deep roots and cannot be pulled free.");
 						}
-						else
+						else if(object == GameObjects.BEAR && chain == 0)
 						{
-							if(birdInCage)
+							output = new String("The bear is still chained to the wall.");
+						}
+						else if(object == GameObjects.BEAR && chain != 0)
+						{
+							
+						}
+						else if(object == GameObjects.CHAIN && chain == 2)
+						{
+							output = new String("The chain is still locked.");
+						}
+						else if(itemsInHand >= 7)
+						{
+							output = new String("You can't carry anything more. You'll have to drop something first.");
+						}
+						else if(object == GameObjects.BIRD && objectIsHere(GameObjects.BIRD))
+						{
+							if(hash.objectIsHere(GameObjects.ROD, Location.INHAND))
 							{
-								takeObject(GameObjects.BIRD);
-								takeObject(GameObjects.CAGE);
-								itemsInHand--;
+								output = new String("The bird was unafraid when you entered, but as you approach it becomes disturbed and you cannot catch it.");
+							}
+							else if(!hash.objectIsHere(GameObjects.CAGE, Location.INHAND))
+							{
+								output = new String("You can catch the bird, but you cannot carry it.");
+							}
+							else
+							{
+								if(birdInCage)
+								{
+									takeObject(GameObjects.BIRD);
+									takeObject(GameObjects.CAGE);
+									itemsInHand--;
+									output = new String("Okay.");
+								}
+							}
+						}
+						else if(object == GameObjects.RUG)
+						{
+							if(objectIsHere(GameObjects.RUG) || objectIsHere(GameObjects.RUG_))
+							{
+								takeObject(GameObjects.RUG);
+								hash.voidObject(GameObjects.RUG_);
 								output = new String("Okay.");
 							}
 						}
-					}
-					else if(object == GameObjects.RUG)
-					{
-						if(objectIsHere(GameObjects.RUG) || objectIsHere(GameObjects.RUG_))
+						else if(object == GameObjects.ROD && !objectIsHere(GameObjects.ROD) && objectIsHere(GameObjects.ROD2))
 						{
-							takeObject(GameObjects.RUG);
-							hash.voidObject(GameObjects.RUG_);
+							takeObject(GameObjects.ROD2);
+							output = new String("Okay.");
+						}
+						else if(object == GameObjects.AXE && bearAxe && bear == 0)
+						{
+							//TODO you can't retrieve the axe after throwing it at the bear
+						}
+						else if(object == GameObjects.VASE && broken == true){	}
+						else if(things.canTake(object) && objectIsHere(object))
+						{
+							takeObject(object);
 							output = new String("Okay.");
 						}
 					}
-					else if(object == GameObjects.ROD && !objectIsHere(GameObjects.ROD) && objectIsHere(GameObjects.ROD2))
-					{
-						takeObject(GameObjects.ROD2);
-						output = new String("Okay.");
-					}
-					else if(object == GameObjects.VASE && broken == true){	}
-					else if(things.canTake(object) && objectIsHere(object))
-					{
-						takeObject(object);
-						output = new String("Okay.");
-					}
-				}
-			break;
-				
-			case DROP:
-
-				output = new String("");
-				if(isInHand(GameObjects.ROD2) && object == GameObjects.ROD && !isInHand(GameObjects.ROD))
-				{
-					//TODO DYNAMITE
-				}
-				if(isInHand(object))
-				{
-					if(object == GameObjects.CAGE && birdInCage)
-					{
-						dropObject(GameObjects.CAGE);
-						itemsInHand++;
-						dropObject(GameObjects.BIRD);
-					}
-					else if(object == GameObjects.BIRD)
-					{
-						if(objectIsHere(GameObjects.SNAKE))
-						{
-							output = new String("The little bird attacks the green snake, and in an astounding flurry drives the snake away.");
-							birdInCage = false;
-							itemsInHand++;
-							dropObject(GameObjects.BIRD);
-							voidObject(GameObjects.SNAKE);
-							//TODO wake dwarves if closed
-						}
-						if(objectIsHere(GameObjects.DRAGON) || objectIsHere(GameObjects.DRAGON_))
-						{
-							output = new String("The little bird attacks the green dragon, and in an astounding flurry gets burnt to a cinder. The ashes blow away.");
-							birdInCage = false;
-							voidObject(GameObjects.BIRD);
-						}
-						else
-						{
-							output = new String("Okay.");
-							birdInCage = false;
-							itemsInHand++;
-							dropObject(GameObjects.BIRD);
-						}
-					}
-					else if(object == GameObjects.COINS && objectIsHere(GameObjects.PONY))
-					{
-						voidObject(GameObjects.COINS);
-						itemsInHand++;
-						dropObject(GameObjects.BATTERIES);
-						//TODO change batteries?
-					}
-					else if(object == GameObjects.BEAR)
-					{
-						//TODO if the troll is here make it leave
-						/**
-						 * "The bear lumbers toward the troll, who lets out a startled shriek and scurries away. The bear soon gives up pursuit and wanders back."
-						 */
-					}
-					else if(object == GameObjects.VASE && !(objectIsHere(GameObjects.PILLOW) || currentLocation == Location.SOFT))
-					{
-						//TODO vase breaking
-						dropObject(GameObjects.VASE);
-						broken = true;
-					}
-					else
-					{
-						dropObject(object);
-						output = new String("Okay.");
-					}
-					
-				}
-				else
-				{
-					output = new String("You aren't carrying it!");
-				}
-				
 				break;
-				
-			case OPEN:
-				
-				if(object == GameObjects.GRATE || object == GameObjects.GRATE_)
-				{
-					if(!objectIsPresent(GameObjects.KEYS))
+					
+				case DROP:
+
+					output = new String("");
+					if(isInHand(GameObjects.ROD2) && object == GameObjects.ROD && !isInHand(GameObjects.ROD))
 					{
-						output = new String("You don't have any keys!");
+						//TODO DYNAMITE
 					}
-					else
+					if(isInHand(object))
 					{
-						output = new String("The grate is now unlocked.");
-						grateUnlocked = true;
-					}
-				}
-				else if(objectIsPresent(object))
-				{
-					if(object == GameObjects.CLAM)
-					{
-						if(!isInHand(GameObjects.TRIDENT))
+						if(object == GameObjects.CAGE && birdInCage)
 						{
-							output = new String("You don't have anything strong enough to open the clam.");
-						}
-						else
-						{
-							voidObject(GameObjects.CLAM);
+							dropObject(GameObjects.CAGE);
 							itemsInHand++;
-							dropObject(GameObjects.OYSTER);
-							output = new String("A glistening pearl falls out of the clam and rolls away. Goodness, this must really be an oyster! (I never was very good at identifying bivalves.)\nWhatever it is, it has now snapped shut again.");
-							hash.dropObject(GameObjects.PEARL, Location.CULDESAC);
+							dropObject(GameObjects.BIRD);
 						}
-					}
-					else if(object == GameObjects.OYSTER)
-					{
-						if(!isInHand(GameObjects.TRIDENT))
+						else if(object == GameObjects.BIRD)
 						{
-							output = new String("You don't have anything strong enough to open the oyster.");
-						}
-						else
-						{
-							output = new String("The oyster creaks open, revealing nothing but oyster inside. It promptly snaps shut again.");
-						}
-					}
-					else if(object == GameObjects.DOOR)
-					{
-						if(oilDoor)
-						{
-							output = new String("Okay.");
-						}
-						else
-						{
-							output = new String("The door is extremely rusty and refuses to open.");
-						}
-					}
-					else if(object == GameObjects.CAGE)
-					{
-						output = new String("It has no lock.");
-					}
-					else if(object == GameObjects.KEYS)
-					{
-						output = new String("You can't unlock the keys.");
-					}
-					else if(object == GameObjects.CHAIN)
-					{
-						if(!objectIsPresent(GameObjects.KEYS))
-						{
-							output = new String("You have no keys!");
-						}
-						else if(chain == 0)
-						{
-							if(bear != 1)
+							if(objectIsHere(GameObjects.SNAKE))
 							{
-								output = new String("There is no way to get past the bear to unlock the chain, which is probably just as well.");
+								output = new String("The little bird attacks the green snake, and in an astounding flurry drives the snake away.");
+								birdInCage = false;
+								itemsInHand++;
+								dropObject(GameObjects.BIRD);
+								voidObject(GameObjects.SNAKE);
+								//TODO wake dwarves if closed
+							}
+							if(objectIsHere(GameObjects.DRAGON) || objectIsHere(GameObjects.DRAGON_))
+							{
+								output = new String("The little bird attacks the green dragon, and in an astounding flurry gets burnt to a cinder. The ashes blow away.");
+								birdInCage = false;
+								voidObject(GameObjects.BIRD);
 							}
 							else
 							{
-								chain = 1;
-								output = new String("You unlock the chain and set the tame bear free");
+								output = new String("Okay.");
+								birdInCage = false;
+								itemsInHand++;
+								dropObject(GameObjects.BIRD);
 							}
 						}
-						else if(chain == 2)
+						else if(object == GameObjects.COINS && objectIsHere(GameObjects.PONY))
 						{
-							chain = 1;
+							voidObject(GameObjects.COINS);
+							itemsInHand++;
+							dropObject(GameObjects.BATTERIES);
+							//TODO change batteries?
+						}
+						else if(object == GameObjects.BEAR)
+						{
+							//TODO if the troll is here make it leave
+							/**
+							 * "The bear lumbers toward the troll, who lets out a startled shriek and scurries away. The bear soon gives up pursuit and wanders back."
+							 */
+						}
+						else if(object == GameObjects.VASE && !(objectIsHere(GameObjects.PILLOW) || currentLocation == Location.SOFT))
+						{
+							//TODO vase breaking
+							dropObject(GameObjects.VASE);
+							broken = true;
+						}
+						else
+						{
+							dropObject(object);
 							output = new String("Okay.");
 						}
+						
 					}
+					else
+					{
+						output = new String("You aren't carrying it!");
+					}
+					
+					break;
+					
+				case OPEN:
+					
+					//TODO closing grate (for close case too)
+//					 else if (closing) {
+//	                     if (!panic) {
+//	                             clock2 = 15;
+//	                             ++panic;
+//	                     }
+//	                     msg = 130;
+//	                     
+//	                     A mysterious recorded voice groans into life and announces: "This exit is
+//	                    	 closed.  Please leave via main office."
+//					 }
+					
+					if(object == GameObjects.GRATE || object == GameObjects.GRATE_)
+					{
+						if(!objectIsPresent(GameObjects.KEYS))
+						{
+							output = new String("You don't have any keys!");
+						}
+						else
+						{
+							output = new String("The grate is now unlocked.");
+							grateUnlocked = true;
+						}
+					}
+					else if(objectIsPresent(object))
+					{
+						if(object == GameObjects.CLAM)
+						{
+							if(isInHand(GameObjects.CLAM))
+							{
+								output = new String("I advise you to put down the clam before opening it. >STRAIN!<");
+							}
+							else if(!isInHand(GameObjects.TRIDENT))
+							{
+								output = new String("You don't have anything strong enough to open the clam.");
+							}
+							else
+							{
+								voidObject(GameObjects.CLAM);
+								itemsInHand++;
+								dropObject(GameObjects.OYSTER);
+								output = new String("A glistening pearl falls out of the clam and rolls away. Goodness, this must really be an oyster! (I never was very good at identifying bivalves.)\nWhatever it is, it has now snapped shut again.");
+								hash.dropObject(GameObjects.PEARL, Location.CULDESAC);
+							}
+						}
+						else if(object == GameObjects.OYSTER)
+						{
+							if(isInHand(GameObjects.OYSTER))
+							{
+								output = new String("I advise you to put down the oyster before opening it. >WRENCH!<");
+							}
+							else if(!isInHand(GameObjects.TRIDENT))
+							{
+								output = new String("You don't have anything strong enough to open the oyster.");
+							}
+							else
+							{
+								output = new String("The oyster creaks open, revealing nothing but oyster inside. It promptly snaps shut again.");
+							}
+						}
+						else if(object == GameObjects.DOOR)
+						{
+							if(oilDoor)
+							{
+								output = new String("Okay.");
+							}
+							else
+							{
+								output = new String("The door is extremely rusty and refuses to open.");
+							}
+						}
+						else if(object == GameObjects.CAGE)
+						{
+							output = new String("It has no lock.");
+						}
+						else if(object == GameObjects.KEYS)
+						{
+							output = new String("You can't unlock the keys.");
+						}
+						else if(object == GameObjects.CHAIN)
+						{
+							if(!objectIsPresent(GameObjects.KEYS))
+							{
+								output = new String("You have no keys!");
+							}
+							else if(chain == 0)
+							{
+								if(bear != 1)
+								{
+									output = new String("There is no way to get past the bear to unlock the chain, which is probably just as well.");
+								}
+								else
+								{
+									chain = 1;
+									output = new String("You unlock the chain and set the tame bear free");
+								}
+							}
+							else if(chain == 2)
+							{
+								chain = 1;
+								output = new String("The chain is now unlocked.");
+							}
+							else
+							{
+								output = new String("It was already unlocked.");
+							}
+						}
+					}
+					else
+					{
+						output = new String("I don't know how to lock or unlock such a thing.");
+					}
+					break;
+					
+					
+				case CLOSE:
+					
+					if(object == GameObjects.GRATE || object == GameObjects.GRATE_)
+					{
+						if(!objectIsPresent(GameObjects.KEYS))
+						{
+							output = new String("You don't have any keys!");
+						}
+						else if(!grateUnlocked)
+						{
+							output = new String("It was already locked.");
+						}
+						else
+						{
+							output = new String("The grate is now locked.");
+							grateUnlocked = false;
+						}
+					}
+					else if(objectIsPresent(object))
+					{
+						if(object == GameObjects.CLAM || object == GameObjects.OYSTER)
+						{
+							output = new String("What?");
+						}
+						else if(object == GameObjects.CAGE)
+						{
+							output = new String("It has no lock.");
+						}
+						else if(object == GameObjects.KEYS)
+						{
+							output = new String("You can't unlock the keys.");
+						}
+						else if(object == GameObjects.CHAIN)
+						{
+							if(!objectIsPresent(GameObjects.KEYS))
+							{
+								output = new String("You have no keys!");
+							}
+							else if(chain != 1)
+							{
+								output = new String("It was already locked.");
+							}
+							else if(chain == 1)
+							{
+								if(!(currentLocation == Location.BARR))
+								{
+									output = new String("There is nothing here to which the chain can be locked.");
+								}
+								else
+								{
+									chain = 2;
+									output = new String("The chain is now locked.");
+								}
+							}
+						}
+					}
+					else
+					{
+						output = new String("I don't know how to lock or unlock such a thing.");
+					}
+					break;
+					
+				case ON:
+					//TODO on
+					break;
+					
+				case OFF:
+					//TODO off
+					break;
+					
+				case WAVE:
+					 if (!isInHand(object) && (object != GameObjects.ROD || !isInHand(GameObjects.ROD2)))
+					 {
+						output = new String("You aren't carrying it!");
+					 }
+					 else if(object != GameObjects.ROD || (currentLocation != Location.EASTFISSURE && currentLocation != Location.WESTFISSURE) || !isInHand(object) || closed)
+					 {
+						 //TODO
+					 }
+					 else
+					 {
+						 //TODO let user know what happened
+						 if(!crystalBridge)
+						 {
+							 hash.dropObject(GameObjects.CRYSTAL, Location.EASTFISSURE);
+							 hash.dropObject(GameObjects.CRYSTAL_, Location.WESTFISSURE);
+						 }
+						 else
+						 {
+							 voidObject(GameObjects.CRYSTAL);
+							 voidObject(GameObjects.CRYSTAL_);
+						 }
+					 }
+					break;
+					
+				case CALM:
+					break;
+					
+				case GO:
+					if(alt.equals(""))
+					{
+						output = new String("Where?");
+					}
+					else
+					{
+						output = attemptMovement(alt);
+					}
+					break;
+					
+				case RELAX:
+					break;
+					
+				case POUR:
+					break;
+					
+				case EAT:
+					break;
+					
+				case DRINK:
+					break;
+					
+				case RUB:
+					if(other == GameObjects.LAMP)
+					{	output = new String("Rubbing the electric lamp is not particularly rewarding. Anyway, nothing exciting happens.");	}
+					else
+					{	output = new String("Peculiar. Nothing unexpected happens.");	}
+					break;
+					
+				case TOSS:
+					break;
+					
+				case WAKE:
+					break;
+					
+				case FEED:
+					break;
+					
+				case FILL:
+					break;
+					
+				case BREAK:
+					break;
+					
+				case BLAST:
+					break;
+					
+				case KILL:
+					
+					if(object == GameObjects.BIRD && objectIsPresent(GameObjects.BIRD))
+					{
+						voidObject(GameObjects.BIRD);
+						output = new String("The little bird is now dead. Its body disappears.");
+					}
+					else if(object == GameObjects.BIRD && closed)
+					{
+						output = new String("Oh, leave the poor unhappy bird alone.");
+					}
+					else if(object == GameObjects.CLAM || object == GameObjects.OYSTER)
+					{
+						output = new String("The shell is very strong and impervious to attack.");
+					}
+					else if(object == GameObjects.SNAKE)
+					{
+						output = new String("Attacking the snake both doesn't work and is very dangerous.");
+					}
+					else if(object == GameObjects.DWARF && objectIsHere(GameObjects.DWARF))
+					{
+						output = new String("With what? Your bare hands?");
+					}
+					else if(object == GameObjects.DWARF && closed)
+					{
+						//TODO dwarf end
+						/**
+							"The resulting ruckus has awakened the Dwarves. There are now several threatening little Dwarves in the room with you! Most of them throw knives at you! All of them get you!"
+						 */
+					}
+					else if(object == GameObjects.TROLL && (objectIsHere(GameObjects.TROLL)|| objectIsHere(GameObjects.TROLL2)))
+					{
+						output = new String("Trolls are close relatives with the rocks and have skin as tough as that of a rhinoceros. The troll fends off your blows effortlessly.");
+					}
+					else if(object == GameObjects.BEAR && objectIsHere(GameObjects.BEAR))
+					{
+						if(bear == 0)
+						{
+							output = new String("With what? Your bare hands? Against HIS bear hands??");
+						}
+						else if(bear != 3)
+						{
+							output = new String("The bear is confused; he only wants to be your friend.");
+						}
+						else
+						{
+							output = new String("For crying out loud, the poor thing is already dead!");
+						}
+					}
+					else if(object == GameObjects.DRAGON)
+					{
+						if(!dragon)
+						{
+							output = new String("For crying out loud, the poor thing is already dead!");
+						}
+						else
+						{
+							output = new String("With what? Your bare hands?");
+							dragonQuest = true;
+						}
+					}
+					else
+					{
+						output = new String("There is nothing here to attack.");
+					}
+					break;
+					
+				case SAY:
+					if(alt.equals(""))
+					{
+						output = new String("What do you want to say?");
+					}
+					else if(other == MessageWords.CUSS)
+					{
+						output = messages.getText(MessageWords.CUSS);
+					}
+					else
+					{
+						output = new String("Okay, \"" + alt + "\".");
+					}
+					break;
+					
+				case READ:
+					break;
+					
+				case FEEFIE:
+					break;
+					
+				case BRIEF:
+					break;
+					
+				case FIND:
+					break;
+					
+				case INVENTORY:
+					break;
+					
+				case SCORE:
+					break;
+					
+				case QUIT:
+					break;
+					
+			}
+		}
+		catch(ClassCastException e)
+		{
+			if(verb == ActionWords.GO)
+			{
+				if(alt.equals(""))
+				{
+					output = new String("Where?");
 				}
 				else
 				{
-					output = new String("I don't know how to lock or unlock such a thing.");
+					output = attemptMovement(alt);
 				}
-				break;
-				
-			case CLOSE:
-				
-//				if()
-//				{
-//					
-//				}
-//				else
-//				{
-//					output = new String("I don't know how to lock or unlock such a thing.");
-//				}
-				break;
-				
-			case ON:
-				break;
-				
-			case OFF:
-				break;
-				
-			case WAVE:
-				break;
-				
-			case CALM:
-				break;
-				
-			case GO:
-				break;
-				
-			case RELAX:
-				break;
-				
-			case POUR:
-				break;
-				
-			case EAT:
-				break;
-				
-			case DRINK:
-				break;
-				
-			case RUB:
-				if(other == GameObjects.LAMP)
-				{	output = new String("Rubbing the electric lamp is not particularly rewarding. Anyway, nothing exciting happens.");	}
-				else
-				{	output = new String("Peculiar. Nothing unexpected happens.");	}
-				break;
-				
-			case TOSS:
-				break;
-				
-			case WAKE:
-				break;
-				
-			case FEED:
-				break;
-				
-			case FILL:
-				break;
-				
-			case BREAK:
-				break;
-				
-			case BLAST:
-				break;
-				
-			case KILL:
-				break;
-				
-			case SAY:
-				break;
-				
-			case READ:
-				break;
-				
-			case FEEFIE:
-				break;
-				
-			case BRIEF:
-				break;
-				
-			case FIND:
-				break;
-				
-			case INVENTORY:
-				break;
-				
-			case SCORE:
-				break;
-				
-			case QUIT:
-				break;
-				
+			}
+			else
+			{
+				output = "You can not do that.";
+			}
 		}
+		
+		
 		return output;
 	}
 	
@@ -663,199 +890,211 @@ public class AdventControl
 			boolean haveClam = (hash.objectIsHere(GameObjects.CLAM, Location.INHAND));
 			boolean haveOyster = (hash.objectIsHere(GameObjects.OYSTER, Location.INHAND));
 			boolean trollIsHere = (hash.getObjectLocation(GameObjects.TROLL) == currentLocation || hash.getObjectLocation(GameObjects.TROLL_) == currentLocation);
-			Movement destination = hash.whichMovement(input);
-			Location locationResult = currentLocation.moveTo(destination, currentLocation, grateUnlocked,
-					haveGold, crystalBridge, snake, haveEmerald, haveClam, haveOyster, plant, oilDoor,
-					dragon, troll, trollIsHere, haveLamp);
-			if(locationResult.equals(Location.THEVOID))
+
+			try
 			{
-				if(destination.equals(Movement.XYZZY)||destination.equals(Movement.PLUGH)||destination.equals(Movement.PLUGH))
+				Movement destination = hash.whichMovement(input);
+				Location locationResult = currentLocation.moveTo(destination, currentLocation, grateUnlocked,
+						haveGold, crystalBridge, snake, haveEmerald, haveClam, haveOyster, plant, oilDoor,
+						dragon, troll, trollIsHere, haveLamp);
+				if(locationResult.equals(Location.THEVOID))
 				{
-					output = "Nothing happens.";
+					if(destination.equals(Movement.XYZZY)||destination.equals(Movement.PLUGH)||destination.equals(Movement.PLUGH))
+					{
+						output = "Nothing happens.";
+					}
+					else if(destination.equals(Movement.NORTH) ||
+							destination.equals(Movement.SOUTH) ||
+							destination.equals(Movement.EAST)  ||
+							destination.equals(Movement.WEST)  ||
+							destination.equals(Movement.NORTHEAST)||
+							destination.equals(Movement.NORTHWEST)||
+							destination.equals(Movement.SOUTHEAST)||
+							destination.equals(Movement.SOUTHWEST))
+					{
+						output = "There are no exits in that direction.";
+					}
+					else
+					{
+						output = "I don't know how to apply that word here.";
+					}
 				}
-				else if(destination.equals(Movement.NORTH) ||
-						destination.equals(Movement.SOUTH) ||
-						destination.equals(Movement.EAST)  ||
-						destination.equals(Movement.WEST)  ||
-						destination.equals(Movement.NORTHEAST)||
-						destination.equals(Movement.NORTHWEST)||
-						destination.equals(Movement.SOUTHEAST)||
-						destination.equals(Movement.SOUTHWEST))
+				else if(locationResult.equals(Location.CRACK))
 				{
-					output = "There are no exits in that direction.";
+					output = "That crack is far too small for you to follow.";
 				}
-				else
+				else if(locationResult.equals(Location.NECK))
 				{
-					output = "I don't know how to apply that word here.";
+					output = "You are at the bottom of the pit with a broken neck.";
+					//
+					//TODO death
+					//
 				}
-			}
-			else if(locationResult.equals(Location.CRACK))
-			{
-				output = "That crack is far too small for you to follow.";
-			}
-			else if(locationResult.equals(Location.NECK))
-			{
-				output = "You are at the bottom of the pit with a broken neck.";
-				//
-				//TODO death
-				//
-			}
-			else if(locationResult.equals(Location.LOSE))
-			{
-				output = "You didn't make it.";
-				//
-				// TODO death 
-				//
-			}
-			else if(locationResult.equals(Location.CANT))
-			{
-				output = "The dome is unclimbable.";
-			}
-			else if(locationResult.equals(Location.CLIMB))
-			{
-				setLocation(Location.NARROW);
-				output = "You clamber up the plant and scurry through the hole at the top.\n" + getDescription(currentLocation, brief);
-			}
-			else if(locationResult.equals(Location.CHECK))
-			{
-				if(plant == 1)
+				else if(locationResult.equals(Location.LOSE))
+				{
+					output = "You didn't make it.";
+					//
+					// TODO death 
+					//
+				}
+				else if(locationResult.equals(Location.CANT))
+				{
+					output = "The dome is unclimbable.";
+				}
+				else if(locationResult.equals(Location.CLIMB))
+				{
+					setLocation(Location.NARROW);
+					output = "You clamber up the plant and scurry through the hole at the top.\n" + getDescription(currentLocation, brief);
+				}
+				else if(locationResult.equals(Location.CHECK))
+				{
+					if(plant == 1)
+					{
+						setLocation(Location.WEST2PIT);
+						output = "You have climbed up the plant and out of the pit.\n" + getDescription(currentLocation, brief);
+					}
+					else
+					{
+						output = "There is nothing here to climb. Use \"UP\" or \"OUT\" to leave the pit.";
+					}
+				}
+				else if(locationResult.equals(Location.SNAKED))
+				{
+					output = "You can't get by the snake.";
+				}
+				else if(locationResult.equals(Location.THRU))
+				{
+					setLocation(Location.WESTMIST);
+					output = "You have crawled through a very low wide passage parallel to and north of the Hall of Mists.\n" + getDescription(currentLocation, brief);
+				}
+				else if(locationResult.equals(Location.DUCK))
+				{
+					setLocation(Location.WESTFISSURE);
+					output = "You have crawled through a very low wide passage parallel to and north of the Hall of Mists.\n" + getDescription(currentLocation, brief);
+				}
+				else if(locationResult.equals(Location.SEWER))
+				{
+					output = "The stream flows out through a pair of 1-foot-diameter sewer pipes.\n\nIt would be advisable to use the exit.";
+				}
+				else if(locationResult.equals(Location.UPNOUT))
+				{
+					output = "There is nothing here to climb. Use \"UP\" or \"OUT\" to leave the pit.";
+				}
+				else if(locationResult.equals(Location.DIDIT))
 				{
 					setLocation(Location.WEST2PIT);
 					output = "You have climbed up the plant and out of the pit.\n" + getDescription(currentLocation, brief);
 				}
-				else
+				else if(locationResult.equals(Location.REMARK))
 				{
-					output = "There is nothing here to climb. Use \"UP\" or \"OUT\" to leave the pit.";
-				}
-			}
-			else if(locationResult.equals(Location.SNAKED))
-			{
-				output = "You can't get by the snake.";
-			}
-			else if(locationResult.equals(Location.THRU))
-			{
-				setLocation(Location.WESTMIST);
-				output = "You have crawled through a very low wide passage parallel to and north of the Hall of Mists.\n" + getDescription(currentLocation, brief);
-			}
-			else if(locationResult.equals(Location.DUCK))
-			{
-				setLocation(Location.WESTFISSURE);
-				output = "You have crawled through a very low wide passage parallel to and north of the Hall of Mists.\n" + getDescription(currentLocation, brief);
-			}
-			else if(locationResult.equals(Location.SEWER))
-			{
-				output = "The stream flows out through a pair of 1-foot-diameter sewer pipes.\n\nIt would be advisable to use the exit.";
-			}
-			else if(locationResult.equals(Location.UPNOUT))
-			{
-				output = "There is nothing here to climb. Use \"UP\" or \"OUT\" to leave the pit.";
-			}
-			else if(locationResult.equals(Location.DIDIT))
-			{
-				setLocation(Location.WEST2PIT);
-				output = "You have climbed up the plant and out of the pit.\n" + getDescription(currentLocation, brief);
-			}
-			else if(locationResult.equals(Location.REMARK))
-			{
-				if(currentLocation.equals(Location.SLIT)||currentLocation.equals(Location.WET))
-				{
-					output = "You can't fit through a two-inch slit!";
-				}
-				else if(currentLocation.equals(Location.INSIDE)||currentLocation.equals(Location.OUTSIDE)||currentLocation.equals(Location.DEBRIS)||currentLocation.equals(Location.AWKWARD)||
-						currentLocation.equals(Location.BIRD)||currentLocation.equals(Location.SMALLPIT))
-				{
-					output = "You can't go through a locked steel grate!";
-				}
-				else if(currentLocation.equals(Location.SWSIDE) && destination != Movement.JUMP)
-				{
-					if(troll)
+					if(currentLocation.equals(Location.SLIT)||currentLocation.equals(Location.WET))
 					{
-						output = "The troll refuses to let you cross.";
+						output = "You can't fit through a two-inch slit!";
 					}
-					else
+					else if(currentLocation.equals(Location.INSIDE)||currentLocation.equals(Location.OUTSIDE)||currentLocation.equals(Location.DEBRIS)||currentLocation.equals(Location.AWKWARD)||
+							currentLocation.equals(Location.BIRD)||currentLocation.equals(Location.SMALLPIT))
 					{
-						output = "There is no longer any way across the chasm.";
+						output = "You can't go through a locked steel grate!";
 					}
-				}
-				else if(currentLocation.equals(Location.NESIDE)||currentLocation.equals(Location.SWSIDE)||currentLocation.equals(Location.EASTFISSURE)||currentLocation.equals(Location.WESTFISSURE))
-				{
-					if(destination.equals(Movement.JUMP))
+					else if(currentLocation.equals(Location.SWSIDE) && destination != Movement.JUMP)
 					{
-						output = "I respectfully suggest that you go across the bridge instead of jumping.";	
-					}
-					else
-					{
-						output = "There is no way to cross the fissure";
-					}
-				}
-				else if(currentLocation.equals(Location.HALLOFMOUNTAINKING))
-				{
-					output = "You can't get by the snake.";
-				}
-				else if(currentLocation.equals(Location.SHELL))
-				{
-					if(haveClam)
-					{
-						output = "You can't fit this five-foot clam through that little passage!";
-					}
-					else
-					{
-						output = "You can't fit this five-foot oyster through that little passage!";
-					}
-				}
-				else if(currentLocation.equals(Location.WITT)&&destination.equals(Movement.WEST))
-				{
-					output = "You have crawled around in some little holes and found your way blocked by a recent cave-in.\nYou are now back in the main passage.";
-				}
-				else if(currentLocation.equals(Location.WITT)||currentLocation.equals(Location.BEDQUILT)||currentLocation.equals(Location.CHEESE))
-				{
-					output = "You have crawled around in some little holes and wound up back in the main passage.";
-				}
-				else if(currentLocation.equals(Location.IMMENSE))
-				{
-					output = "The door is extremely rusty and refuses to open.";
-				}
-				else if(currentLocation.equals(Location.SCAN1)||currentLocation.equals(Location.SCAN3))
-				{
-					output = "That dragon looks rather nasty. You'd best not try to get by.";
-				}
-				else if(currentLocation.equals(Location.VIEW))
-				{
-					output = "Don't be ridiculous!";
-				}
-				else
-				{
-					output = "You can not do that.";
-				}
-			}
-			else
-			{
-				setLocation(locationResult);
-				if(!canISee(currentLocation))
-				{
-					//TODO death
-					boolean pitifulDeath = fallInPit();
-					if(pitifulDeath)
-					{
-
-					}
-					else
-					{
-						output = "It is now pitch dark. If you proceed you will likely fall into a pit.";
-					}
-				}
-				else
-				{
-					output = getDescription(currentLocation, brief);
-					if(currentLocation.equals(Location.Y2))
-					{
-						if(Math.random() > .74)
+						if(troll)
 						{
-							//hollow voice
-							output = new String(output + "\n\nA hollow voice says \"PLUGH\"");
+							output = "The troll refuses to let you cross.";
+						}
+						else
+						{
+							output = "There is no longer any way across the chasm.";
+						}
+					}
+					else if(currentLocation.equals(Location.NESIDE)||currentLocation.equals(Location.SWSIDE)||currentLocation.equals(Location.EASTFISSURE)||currentLocation.equals(Location.WESTFISSURE))
+					{
+						if(destination.equals(Movement.JUMP))
+						{
+							output = "I respectfully suggest that you go across the bridge instead of jumping.";	
+						}
+						else
+						{
+							output = "There is no way to cross the fissure";
+						}
+					}
+					else if(currentLocation.equals(Location.HALLOFMOUNTAINKING))
+					{
+						output = "You can't get by the snake.";
+					}
+					else if(currentLocation.equals(Location.SHELL))
+					{
+						if(haveClam)
+						{
+							output = "You can't fit this five-foot clam through that little passage!";
+						}
+						else
+						{
+							output = "You can't fit this five-foot oyster through that little passage!";
+						}
+					}
+					else if(currentLocation.equals(Location.WITT)&&destination.equals(Movement.WEST))
+					{
+						output = "You have crawled around in some little holes and found your way blocked by a recent cave-in.\nYou are now back in the main passage.";
+					}
+					else if(currentLocation.equals(Location.WITT)||currentLocation.equals(Location.BEDQUILT)||currentLocation.equals(Location.CHEESE))
+					{
+						output = "You have crawled around in some little holes and wound up back in the main passage.";
+					}
+					else if(currentLocation.equals(Location.IMMENSE))
+					{
+						output = "The door is extremely rusty and refuses to open.";
+					}
+					else if(currentLocation.equals(Location.SCAN1)||currentLocation.equals(Location.SCAN3))
+					{
+						output = "That dragon looks rather nasty. You'd best not try to get by.";
+					}
+					else if(currentLocation.equals(Location.VIEW))
+					{
+						output = "Don't be ridiculous!";
+					}
+					else
+					{
+						output = "You can not do that.";
+					}
+				}
+				else
+				{
+					setLocation(locationResult);
+					if(!canISee(currentLocation))
+					{
+						//TODO death
+						boolean pitifulDeath = fallInPit();
+						if(pitifulDeath)
+						{
+
+						}
+						else
+						{
+							output = "It is now pitch dark. If you proceed you will likely fall into a pit.";
+						}
+					}
+					else
+					{
+						output = getDescription(currentLocation, brief);
+						if(currentLocation.equals(Location.Y2))
+						{
+							if(Math.random() > .74)
+							{
+								//hollow voice
+								output = new String(output + "\n\nA hollow voice says \"PLUGH\"");
+							}
 						}
 					}
 				}
+			}
+//			catch(ClassCastException e)
+//			{
+//				output = "You can not do that.";
+//			}
+			catch(NullPointerException e)
+			{
+				output = "You can not do that.";
 			}
 		}
 		else
