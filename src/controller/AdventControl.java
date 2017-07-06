@@ -198,13 +198,32 @@ public class AdventControl
 		else
 		{
 			turns++;
-			if(hash.isAction(input1))
+			String input12 = input1;
+			String input22 = input2;
+			
+			if(input1.length() > 5)
 			{
-				output = attemptAction(hash.whichAction(input1), determineNature(input2), input2);
+				input12 = input1.substring(0, 5);
 			}
-			else if(hash.isAction(input2))
+			if(input2.length() > 5)
 			{
-				output = attemptAction(hash.whichAction(input2), determineNature(input1), input1);
+				input22 = input2.substring(0, 5);
+			}
+			if(hash.isMovement(input12))
+			{
+				output = attemptMovement(input12);
+			}
+			else if(hash.isMovement(input22))
+			{
+				output = attemptMovement(input22);
+			}
+			else if(hash.isAction(input12))
+			{
+				output = attemptAction(hash.whichAction(input12), determineNature(input22), input2);
+			}
+			else if(hash.isAction(input22))
+			{
+				output = attemptAction(hash.whichAction(input22), determineNature(input12), input1);
 			}
 			else
 			{
@@ -315,17 +334,14 @@ public class AdventControl
 					
 				case TAKE:
 					output = new String("You can't be serious!");
-					if(!objectIsHere(object))
-					{
-						output = new String("I don't see any " + alt + ".");
-					}
+					
 					if(object == GameObjects.WATER)
 					{
 						if(hash.objectIsHere(GameObjects.BOTTLE, Location.INHAND))
 						{
 							if(bottle == 0)
 							{
-								if(currentLocation.isWaterHere(currentLocation))
+								if(currentLocation == Location.ROAD || currentLocation == Location.BUILDING || currentLocation == Location.VALLEY || currentLocation == Location.SLIT || currentLocation == Location.WET || currentLocation == Location.FALLS || currentLocation == Location.RESER)
 								{
 									output = new String("You fill the bottle with water.");
 									bottle = 1;
@@ -451,9 +467,14 @@ public class AdventControl
 							output = new String("Okay.");
 						}
 					}
+					else
+					{
+						output = new String("I don't see any " + alt + ".");
+					}
+					
 					if(currentLocation == Location.BUILDING && things.isTreasure(object) && output.equals("Okay."))
 					{
-						
+						//TODO treasure score
 					}
 				break;
 					
@@ -534,18 +555,6 @@ public class AdventControl
 					break;
 					
 				case OPEN:
-					
-					//TODO closing grate (for close case too)
-//					 else if (closing) {
-//	                     if (!panic) {
-//	                             clock2 = 15;
-//	                             ++panic;
-//	                     }
-//	                     msg = 130;
-//	                     
-//	                     A mysterious recorded voice groans into life and announces: "This exit is
-//	                    	 closed.  Please leave via main office."
-//					 }
 					
 					if(object == GameObjects.GRATE || object == GameObjects.GRATE_)
 					{
@@ -812,6 +821,86 @@ public class AdventControl
 					break;
 					
 				case POUR:
+					if(object == GameObjects.NOTHING || object == GameObjects.BOTTLE)
+					{
+						if(bottle == 1)
+						{
+							object = GameObjects.WATER;
+						}
+						else if(bottle == 2)
+						{
+							object = GameObjects.OIL;
+						}
+						else
+						{
+							object = GameObjects.NOTHING;
+						}					
+					}
+					if(object == GameObjects.NOTHING)
+					{
+						output = new String("You can't pour that.");
+					}
+					else if(object == GameObjects.WATER && bottle == 1)
+					{
+						if(currentLocation == Location.WESTPIT)
+						{
+							plant++;
+							if(plant == 1)
+							{
+								output = new String("The plant spurts into furious growth for a few seconds.\n\n\tThere is a 12-foot-tall beanstalk stretching up out of the pit, bellowing \"Water!! Water!!\"");
+							}
+							else if(plant == 2)
+							{
+								output = new String("The plant grows explosively, almost filling the bottom of the pit.\n\n\tThere is a gigantic beanstalk stretching all the way up to the hole.");
+							}
+							else if(plant == 3)
+							{
+								output = new String("You've over-watered the plant! It's shriveling up! It's, It's...");
+								voidObject(GameObjects.PLANT);
+								voidObject(GameObjects.PLANT2);
+								voidObject(GameObjects.PLANT2_);
+							}
+							else
+							{
+								output = new String("Your bottle is empty and the ground is wet.");
+							}
+						}
+						else if(objectIsPresent(GameObjects.DOOR))
+						{
+							oilDoor = false;
+							output = new String("The hinges are quite thoroughly rusted now and won't budge.");
+						}
+						else
+						{
+							output = new String("Your bottle is empty and the ground is wet.");
+						}
+						bottle = 0;
+					}
+					else if(object == GameObjects.OIL && bottle == 2)
+					{
+						if(currentLocation == Location.WESTPIT)
+						{
+							if(plant == 1)
+							{
+								output = new String("The plant indignantly shakes the oil off its leaves and asks: \"Water?\".");
+							}
+							else
+							{
+								output = new String("Your bottle is empty and the ground is wet.");
+							}
+						}
+						else if(objectIsPresent(GameObjects.DOOR))
+						{
+							oilDoor = true;
+							output = new String("The oil has freed up the hinges so that the door will now move, although it requires some effort.");
+						}
+						else
+						{
+							output = new String("Your bottle is empty and the ground is wet.");
+						}
+						bottle = 0;
+					}
+						
 					break;
 					
 				case EAT:
@@ -991,7 +1080,11 @@ public class AdventControl
 				Location locationResult = currentLocation.moveTo(destination, currentLocation, grateUnlocked,
 						haveGold, crystalBridge, snake, haveEmerald, haveClam, haveOyster, plant, oilDoor,
 						dragon, troll, trollIsHere, haveLamp);
-				if(locationResult.equals(Location.THEVOID))
+				if(closed && (locationResult.compareTo(Location.THEVOID) < 10))
+				{
+					output = "A mysterious recorded voice groans into life and announces: \n\t\"This exit is closed. Please leave via main office.\"";
+				}
+				else if(locationResult.equals(Location.THEVOID))
 				{
 					if(destination.equals(Movement.XYZZY)||destination.equals(Movement.PLUGH)||destination.equals(Movement.PLUGH))
 					{
@@ -1228,6 +1321,10 @@ public class AdventControl
 	private String nonsense()
 	{
 		String output = null;
+		if(turns > 1)
+		{
+			turns--;
+		}
 		double randomOutput = Math.random();
 		if(randomOutput < .34)
 		{

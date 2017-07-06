@@ -41,7 +41,6 @@ public enum Location
 		hasWater.add(BUILDING);
 		hasWater.add(VALLEY);
 		hasWater.add(SLIT);
-		hasWater.add(BUILDING);
 		hasWater.add(WET);
 		hasWater.add(FALLS);
 		hasWater.add(RESER);
