@@ -919,12 +919,15 @@ public class HashMaps
 		}
 	}
 
-	public String getDescription(Location here, boolean breif)
+	public String getDescription(Location here, int breif)
 	{
-		
-		
 		String description = null;
-		if(!breif && longDescription.containsKey(here) && !beenHere(here))
+		if(breif == 0 && longDescription.containsKey(here) && !beenHere(here))
+		{
+			description = longDescription.get(here);
+			firstVisit.replace(here, true);
+		}
+		else if(breif == 2 && longDescription.containsKey(here))
 		{
 			description = longDescription.get(here);
 			firstVisit.replace(here, true);
@@ -932,6 +935,7 @@ public class HashMaps
 		else
 		{
 			description = shortDescription.get(here);
+			firstVisit.replace(here, true);
 		}
 		return description;
 	}

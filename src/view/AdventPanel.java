@@ -27,6 +27,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import javax.swing.text.Caret;
+import javax.swing.text.DefaultCaret;
 import javax.swing.JLabel;
 
 public class AdventPanel extends JPanel 
@@ -34,6 +35,7 @@ public class AdventPanel extends JPanel
 	private AdventControl base;
 	private JTextField inputField;
 	private JTextArea displayLog;
+	private DefaultCaret displayCaret;
 	private SpringLayout springLayout;
 	private JScrollPane scroll;
 	private Color outline;
@@ -48,6 +50,7 @@ public class AdventPanel extends JPanel
 		this.base = base;
 		springLayout = new SpringLayout();
 		displayLog = new JTextArea();
+		displayCaret = (DefaultCaret)displayLog.getCaret();
 		inputField = new JTextField();
 		scroll = new JScrollPane(displayLog);
 		outline = new Color(0, 255, 0);
@@ -69,6 +72,7 @@ public class AdventPanel extends JPanel
 		add(lblTurns);
 		add(lblScore);
 		inputField.requestFocusInWindow();
+		displayCaret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 		UIManager.put("ScrollBarUI", "view.ScrollBarUI");
 		scrollBar.setUI(new NewScrollBarUI());
 	}

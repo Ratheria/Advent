@@ -29,7 +29,6 @@ public class AdventControl
 	private Location currentLocation;
 	private Location previousLocation;
 	private boolean dead;
-	private boolean brief;
 	private boolean beginning;
 	private boolean closed;
 	private boolean grateUnlocked;
@@ -47,6 +46,7 @@ public class AdventControl
 	private boolean haveGold;
 	private boolean collapse;
 	private boolean wayIsBlocked;
+	private int brief;
 	private int score;
 	private int turns;
 	private int lamp;
@@ -72,7 +72,7 @@ public class AdventControl
 		actions = ActionWords.NOTHING;
 		things = GameObjects.NOTHING;
 		dead = false;
-		brief = false;
+		brief = 0;
 		beginning = true;
 		closed = false;
 		grateUnlocked = false;
@@ -136,6 +136,7 @@ public class AdventControl
 			//TODO you killed the dragon message
 			dragonQuest = false;
 			dragon = false;
+			turns++;
 		}
 		else
 		{
@@ -165,9 +166,24 @@ public class AdventControl
 				output = nonsense();
 			}
 		}
+		if(light)
+		{
+			lamp--;
+		}
+		if(lamp < 0)
+		{
+			output = output + "\nYour lamp has run out of power.";
+			if(!canISee(currentLocation))
+			{
+				output = output + "\nIt is now pitch dark. If you proceed you will likely fall into a pit.";
+			}
+			light = false;
+		}
 		output = output + checkForHints();
 		System.out.println("previous " + previousLocation);
 		System.out.println("current " + currentLocation);
+		System.out.println("lamp " + lamp);
+		System.out.println("items " + itemsInHand);
 		return output;
 	}
 
@@ -195,9 +211,24 @@ public class AdventControl
 				output = nonsense();
 			}
 		}
+		if(light)
+		{
+			lamp--;
+		}
+		if(lamp < 0)
+		{
+			output = output + "\nYour lamp has run out of power.";
+			if(!canISee(currentLocation))
+			{
+				output = output + "\nIt is now pitch dark. If you proceed you will likely fall into a pit.";
+			}
+			light = false;
+		}
 		output = output + checkForHints();
 		System.out.println("previous " + previousLocation);
 		System.out.println("current " + currentLocation);
+		System.out.println("lamp " + lamp);
+		System.out.println("items " + itemsInHand);
 		return output;
 	}
 	
@@ -356,7 +387,7 @@ public class AdventControl
 						}
 						else if(object == GameObjects.BEAR && chain != 0)
 						{
-							
+							//TODO bear is following
 						}
 						else if(object == GameObjects.CHAIN && chain == 2)
 						{
@@ -368,13 +399,20 @@ public class AdventControl
 						}
 						else if(object == GameObjects.BIRD && objectIsHere(GameObjects.BIRD))
 						{
-							if(hash.objectIsHere(GameObjects.ROD, Location.INHAND))
+							if(hash.objectIsHere(GameObjects.ROD, Location.INHAND) && !birdInCage)
 							{
 								output = new String("The bird was unafraid when you entered, but as you approach it becomes disturbed and you cannot catch it.");
 							}
 							else if(!hash.objectIsHere(GameObjects.CAGE, Location.INHAND))
 							{
 								output = new String("You can catch the bird, but you cannot carry it.");
+							}
+							else if(isInHand(GameObjects.CAGE))
+							{
+								birdInCage = true;
+								takeObject(GameObjects.BIRD);
+								itemsInHand--;
+								output = new String("Okay.");
 							}
 							else
 							{
@@ -385,6 +423,7 @@ public class AdventControl
 									itemsInHand--;
 									output = new String("Okay.");
 								}
+								
 							}
 						}
 						else if(object == GameObjects.RUG)
@@ -412,6 +451,10 @@ public class AdventControl
 							output = new String("Okay.");
 						}
 					}
+					if(currentLocation == Location.BUILDING && things.isTreasure(object) && output.equals("Okay."))
+					{
+						
+					}
 				break;
 					
 				case DROP:
@@ -428,19 +471,21 @@ public class AdventControl
 							dropObject(GameObjects.CAGE);
 							itemsInHand++;
 							dropObject(GameObjects.BIRD);
+							output = new String("Okay.");
 						}
 						else if(object == GameObjects.BIRD)
 						{
-							if(objectIsHere(GameObjects.SNAKE))
+							if(hash.objectIsHere(GameObjects.SNAKE, currentLocation))
 							{
-								output = new String("The little bird attacks the green snake, and in an astounding flurry drives the snake away.");
 								birdInCage = false;
 								itemsInHand++;
 								dropObject(GameObjects.BIRD);
 								voidObject(GameObjects.SNAKE);
+								snake = false;
+								output = new String("The little bird attacks the green snake, and in an astounding flurry drives the snake away.");
 								//TODO wake dwarves if closed
 							}
-							if(objectIsHere(GameObjects.DRAGON) || objectIsHere(GameObjects.DRAGON_))
+							else if(objectIsHere(GameObjects.DRAGON) || objectIsHere(GameObjects.DRAGON_))
 							{
 								output = new String("The little bird attacks the green dragon, and in an astounding flurry gets burnt to a cinder. The ashes blow away.");
 								birdInCage = false;
@@ -668,34 +713,83 @@ public class AdventControl
 					break;
 					
 				case ON:
-					//TODO on
+					if(objectIsPresent(GameObjects.LAMP))
+					{
+						if(lamp > 0)
+						{
+							if(canISee(currentLocation))
+							{
+								output = new String("Your lamp is now on.");
+								light = true;
+							}
+							else
+							{
+								output = new String("Your lamp is now on.\n\n" + getDescription(currentLocation, brief));
+								light = true;
+							}
+						}
+						else
+						{
+							output = new String("Your lamp has run out of power.");
+						}
+					}
+					else if(object == GameObjects.NOTHING || objectIsPresent(object))
+					{
+						output = new String("You have no source of light.");
+					}
+					else
+					{
+						output = new String("I don't see any " + alt + ".");
+					}
 					break;
 					
-				case OFF:
-					//TODO off
+				case OFF: 
+					if(objectIsPresent(GameObjects.LAMP))
+					{
+						light = false;
+						output = new String("Your lamp is now off.");
+						if(!canISee(currentLocation))
+						{
+							output = output + "\n\nIt is now pitch dark. If you proceed you will likely fall into a pit.";
+						}
+					}
 					break;
 					
 				case WAVE:
-					 if (!isInHand(object) && (object != GameObjects.ROD || !isInHand(GameObjects.ROD2)))
+					if(object == GameObjects.NOTHING)
+					{
+						 output = new String("What would you like to wave?");
+					}
+					else if (!isInHand(object) && (object != GameObjects.ROD || !isInHand(GameObjects.ROD2)))
 					 {
 						output = new String("You aren't carrying it!");
 					 }
-					 else if(object != GameObjects.ROD || (currentLocation != Location.EASTFISSURE && currentLocation != Location.WESTFISSURE) || !isInHand(object) || closed)
+					 else if(object != GameObjects.ROD || closed)
 					 {
-						 //TODO
+						 if(!isInHand(object))
+						 {
+							 output = new String("I don't see any " + alt + ".");
+						 }
+					 }
+					 else if((currentLocation != Location.EASTFISSURE && currentLocation != Location.WESTFISSURE))
+					 {
+						 output = new String("Nothing happens.");
 					 }
 					 else
 					 {
-						 //TODO let user know what happened
 						 if(!crystalBridge)
 						 {
+							 output = new String("A crystal bridge now spans the fissure.");
 							 hash.dropObject(GameObjects.CRYSTAL, Location.EASTFISSURE);
 							 hash.dropObject(GameObjects.CRYSTAL_, Location.WESTFISSURE);
+							 crystalBridge = true;
 						 }
 						 else
 						 {
+							 output = new String("The crystal bridge has vanished!");
 							 voidObject(GameObjects.CRYSTAL);
 							 voidObject(GameObjects.CRYSTAL_);
+							 crystalBridge = false;
 						 }
 					 }
 					break;
@@ -901,7 +995,8 @@ public class AdventControl
 				{
 					if(destination.equals(Movement.XYZZY)||destination.equals(Movement.PLUGH)||destination.equals(Movement.PLUGH))
 					{
-						output = "Nothing happens.";
+						output = "Nothing happens.\n";
+						output = output + getDescription(currentLocation, brief);
 					}
 					else if(destination.equals(Movement.NORTH) ||
 							destination.equals(Movement.SOUTH) ||
@@ -912,11 +1007,13 @@ public class AdventControl
 							destination.equals(Movement.SOUTHEAST)||
 							destination.equals(Movement.SOUTHWEST))
 					{
-						output = "There are no exits in that direction.";
+						output = "There are no exits in that direction.\n";
+						output = output + getDescription(currentLocation, brief);
 					}
 					else
 					{
-						output = "I don't know how to apply that word here.";
+						output = "I don't know how to apply that word here.\n";
+						output = output + getDescription(currentLocation, brief);
 					}
 				}
 				else if(locationResult.equals(Location.CRACK))
@@ -1071,7 +1168,7 @@ public class AdventControl
 						}
 						else
 						{
-							output = "It is now pitch dark. If you proceed you will likely fall into a pit.";
+							output = new String("It is now pitch dark. If you proceed you will likely fall into a pit.");
 						}
 					}
 					else
@@ -1100,7 +1197,7 @@ public class AdventControl
 		else
 		{
 			output = "";
-			//blocked by dwarf or something
+			//TODO blocked by dwarf or something
 		}
 
 
@@ -1121,10 +1218,10 @@ public class AdventControl
 	//		return null;
 	//	}
 
-	private String getDescription(Location here, boolean breif)
+	private String getDescription(Location here, int brief)
 	{
-		String output = hash.getDescription(here, breif);
-		output = new String(output + listItemsHere());
+		String output = hash.getDescription(here, brief);
+		output = output + listItemsHere();
 		return output;
 	}
 	
@@ -1186,8 +1283,6 @@ public class AdventControl
 				previousLocation = Location.locate[Integer.parseInt(line)];
 					line = updateLine(reader, row);
 				dead = Boolean.parseBoolean(line);
-					line = updateLine(reader, row);
-				brief = Boolean.parseBoolean(line);
 					line = updateLine(reader, row);
 				beginning = Boolean.parseBoolean(line);
 					line = updateLine(reader, row);
