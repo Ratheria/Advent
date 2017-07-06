@@ -91,7 +91,7 @@ public class AdventControl
 		score = 0;
 		turns = 0;
 		lamp = 100;
-		//TODO lamp runs out
+		//TODO lamp more time?
 		itemsInHand = 0;
 		deaths = 0;
 		plant = 0;
