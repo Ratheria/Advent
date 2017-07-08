@@ -24,10 +24,12 @@ public class AdventControl
 	private AdventureFrame frame = new AdventureFrame(this);;
 	private HashMaps hash = new HashMaps();
 	private MessageWords messages;
+	@SuppressWarnings("unused")
 	private ActionWords actions;
 	private GameObjects things;
 	private Location currentLocation;
 	private Location previousLocation;
+	private String okay;
 	private boolean dead;
 	private boolean beginning;
 	private boolean closed;
@@ -71,8 +73,8 @@ public class AdventControl
 		previousLocation = null;
 		actions = ActionWords.NOTHING;
 		things = GameObjects.NOTHING;
+		okay = new String("Okay.");
 		dead = false;
-		brief = 0;
 		beginning = true;
 		closed = false;
 		grateUnlocked = false;
@@ -88,6 +90,7 @@ public class AdventControl
 		broken = false;
 		haveGold = false;
 		collapse = false;
+		brief = 0;
 		score = 0;
 		turns = 0;
 		lamp = 100;
@@ -428,7 +431,7 @@ public class AdventControl
 								birdInCage = true;
 								takeObject(GameObjects.BIRD);
 								itemsInHand--;
-								output = new String("Okay.");
+								output = okay;
 							}
 							else
 							{
@@ -437,7 +440,7 @@ public class AdventControl
 									takeObject(GameObjects.BIRD);
 									takeObject(GameObjects.CAGE);
 									itemsInHand--;
-									output = new String("Okay.");
+									output = okay;
 								}
 								
 							}
@@ -448,13 +451,13 @@ public class AdventControl
 							{
 								takeObject(GameObjects.RUG);
 								hash.voidObject(GameObjects.RUG_);
-								output = new String("Okay.");
+								output = okay;
 							}
 						}
 						else if(object == GameObjects.ROD && !objectIsHere(GameObjects.ROD) && objectIsHere(GameObjects.ROD2))
 						{
 							takeObject(GameObjects.ROD2);
-							output = new String("Okay.");
+							output = okay;
 						}
 						else if(object == GameObjects.AXE && bearAxe && bear == 0)
 						{
@@ -464,7 +467,7 @@ public class AdventControl
 						else if(things.canTake(object) && objectIsHere(object))
 						{
 							takeObject(object);
-							output = new String("Okay.");
+							output = okay;
 						}
 					}
 					else
@@ -492,7 +495,7 @@ public class AdventControl
 							dropObject(GameObjects.CAGE);
 							itemsInHand++;
 							dropObject(GameObjects.BIRD);
-							output = new String("Okay.");
+							output = okay;
 						}
 						else if(object == GameObjects.BIRD)
 						{
@@ -514,7 +517,7 @@ public class AdventControl
 							}
 							else
 							{
-								output = new String("Okay.");
+								output = okay;
 								birdInCage = false;
 								itemsInHand++;
 								dropObject(GameObjects.BIRD);
@@ -543,7 +546,7 @@ public class AdventControl
 						else
 						{
 							dropObject(object);
-							output = new String("Okay.");
+							output = okay;
 						}
 						
 					}
@@ -608,7 +611,7 @@ public class AdventControl
 						{
 							if(oilDoor)
 							{
-								output = new String("Okay.");
+								output = okay;
 							}
 							else
 							{
@@ -1037,6 +1040,10 @@ public class AdventControl
 				case QUIT:
 					break;
 					
+				default:
+					output = new String("You broke something.");
+					break;
+					
 			}
 		}
 		catch(ClassCastException e)
@@ -1443,7 +1450,7 @@ public class AdventControl
 	private boolean saveGame()
 	{
 		boolean result = false;
-		//TODO
+		//TODO save
 		return result;
 	}
 
