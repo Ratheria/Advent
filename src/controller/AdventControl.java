@@ -137,6 +137,7 @@ public class AdventControl
 		else if(dragonQuest && (input.toLowerCase().contains("yes") || input.equalsIgnoreCase("y")))
 		{
 			//TODO you killed the dragon message
+			output = "Dead";
 			dragonQuest = false;
 			dragon = false;
 			turns++;
@@ -162,7 +163,8 @@ public class AdventControl
 			}
 			else if(hash.isMessage(input))
 			{
-				output = messages.getText(hash.whichMessage(input));
+				MessageWords message = hash.whichMessage(input);
+				output = getText(message);
 			}
 			else
 			{
@@ -193,7 +195,10 @@ public class AdventControl
 	public String determineAction(String input1, String input2) 
 	{
 		String output = null;
-
+		if(dragonQuest)
+		{
+			dragonQuest = false;
+		}
 		if(beginning)
 		{
 			output = "Just yes or no, please.";
@@ -913,7 +918,7 @@ public class AdventControl
 					break;
 					
 				case RUB:
-					if(other == GameObjects.LAMP)
+					if(object == GameObjects.LAMP)
 					{	output = new String("Rubbing the electric lamp is not particularly rewarding. Anyway, nothing exciting happens.");	}
 					else
 					{	output = new String("Peculiar. Nothing unexpected happens.");	}
@@ -939,10 +944,17 @@ public class AdventControl
 					
 				case KILL:
 					
-					if(object == GameObjects.BIRD && objectIsPresent(GameObjects.BIRD))
+					if(object == GameObjects.BIRD)
 					{
-						voidObject(GameObjects.BIRD);
-						output = new String("The little bird is now dead. Its body disappears.");
+						if(objectIsHere(GameObjects.BIRD))
+						{
+							voidObject(GameObjects.BIRD);
+							output = new String("The little bird is now dead. Its body disappears.");
+						}
+						else
+						{
+							output = new String("I don't see any bird.");
+						}
 					}
 					else if(object == GameObjects.BIRD && closed)
 					{
@@ -950,15 +962,25 @@ public class AdventControl
 					}
 					else if(object == GameObjects.CLAM || object == GameObjects.OYSTER)
 					{
-						output = new String("The shell is very strong and impervious to attack.");
+						if(objectIsPresent(object))
+						{
+							output = new String("The shell is very strong and impervious to attack.");
+						}
+						else
+						{
+							output = new String("I don't see any " + alt + ".");
+						}
 					}
 					else if(object == GameObjects.SNAKE)
 					{
-						output = new String("Attacking the snake both doesn't work and is very dangerous.");
-					}
-					else if(object == GameObjects.DWARF && objectIsHere(GameObjects.DWARF))
-					{
-						output = new String("With what? Your bare hands?");
+						if(objectIsHere(GameObjects.SNAKE))
+						{
+							output = new String("Attacking the snake both doesn't work and is very dangerous.");
+						}
+						else
+						{
+							output = new String("I don't see any snake.");
+						}
 					}
 					else if(object == GameObjects.DWARF && closed)
 					{
@@ -967,40 +989,72 @@ public class AdventControl
 							"The resulting ruckus has awakened the Dwarves. There are now several threatening little Dwarves in the room with you! Most of them throw knives at you! All of them get you!"
 						 */
 					}
+					else if(object == GameObjects.DWARF)
+					{
+						if(objectIsHere(GameObjects.DWARF))
+						{
+							output = new String("With what? Your bare hands?");
+						}
+						else
+						{
+							output = new String("I don't see any dwarf.");
+						}
+					}
 					else if(object == GameObjects.TROLL && (objectIsHere(GameObjects.TROLL)|| objectIsHere(GameObjects.TROLL2)))
 					{
 						output = new String("Trolls are close relatives with the rocks and have skin as tough as that of a rhinoceros. The troll fends off your blows effortlessly.");
 					}
-					else if(object == GameObjects.BEAR && objectIsHere(GameObjects.BEAR))
+					else if(object == GameObjects.BEAR)
 					{
-						if(bear == 0)
+						if(objectIsHere(GameObjects.BEAR))
 						{
-							output = new String("With what? Your bare hands? Against HIS bear hands??");
-						}
-						else if(bear != 3)
-						{
-							output = new String("The bear is confused; he only wants to be your friend.");
+							if(bear == 0)
+							{
+								output = new String("With what? Your bare hands? Against HIS bear hands??");
+							}
+							else if(bear != 3)
+							{
+								output = new String("The bear is confused; he only wants to be your friend.");
+							}
+							else
+							{
+								output = new String("For crying out loud, the poor thing is already dead!");
+							}
 						}
 						else
 						{
-							output = new String("For crying out loud, the poor thing is already dead!");
+							output = new String("I don't see any bear.");
 						}
 					}
 					else if(object == GameObjects.DRAGON)
 					{
-						if(!dragon)
+						if(objectIsPresent(GameObjects.DRAGON) || objectIsPresent(GameObjects.DRAGON_))
 						{
-							output = new String("For crying out loud, the poor thing is already dead!");
+							if(!dragon)
+							{
+								output = new String("For crying out loud, the poor thing is already dead!");
+							}
+							else
+							{
+								output = new String("With what? Your bare hands?");
+								dragonQuest = true;
+							}
 						}
 						else
 						{
-							output = new String("With what? Your bare hands?");
-							dragonQuest = true;
+							output = new String("I don't see any dragon.");
 						}
 					}
-					else
+					else 
 					{
-						output = new String("There is nothing here to attack.");
+						if(!objectIsPresent(object) && !(object == GameObjects.NOTHING))
+						{
+							output = new String("I don't see any " + alt + ".");
+						}
+						else
+						{
+							output = new String("There is nothing here to attack.");
+						}
 					}
 					break;
 					
@@ -1011,7 +1065,7 @@ public class AdventControl
 					}
 					else if(other == MessageWords.CUSS)
 					{
-						output = messages.getText(MessageWords.CUSS);
+						output = getText(MessageWords.CUSS);
 					}
 					else
 					{
@@ -1302,6 +1356,75 @@ public class AdventControl
 
 
 		return output;
+	}
+	
+	public String getText(MessageWords input)
+	{
+		String result = "I don't know how.";
+		switch(input)
+		{
+			case MAGIC:
+				result = new String("Good try, but that is an old worn-out magic word.");
+				break;
+			
+			case HELP:
+				result = new String("I know of places, actions, and things. "
+						+ "Most of my vocabulary describes places and is used to move you there."
+						+ "To move, try words like forest, building, downstream, enter, east, west, north, south, up, or down. "
+						+ "I know about a few special objects, like a black rod hidden in the cave. "
+						+ "These objects can be manipulated using some of the action words that I know. "
+						+ "Usually you will need to give both the object and the action words (in either order), but sometimes I can infer the object from the verb alone. "
+						+ "Some objects also imply verbs; in particular, \"inventory\" implies \"take inventory\", which causes me to give you a list of what you are carrying. "
+						+ "The objects have side effects; for instance, the rod scares the bird. "
+						+ "Usually people having trouble moving just need to try a few more words. "
+						+ "Usually people trying unsuccessfully to manupulate an object are attempting beyond their (or my!) capabilities and should try a completely different tack. "
+						+ "To speed the game you can sometimes move long distances with a single word. "
+						+ "For example, \"building\" usually gets you to the building from anywhere above ground except when lost in the forest. "
+						+ "Also, note that cave passages turn a lot, and that leaving a room to the north does not guarantee entering the next from the south. \nGood luck!");
+				break;
+				
+			case TREE:
+				result = new String("The trees of the forest are large hardwood oak and maple, with an occasional grove of pine or spruce. "
+						+ "There is quite a bit of under-growth, largely birch and ash saplings plus nondescript bushes of various sorts. "
+						+ "This time of year visibility is quite restricted by all the leaves, but travel is quite easy if you detour around the spruce and berry bushes.");
+				break;
+				
+			case DIG:
+				result = new String("Digging without a shovel is quite impractical. Even with a shovel progress is unlikely.");
+				break;
+				
+			case LOST:
+				result = new String("I'm as confused as you are.");
+				break;
+				
+			case MIST:
+				result = new String("Mist is a white vapor, usually water, seen from time to time in caverns. It can be found anywhere but is frequently a sign of a deep pit leading down to water.");
+				break;
+				
+			case CUSS:
+				result = new String("Watch it!");
+				break;
+				
+			case INFO:
+				result = new String("If you want to end your adventure early, say \"quit\". "
+						+ "To get full credit for a treasure, you must have left it safely in the building, though you get partial credit just for locating it. "
+						+ "You lose points for getting killed, or for quitting, though the former costs you more. "
+						+ "There are also points based on how much (if any) of the cave you've managed to explore; in particular, there is a large bonus just for getting in (to distinguish the beginners from the rest of the pack), and there are other ways to determine whether you've been through some of the more harrowing sections. "
+						+ "If you think you've found all the treasures, just keep exploring for a while. If nothing interesting happens, you haven't found them all yet. If something interesting DOES happen, it means you're getting a bonus and have an opportunity to garner many more points in the master's section. "
+						+ "I may occasionally offer hints if you seem to be having trouble. If I do, I will warn you in advance how much it will affect your score to accept the hints. "
+						+ "Finally, to save paper, you may specify \"brief\", which tells me never to repeat the full description of a place unless you explicitly ask me to.");
+				break;
+				
+			case DENNIS:
+				result = new String("Thou cannotst go there. Who do you think thou art? A magistrate?!");
+				break;
+				
+			default:
+				result = new String("I don't know how.");
+				break;
+		}
+		System.out.println(result);
+		return result;
 	}
 	
 	private void setLocation(Location newLocation)
