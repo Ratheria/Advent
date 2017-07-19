@@ -119,9 +119,9 @@ public class AdventPanel extends JPanel
 	private void setUpGame()
 	{
 		displayLog.setText(" Welcome to ADVENTURE!\n"
-				+ " Original development by William Crowther\n"
-				+ " Major features added by Don Woods\n"
-				+ " Conversion to Java by A. F.\n\n"
+				+ " Original development by William Crowther.\n"
+				+ " Major features added by Don Woods.\n"
+				+ " Conversion to Java by Ari.\n\n"
 				+ " Would you like instructions? (y/n)\n");
 	}
 	
@@ -129,7 +129,6 @@ public class AdventPanel extends JPanel
 	{
 		inputField.addActionListener(new ActionListener()
 		{
-
 			@Override
 			public void actionPerformed(ActionEvent e) 
 			{
@@ -169,14 +168,11 @@ public class AdventPanel extends JPanel
 						lblTurns.setText("Turns: " + base.getTurns());
 						lblScore.setText("Score: " + base.getScore());
 					}
-
 					inputField.setText("");
 					inputField.requestFocusInWindow();
 					scroll.setViewportView(displayLog);
 				}
-				
 			}
-
 		});
 	}
 	

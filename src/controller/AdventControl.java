@@ -48,12 +48,15 @@ public class AdventControl
 	private boolean haveGold;
 	private boolean collapse;
 	private boolean wayIsBlocked;
+	private boolean question;
 	private int brief;
 	private int score;
 	private int turns;
 	private int lamp;
 	private int itemsInHand;
 	private int deaths;
+	private int tally;
+	private int lostTreasures;
 	private int plant;
 	private int bottle;
 	private int bear;
@@ -63,6 +66,7 @@ public class AdventControl
 	//	private String beforeTurnBeforeLast;
 	//	private String turnBeforeLast;
 	//	private String turnLast;
+	private int west;
 	
 	public AdventControl()
 	{
@@ -90,6 +94,8 @@ public class AdventControl
 		broken = false;
 		haveGold = false;
 		collapse = false;
+		wayIsBlocked = false;
+		question = false;
 		brief = 0;
 		score = 0;
 		turns = 0;
@@ -97,10 +103,13 @@ public class AdventControl
 		//TODO lamp more time?
 		itemsInHand = 0;
 		deaths = 0;
+		tally = 15;
+		lostTreasures = 0;
 		plant = 0;
 		bottle = 1;
 		bear = 0;
 		chain = 0;
+		west = 0;
 		currentLocation.setUp();
 		things.setUp();
 	}
@@ -134,13 +143,18 @@ public class AdventControl
 				output = "Just yes or no, please.";
 			}
 		}
-		else if(dragonQuest && (input.toLowerCase().contains("yes") || input.equalsIgnoreCase("y")))
+		else if(question)
+		{
+			int answer = askYesNo(input);
+			//TODO questions
+		}
+		else if(dragonQuest && (input.toLowerCase().contains("yes") || input.equalsIgnoreCase("y") || input.toLowerCase().contains("yes")))
 		{
 			//TODO you killed the dragon message
 			output = "Dead";
 			dragonQuest = false;
 			dragon = false;
-			turns++;
+			//turns++;
 		}
 		else
 		{
@@ -148,7 +162,7 @@ public class AdventControl
 			{
 				dragonQuest = false;
 			}
-			turns++;
+			//turns++;
 			if(input.length() > 5)
 			{
 				input = input.substring(0, 5);
@@ -156,6 +170,22 @@ public class AdventControl
 			if(hash.isMovement(input))
 			{				
 				output = attemptMovement(input);
+			}
+			else if(hash.isObject(input) && objectIsPresent(hash.whichObject(input)) && hash.whichObject(input) == GameObjects.KNIFE)
+			{
+				output = new String("The dwarves' knives vanish as they strike the walls of the cave.");
+			}
+			else if(hash.isObject(input))
+			{
+				GameObjects currentObject = hash.whichObject(input);
+				if(objectIsPresent(currentObject))
+				{
+					output = "What would you like to do with the " + input + "?";
+				}
+				else
+				{
+					output = new String("I don't see any " + input + ".");
+				}
 			}
 			else if(hash.isAction(input))
 			{
@@ -184,6 +214,10 @@ public class AdventControl
 			}
 			light = false;
 		}
+		if(input.equalsIgnoreCase("west"))
+		{
+			west++;
+		}
 		output = output + checkForHints();
 		System.out.println("previous " + previousLocation);
 		System.out.println("current " + currentLocation);
@@ -199,13 +233,13 @@ public class AdventControl
 		{
 			dragonQuest = false;
 		}
-		if(beginning)
+		if(beginning||question)
 		{
 			output = "Just yes or no, please.";
 		}
 		else
 		{
-			turns++;
+			//turns++;
 			String input12 = input1;
 			String input22 = input2;
 			
@@ -219,11 +253,40 @@ public class AdventControl
 			}
 			if(hash.isMovement(input12))
 			{
-				output = attemptMovement(input12);
+				if(hash.whichMovement(input12) == Movement.ENTER)
+				{
+					if(input22.equalsIgnoreCase("water")||input22.equalsIgnoreCase("strea"))
+					{
+						if(currentLocation == Location.ROAD || currentLocation == Location.BUILDING || currentLocation == Location.VALLEY || currentLocation == Location.SLIT || currentLocation == Location.WET || currentLocation == Location.FALLS || currentLocation == Location.RESER)
+						{
+							output = "Your feet are now wet.";
+						}
+						else
+						{
+							output = "I don't see any water.";
+						}
+					}
+					else
+					{
+						output = attemptAction(ActionWords.GO, determineNature(input22), input2);
+					}
+				}
+				else
+				{
+					output = attemptMovement(input12);
+				}
 			}
 			else if(hash.isMovement(input22))
 			{
 				output = attemptMovement(input22);
+			}
+			else if(hash.isObject(input12) && objectIsPresent(hash.whichObject(input12)) && hash.whichObject(input12) == GameObjects.KNIFE)
+			{
+				output = new String("The dwarves' knives vanish as they strike the walls of the cave.");
+			}
+			else if(hash.isObject(input22) && objectIsPresent(hash.whichObject(input22)) && hash.whichObject(input22) == GameObjects.KNIFE)
+			{
+				output = new String("The dwarves' knives vanish as they strike the walls of the cave.");
 			}
 			else if(hash.isAction(input12))
 			{
@@ -251,6 +314,10 @@ public class AdventControl
 			}
 			light = false;
 		}
+		if(input1.equalsIgnoreCase("west")||input2.equalsIgnoreCase("west"))
+		{
+			west++;
+		}
 		output = output + checkForHints();
 		System.out.println("previous " + previousLocation);
 		System.out.println("current " + currentLocation);
@@ -262,29 +329,47 @@ public class AdventControl
 	private String checkForHints()
 	{
 		String output = new String("");
+		if(west == 10)
+		{
+			output = "If you prefer, simply type W rather than WEST.";
+		}
 		//15
-		//cave - outside
+		//cave - outside - 2 points 
 		//bird - bird
 		//twist - alike 1-14 + dead1 + dead3-7 + dead 9-11
 		//snake - hall of mountain king
 		//wit - wit's end
-		//dark - alcove + plover
+		//dark - alcove + plover - 5 points - 
 		//
 		return output;
 	}
 	
-	private String listItemsHere()
+	private String listItemsHere(Location here)
 	{
 		String output = "";
-		ArrayList<GameObjects> objects = hash.objectsHere(currentLocation);
+		ArrayList<GameObjects> objects = hash.objectsHere(here);
 		if(objects != null)
 		{
-			output = output + "\n";
+			//output = output + "\n";
 			for(GameObjects thing : objects)
 			{
-				output = new String(output + things.getItemDescription(currentLocation, thing, 
+				output = new String(output + things.getItemDescription(here, thing, 
 						light, grateUnlocked, plant, bottle, birdInCage, oilDoor, bearAxe, dragon,
 						bear, usedBatteries, broken, chain, haveGold, crystalBridge, collapse));
+				
+				if(things.isTreasure(thing))
+				{
+					if(!hash.haveIFound(GameObjects.RUG) && thing == GameObjects.RUG_)
+					{
+						hash.wasFound(GameObjects.RUG);
+						tally--;
+					}
+					else if(!hash.haveIFound(thing))
+					{
+						hash.wasFound(thing);
+						tally--;
+					}
+				}
 				System.out.println(thing);
 			}
 		}
@@ -338,6 +423,10 @@ public class AdventControl
 			switch(verb)
 			{
 				case ABSTAIN:
+					break;
+					
+				case LOOK:
+					
 					break;
 					
 				case TAKE:
@@ -400,6 +489,10 @@ public class AdventControl
 						if(hash.objectIsHere(object, Location.INHAND))
 						{
 							output = new String("You are already carrying it!");
+						}
+						else if(object == GameObjects.KNIFE)
+						{
+							output = new String("The dwarves' knives vanish as they strike the walls of the cave.");
 						}
 						else if(object == GameObjects.PLANT && objectIsHere(object))
 						{
@@ -531,6 +624,7 @@ public class AdventControl
 						else if(object == GameObjects.COINS && objectIsHere(GameObjects.PONY))
 						{
 							voidObject(GameObjects.COINS);
+							lostTreasures++;
 							itemsInHand++;
 							dropObject(GameObjects.BATTERIES);
 							//TODO change batteries?
@@ -547,6 +641,7 @@ public class AdventControl
 							//TODO vase breaking
 							dropObject(GameObjects.VASE);
 							broken = true;
+							lostTreasures++;
 						}
 						else
 						{
@@ -563,7 +658,6 @@ public class AdventControl
 					break;
 					
 				case OPEN:
-					
 					if(object == GameObjects.GRATE || object == GameObjects.GRATE_)
 					{
 						if(!objectIsPresent(GameObjects.KEYS))
@@ -665,10 +759,8 @@ public class AdventControl
 						output = new String("I don't know how to lock or unlock such a thing.");
 					}
 					break;
-					
-					
+									
 				case CLOSE:
-					
 					if(object == GameObjects.GRATE || object == GameObjects.GRATE_)
 					{
 						if(!objectIsPresent(GameObjects.KEYS))
@@ -816,13 +908,9 @@ public class AdventControl
 					
 				case GO:
 					if(alt.equals(""))
-					{
-						output = new String("Where?");
-					}
+					{	output = new String("Where?");	}
 					else
-					{
-						output = attemptMovement(alt);
-					}
+					{	output = attemptMovement(alt);	}
 					break;
 					
 				case RELAX:
@@ -943,7 +1031,6 @@ public class AdventControl
 					break;
 					
 				case KILL:
-					
 					if(object == GameObjects.BIRD)
 					{
 						if(objectIsHere(GameObjects.BIRD))
@@ -1074,6 +1161,26 @@ public class AdventControl
 					break;
 					
 				case READ:
+					if(!canISee(currentLocation))
+					{
+						output = "You can't read in the dark!";
+					}
+					else if(objectIsPresent(GameObjects.MAG))
+					{
+						//TODO reading all these things
+					}
+					else if(objectIsPresent(GameObjects.TABLET))
+					{
+						
+					}
+					else if(objectIsPresent(GameObjects.MESSAGE))
+					{
+						
+					}
+					else if(objectIsPresent(GameObjects.OYSTER))
+					{
+						
+					}
 					break;
 					
 				case FEEFIE:
@@ -1083,9 +1190,33 @@ public class AdventControl
 					break;
 					
 				case FIND:
+					if(isInHand(object))
+					{
+						output = new String("You are already carrying it!");
+					}
+					else if(objectIsPresent(object))
+					{
+						output = new String("I believe what you want is right here with you.");
+					}
+					else
+					{
+						output = "I can only tell you what you see as you move about and manipulate things. I can not tell you where remote things are.";
+					}
 					break;
 					
 				case INVENTORY:
+					if(itemsInHand > 0)
+					{
+						output = "\t   -----" + listItemsHere(Location.INHAND) + "\n\t   -----";
+						if(bear == 2)
+						{
+							output = output + "\n\nYou are being followed by a very large, tame bear.";
+						}
+					}
+					else
+					{
+						output = new String("You're not carrying anything.");
+					}
 					break;
 					
 				case SCORE:
@@ -1129,7 +1260,6 @@ public class AdventControl
 		if(!wayIsBlocked)
 		{
 			haveGold = (hash.objectIsHere(GameObjects.GOLD, Location.INHAND));
-			boolean haveLamp = hash.getObjectLocation(GameObjects.LAMP) == Location.INHAND;
 			boolean haveEmerald = (hash.objectIsHere(GameObjects.EMERALD, Location.INHAND));
 			boolean haveClam = (hash.objectIsHere(GameObjects.CLAM, Location.INHAND));
 			boolean haveOyster = (hash.objectIsHere(GameObjects.OYSTER, Location.INHAND));
@@ -1140,7 +1270,7 @@ public class AdventControl
 				Movement destination = hash.whichMovement(input);
 				Location locationResult = currentLocation.moveTo(destination, currentLocation, grateUnlocked,
 						haveGold, crystalBridge, snake, haveEmerald, haveClam, haveOyster, plant, oilDoor,
-						dragon, troll, trollIsHere, haveLamp);
+						dragon, troll, trollIsHere, itemsInHand);
 				if(closed && (locationResult.compareTo(Location.THEVOID) < 10))
 				{
 					output = "A mysterious recorded voice groans into life and announces: \n\t\"This exit is closed. Please leave via main office.\"";
@@ -1336,6 +1466,10 @@ public class AdventControl
 								output = new String(output + "\n\nA hollow voice says \"PLUGH\"");
 							}
 						}
+						if(bear == 2)
+						{
+							output = output + "You are being followed by a very large, tame bear.";
+						}
 					}
 				}
 			}
@@ -1444,7 +1578,7 @@ public class AdventControl
 	private String getDescription(Location here, int brief)
 	{
 		String output = hash.getDescription(here, brief);
-		output = output + listItemsHere();
+		output = output + listItemsHere(currentLocation);
 		return output;
 	}
 	
@@ -1478,15 +1612,11 @@ public class AdventControl
 		{	
 			canSee = true;
 		}
-		else if(light && isInHand(GameObjects.LAMP))
+		else if(light && objectIsPresent(GameObjects.LAMP))
 		{
 			canSee = true;
 		}
-		else if(light && objectIsHere(GameObjects.LAMP))
-		{
-			canSee = true;
-		}
-		System.out.print("can see ");System.out.print(currentLocation.dontNeedLamp(here)); System.out.println("\n");
+		System.out.print("can see "); System.out.print(currentLocation.dontNeedLamp(here)); System.out.println("\n");
 		System.out.println(currentLocation);
 		return canSee;
 	}

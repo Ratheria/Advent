@@ -15,7 +15,8 @@ public class HashMaps
 	private HashMap<String, GameObjects> objects =new HashMap();
 	private HashMap<String, ActionWords> actions = new HashMap();
 	private HashMap<String, MessageWords> mwords = new HashMap();
-	private HashMap<Location, Boolean> firstVisit = new HashMap();
+	private HashMap<Location, Integer> visits = new HashMap();
+	private HashMap<GameObjects, Boolean> found = new HashMap();
 	private HashMap<Location, String> longDescription = new HashMap();
 	private HashMap<Location, String> shortDescription = new HashMap();
 	private HashMap<GameObjects, Location> objectLocation = new HashMap();
@@ -308,99 +309,115 @@ public class HashMaps
 		mwords.put("info", MessageWords.INFO);
 		mwords.put("infor", MessageWords.INFO);
 		mwords.put("swim", MessageWords.SWIM);
-		mwords.put("Denni", MessageWords.DENNIS);
+		mwords.put("denni", MessageWords.DENNIS);
 		
-		firstVisit.put(Location.ROAD, false);
-		firstVisit.put(Location.HILL, false);
-		firstVisit.put(Location.BUILDING, false);
-		firstVisit.put(Location.VALLEY, false);
-		firstVisit.put(Location.FOREST, false);
-		firstVisit.put(Location.WOODS, false);
-		firstVisit.put(Location.SLIT, false);
-		firstVisit.put(Location.OUTSIDE, false);
-		firstVisit.put(Location.INSIDE, false);
-		firstVisit.put(Location.COBBLES, false);
-		firstVisit.put(Location.DEBRIS, false);
-		firstVisit.put(Location.AWKWARD, false);
-		firstVisit.put(Location.BIRD, false);
-		firstVisit.put(Location.SMALLPIT, false);
-		firstVisit.put(Location.EASTMIST, false);
-		firstVisit.put(Location.NUGGET, false);
-		firstVisit.put(Location.EASTFISSURE, false);
-		firstVisit.put(Location.WESTFISSURE, false);
-		firstVisit.put(Location.WESTMIST, false);
-		firstVisit.put(Location.BRINK, false);
-		firstVisit.put(Location.EASTLONG, false);
-		firstVisit.put(Location.WESTLONG, false);
-		firstVisit.put(Location.PONY, false);
-		firstVisit.put(Location.CROSS, false);
-		firstVisit.put(Location.HALLOFMOUNTAINKING, false);
-		firstVisit.put(Location.WEST, false);
-		firstVisit.put(Location.SOUTH, false);
-		firstVisit.put(Location.NS, false);
-		firstVisit.put(Location.Y2, false);
-		firstVisit.put(Location.JUMBLE, false);
-		firstVisit.put(Location.EASTWINDOW, false);
-		firstVisit.put(Location.DIRTY, false);
-		firstVisit.put(Location.CLEAN, false);
-		firstVisit.put(Location.WET, false);
-		firstVisit.put(Location.DUSTY, false);
-		firstVisit.put(Location.COMPLEX, false);
-		firstVisit.put(Location.SHELL, false);
-		firstVisit.put(Location.ARCH, false);
-		firstVisit.put(Location.RAGGED, false);
-		firstVisit.put(Location.CULDESAC, false);
-		firstVisit.put(Location.ANTE, false);
-		firstVisit.put(Location.WITT, false);
-		firstVisit.put(Location.BEDQUILT, false);
-		firstVisit.put(Location.CHEESE, false);
-		firstVisit.put(Location.SOFT, false);
-		firstVisit.put(Location.EAST2PIT, false);
-		firstVisit.put(Location.WEST2PIT, false);
-		firstVisit.put(Location.EASTPIT, false);
-		firstVisit.put(Location.WESTPIT, false);
-		firstVisit.put(Location.NARROW, false);
-		firstVisit.put(Location.GIANT, false);
-		firstVisit.put(Location.BLOCK, false);
-		firstVisit.put(Location.IMMENSE, false);
-		firstVisit.put(Location.FALLS, false);
-		firstVisit.put(Location.STEEP, false);
-		firstVisit.put(Location.ABOVEP, false);
-		firstVisit.put(Location.SJUNC, false);
-		firstVisit.put(Location.TIGHT, false);
-		firstVisit.put(Location.LOW, false);
-		firstVisit.put(Location.CRAWL, false);
-		firstVisit.put(Location.WESTWINDOW, false);
-		firstVisit.put(Location.ORIENTAL, false);
-		firstVisit.put(Location.MISTY, false);
-		firstVisit.put(Location.ALCOVE, false);
-		firstVisit.put(Location.PROOM, false);
-		firstVisit.put(Location.DROOM, false);
-		firstVisit.put(Location.SLAB, false);
-		firstVisit.put(Location.ABOVER, false);
-		firstVisit.put(Location.MIRROR, false);
-		firstVisit.put(Location.RESER, false);
-		firstVisit.put(Location.SCAN1, false);
-		firstVisit.put(Location.SCAN2, false);
-		firstVisit.put(Location.SCAN3, false);
-		firstVisit.put(Location.SECRET, false);
-		firstVisit.put(Location.WIDE, false);
-		firstVisit.put(Location.STALACTITE, false);
-		firstVisit.put(Location.TALL, false);
-		firstVisit.put(Location.BOULDERS, false);
-		firstVisit.put(Location.SCORR, false);
-		firstVisit.put(Location.SWSIDE, false);
-		firstVisit.put(Location.NESIDE, false);
-		firstVisit.put(Location.CORR, false);
-		firstVisit.put(Location.FORK, false);
-		firstVisit.put(Location.WARM, false);
-		firstVisit.put(Location.VIEW, false);
-		firstVisit.put(Location.CHAMBER, false);
-		firstVisit.put(Location.LIME, false);
-		firstVisit.put(Location.FBARR, false);
-		firstVisit.put(Location.BARR, false);
-		firstVisit.put(Location.NEEND, false);
-		firstVisit.put(Location.SWEND, false);
+		visits.put(Location.ROAD, 0);
+		visits.put(Location.HILL, 0);
+		visits.put(Location.BUILDING, 0);
+		visits.put(Location.VALLEY, 0);
+		visits.put(Location.FOREST, 0);
+		visits.put(Location.WOODS, 0);
+		visits.put(Location.SLIT, 0);
+		visits.put(Location.OUTSIDE, 0);
+		visits.put(Location.INSIDE, 0);
+		visits.put(Location.COBBLES, 0);
+		visits.put(Location.DEBRIS, 0);
+		visits.put(Location.AWKWARD, 0);
+		visits.put(Location.BIRD, 0);
+		visits.put(Location.SMALLPIT, 0);
+		visits.put(Location.EASTMIST, 0);
+		visits.put(Location.NUGGET, 0);
+		visits.put(Location.EASTFISSURE, 0);
+		visits.put(Location.WESTFISSURE, 0);
+		visits.put(Location.WESTMIST, 0);
+		visits.put(Location.BRINK, 0);
+		visits.put(Location.EASTLONG, 0);
+		visits.put(Location.WESTLONG, 0);
+		visits.put(Location.PONY, 0);
+		visits.put(Location.CROSS, 0);
+		visits.put(Location.HALLOFMOUNTAINKING, 0);
+		visits.put(Location.WEST, 0);
+		visits.put(Location.SOUTH, 0);
+		visits.put(Location.NS, 0);
+		visits.put(Location.Y2, 0);
+		visits.put(Location.JUMBLE, 0);
+		visits.put(Location.EASTWINDOW, 0);
+		visits.put(Location.DIRTY, 0);
+		visits.put(Location.CLEAN, 0);
+		visits.put(Location.WET, 0);
+		visits.put(Location.DUSTY, 0);
+		visits.put(Location.COMPLEX, 0);
+		visits.put(Location.SHELL, 0);
+		visits.put(Location.ARCH, 0);
+		visits.put(Location.RAGGED, 0);
+		visits.put(Location.CULDESAC, 0);
+		visits.put(Location.ANTE, 0);
+		visits.put(Location.WITT, 0);
+		visits.put(Location.BEDQUILT, 0);
+		visits.put(Location.CHEESE, 0);
+		visits.put(Location.SOFT, 0);
+		visits.put(Location.EAST2PIT, 0);
+		visits.put(Location.WEST2PIT, 0);
+		visits.put(Location.EASTPIT, 0);
+		visits.put(Location.WESTPIT, 0);
+		visits.put(Location.NARROW, 0);
+		visits.put(Location.GIANT, 0);
+		visits.put(Location.BLOCK, 0);
+		visits.put(Location.IMMENSE, 0);
+		visits.put(Location.FALLS, 0);
+		visits.put(Location.STEEP, 0);
+		visits.put(Location.ABOVEP, 0);
+		visits.put(Location.SJUNC, 0);
+		visits.put(Location.TIGHT, 0);
+		visits.put(Location.LOW, 0);
+		visits.put(Location.CRAWL, 0);
+		visits.put(Location.WESTWINDOW, 0);
+		visits.put(Location.ORIENTAL, 0);
+		visits.put(Location.MISTY, 0);
+		visits.put(Location.ALCOVE, 0);
+		visits.put(Location.PROOM, 0);
+		visits.put(Location.DROOM, 0);
+		visits.put(Location.SLAB, 0);
+		visits.put(Location.ABOVER, 0);
+		visits.put(Location.MIRROR, 0);
+		visits.put(Location.RESER, 0);
+		visits.put(Location.SCAN1, 0);
+		visits.put(Location.SCAN2, 0);
+		visits.put(Location.SCAN3, 0);
+		visits.put(Location.SECRET, 0);
+		visits.put(Location.WIDE, 0);
+		visits.put(Location.STALACTITE, 0);
+		visits.put(Location.TALL, 0);
+		visits.put(Location.BOULDERS, 0);
+		visits.put(Location.SCORR, 0);
+		visits.put(Location.SWSIDE, 0);
+		visits.put(Location.NESIDE, 0);
+		visits.put(Location.CORR, 0);
+		visits.put(Location.FORK, 0);
+		visits.put(Location.WARM, 0);
+		visits.put(Location.VIEW, 0);
+		visits.put(Location.CHAMBER, 0);
+		visits.put(Location.LIME, 0);
+		visits.put(Location.FBARR, 0);
+		visits.put(Location.BARR, 0);
+		visits.put(Location.NEEND, 0);
+		visits.put(Location.SWEND, 0);
+		
+		found.put(GameObjects.GOLD, false);
+		found.put(GameObjects.DIAMONDS, false);
+		found.put(GameObjects.SILVER, false);
+		found.put(GameObjects.JEWELS, false);
+		found.put(GameObjects.COINS, false);
+		found.put(GameObjects.CHEST, false);
+		found.put(GameObjects.EGGS, false);
+		found.put(GameObjects.TRIDENT, false);
+		found.put(GameObjects.VASE, false);
+		found.put(GameObjects.EMERALD, false);
+		found.put(GameObjects.PYRAMID, false);
+		found.put(GameObjects.PEARL, false);
+		found.put(GameObjects.RUG, false);
+		found.put(GameObjects.SPICES, false);
+		found.put(GameObjects.CHAIN, false);
 		
 		longDescription.put(Location.ROAD, "You are standing at the end of a road before a small brick building. Around you is a forest. A small stream flows out of the building and down a gully.");
 		longDescription.put(Location.HILL, "You have walked up a hill, still in the forest. The road slopes back down the other side of the hill. There is a building in the distance.");
@@ -654,24 +671,6 @@ public class HashMaps
 		objectLocation.put(GameObjects.PONY, Location.PONY);
 		objectLocation.put(GameObjects.BATTERIES, Location.THEVOID);
 		objectLocation.put(GameObjects.MOSS, Location.SOFT);
-		objectLocation.put(GameObjects.GOLD, Location.NUGGET);
-		objectLocation.put(GameObjects.DIAMONDS, Location.WESTFISSURE);
-		objectLocation.put(GameObjects.SILVER, Location.NS);
-		objectLocation.put(GameObjects.JEWELS, Location.SOUTH);
-		objectLocation.put(GameObjects.COINS, Location.WEST);
-		objectLocation.put(GameObjects.CHEST, Location.THEVOID);
-		objectLocation.put(GameObjects.EGGS, Location.GIANT);
-		objectLocation.put(GameObjects.TRIDENT, Location.FALLS);
-		objectLocation.put(GameObjects.VASE, Location.ORIENTAL);
-		objectLocation.put(GameObjects.EMERALD, Location.PROOM);
-		objectLocation.put(GameObjects.PYRAMID, Location.DROOM);
-		objectLocation.put(GameObjects.PEARL, Location.THEVOID);
-		objectLocation.put(GameObjects.RUG, Location.SCAN1);
-		objectLocation.put(GameObjects.RUG_, Location.SCAN3);
-		objectLocation.put(GameObjects.SPICES, Location.CHAMBER);
-		objectLocation.put(GameObjects.CHAIN, Location.BARR);
-		
-		
 	}
 	
 	public boolean isMovement(String input)
@@ -904,9 +903,10 @@ public class HashMaps
 	public boolean beenHere(Location here)
 	{
 		boolean result = false;
-		if(firstVisit.get(here) == true)
+		int visit = visits.get(here);
+		if(visit == 0 || visit % 5 == 0)
 		{
-			result = true;
+			result = false;
 		}
 		return result;
 	}
@@ -915,34 +915,34 @@ public class HashMaps
 	{
 		if(canSee)
 		{
-			firstVisit.replace(here, true);
+			int visit = visits.get(here);
+			visits.replace(here, visit + 1);
 		}
 	}
 
 	public String getDescription(Location here, int breif)
 	{
 		String description = null;
-		if(breif == 0 && longDescription.containsKey(here) && !beenHere(here))
+		int visit = visits.get(here);
+		if((breif == 0 && longDescription.containsKey(here) && !beenHere(here)) || visits.get(here) == 0)
 		{
 			description = longDescription.get(here);
-			firstVisit.replace(here, true);
 		}
 		else if(breif == 2 && longDescription.containsKey(here))
 		{
 			description = longDescription.get(here);
-			firstVisit.replace(here, true);
 		}
 		else
 		{
 			description = shortDescription.get(here);
-			firstVisit.replace(here, true);
 		}
+		visits.replace(here, visit + 1);
 		return description;
 	}
 	
 	public String getLongDescription(Location here)
 	{
-		String description = "I am not allowed to go into more detail.";
+		String description = "Sorry, but I am not allowed to go into more detail. I will repeat the long description of your location.\n\n";
 		if(longDescription.containsKey(here))
 		{
 			description = longDescription.get(here);
@@ -963,6 +963,16 @@ public class HashMaps
 	public void dropObject(GameObjects thing, Location here)
 	{
 		objectLocation.put(thing, here);
+	}
+	
+	public boolean haveIFound(GameObjects thing)
+	{
+		return found.get(thing);
+	}
+	
+	public void wasFound(GameObjects thing)
+	{
+		found.put(thing, true);
 	}
 	
 }

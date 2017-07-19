@@ -89,7 +89,7 @@ public enum Location
 	public Location moveTo(Movement destination, Location here, boolean grate,
 			boolean gold, boolean crystalBridge, boolean snake, boolean emerald, boolean clam, 
 			boolean oyster, int plant, boolean oilDoor, boolean dragon, boolean troll,
-			boolean trollHere, boolean haveLamp)
+			boolean trollHere, int itemsInHand)
 	{
 		Location next = null;
 		switch(here)
@@ -1459,34 +1459,22 @@ public enum Location
 					case NORTHWEST: next = MISTY; break;
 					case CAVERN: next = MISTY; break;
 					case EAST:
-						if(haveLamp == true)
-						{
-							next = REMARK;
-						}
+						if(itemsInHand > 0)
+						{	next = REMARK;	}
 						else
-						{
-							next = PROOM;
-						}
+						{	next = PROOM;	}
 						break;
 					case PASSAGE:
-						if(haveLamp == true)
-						{
-							next = REMARK;
-						}
+						if(itemsInHand > 0)
+						{	next = REMARK;	}
 						else
-						{
-							next = PROOM;
-						}
+						{	next = PROOM;	}
 						break;
 					case PLOVER:
-						if(haveLamp == true)
-						{
-							next = REMARK;
-						}
+						if(itemsInHand > 0)
+						{	next = REMARK;	}
 						else
-						{
-							next = PROOM;
-						}
+						{	next = PROOM;	}
 						break;
 					default: next = THEVOID; break;
 				}
@@ -1496,34 +1484,22 @@ public enum Location
 				switch(destination)
 				{
 					case WEST:
-						if(haveLamp == true)
-						{
-							next = REMARK;
-						}
+						if(itemsInHand > 0)
+						{	next = REMARK;	}
 						else
-						{
-							next = PROOM;
-						}
+						{	next = PROOM;	}
 						break;
 					case PASSAGE: 
-						if(haveLamp == true)
-						{
-							next = REMARK;
-						}
+						if(itemsInHand > 0)
+						{	next = REMARK;	}
 						else
-						{
-							next = PROOM;
-						}
+						{	next = PROOM;	}
 						break;
 					case OUT: 
-						if(haveLamp == true)
-						{
-							next = REMARK;
-						}
+						if(itemsInHand > 0)
+						{	next = REMARK;	}
 						else
-						{
-							next = PROOM;
-						}
+						{	next = PROOM;	}
 						break;
 					case PLOVER: next = Y2;
 					case NORTHEAST: next = DROOM; break;

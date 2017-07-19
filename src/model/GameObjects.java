@@ -84,7 +84,7 @@ public enum GameObjects
 			case KEYS:
 				if(location == Location.INHAND)
 				{
-					output = new String("\n\tSet of Keys");
+					output = new String("\n\t\tSet of Keys");
 				}
 				else
 				{
@@ -95,7 +95,7 @@ public enum GameObjects
 			case LAMP:
 				if(location == Location.INHAND)
 				{
-					output = new String("\n\tBrass Lantern");
+					output = new String("\n\t\tBrass Lantern");
 				}
 				else
 				{
@@ -135,7 +135,7 @@ public enum GameObjects
 			case CAGE:
 				if(location == Location.INHAND)
 				{
-					output = new String("\n\tWicker Cage");
+					output = new String("\n\t\tWicker Cage");
 				}
 				else
 				{
@@ -146,7 +146,7 @@ public enum GameObjects
 			case BIRD:
 				if(location == Location.INHAND)
 				{
-					output = new String("\n\tLittle Bird in Cage");
+					output = new String("\n\t\tLittle Bird in Cage");
 				}
 				else
 				{
@@ -164,7 +164,7 @@ public enum GameObjects
 			case ROD:
 				if(location == Location.INHAND)
 				{
-					output = new String("\n\tBlack Rod");
+					output = new String("\n\t\tBlack Rod");
 				}
 				else
 				{
@@ -175,7 +175,7 @@ public enum GameObjects
 			case ROD2:
 				if(location == Location.INHAND)
 				{
-					output = new String("\n\tBlack Rod");
+					output = new String("\n\t\tBlack Rod");
 				}
 				else
 				{
@@ -197,7 +197,7 @@ public enum GameObjects
 			case PILLOW:
 				if(location == Location.INHAND)
 				{
-					output = new String("\n\tVelvet Pillow");
+					output = new String("\n\t\tVelvet Pillow");
 				}
 				else
 				{
@@ -210,7 +210,7 @@ public enum GameObjects
 				{
 					if(location == Location.INHAND)
 					{
-						output = new String("\n\tMing Vase");
+						output = new String("\n\t\tMing Vase");
 					}
 					else
 					{
@@ -235,7 +235,7 @@ public enum GameObjects
 			case CLAM:
 				if(location == Location.INHAND)
 				{
-					output = new String("\n\tGiant Clam >GRUNT!<");
+					output = new String("\n\t\tGiant Clam >GRUNT!<");
 				}
 				else
 				{
@@ -246,7 +246,7 @@ public enum GameObjects
 			case OYSTER:
 				if(location == Location.INHAND)
 				{
-					output = new String("\n\tGiant Oyster >GROAN!<");
+					output = new String("\n\t\tGiant Oyster >GROAN!<");
 				}
 				else
 				{
@@ -257,7 +257,7 @@ public enum GameObjects
 			case MAG:
 				if(location == Location.INHAND)
 				{
-					output = new String("\n\t\"Spelunker Today\"");
+					output = new String("\n\t\t\"Spelunker Today\"");
 				}
 				else
 				{
@@ -268,7 +268,7 @@ public enum GameObjects
 			case FOOD:
 				if(location == Location.INHAND)
 				{
-					output = new String("\n\tTasty Food");
+					output = new String("\n\t\tTasty Food");
 				}
 				else
 				{
@@ -281,7 +281,7 @@ public enum GameObjects
 				{
 					if(location == Location.INHAND)
 					{
-						output = new String("\n\tSmall Bottle");
+						output = new String("\n\t\tSmall Bottle");
 					}
 					else
 					{
@@ -292,7 +292,7 @@ public enum GameObjects
 				{
 					if(location == Location.INHAND)
 					{
-						output = new String("\n\tBottle of Water");
+						output = new String("\n\t\tBottle of Water");
 					}
 					else
 					{
@@ -303,7 +303,7 @@ public enum GameObjects
 				{
 					if(location == Location.INHAND)
 					{
-						output = new String("\n\tBottle of Oil");
+						output = new String("\n\t\tBottle of Oil");
 					}
 					else
 					{
@@ -365,7 +365,7 @@ public enum GameObjects
 			case AXE:
 				if(location == Location.INHAND)
 				{
-					output = new String("\n\tDwarf's Axe");
+					output = new String("\n\t\tDwarf's Axe");
 				}
 				else if(bearAxe)
 				{
@@ -378,7 +378,7 @@ public enum GameObjects
 				break;		
 		
 			case ART:
-				//cave art
+				//TODO cave art
 				output = new String("\n\t");
 				break;
 				
@@ -411,7 +411,7 @@ public enum GameObjects
 				}
 				else if(location == Location.INHAND)
 				{
-					output = new String("\n\tPersian Rug");
+					output = new String("\n\t\tPersian Rug");
 				}
 				else
 				{
@@ -460,14 +460,14 @@ public enum GameObjects
 				break;	
 				
 			case MOSS:
-				//moss
+				//TODO moss
 				output = new String("\n\t");
 				break;
 				
 			case GOLD:
 				if(location == Location.INHAND)
 				{
-					output = new String("\n\tLarge Gold Nugget");
+					output = new String("\n\t\tLarge Gold Nugget");
 				}
 				else
 				{
@@ -478,7 +478,7 @@ public enum GameObjects
 			case DIAMONDS:
 				if(location == Location.INHAND)
 				{
-					output = new String("\n\tSeveral Diamonds");
+					output = new String("\n\t\tSeveral Diamonds");
 				}
 				else
 				{
@@ -489,7 +489,7 @@ public enum GameObjects
 			case SILVER:
 				if(location == Location.INHAND)
 				{
-					output = new String("\n\tBars of Silver");
+					output = new String("\n\t\tBars of Silver");
 				}
 				else
 				{
@@ -500,7 +500,7 @@ public enum GameObjects
 			case JEWELS:
 				if(location == Location.INHAND)
 				{
-					output = new String("\n\tPrecious Jewelry");
+					output = new String("\n\t\tPrecious Jewelry");
 				}
 				else
 				{
@@ -511,7 +511,7 @@ public enum GameObjects
 			case COINS:
 				if(location == Location.INHAND)
 				{
-					output = new String("\n\tRare coins");
+					output = new String("\n\t\tRare coins");
 				}
 				else
 				{
@@ -522,7 +522,7 @@ public enum GameObjects
 			case CHEST:
 				if(location == Location.INHAND)
 				{
-					output = new String("\n\tTreasure Chest");
+					output = new String("\n\t\tTreasure Chest");
 				}
 				else
 				{
@@ -533,7 +533,7 @@ public enum GameObjects
 			case EGGS:
 				if(location == Location.INHAND)
 				{
-					output = new String("\n\tGolden Eggs");
+					output = new String("\n\t\tGolden Eggs");
 				}
 				else
 				{
@@ -544,7 +544,7 @@ public enum GameObjects
 			case TRIDENT:
 				if(location == Location.INHAND)
 				{
-					output = new String("\n\tJeweled Trident");
+					output = new String("\n\t\tJeweled Trident");
 				}
 				else
 				{
@@ -555,7 +555,7 @@ public enum GameObjects
 			case EMERALD:
 				if(location == Location.INHAND)
 				{
-					output = new String("\n\tEgg-Sized Emerald");
+					output = new String("\n\t\tEgg-Sized Emerald");
 				}
 				else
 				{
@@ -566,7 +566,7 @@ public enum GameObjects
 			case PYRAMID:
 				if(location == Location.INHAND)
 				{
-					output = new String("\n\tPlatinum Pyramid");
+					output = new String("\n\t\tPlatinum Pyramid");
 				}
 				else
 				{
@@ -577,7 +577,7 @@ public enum GameObjects
 			case PEARL:
 				if(location == Location.INHAND)
 				{
-					output = new String("\n\tGlistening Pearl");
+					output = new String("\n\t\tGlistening Pearl");
 				}
 				else
 				{
@@ -588,7 +588,7 @@ public enum GameObjects
 			case SPICES:
 				if(location == Location.INHAND)
 				{
-					output = new String("\n\tRare Spices");
+					output = new String("\n\t\tRare Spices");
 				}
 				else
 				{
@@ -599,7 +599,7 @@ public enum GameObjects
 			case CHAIN:
 				if(location == Location.INHAND)
 				{
-					output = new String("\n\tGolden Chain");
+					output = new String("\n\t\tGolden Chain");
 				}
 				else
 				{
