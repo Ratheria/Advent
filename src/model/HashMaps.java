@@ -281,6 +281,7 @@ public class HashMaps
 		actions.put("foo", ActionWords.FEEFIE);
 		actions.put("fum", ActionWords.FEEFIE);
 		actions.put("brief", ActionWords.BRIEF);
+		actions.put("verbo", ActionWords.VERBOSE);
 		actions.put("find", ActionWords.FIND);
 		actions.put("where", ActionWords.FIND);
 		actions.put("inven", ActionWords.INVENTORY);
@@ -924,7 +925,7 @@ public class HashMaps
 	{
 		String description = null;
 		int visit = visits.get(here);
-		if((breif == 0 && longDescription.containsKey(here) && !beenHere(here)) || visits.get(here) == 0)
+		if((breif == 0 && longDescription.containsKey(here) && !beenHere(here)) || (breif == 1 && longDescription.containsKey(here) && !beenHere(here)) || visits.get(here) == 0)
 		{
 			description = longDescription.get(here);
 		}

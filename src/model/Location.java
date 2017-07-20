@@ -6,6 +6,8 @@ package model;
 
 import java.util.ArrayList;
 
+import controller.AdventControl;
+
 public enum Location
 {
 	THEVOID,INHAND, ROAD, HILL, BUILDING, VALLEY, FOREST, WOODS, SLIT, OUTSIDE, 
@@ -32,11 +34,13 @@ public enum Location
 	CRACK, NECK, LOSE, CANT, CLIMB, CHECK, SNAKED, THRU, DUCK, SEWER, UPNOUT, DIDIT,
 	PPASS, PDROP, TROLL, REMARK;
 	
+	private AdventControl base;
 	public static Location[] locate = Location.values();
 	private ArrayList<Location> hasWater = new ArrayList<Location>();
 	
-	public void setUp()
+	public void setUp(AdventControl base)
 	{	
+		this.base = base;
 		hasWater.add(ROAD);
 		hasWater.add(BUILDING);
 		hasWater.add(VALLEY);
@@ -1459,19 +1463,19 @@ public enum Location
 					case NORTHWEST: next = MISTY; break;
 					case CAVERN: next = MISTY; break;
 					case EAST:
-						if(itemsInHand > 0)
+						if(itemsInHand > 0 || (itemsInHand == 1 && emerald))
 						{	next = REMARK;	}
 						else
 						{	next = PROOM;	}
 						break;
 					case PASSAGE:
-						if(itemsInHand > 0)
+						if(itemsInHand > 0 || (itemsInHand == 1 && emerald))
 						{	next = REMARK;	}
 						else
 						{	next = PROOM;	}
 						break;
 					case PLOVER:
-						if(itemsInHand > 0)
+						if(itemsInHand > 0 || (itemsInHand == 1 && emerald))
 						{	next = REMARK;	}
 						else
 						{	next = PROOM;	}
@@ -1484,24 +1488,29 @@ public enum Location
 				switch(destination)
 				{
 					case WEST:
-						if(itemsInHand > 0)
+						if(itemsInHand > 0 || (itemsInHand == 1 && emerald))
 						{	next = REMARK;	}
 						else
 						{	next = PROOM;	}
 						break;
 					case PASSAGE: 
-						if(itemsInHand > 0)
+						if(itemsInHand > 0 || (itemsInHand == 1 && emerald))
 						{	next = REMARK;	}
 						else
 						{	next = PROOM;	}
 						break;
 					case OUT: 
-						if(itemsInHand > 0)
+						if(itemsInHand > 0 || (itemsInHand == 1 && emerald))
 						{	next = REMARK;	}
 						else
 						{	next = PROOM;	}
 						break;
-					case PLOVER: next = Y2;
+					case PLOVER: 
+						if(emerald)
+						{
+							base.relocate();
+						}
+						next = Y2;
 					case NORTHEAST: next = DROOM; break;
 					case DARK: next = DROOM; break;
 					default: next = THEVOID; break;

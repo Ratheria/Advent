@@ -52,11 +52,20 @@ public class AdventPanel extends JPanel
 		displayLog = new JTextArea();
 		displayCaret = (DefaultCaret)displayLog.getCaret();
 		inputField = new JTextField();
+		springLayout.putConstraint(SpringLayout.SOUTH, inputField, -15, SpringLayout.SOUTH, this);
 		scroll = new JScrollPane(displayLog);
+		springLayout.putConstraint(SpringLayout.NORTH, scroll, 45, SpringLayout.NORTH, this);
+		springLayout.putConstraint(SpringLayout.NORTH, inputField, 15, SpringLayout.SOUTH, scroll);
+		springLayout.putConstraint(SpringLayout.EAST, inputField, 0, SpringLayout.EAST, scroll);
+		springLayout.putConstraint(SpringLayout.SOUTH, scroll, -60, SpringLayout.SOUTH, this);
 		outline = new Color(0, 255, 0);
 		scrollBar = scroll.getVerticalScrollBar();
 		lblTurns = new JLabel("Turns: 0");
-		lblScore = new JLabel("Score: 0");
+		springLayout.putConstraint(SpringLayout.SOUTH, lblTurns, -10, SpringLayout.NORTH, scroll);
+		springLayout.putConstraint(SpringLayout.EAST, lblTurns, -25, SpringLayout.EAST, this);
+		lblScore = new JLabel("Score: 36/350");
+		springLayout.putConstraint(SpringLayout.SOUTH, lblScore, -10, SpringLayout.NORTH, scroll);
+		springLayout.putConstraint(SpringLayout.WEST, lblTurns, 15, SpringLayout.EAST, lblScore);
 		
 		setUpPanel();
 		setUpLayout();
@@ -71,6 +80,17 @@ public class AdventPanel extends JPanel
 		add(scroll);
 		add(lblTurns);
 		add(lblScore);
+		
+		JLabel lblWelcomeToAdventure = new JLabel("Colossal Cave Adventure");
+		springLayout.putConstraint(SpringLayout.NORTH, lblWelcomeToAdventure, 15, SpringLayout.NORTH, this);
+		springLayout.putConstraint(SpringLayout.WEST, lblWelcomeToAdventure, 0, SpringLayout.WEST, inputField);
+		springLayout.putConstraint(SpringLayout.SOUTH, lblWelcomeToAdventure, -10, SpringLayout.NORTH, scroll);
+		springLayout.putConstraint(SpringLayout.EAST, lblWelcomeToAdventure, -230, SpringLayout.EAST, this);
+		springLayout.putConstraint(SpringLayout.WEST, lblScore, 15, SpringLayout.EAST, lblWelcomeToAdventure);
+		springLayout.putConstraint(SpringLayout.EAST, lblScore, 120, SpringLayout.EAST, lblWelcomeToAdventure);
+		lblWelcomeToAdventure.setFont(new Font("Monospaced", Font.PLAIN, 20));
+		lblWelcomeToAdventure.setForeground(Color.GREEN);
+		add(lblWelcomeToAdventure);
 		inputField.requestFocusInWindow();
 		displayCaret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 		UIManager.put("ScrollBarUI", "view.ScrollBarUI");
@@ -88,20 +108,9 @@ public class AdventPanel extends JPanel
 		displayLog.setBackground(Color.BLACK);
 		displayLog.setFont(new Font("DialogInput", Font.PLAIN, 15));
 		displayLog.setBorder(new EmptyBorder(5, 15, 5, 15));
-		springLayout.putConstraint(SpringLayout.NORTH, inputField, 20, SpringLayout.NORTH, this);
 		springLayout.putConstraint(SpringLayout.WEST, inputField, 25, SpringLayout.WEST, this);
-		springLayout.putConstraint(SpringLayout.SOUTH, inputField, -15, SpringLayout.NORTH, scroll);
-		springLayout.putConstraint(SpringLayout.EAST, inputField, -70, SpringLayout.EAST, scroll);
-		springLayout.putConstraint(SpringLayout.NORTH, scroll, 70, SpringLayout.NORTH, this);
-		springLayout.putConstraint(SpringLayout.SOUTH, scroll, -25, SpringLayout.SOUTH, this);
 		springLayout.putConstraint(SpringLayout.WEST, scroll, 25, SpringLayout.WEST, this);
 		springLayout.putConstraint(SpringLayout.EAST, scroll, -25, SpringLayout.EAST, this);
-		springLayout.putConstraint(SpringLayout.WEST, lblTurns, 10, SpringLayout.EAST, inputField);
-		springLayout.putConstraint(SpringLayout.NORTH, lblTurns, 20, SpringLayout.NORTH, this);
-		springLayout.putConstraint(SpringLayout.EAST, lblTurns, 0, SpringLayout.EAST, scroll);
-		springLayout.putConstraint(SpringLayout.NORTH, lblScore, 6, SpringLayout.SOUTH, lblTurns);
-		springLayout.putConstraint(SpringLayout.WEST, lblScore, 10, SpringLayout.EAST, inputField);
-		springLayout.putConstraint(SpringLayout.EAST, lblScore, -10, SpringLayout.EAST, lblTurns);
 		inputField.setColumns(20);
 		inputField.setText("");
 		inputField.setForeground(Color.GREEN);
@@ -111,9 +120,9 @@ public class AdventPanel extends JPanel
                 BorderFactory.createEmptyBorder(0, 55, 0, 0)));
 		scroll.setBorder(new LineBorder(new Color(0, 255, 0)));
 		lblTurns.setForeground(Color.GREEN);
-		lblTurns.setFont(new Font("Monospaced", Font.PLAIN, 10));
+		lblTurns.setFont(new Font("Monospaced", Font.PLAIN, 12));
 		lblScore.setForeground(Color.GREEN);
-		lblScore.setFont(new Font("Monospaced", Font.PLAIN, 10));
+		lblScore.setFont(new Font("Monospaced", Font.PLAIN, 12));
 	}
 	
 	private void setUpGame()
@@ -170,7 +179,6 @@ public class AdventPanel extends JPanel
 					}
 					inputField.setText("");
 					inputField.requestFocusInWindow();
-					scroll.setViewportView(displayLog);
 				}
 			}
 		});
