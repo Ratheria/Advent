@@ -925,7 +925,7 @@ public class HashMaps
 	{
 		String description = null;
 		int visit = visits.get(here);
-		if((breif == 0 && longDescription.containsKey(here) && !beenHere(here)) || (breif == 1 && longDescription.containsKey(here) && !beenHere(here)) || visits.get(here) == 0)
+		if((breif == 0 && longDescription.containsKey(here) && !beenHere(here)) || (breif == 1 && longDescription.containsKey(here) && !beenHere(here)) || (visits.get(here) == 0 && longDescription.containsKey(here)))
 		{
 			description = longDescription.get(here);
 		}

@@ -42,6 +42,7 @@ public class AdventPanel extends JPanel
 	private JScrollBar scrollBar;
 	private JLabel lblTurns;
 	private JLabel lblScore;
+	private JLabel lblTop;
 	
 	
 	public AdventPanel(AdventControl base)
@@ -52,20 +53,12 @@ public class AdventPanel extends JPanel
 		displayLog = new JTextArea();
 		displayCaret = (DefaultCaret)displayLog.getCaret();
 		inputField = new JTextField();
-		springLayout.putConstraint(SpringLayout.SOUTH, inputField, -15, SpringLayout.SOUTH, this);
 		scroll = new JScrollPane(displayLog);
-		springLayout.putConstraint(SpringLayout.NORTH, scroll, 45, SpringLayout.NORTH, this);
-		springLayout.putConstraint(SpringLayout.NORTH, inputField, 15, SpringLayout.SOUTH, scroll);
-		springLayout.putConstraint(SpringLayout.EAST, inputField, 0, SpringLayout.EAST, scroll);
-		springLayout.putConstraint(SpringLayout.SOUTH, scroll, -60, SpringLayout.SOUTH, this);
 		outline = new Color(0, 255, 0);
 		scrollBar = scroll.getVerticalScrollBar();
 		lblTurns = new JLabel("Turns: 0");
-		springLayout.putConstraint(SpringLayout.SOUTH, lblTurns, -10, SpringLayout.NORTH, scroll);
-		springLayout.putConstraint(SpringLayout.EAST, lblTurns, -25, SpringLayout.EAST, this);
 		lblScore = new JLabel("Score: 36/350");
-		springLayout.putConstraint(SpringLayout.SOUTH, lblScore, -10, SpringLayout.NORTH, scroll);
-		springLayout.putConstraint(SpringLayout.WEST, lblTurns, 15, SpringLayout.EAST, lblScore);
+		lblTop = new JLabel("Colossal Cave Adventure");
 		
 		setUpPanel();
 		setUpLayout();
@@ -80,21 +73,13 @@ public class AdventPanel extends JPanel
 		add(scroll);
 		add(lblTurns);
 		add(lblScore);
+		add(lblTop);
 		
-		JLabel lblWelcomeToAdventure = new JLabel("Colossal Cave Adventure");
-		springLayout.putConstraint(SpringLayout.NORTH, lblWelcomeToAdventure, 15, SpringLayout.NORTH, this);
-		springLayout.putConstraint(SpringLayout.WEST, lblWelcomeToAdventure, 0, SpringLayout.WEST, inputField);
-		springLayout.putConstraint(SpringLayout.SOUTH, lblWelcomeToAdventure, -10, SpringLayout.NORTH, scroll);
-		springLayout.putConstraint(SpringLayout.EAST, lblWelcomeToAdventure, -230, SpringLayout.EAST, this);
-		springLayout.putConstraint(SpringLayout.WEST, lblScore, 15, SpringLayout.EAST, lblWelcomeToAdventure);
-		springLayout.putConstraint(SpringLayout.EAST, lblScore, 120, SpringLayout.EAST, lblWelcomeToAdventure);
-		lblWelcomeToAdventure.setFont(new Font("Monospaced", Font.PLAIN, 20));
-		lblWelcomeToAdventure.setForeground(Color.GREEN);
-		add(lblWelcomeToAdventure);
 		inputField.requestFocusInWindow();
 		displayCaret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 		UIManager.put("ScrollBarUI", "view.ScrollBarUI");
 		scrollBar.setUI(new NewScrollBarUI());
+		inputField.requestFocusInWindow();
 	}
 
 	private void setUpLayout() 
@@ -111,6 +96,23 @@ public class AdventPanel extends JPanel
 		springLayout.putConstraint(SpringLayout.WEST, inputField, 25, SpringLayout.WEST, this);
 		springLayout.putConstraint(SpringLayout.WEST, scroll, 25, SpringLayout.WEST, this);
 		springLayout.putConstraint(SpringLayout.EAST, scroll, -25, SpringLayout.EAST, this);
+		springLayout.putConstraint(SpringLayout.NORTH, lblTop, 15, SpringLayout.NORTH, this);
+		springLayout.putConstraint(SpringLayout.WEST, lblTop, 0, SpringLayout.WEST, inputField);
+		springLayout.putConstraint(SpringLayout.SOUTH, lblTop, -10, SpringLayout.NORTH, scroll);
+		springLayout.putConstraint(SpringLayout.EAST, lblTop, -230, SpringLayout.EAST, this);
+		springLayout.putConstraint(SpringLayout.SOUTH, inputField, -15, SpringLayout.SOUTH, this);
+		springLayout.putConstraint(SpringLayout.WEST, lblScore, 15, SpringLayout.EAST, lblTop);
+		springLayout.putConstraint(SpringLayout.EAST, lblScore, 120, SpringLayout.EAST, lblTop);
+		springLayout.putConstraint(SpringLayout.SOUTH, lblScore, -10, SpringLayout.NORTH, scroll);
+		springLayout.putConstraint(SpringLayout.WEST, lblTurns, 15, SpringLayout.EAST, lblScore);
+		springLayout.putConstraint(SpringLayout.SOUTH, lblTurns, -10, SpringLayout.NORTH, scroll);
+		springLayout.putConstraint(SpringLayout.EAST, lblTurns, -25, SpringLayout.EAST, this);
+		springLayout.putConstraint(SpringLayout.NORTH, scroll, 45, SpringLayout.NORTH, this);
+		springLayout.putConstraint(SpringLayout.NORTH, inputField, 15, SpringLayout.SOUTH, scroll);
+		springLayout.putConstraint(SpringLayout.EAST, inputField, 0, SpringLayout.EAST, scroll);
+		springLayout.putConstraint(SpringLayout.SOUTH, scroll, -60, SpringLayout.SOUTH, this);
+		lblTop.setFont(new Font("Monospaced", Font.PLAIN, 20));
+		lblTop.setForeground(Color.GREEN);
 		inputField.setColumns(20);
 		inputField.setText("");
 		inputField.setForeground(Color.GREEN);
@@ -123,6 +125,8 @@ public class AdventPanel extends JPanel
 		lblTurns.setFont(new Font("Monospaced", Font.PLAIN, 12));
 		lblScore.setForeground(Color.GREEN);
 		lblScore.setFont(new Font("Monospaced", Font.PLAIN, 12));
+		inputField.setText("");
+		inputField.requestFocusInWindow();
 	}
 	
 	private void setUpGame()
@@ -157,14 +161,14 @@ public class AdventPanel extends JPanel
 						displayLog.append("\n\t> " + origin 
 								+ "\n\n" + base.determineAction(first, second) + "\n");
 						lblTurns.setText("Turns: " + base.getTurns());
-						lblScore.setText("Score: " + base.getScore());
+						lblScore.setText("Score: " + base.getScore() + "/350");
 						
 					}
 					else if(input.equals("exception"))
 					{
 						displayLog.append("I beg your pardon?\n");
 						lblTurns.setText("Turns: " + base.getTurns());
-						lblScore.setText("Score: " + base.getScore());
+						lblScore.setText("Score: " + base.getScore() + "/350");
 					}
 					else
 					{
@@ -175,10 +179,12 @@ public class AdventPanel extends JPanel
 						displayLog.append("\n\t> " + origin 
 								+ "\n\n" + base.determineAction(input) + "\n");
 						lblTurns.setText("Turns: " + base.getTurns());
-						lblScore.setText("Score: " + base.getScore());
+						lblScore.setText("Score: " + base.getScore() + "/350");
 					}
+					displayCaret = (DefaultCaret)displayLog.getCaret();
 					inputField.setText("");
 					inputField.requestFocusInWindow();
+					//scroll.setViewportView(displayLog);
 				}
 			}
 		});
