@@ -63,6 +63,16 @@ public enum GameObjects
 		return treasure;
 	}
 	
+	public boolean isLesserTreasure(GameObjects thisThing)
+	{
+		boolean treasure = false;
+		if(thisThing.ordinal() < GameObjects.CHEST.ordinal())
+		{
+			treasure = true;
+		}
+		return treasure;
+	}
+	
 	public boolean canTake(GameObjects thisThing)
 	{
 		boolean result = false;

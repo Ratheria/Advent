@@ -63,7 +63,7 @@ public enum Location
 	public boolean outside(Location here)
 	{
 		boolean outside = false;
-		if(here.ordinal() > INHAND.ordinal()&&here.ordinal() < DEBRIS.ordinal())
+		if(here.ordinal() > INHAND.ordinal() && here.ordinal() < DEBRIS.ordinal())
 		{
 			outside = true;
 		}
@@ -2024,8 +2024,6 @@ public enum Location
 		
 		return next;
 	}
-
-	
 	
 	private Location atWittsEnd()
 	{

@@ -56,7 +56,7 @@ public class AdventPanel extends JPanel
 		scroll = new JScrollPane(displayLog);
 		outline = new Color(0, 255, 0);
 		scrollBar = scroll.getVerticalScrollBar();
-		lblTurns = new JLabel("Turns: 0");
+		lblTurns = new JLabel("Turns: 1");
 		lblScore = new JLabel("Score: 36/350");
 		lblTop = new JLabel("Colossal Cave Adventure");
 		
@@ -136,6 +136,7 @@ public class AdventPanel extends JPanel
 				+ " Major features added by Don Woods.\n"
 				+ " Conversion to Java by Ari.\n\n"
 				+ " Would you like instructions? (y/n)\n");
+		inputField.requestFocusInWindow();
 	}
 	
 	private void setUpListeners() 

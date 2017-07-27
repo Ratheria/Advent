@@ -54,6 +54,7 @@ public class AdventControl
 	private boolean enteredCave;
 	private boolean quit;
 	
+	private boolean increaseTurns;
 	private int brief;
 	private int score;
 	private int turns;
@@ -104,9 +105,10 @@ public class AdventControl
 		instructions = false;
 		enteredCave = false;
 		quit = false;
+		increaseTurns = false;
 		brief = 0;
 		score = 36;
-		turns = 0;
+		turns = 1;
 		lamp = 1000;
 		itemsInHand = 0;
 		deaths = 3;
@@ -124,8 +126,10 @@ public class AdventControl
 	public String determineAction(String input) 
 	{
 		String output = null;
+		increaseTurns = true;
 		if(beginning)
 		{
+			//TODO your answer changes your score and lamp value
 			int answer = askYesNo(input);
 			if(answer == 1)
 			{
@@ -148,6 +152,7 @@ public class AdventControl
 			else
 			{
 				output = "Just yes or no, please.";
+				increaseTurns = false;
 			}
 		}
 		else if(question)
@@ -179,6 +184,7 @@ public class AdventControl
 			else if(hash.isObject(input) && objectIsPresent(hash.whichObject(input)) && hash.whichObject(input) == GameObjects.KNIFE)
 			{
 				output = new String("The dwarves' knives vanish as they strike the walls of the cave.");
+				increaseTurns = false;
 			}
 			else if(hash.isObject(input))
 			{
@@ -186,10 +192,16 @@ public class AdventControl
 				if(objectIsPresent(currentObject))
 				{
 					output = "What would you like to do with the " + input + "?";
+					increaseTurns = false;
+				}
+				else if(currentObject == GameObjects.NOTHING)
+				{
+					output = "Okay.";
 				}
 				else
 				{
 					output = new String("I don't see any " + input + ".");
+					increaseTurns = false;
 				}
 			}
 			else if(hash.isAction(input))
@@ -200,6 +212,7 @@ public class AdventControl
 			{
 				MessageWords message = hash.whichMessage(input);
 				output = getText(message);
+				increaseTurns = false;
 			}
 			else
 			{
@@ -212,6 +225,7 @@ public class AdventControl
 		}
 		if(lamp < 0)
 		{
+			//TODO batteries
 			output = output + "\nYour lamp has run out of power.";
 			if(!canISee(currentLocation))
 			{
@@ -223,6 +237,11 @@ public class AdventControl
 		{
 			west++;
 		}
+		if(increaseTurns)
+		{
+			turns++;
+		}
+		getCurrentScore();
 		output = output + checkForHints();
 		System.out.println("previous " + previousLocation);
 		System.out.println("current " + currentLocation);
@@ -234,6 +253,7 @@ public class AdventControl
 	public String determineAction(String input1, String input2) 
 	{
 		String output = null;
+		increaseTurns = true;
 		if(dragonQuest)
 		{
 			dragonQuest = false;
@@ -241,6 +261,7 @@ public class AdventControl
 		if(beginning||question)
 		{
 			output = "Just yes or no, please.";
+			increaseTurns = false;
 		}
 		else
 		{
@@ -288,10 +309,12 @@ public class AdventControl
 			else if(hash.isObject(input12) && objectIsPresent(hash.whichObject(input12)) && hash.whichObject(input12) == GameObjects.KNIFE)
 			{
 				output = new String("The dwarves' knives vanish as they strike the walls of the cave.");
+				increaseTurns = false;
 			}
 			else if(hash.isObject(input22) && objectIsPresent(hash.whichObject(input22)) && hash.whichObject(input22) == GameObjects.KNIFE)
 			{
 				output = new String("The dwarves' knives vanish as they strike the walls of the cave.");
+				increaseTurns = false;
 			}
 			else if(hash.isAction(input12))
 			{
@@ -323,6 +346,11 @@ public class AdventControl
 		{
 			west++;
 		}
+		if(increaseTurns)
+		{
+			turns++;
+		}
+		getCurrentScore();
 		output = output + checkForHints();
 		System.out.println("previous " + previousLocation);
 		System.out.println("current " + currentLocation);
@@ -418,6 +446,7 @@ public class AdventControl
 		if(!hash.isObject(other))
 		{
 			output = new String("I don't see any " + alt + ".");
+			increaseTurns = false;
 		}
 		
 		try
@@ -426,6 +455,11 @@ public class AdventControl
 			switch(verb)
 			{
 				case ABSTAIN:
+					/*if(other == GameObjects.NOTHING)
+					{
+						output = "Okay.";
+					}*/
+					output = "Okay.";
 					break;
 					
 				case LOOK:
@@ -449,16 +483,19 @@ public class AdventControl
 								else
 								{
 									output = new String("I don't see any water.");
+									increaseTurns = false;
 								}
 							}
 							else
 							{
 								output = new String("Your bottle is already full.");
+								increaseTurns = false;
 							}
 						}
 						else
 						{
 							output = new String("You have nothing in which to carry it.");
+							increaseTurns = false;
 						}
 					}
 					else if(object == GameObjects.OIL)
@@ -475,16 +512,19 @@ public class AdventControl
 								else
 								{
 									output = new String("I don't see any oil.");
+									increaseTurns = false;
 								}
 							}
 							else
 							{
 								output = new String("Your bottle is already full.");
+								increaseTurns = false;
 							}
 						}
 						else
 						{
 							output = new String("You have nothing in which to carry it.");
+							increaseTurns = false;
 						}
 					}
 					else if(objectIsPresent(object))
@@ -492,18 +532,22 @@ public class AdventControl
 						if(hash.objectIsHere(object, Location.INHAND))
 						{
 							output = new String("You are already carrying it!");
+							increaseTurns = false;
 						}
 						else if(object == GameObjects.KNIFE)
 						{
 							output = new String("The dwarves' knives vanish as they strike the walls of the cave.");
+							increaseTurns = false;
 						}
 						else if(object == GameObjects.PLANT && objectIsHere(object))
 						{
 							output = new String("The plant has exceptionally deep roots and cannot be pulled free.");
+							increaseTurns = false;
 						}
 						else if(object == GameObjects.BEAR && chain == 0)
 						{
 							output = new String("The bear is still chained to the wall.");
+							increaseTurns = false;
 						}
 						else if(object == GameObjects.BEAR && chain != 0)
 						{
@@ -512,20 +556,24 @@ public class AdventControl
 						else if(object == GameObjects.CHAIN && chain == 2)
 						{
 							output = new String("The chain is still locked.");
+							increaseTurns = false;
 						}
 						else if(itemsInHand >= 7)
 						{
 							output = new String("You can't carry anything more. You'll have to drop something first.");
+							increaseTurns = false;
 						}
 						else if(object == GameObjects.BIRD && objectIsHere(GameObjects.BIRD))
 						{
 							if(hash.objectIsHere(GameObjects.ROD, Location.INHAND) && !birdInCage)
 							{
 								output = new String("The bird was unafraid when you entered, but as you approach it becomes disturbed and you cannot catch it.");
+								increaseTurns = false;
 							}
 							else if(!hash.objectIsHere(GameObjects.CAGE, Location.INHAND))
 							{
 								output = new String("You can catch the bird, but you cannot carry it.");
+								increaseTurns = false;
 							}
 							else if(isInHand(GameObjects.CAGE))
 							{
@@ -574,6 +622,7 @@ public class AdventControl
 					else
 					{
 						output = new String("I don't see any " + alt + ".");
+						increaseTurns = false;
 					}
 				break;
 					
@@ -651,6 +700,7 @@ public class AdventControl
 					else
 					{
 						output = new String("You aren't carrying it!");
+						increaseTurns = false;
 					}
 					
 					break;
@@ -661,6 +711,7 @@ public class AdventControl
 						if(!objectIsPresent(GameObjects.KEYS))
 						{
 							output = new String("You don't have any keys!");
+							increaseTurns = false;
 						}
 						else
 						{
@@ -675,10 +726,12 @@ public class AdventControl
 							if(isInHand(GameObjects.CLAM))
 							{
 								output = new String("I advise you to put down the clam before opening it. >STRAIN!<");
+								increaseTurns = false;
 							}
 							else if(!isInHand(GameObjects.TRIDENT))
 							{
 								output = new String("You don't have anything strong enough to open the clam.");
+								increaseTurns = false;
 							}
 							else
 							{
@@ -694,10 +747,12 @@ public class AdventControl
 							if(isInHand(GameObjects.OYSTER))
 							{
 								output = new String("I advise you to put down the oyster before opening it. >WRENCH!<");
+								increaseTurns = false;
 							}
 							else if(!isInHand(GameObjects.TRIDENT))
 							{
 								output = new String("You don't have anything strong enough to open the oyster.");
+								increaseTurns = false;
 							}
 							else
 							{
@@ -713,27 +768,32 @@ public class AdventControl
 							else
 							{
 								output = new String("The door is extremely rusty and refuses to open.");
+								increaseTurns = false;
 							}
 						}
 						else if(object == GameObjects.CAGE)
 						{
 							output = new String("It has no lock.");
+							increaseTurns = false;
 						}
 						else if(object == GameObjects.KEYS)
 						{
 							output = new String("You can't unlock the keys.");
+							increaseTurns = false;
 						}
 						else if(object == GameObjects.CHAIN)
 						{
 							if(!objectIsPresent(GameObjects.KEYS))
 							{
 								output = new String("You have no keys!");
+								increaseTurns = false;
 							}
 							else if(chain == 0)
 							{
 								if(bear != 1)
 								{
 									output = new String("There is no way to get past the bear to unlock the chain, which is probably just as well.");
+									increaseTurns = false;
 								}
 								else
 								{
@@ -749,12 +809,14 @@ public class AdventControl
 							else
 							{
 								output = new String("It was already unlocked.");
+								increaseTurns = false;
 							}
 						}
 					}
 					else
 					{
 						output = new String("I don't know how to lock or unlock such a thing.");
+						increaseTurns = false;
 					}
 					break;
 									
@@ -764,10 +826,12 @@ public class AdventControl
 						if(!objectIsPresent(GameObjects.KEYS))
 						{
 							output = new String("You don't have any keys!");
+							increaseTurns = false;
 						}
 						else if(!grateUnlocked)
 						{
 							output = new String("It was already locked.");
+							increaseTurns = false;
 						}
 						else
 						{
@@ -780,30 +844,36 @@ public class AdventControl
 						if(object == GameObjects.CLAM || object == GameObjects.OYSTER)
 						{
 							output = new String("What?");
+							increaseTurns = false;
 						}
 						else if(object == GameObjects.CAGE)
 						{
 							output = new String("It has no lock.");
+							increaseTurns = false;
 						}
 						else if(object == GameObjects.KEYS)
 						{
-							output = new String("You can't unlock the keys.");
+							output = new String("You can't lock the keys.");
+							increaseTurns = false;
 						}
 						else if(object == GameObjects.CHAIN)
 						{
 							if(!objectIsPresent(GameObjects.KEYS))
 							{
 								output = new String("You have no keys!");
+								increaseTurns = false;
 							}
 							else if(chain != 1)
 							{
 								output = new String("It was already locked.");
+								increaseTurns = false;
 							}
 							else if(chain == 1)
 							{
 								if(!(currentLocation == Location.BARR))
 								{
 									output = new String("There is nothing here to which the chain can be locked.");
+									increaseTurns = false;
 								}
 								else
 								{
@@ -816,6 +886,7 @@ public class AdventControl
 					else
 					{
 						output = new String("I don't know how to lock or unlock such a thing.");
+						increaseTurns = false;
 					}
 					break;
 					
@@ -838,15 +909,18 @@ public class AdventControl
 						else
 						{
 							output = new String("Your lamp has run out of power.");
+							increaseTurns = false;
 						}
 					}
 					else if(object == GameObjects.NOTHING || objectIsPresent(object))
 					{
 						output = new String("You have no source of light.");
+						increaseTurns = false;
 					}
 					else
 					{
 						output = new String("I don't see any " + alt + ".");
+						increaseTurns = false;
 					}
 					break;
 					
@@ -865,22 +939,26 @@ public class AdventControl
 				case WAVE:
 					if(object == GameObjects.NOTHING)
 					{
-						 output = new String("What would you like to wave?");
+						output = new String("What would you like to wave?");
+						increaseTurns = false;
 					}
 					else if (!isInHand(object) && (object != GameObjects.ROD || !isInHand(GameObjects.ROD2)))
 					 {
 						output = new String("You aren't carrying it!");
+						increaseTurns = false;
 					 }
 					 else if(object != GameObjects.ROD || closed)
 					 {
 						 if(!isInHand(object))
 						 {
-							 output = new String("I don't see any " + alt + ".");
+							output = new String("I don't see any " + alt + ".");
+							increaseTurns = false;
 						 }
 					 }
 					 else if((currentLocation != Location.EASTFISSURE && currentLocation != Location.WESTFISSURE))
 					 {
-						 output = new String("Nothing happens.");
+						output = new String("Nothing happens.");
+						increaseTurns = false;
 					 }
 					 else
 					 {
@@ -907,7 +985,7 @@ public class AdventControl
 					
 				case GO:
 					if(alt.equals(""))
-					{	output = new String("Where?");	}
+					{	output = new String("Where?");	increaseTurns = false;	}
 					else
 					{	output = attemptMovement(alt);	}
 					break;
@@ -934,6 +1012,7 @@ public class AdventControl
 					if(object == GameObjects.NOTHING)
 					{
 						output = new String("You can't pour that.");
+						increaseTurns = false;
 					}
 					else if(object == GameObjects.WATER && bottle == 1)
 					{
@@ -1040,11 +1119,13 @@ public class AdventControl
 						else
 						{
 							output = new String("I don't see any bird.");
+							increaseTurns = false;
 						}
 					}
 					else if(object == GameObjects.BIRD && closed)
 					{
 						output = new String("Oh, leave the poor unhappy bird alone.");
+						increaseTurns = false;
 					}
 					else if(object == GameObjects.CLAM || object == GameObjects.OYSTER)
 					{
@@ -1056,6 +1137,7 @@ public class AdventControl
 						{
 							output = new String("I don't see any " + alt + ".");
 						}
+						increaseTurns = false;
 					}
 					else if(object == GameObjects.SNAKE)
 					{
@@ -1067,6 +1149,7 @@ public class AdventControl
 						{
 							output = new String("I don't see any snake.");
 						}
+						increaseTurns = false;
 					}
 					else if(object == GameObjects.DWARF && closed)
 					{
@@ -1085,10 +1168,12 @@ public class AdventControl
 						{
 							output = new String("I don't see any dwarf.");
 						}
+						increaseTurns = false;
 					}
 					else if(object == GameObjects.TROLL && (objectIsHere(GameObjects.TROLL)|| objectIsHere(GameObjects.TROLL2)))
 					{
 						output = new String("Trolls are close relatives with the rocks and have skin as tough as that of a rhinoceros. The troll fends off your blows effortlessly.");
+						increaseTurns = false;
 					}
 					else if(object == GameObjects.BEAR)
 					{
@@ -1097,6 +1182,7 @@ public class AdventControl
 							if(bear == 0)
 							{
 								output = new String("With what? Your bare hands? Against HIS bear hands??");
+								increaseTurns = false;
 							}
 							else if(bear != 3)
 							{
@@ -1105,11 +1191,13 @@ public class AdventControl
 							else
 							{
 								output = new String("For crying out loud, the poor thing is already dead!");
+								increaseTurns = false;
 							}
 						}
 						else
 						{
 							output = new String("I don't see any bear.");
+							increaseTurns = false;
 						}
 					}
 					else if(object == GameObjects.DRAGON)
@@ -1119,16 +1207,19 @@ public class AdventControl
 							if(!dragon)
 							{
 								output = new String("For crying out loud, the poor thing is already dead!");
+								increaseTurns = false;
 							}
 							else
 							{
 								output = new String("With what? Your bare hands?");
 								dragonQuest = true;
+								increaseTurns = false;
 							}
 						}
 						else
 						{
 							output = new String("I don't see any dragon.");
+							increaseTurns = false;
 						}
 					}
 					else 
@@ -1141,6 +1232,7 @@ public class AdventControl
 						{
 							output = new String("There is nothing here to attack.");
 						}
+						increaseTurns = false;
 					}
 					break;
 					
@@ -1148,6 +1240,7 @@ public class AdventControl
 					if(alt.equals(""))
 					{
 						output = new String("What do you want to say?");
+						increaseTurns = false;
 					}
 					else if(other == MessageWords.CUSS)
 					{
@@ -1163,6 +1256,7 @@ public class AdventControl
 					if(!canISee(currentLocation))
 					{
 						output = "You can't read in the dark!";
+						increaseTurns = false;
 					}
 					else if(objectIsPresent(GameObjects.MAG))
 					{
@@ -1215,6 +1309,7 @@ public class AdventControl
 					if(isInHand(object))
 					{
 						output = new String("You are already carrying it!");
+						increaseTurns = false;
 					}
 					else if(objectIsPresent(object))
 					{
@@ -1223,6 +1318,7 @@ public class AdventControl
 					else
 					{
 						output = "I can only tell you what you see as you move about and manipulate things. I can not tell you where remote things are.";
+						increaseTurns = false;
 					}
 					break;
 					
@@ -1237,7 +1333,7 @@ public class AdventControl
 					}
 					else
 					{
-						output = new String("You're not carrying anything.");
+						output = new String("\t   -----\n\t\tYou're not carrying anything.\n\t   -----");
 					}
 					break;
 					
@@ -1249,6 +1345,7 @@ public class AdventControl
 					
 				default:
 					output = new String("You broke something.");
+					increaseTurns = false;
 					break;
 					
 			}
@@ -1260,6 +1357,7 @@ public class AdventControl
 				if(alt.equals(""))
 				{
 					output = new String("Where?");
+					increaseTurns = false;
 				}
 				else
 				{
@@ -1269,6 +1367,7 @@ public class AdventControl
 			else
 			{
 				output = "You can not do that.";
+				increaseTurns = false;
 			}
 		}
 		return output;
@@ -1294,6 +1393,7 @@ public class AdventControl
 				if(closed && (locationResult.compareTo(Location.THEVOID) < 10))
 				{
 					output = "A mysterious recorded voice groans into life and announces: \n\t\"This exit is closed. Please leave via main office.\"";
+					increaseTurns = false;
 				}
 				else if(locationResult.equals(Location.THEVOID))
 				{
@@ -1301,6 +1401,7 @@ public class AdventControl
 					{
 						output = "Nothing happens.\n";
 						output = output + getDescription(currentLocation, brief);
+						increaseTurns = false;
 					}
 					else if(destination.equals(Movement.NORTH) ||
 							destination.equals(Movement.SOUTH) ||
@@ -1313,20 +1414,24 @@ public class AdventControl
 					{
 						output = "There are no exits in that direction.\n";
 						output = output + getDescription(currentLocation, brief);
+						increaseTurns = false;
 					}
 					else
 					{
 						output = "I don't know how to apply that word here.\n";
 						output = output + getDescription(currentLocation, brief);
+						increaseTurns = false;
 					}
 				}
 				else if(locationResult.equals(Location.CRACK))
 				{
 					output = "That crack is far too small for you to follow.";
+					increaseTurns = false;
 				}
 				else if(locationResult.equals(Location.NECK))
 				{
 					output = "You are at the bottom of the pit with a broken neck.";
+					increaseTurns = false;
 					//
 					//TODO death
 					//
@@ -1334,6 +1439,7 @@ public class AdventControl
 				else if(locationResult.equals(Location.LOSE))
 				{
 					output = "You didn't make it.";
+					increaseTurns = false;
 					//
 					// TODO death 
 					//
@@ -1341,6 +1447,7 @@ public class AdventControl
 				else if(locationResult.equals(Location.CANT))
 				{
 					output = "The dome is unclimbable.";
+					increaseTurns = false;
 				}
 				else if(locationResult.equals(Location.CLIMB))
 				{
@@ -1357,11 +1464,13 @@ public class AdventControl
 					else
 					{
 						output = "There is nothing here to climb. Use \"UP\" or \"OUT\" to leave the pit.";
+						increaseTurns = false;
 					}
 				}
 				else if(locationResult.equals(Location.SNAKED))
 				{
 					output = "You can't get by the snake.";
+					increaseTurns = false;
 				}
 				else if(locationResult.equals(Location.THRU))
 				{
@@ -1376,10 +1485,12 @@ public class AdventControl
 				else if(locationResult.equals(Location.SEWER))
 				{
 					output = "The stream flows out through a pair of 1-foot-diameter sewer pipes.\n\nIt would be advisable to use the exit.";
+					increaseTurns = false;
 				}
 				else if(locationResult.equals(Location.UPNOUT))
 				{
 					output = "There is nothing here to climb. Use \"UP\" or \"OUT\" to leave the pit.";
+					increaseTurns = false;
 				}
 				else if(locationResult.equals(Location.DIDIT))
 				{
@@ -1391,14 +1502,17 @@ public class AdventControl
 					if(currentLocation.equals(Location.SLIT)||currentLocation.equals(Location.WET))
 					{
 						output = "You can't fit through a two-inch slit!";
+						increaseTurns = false;
 					}
 					else if(currentLocation.equals(Location.INSIDE)||currentLocation.equals(Location.OUTSIDE)||currentLocation.equals(Location.DEBRIS)||currentLocation.equals(Location.AWKWARD)||
 							currentLocation.equals(Location.BIRD)||currentLocation.equals(Location.SMALLPIT))
 					{
 						output = "You can't go through a locked steel grate!";
+						increaseTurns = false;
 					}
 					else if(currentLocation.equals(Location.SWSIDE) && destination != Movement.JUMP)
 					{
+						increaseTurns = false;
 						if(troll)
 						{
 							output = "The troll refuses to let you cross.";
@@ -1410,6 +1524,7 @@ public class AdventControl
 					}
 					else if(currentLocation.equals(Location.NESIDE)||currentLocation.equals(Location.SWSIDE)||currentLocation.equals(Location.EASTFISSURE)||currentLocation.equals(Location.WESTFISSURE))
 					{
+						increaseTurns = false;
 						if(destination.equals(Movement.JUMP))
 						{
 							output = "I respectfully suggest that you go across the bridge instead of jumping.";	
@@ -1422,9 +1537,11 @@ public class AdventControl
 					else if(currentLocation.equals(Location.HALLOFMOUNTAINKING))
 					{
 						output = "You can't get by the snake.";
+						increaseTurns = false;
 					}
 					else if(currentLocation.equals(Location.SHELL))
 					{
+						increaseTurns = false;
 						if(haveClam)
 						{
 							output = "You can't fit this five-foot clam through that little passage!";
@@ -1445,18 +1562,22 @@ public class AdventControl
 					else if(currentLocation.equals(Location.IMMENSE))
 					{
 						output = "The door is extremely rusty and refuses to open.";
+						increaseTurns = false;
 					}
 					else if(currentLocation.equals(Location.SCAN1)||currentLocation.equals(Location.SCAN3))
 					{
 						output = "That dragon looks rather nasty. You'd best not try to get by.";
+						increaseTurns = false;
 					}
 					else if(currentLocation.equals(Location.VIEW))
 					{
 						output = "Don't be ridiculous!";
+						increaseTurns = false;
 					}
 					else
 					{
 						output = "You can not do that.";
+						increaseTurns = false;
 					}
 				}
 				else
@@ -1500,11 +1621,13 @@ public class AdventControl
 			catch(NullPointerException e)
 			{
 				output = "You can not do that.";
+				increaseTurns = false;
 			}
 		}
 		else
 		{
 			output = "";
+			increaseTurns = false;
 			//TODO blocked by dwarf or something
 		}
 
@@ -1536,10 +1659,7 @@ public class AdventControl
 	private String nonsense()
 	{
 		String output = null;
-		if(turns > 1)
-		{
-			turns--;
-		}
+		increaseTurns = false;
 		double randomOutput = Math.random();
 		if(randomOutput < .34)
 		{
@@ -1576,9 +1696,34 @@ public class AdventControl
 	{
 		//TODO finish normal and in building scores
 		int currentScore = (2 + (2 * (15 - tally)) + (deaths * 10));
+		ArrayList<GameObjects> buildingItems = hash.objectsHere(Location.BUILDING);
+		
+		for(GameObjects item : buildingItems)
+		{
+			if(things.isTreasure(item))
+			{
+				if(things.isLesserTreasure(item))
+				{
+					currentScore = currentScore + 12;
+				}
+				else if(item == GameObjects.VASE && broken){	}
+				else if(item == GameObjects.CHEST)
+				{
+					currentScore = currentScore + 14;
+				}
+				else
+				{
+					currentScore = currentScore + 16;
+				}
+			}
+		}
+		
 		if(instructions){	currentScore = currentScore - 5;	}
-		if(enteredCave){	currentScore = currentScore + 25;	}
+		if(enteredCave){	currentScore = currentScore + 25;	} //TODO check for this
+		if(closed){	currentScore = currentScore + 25;	}
 		if(!quit){	currentScore = currentScore + 4;	}
+
+		//TODO point for witt's end
 		score = currentScore;
 		return currentScore;
 	}
