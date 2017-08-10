@@ -70,6 +70,16 @@ public enum Location
 		return outside;
 	}
 	
+	public boolean outsideCave(Location here)
+	{
+		boolean outside = false;
+		if(here.ordinal() > INHAND.ordinal() && here.ordinal() < INSIDE.ordinal())
+		{
+			outside = true;
+		}
+		return outside;
+	}
+	
 	public boolean upperCave(Location here)
 	{
 		boolean upper = false;
