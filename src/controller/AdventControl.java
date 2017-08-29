@@ -41,6 +41,8 @@ public class AdventControl
 	private boolean snake;
 	private boolean oilDoor;
 	private boolean dragon;
+	private boolean dragonQuest;
+	private boolean quitQuest;
 	private boolean troll;
 	private boolean birdInCage;
 	private boolean bearAxe;
@@ -50,13 +52,15 @@ public class AdventControl
 	private boolean collapse;
 	private boolean wayIsBlocked;
 	private boolean seriousQuestion;
+	private boolean casualQuestion;
+	private boolean takeQuest;
+	private boolean dropQuest;
 	
 	private boolean instructions;
 	private boolean enteredCave;
 	private boolean quit;
 	
 	private boolean increaseTurns;
-	private int quest;
 	private int brief;
 	private int score;
 	private int turns;
@@ -96,6 +100,8 @@ public class AdventControl
 		snake = true;
 		oilDoor = false;
 		dragon = true;
+		dragonQuest = false;
+		quitQuest = false;
 		troll = true;
 		birdInCage = false;
 		bearAxe = false;
@@ -104,11 +110,13 @@ public class AdventControl
 		collapse = false;
 		wayIsBlocked = false;
 		seriousQuestion = false;
+		casualQuestion = false;
+		takeQuest = false;
+		dropQuest = false;
 		instructions = false;
 		enteredCave = false;
 		quit = false;
 		increaseTurns = false;
-		quest = 0;
 		brief = 0;
 		score = 36;
 		turns = 1;
@@ -131,12 +139,6 @@ public class AdventControl
 		String output = null;
 		increaseTurns = true;
 		int answer = askYesNo(input);
-		boolean thisIsAnObject = hash.isObject(input);
-		GameObjects itsAn = null;
-		if(thisIsAnObject)
-		{
-			itsAn = (hash.whichObject(input));
-		}
 		if(beginning)
 		{
 			//TODO your answer changes your score and lamp value
@@ -165,10 +167,10 @@ public class AdventControl
 				increaseTurns = false;
 			}
 		}
-		else if(quest == 1 && (input.toLowerCase().contains("yes") || input.equalsIgnoreCase("y") || input.toLowerCase().contains("yes")))
+		else if(dragonQuest && (input.toLowerCase().contains("yes") || input.equalsIgnoreCase("y") || input.toLowerCase().contains("yes")))
 		{
 			output = "Congratulations! You have just vanquished a dragon with your bare hands! (Unbelievable, isn't it?)";
-			quest = 0;
+			dragonQuest = false;
 			dragon = false;
 		}
 		else if(seriousQuestion && answer == 0)
@@ -176,37 +178,36 @@ public class AdventControl
 			output = "Just yes or no, please.";
 			increaseTurns = false;
 		}
-		else if(quest == 2 && answer == 1)
+		else if(quitQuest && answer == 1)
 		{
 			//TODO game over
-			quest = 0;		
-			seriousQuestion = false;
+			quitQuest = false;				
+			casualQuestion = false;
 		}
-		else if(quest == 3 && thisIsAnObject && itsAn != GameObjects.NOTHING)
+		else if(takeQuest && hash.isObject(input) && (hash.whichObject(input) != GameObjects.NOTHING))
 		{
-			output = attemptAction(ActionWords.TAKE, hash.whichObject(input), input);
-			quest = 0;
+			attemptAction(ActionWords.TAKE, hash.whichObject(input), input);
+			takeQuest = false;				
+			casualQuestion = false;
 		}
-		else if(quest == 4 && thisIsAnObject && itsAn != GameObjects.NOTHING)
+		else if(dropQuest && hash.isObject(input) && (hash.whichObject(input) != GameObjects.NOTHING))
 		{
-			output = attemptAction(ActionWords.DROP, hash.whichObject(input), input);
-			quest = 0;
-		}
-		else if(quest == 5 && thisIsAnObject && itsAn != GameObjects.NOTHING)
-		{
-			output = attemptAction(ActionWords.OPEN, hash.whichObject(input), input);
-			quest = 0;
-		}
-		else if(quest == 6 && thisIsAnObject && itsAn != GameObjects.NOTHING)
-		{
-			output = attemptAction(ActionWords.CLOSE, hash.whichObject(input), input);
-			quest = 0;
+			attemptAction(ActionWords.DROP, hash.whichObject(input), input);
+			dropQuest = false;				
+			casualQuestion = false;
 		}
 		else
 		{
-			if(quest != 0)
+			if(dragonQuest)
 			{
-				quest = 0;
+				dragonQuest = false;
+			}
+			if(casualQuestion)
+			{
+				casualQuestion = false;
+				quitQuest = false;
+				takeQuest = false;
+				dropQuest = false;
 			}
 			if(input.length() > 5)
 			{
@@ -296,9 +297,12 @@ public class AdventControl
 	{
 		String output = null;
 		increaseTurns = true;
-		if(!seriousQuestion && quest != 0)
+		if(casualQuestion)
 		{
-			quest = 0;
+			casualQuestion = false;
+			dragonQuest = false;
+			quitQuest = false;
+			takeQuest = false;
 		}
 		if(beginning||seriousQuestion)
 		{
@@ -579,7 +583,8 @@ public class AdventControl
 					else if(object == GameObjects.NOTHING)
 					{
 						output = "What would you like to take?";
-						quest = 3;
+						takeQuest = true;
+						casualQuestion = true;
 						increaseTurns = false;
 					}
 					else if(objectIsPresent(object))
@@ -694,7 +699,8 @@ public class AdventControl
 					if(object == GameObjects.NOTHING)
 					{
 						output = "What would you like to drop?";
-						quest = 4;
+						casualQuestion = true;
+						dropQuest = true;
 						increaseTurns = false;
 					}
 					else if(isInHand(object))
@@ -862,7 +868,7 @@ public class AdventControl
 								else
 								{
 									chain = 1;
-									output = new String("You unlock the chain and set the tame bear free.");
+									output = new String("You unlock the chain and set the tame bear free");
 								}
 							}
 							else if(chain == 2)
@@ -879,9 +885,7 @@ public class AdventControl
 					}
 					else if(object == GameObjects.NOTHING)
 					{
-						output = "What would you like to open?";
-						quest = 5;
-						increaseTurns = false;
+						//TODO finish continuing actions for all commands
 					}
 					else
 					{
@@ -1282,7 +1286,7 @@ public class AdventControl
 							else
 							{
 								output = new String("With what? Your bare hands?");
-								quest = 1;
+								dragonQuest = true;
 								increaseTurns = false;
 							}
 						}
@@ -1413,7 +1417,7 @@ public class AdventControl
 				case QUIT:
 					output = "Do you really wish to quit now?";
 					seriousQuestion = true;
-					quest = 2;
+					quitQuest = true;
 					increaseTurns = false;
 					break;
 					

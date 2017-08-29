@@ -1075,7 +1075,11 @@ public class HashMaps
 	{
 		String description = null;
 		int visit = visits.get(here);
-		if((longDescription.containsKey(here)) && ((breif == 0 && visit % 5 == 0) || (breif == 2) || (visits.get(here) == 0)))
+		if((breif == 0 && longDescription.containsKey(here) && !beenHere(here)) || (breif == 1 && longDescription.containsKey(here) && !beenHere(here)) || (visits.get(here) == 0 && longDescription.containsKey(here)))
+		{
+			description = longDescription.get(here);
+		}
+		else if(breif == 2 && longDescription.containsKey(here))
 		{
 			description = longDescription.get(here);
 		}
@@ -1083,7 +1087,6 @@ public class HashMaps
 		{
 			description = shortDescription.get(here);
 		}
-		System.out.println("visit " + visit);
 		visits.replace(here, visit + 1);
 		return description;
 	}
