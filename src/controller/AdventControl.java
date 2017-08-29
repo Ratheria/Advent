@@ -23,14 +23,12 @@ public class AdventControl
 {
 	private AdventureFrame frame = new AdventureFrame(this);;
 	private HashMaps hash = new HashMaps();
-	@SuppressWarnings("unused")
 	private MessageWords messages;
 	@SuppressWarnings("unused")
 	private ActionWords actions;
 	private GameObjects things;
 	private Location currentLocation;
 	private Location previousLocation;
-	private Location eldestLocation;
 	private String okay;
 	private boolean dead;
 	private boolean beginning;
@@ -41,6 +39,10 @@ public class AdventControl
 	private boolean snake;
 	private boolean oilDoor;
 	private boolean dragon;
+<<<<<<< HEAD
+=======
+	private boolean dragonQuest;
+>>>>>>> parent of 0c57575... Work on continuing actions, questions, and score
 	private boolean troll;
 	private boolean birdInCage;
 	private boolean bearAxe;
@@ -49,7 +51,11 @@ public class AdventControl
 	private boolean haveGold;
 	private boolean collapse;
 	private boolean wayIsBlocked;
+<<<<<<< HEAD
 	private boolean seriousQuestion;
+=======
+	private boolean question;
+>>>>>>> parent of 0c57575... Work on continuing actions, questions, and score
 	
 	private boolean instructions;
 	private boolean enteredCave;
@@ -83,7 +89,6 @@ public class AdventControl
 		//		turnLast = "";
 		currentLocation = Location.ROAD;
 		previousLocation = null;
-		eldestLocation = null;
 		actions = ActionWords.NOTHING;
 		things = GameObjects.NOTHING;
 		okay = new String("Okay.");
@@ -96,6 +101,10 @@ public class AdventControl
 		snake = true;
 		oilDoor = false;
 		dragon = true;
+<<<<<<< HEAD
+=======
+		dragonQuest = false;
+>>>>>>> parent of 0c57575... Work on continuing actions, questions, and score
 		troll = true;
 		birdInCage = false;
 		bearAxe = false;
@@ -103,7 +112,11 @@ public class AdventControl
 		haveGold = false;
 		collapse = false;
 		wayIsBlocked = false;
+<<<<<<< HEAD
 		seriousQuestion = false;
+=======
+		question = false;
+>>>>>>> parent of 0c57575... Work on continuing actions, questions, and score
 		instructions = false;
 		enteredCave = false;
 		quit = false;
@@ -130,6 +143,7 @@ public class AdventControl
 	{
 		String output = null;
 		increaseTurns = true;
+<<<<<<< HEAD
 		int answer = askYesNo(input);
 		boolean thisIsAnObject = hash.isObject(input);
 		GameObjects itsAn = null;
@@ -137,12 +151,14 @@ public class AdventControl
 		{
 			itsAn = (hash.whichObject(input));
 		}
+=======
+>>>>>>> parent of 0c57575... Work on continuing actions, questions, and score
 		if(beginning)
 		{
 			//TODO your answer changes your score and lamp value
+			int answer = askYesNo(input);
 			if(answer == 1)
 			{
-				instructions = true;
 				output = "\tSomewhere nearby is Colossal Cave, where others have found great fortunes in "
 						+ "treasure and gold, though it is rumored that some who enter are never seen "
 						+ "again. Magic is said to work in the cave. I will be your eyes and hands. "
@@ -165,6 +181,7 @@ public class AdventControl
 				increaseTurns = false;
 			}
 		}
+<<<<<<< HEAD
 		else if(quest == 1 && (input.toLowerCase().contains("yes") || input.equalsIgnoreCase("y") || input.toLowerCase().contains("yes")))
 		{
 			output = "Congratulations! You have just vanquished a dragon with your bare hands! (Unbelievable, isn't it?)";
@@ -207,6 +224,25 @@ public class AdventControl
 			if(quest != 0)
 			{
 				quest = 0;
+=======
+		else if(question)
+		{
+			int answer = askYesNo(input);
+			//TODO questions
+		}
+		else if(dragonQuest && (input.toLowerCase().contains("yes") || input.equalsIgnoreCase("y") || input.toLowerCase().contains("yes")))
+		{
+			//TODO you killed the dragon message
+			output = "Dead";
+			dragonQuest = false;
+			dragon = false;
+		}
+		else
+		{
+			if(dragonQuest)
+			{
+				dragonQuest = false;
+>>>>>>> parent of 0c57575... Work on continuing actions, questions, and score
 			}
 			if(input.length() > 5)
 			{
@@ -268,13 +304,6 @@ public class AdventControl
 			}
 			light = false;
 		}
-		if(!enteredCave)
-		{
-			if(!(currentLocation.outsideCave(currentLocation)))
-			{
-				enteredCave = true;
-			}
-		}
 		if(input.equalsIgnoreCase("west"))
 		{
 			west++;
@@ -296,11 +325,17 @@ public class AdventControl
 	{
 		String output = null;
 		increaseTurns = true;
+<<<<<<< HEAD
 		if(!seriousQuestion && quest != 0)
 		{
 			quest = 0;
+=======
+		if(dragonQuest)
+		{
+			dragonQuest = false;
+>>>>>>> parent of 0c57575... Work on continuing actions, questions, and score
 		}
-		if(beginning||seriousQuestion)
+		if(beginning||question)
 		{
 			output = "Just yes or no, please.";
 			increaseTurns = false;
@@ -383,13 +418,6 @@ public class AdventControl
 				output = output + "\nIt is now pitch dark. If you proceed you will likely fall into a pit.";
 			}
 			light = false;
-		}
-		if(!enteredCave)
-		{
-			if(!(currentLocation.outsideCave(currentLocation)))
-			{
-				enteredCave = true;
-			}
 		}
 		if(input1.equalsIgnoreCase("west")||input2.equalsIgnoreCase("west"))
 		{
@@ -576,12 +604,15 @@ public class AdventControl
 							increaseTurns = false;
 						}
 					}
+<<<<<<< HEAD
 					else if(object == GameObjects.NOTHING)
 					{
 						output = "What would you like to take?";
 						quest = 3;
 						increaseTurns = false;
 					}
+=======
+>>>>>>> parent of 0c57575... Work on continuing actions, questions, and score
 					else if(objectIsPresent(object))
 					{
 						if(hash.objectIsHere(object, Location.INHAND))
@@ -667,10 +698,7 @@ public class AdventControl
 						{
 							//TODO you can't retrieve the axe after throwing it at the bear
 						}
-						else if(object == GameObjects.VASE && broken == true)
-						{
-							//TODO trying to take broken vase
-						}
+						else if(object == GameObjects.VASE && broken == true){	}
 						else if(things.canTake(object) && objectIsHere(object))
 						{
 							takeObject(object);
@@ -691,6 +719,7 @@ public class AdventControl
 					{
 						//TODO DYNAMITE
 					}
+<<<<<<< HEAD
 					if(object == GameObjects.NOTHING)
 					{
 						output = "What would you like to drop?";
@@ -698,6 +727,9 @@ public class AdventControl
 						increaseTurns = false;
 					}
 					else if(isInHand(object))
+=======
+					if(isInHand(object))
+>>>>>>> parent of 0c57575... Work on continuing actions, questions, and score
 					{
 						if(object == GameObjects.CAGE && birdInCage)
 						{
@@ -749,7 +781,7 @@ public class AdventControl
 						}
 						else if(object == GameObjects.VASE && !(objectIsHere(GameObjects.PILLOW) || currentLocation == Location.SOFT))
 						{
-							//TODO vase breaking text
+							//TODO vase breaking
 							dropObject(GameObjects.VASE);
 							broken = true;
 							lostTreasures++;
@@ -877,12 +909,15 @@ public class AdventControl
 							}
 						}
 					}
+<<<<<<< HEAD
 					else if(object == GameObjects.NOTHING)
 					{
 						output = "What would you like to open?";
 						quest = 5;
 						increaseTurns = false;
 					}
+=======
+>>>>>>> parent of 0c57575... Work on continuing actions, questions, and score
 					else
 					{
 						output = new String("I don't know how to lock or unlock such a thing.");
@@ -1411,10 +1446,13 @@ public class AdventControl
 					break;
 					
 				case QUIT:
+<<<<<<< HEAD
 					output = "Do you really wish to quit now?";
 					seriousQuestion = true;
 					quest = 2;
 					increaseTurns = false;
+=======
+>>>>>>> parent of 0c57575... Work on continuing actions, questions, and score
 					break;
 					
 				default:
@@ -1711,7 +1749,6 @@ public class AdventControl
 	
 	private void setLocation(Location newLocation)
 	{
-		eldestLocation = previousLocation;
 		previousLocation = currentLocation;
 		currentLocation = newLocation;
 	}
@@ -1794,7 +1831,7 @@ public class AdventControl
 		}
 		
 		if(instructions){	currentScore = currentScore - 5;	}
-		if(enteredCave){	currentScore = currentScore + 25;	}
+		if(enteredCave){	currentScore = currentScore + 25;	} //TODO check for this
 		if(closed){	currentScore = currentScore + 25;	}
 		if(!quit){	currentScore = currentScore + 4;	}
 
