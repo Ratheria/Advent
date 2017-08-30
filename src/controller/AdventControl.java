@@ -1774,22 +1774,25 @@ public class AdventControl
 		int currentScore = (2 + (2 * (15 - tally)) + (deaths * 10));
 		ArrayList<GameObjects> buildingItems = hash.objectsHere(Location.BUILDING);
 		
-		for(GameObjects item : buildingItems)
+		if(!(buildingItems == null))
 		{
-			if(things.isTreasure(item))
+			for(GameObjects item : buildingItems)
 			{
-				if(things.isLesserTreasure(item))
+				if(things.isTreasure(item))
 				{
-					currentScore = currentScore + 12;
-				}
-				else if(item == GameObjects.VASE && broken){	}
-				else if(item == GameObjects.CHEST)
-				{
-					currentScore = currentScore + 14;
-				}
-				else
-				{
-					currentScore = currentScore + 16;
+					if(things.isLesserTreasure(item))
+					{
+						currentScore = currentScore + 12;
+					}
+					else if(item == GameObjects.VASE && broken){	}
+					else if(item == GameObjects.CHEST)
+					{
+						currentScore = currentScore + 14;
+					}
+					else
+					{
+						currentScore = currentScore + 16;
+					}
 				}
 			}
 		}

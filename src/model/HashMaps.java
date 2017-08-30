@@ -798,29 +798,28 @@ public class HashMaps
 		objectLocation.put(GameObjects.TROLL_, Location.NESIDE);
 		objectLocation.put(GameObjects.TROLL2, Location.THEVOID);
 		objectLocation.put(GameObjects.TROLL2_, Location.THEVOID);
-		objectLocation.put(GameObjects.BEAR, Location.THEVOID);
+		objectLocation.put(GameObjects.BEAR, Location.BARR);
 		objectLocation.put(GameObjects.MESSAGE, Location.THEVOID);
 		objectLocation.put(GameObjects.GEYSER, Location.VIEW);
 		objectLocation.put(GameObjects.PONY, Location.PONY);
 		objectLocation.put(GameObjects.BATTERIES, Location.THEVOID);
 		objectLocation.put(GameObjects.MOSS, Location.SOFT);
 		
-		//TODO finish treasure locations
 		objectLocation.put(GameObjects.GOLD, Location.NUGGET);
-		objectLocation.put(GameObjects.DIAMONDS, Location.THEVOID);
+		objectLocation.put(GameObjects.DIAMONDS, Location.WESTFISSURE);
 		objectLocation.put(GameObjects.SILVER, Location.NS);
-		objectLocation.put(GameObjects.JEWELS, Location.THEVOID);
-		objectLocation.put(GameObjects.COINS, Location.THEVOID);
+		objectLocation.put(GameObjects.JEWELS, Location.SOUTH);
+		objectLocation.put(GameObjects.COINS, Location.WEST);
 		objectLocation.put(GameObjects.CHEST, Location.THEVOID);
 		objectLocation.put(GameObjects.EGGS, Location.GIANT);
-		objectLocation.put(GameObjects.TRIDENT, Location.THEVOID);
+		objectLocation.put(GameObjects.TRIDENT, Location.FALLS);
 		objectLocation.put(GameObjects.VASE, Location.ORIENTAL);
 		objectLocation.put(GameObjects.EMERALD, Location.PROOM);
 		objectLocation.put(GameObjects.PYRAMID, Location.DROOM);
 		objectLocation.put(GameObjects.PEARL, Location.THEVOID);
-		objectLocation.put(GameObjects.RUG, Location.THEVOID);
-		objectLocation.put(GameObjects.RUG_, Location.THEVOID);
-		objectLocation.put(GameObjects.SPICES, Location.THEVOID);
+		objectLocation.put(GameObjects.RUG, Location.SCAN1);
+		objectLocation.put(GameObjects.RUG_, Location.SCAN2);
+		objectLocation.put(GameObjects.SPICES, Location.CHAMBER);
 		objectLocation.put(GameObjects.CHAIN, Location.BARR);
 	}
 	
