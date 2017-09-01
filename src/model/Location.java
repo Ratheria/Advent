@@ -737,6 +737,15 @@ public enum Location
 				}
 				break;	
 				
+			case CROSS:
+				switch(destination)
+				{
+					case WEST: next = EASTLONG;
+					case NORTH: next = DEAD0;
+					case EAST: next = WEST;
+					case SOUTH: next = WESTLONG;
+				}
+				
 			case HALLOFMOUNTAINKING:
 				switch(destination)
 				{

@@ -170,6 +170,11 @@ public class AdventControl
 			output = "Congratulations! You have just vanquished a dragon with your bare hands! (Unbelievable, isn't it?)";
 			quest = 0;
 			dragon = false;
+			currentLocation = Location.SCAN2;
+			voidObject(GameObjects.DRAGON_);
+			voidObject(GameObjects.RUG_);
+			hash.dropObject(GameObjects.DRAGON, currentLocation);
+			hash.dropObject(GameObjects.RUG, currentLocation);
 		}
 		else if(seriousQuestion && answer == 0)
 		{
@@ -1149,6 +1154,22 @@ public class AdventControl
 					break;
 					
 				case EAT:
+					if(object == GameObjects.FOOD)
+					{
+						if(!objectIsPresent(GameObjects.FOOD))
+						{
+							output = "You don't have any.";
+						}
+						else
+						{
+							voidObject(GameObjects.FOOD);
+							output = "Thank you, it was delicious!";
+						}
+					}
+					else
+					{
+						output = "I think I just lost my appetite.";
+					}
 					break;
 					
 				case DRINK:

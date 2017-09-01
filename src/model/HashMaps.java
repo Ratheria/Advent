@@ -205,6 +205,10 @@ public class HashMaps
 		objects.put("emera", GameObjects.EMERALD);
 		objects.put("plati", GameObjects.PYRAMID);
 		objects.put("pyram", GameObjects.PYRAMID);
+		objects.put("pearl", GameObjects.PEARL);
+		objects.put("rug", GameObjects.RUG);
+		objects.put("spice", GameObjects.SPICES);
+		objects.put("chain", GameObjects.CHAIN);
 		
 		actions.put("look", ActionWords.LOOK);
 		actions.put("descr", ActionWords.LOOK);
@@ -818,7 +822,7 @@ public class HashMaps
 		objectLocation.put(GameObjects.PYRAMID, Location.DROOM);
 		objectLocation.put(GameObjects.PEARL, Location.THEVOID);
 		objectLocation.put(GameObjects.RUG, Location.SCAN1);
-		objectLocation.put(GameObjects.RUG_, Location.SCAN2);
+		objectLocation.put(GameObjects.RUG_, Location.SCAN3);
 		objectLocation.put(GameObjects.SPICES, Location.CHAMBER);
 		objectLocation.put(GameObjects.CHAIN, Location.BARR);
 	}
