@@ -132,6 +132,7 @@ public class HashMaps
 		movement.put("reser", Movement.RESERVOIR);
 		movement.put("fork", Movement.FORK);
 		
+		objects.put("all", GameObjects.ALL);
 		objects.put("key", GameObjects.KEYS);
 		objects.put("keys", GameObjects.KEYS);
 		objects.put("lamp", GameObjects.LAMP);
@@ -210,7 +211,6 @@ public class HashMaps
 		objects.put("spice", GameObjects.SPICES);
 		objects.put("chain", GameObjects.CHAIN);
 		
-		actions.put("look", ActionWords.LOOK);
 		actions.put("descr", ActionWords.LOOK);
 		actions.put("take", ActionWords.TAKE);
 		actions.put("carry", ActionWords.TAKE);

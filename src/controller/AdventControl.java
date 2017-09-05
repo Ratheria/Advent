@@ -523,8 +523,24 @@ public class AdventControl
 					
 				case TAKE:
 					output = new String("You can't be serious!");
-					
-					if(object == GameObjects.WATER)
+					if(object == GameObjects.ALL)
+					{
+						ArrayList<GameObjects> itemsHere = hash.objectsHere(currentLocation);
+						if(!(itemsHere == null))
+						{
+							output = "";
+							for(GameObjects item : itemsHere)
+							{
+								output = output + attemptAction(ActionWords.TAKE, item, "") + "\n"; 
+							}
+						}
+						else
+						{
+							output = "There is nothing to take.";
+							increaseTurns = false;
+						}
+					}
+					else if(object == GameObjects.WATER)
 					{
 						if(hash.objectIsHere(GameObjects.BOTTLE, Location.INHAND))
 						{
@@ -605,6 +621,11 @@ public class AdventControl
 							output = new String("The plant has exceptionally deep roots and cannot be pulled free.");
 							increaseTurns = false;
 						}
+						else if(object == GameObjects.BEAR && bear == 3)
+						{
+							//TODO taking a dead bear
+							increaseTurns = false;
+						}
 						else if(object == GameObjects.BEAR && chain == 0)
 						{
 							output = new String("The bear is still chained to the wall.");
@@ -612,7 +633,8 @@ public class AdventControl
 						}
 						else if(object == GameObjects.BEAR && chain != 0)
 						{
-							//TODO bear is following
+							bear = 2;
+							output = "The bear is now following you.";
 						}
 						else if(object == GameObjects.CHAIN && chain == 2)
 						{
@@ -691,13 +713,29 @@ public class AdventControl
 				break;
 					
 				case DROP:
-
 					output = new String("");
 					if(isInHand(GameObjects.ROD2) && object == GameObjects.ROD && !isInHand(GameObjects.ROD))
 					{
 						//TODO DYNAMITE
 					}
-					if(object == GameObjects.NOTHING)
+					if(object == GameObjects.ALL)
+					{
+						ArrayList<GameObjects> itemsHere = hash.objectsHere(Location.INHAND);
+						if(!(itemsHere == null))
+						{
+							output = "";
+							for(GameObjects item : itemsHere)
+							{
+								output = output + attemptAction(ActionWords.DROP, item, "") + "\n"; 
+							}
+						}
+						else
+						{
+							output = "You aren't carrying anything";
+							increaseTurns = false;
+						}
+					}
+					else if(object == GameObjects.NOTHING)
 					{
 						output = "What would you like to drop?";
 						quest = 4;
@@ -776,9 +814,14 @@ public class AdventControl
 					break;
 					
 				case OPEN:
-					if(object == GameObjects.GRATE || object == GameObjects.GRATE_)
+					if(object == GameObjects.GRATE)
 					{
-						if(!objectIsPresent(GameObjects.KEYS))
+						if(objectIsPresent(GameObjects.GRATE) || objectIsPresent(GameObjects.GRATE_))
+						{
+							output = new String("I don't see any grate");
+							increaseTurns = false;
+						}
+						else if(!objectIsPresent(GameObjects.KEYS))
 						{
 							output = new String("You don't have any keys!");
 							increaseTurns = false;
@@ -1430,6 +1473,10 @@ public class AdventControl
 					break;
 					
 				case SCORE:
+					output = "If you were to quit now, you would score " + getCurrentScore() + " out of a possible 350. \nDo you indeed wish to quit now?";
+					seriousQuestion = true;
+					quest = 2;
+					increaseTurns = false;
 					break;
 					
 				case QUIT:
@@ -1791,9 +1838,9 @@ public class AdventControl
 	
 	private int getCurrentScore()
 	{
-		//TODO finish normal and in building scores
 		int currentScore = (2 + (2 * (15 - tally)) + (deaths * 10));
 		ArrayList<GameObjects> buildingItems = hash.objectsHere(Location.BUILDING);
+		ArrayList<GameObjects> witItems = hash.objectsHere(Location.WITT);
 		
 		if(!(buildingItems == null))
 		{
@@ -1817,13 +1864,21 @@ public class AdventControl
 				}
 			}
 		}
-		
+		if(!(witItems == null))
+		{
+			for(GameObjects item : witItems)
+			{
+				if(item == GameObjects.MAG)
+				{
+					currentScore = currentScore + 1;
+				}
+			}
+		}
 		if(instructions){	currentScore = currentScore - 5;	}
 		if(enteredCave){	currentScore = currentScore + 25;	}
 		if(closed){	currentScore = currentScore + 25;	}
 		if(!quit){	currentScore = currentScore + 4;	}
 
-		//TODO point for witt's end
 		score = currentScore;
 		return currentScore;
 	}

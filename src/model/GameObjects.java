@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public enum GameObjects 
 {
 
-	NOTHING, KEYS, LAMP, GRATE, GRATE_, CAGE, ROD, ROD2,
+	NOTHING, ALL, KEYS, LAMP, GRATE, GRATE_, CAGE, ROD, ROD2,
 	TREADS, TREADS_, BIRD, DOOR, PILLOW, SNAKE, CRYSTAL, 
 	CRYSTAL_, TABLET, CLAM, OYSTER, MAG, DWARF, KNIFE, 
 	FOOD, BOTTLE, WATER, OIL, MIRROR, MIRROR_, PLANT,
@@ -260,7 +260,7 @@ public enum GameObjects
 				}
 				else
 				{
-					output = new String("\n\tThere is an enormous oyster here with its shell tightly closed.");
+					output = new String("\n\tThere is an enormous oyster here with its shell tightly closed. Interesting, there seems to be something written on the underside of the oyster.");
 				}
 				break;		
 				
