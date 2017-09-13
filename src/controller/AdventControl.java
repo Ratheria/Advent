@@ -1197,7 +1197,12 @@ public class AdventControl
 					break;
 					
 				case EAT:
-					if(object == GameObjects.FOOD)
+					if(object == GameObjects.NOTHING)
+					{
+						output = "What would you like to eat?";
+						increaseTurns = false;
+					}
+					else if(object == GameObjects.FOOD)
 					{
 						if(!objectIsPresent(GameObjects.FOOD))
 						{
@@ -1238,6 +1243,34 @@ public class AdventControl
 					break;
 					
 				case BREAK:
+					if(object == GameObjects.VASE)
+					{
+						if(isInHand(GameObjects.VASE))
+						{
+							output = "You have taken the vase and hurled it delicately to the ground.";
+							broken = true;
+							lostTreasures++;
+							dropObject(GameObjects.VASE);
+						}
+					}
+					else if(object == GameObjects.MIRROR)
+					{
+						if(closed)
+						{
+							output = "You strike the mirror a resounding blow, whereupon it shatters into a myriad tiny fragments.";
+							//TODO dwarfs upset
+						}
+						else if(objectIsHere(GameObjects.MIRROR) || objectIsHere(GameObjects.MIRROR_))
+						{
+							output = "It is too far up for you to reach.";
+							increaseTurns = false;
+						}
+						else
+						{
+							output = "You can not do that.";
+							increaseTurns = false;
+						}
+					}
 					break;
 					
 				case BLAST:
