@@ -120,18 +120,7 @@ public enum GameObjects
 				}
 				break;
 				
-			case GRATE:
-				if(grate)
-				{
-					output = new String("\n\tThe grate is open.");
-				}
-				else
-				{
-					output = new String("\n\tThe grate is locked.");	
-				}
-				break;
-				
-			case GRATE_:
+			case GRATE: case GRATE_:
 				if(grate)
 				{
 					output = new String("\n\tThe grate is open.");
@@ -341,23 +330,7 @@ public enum GameObjects
 				}
 				break;
 				
-			case PLANT2:
-				if(plant == 1)
-				{
-					output = new String("\n\tThe top of a 12-foot-tall beanstalk is poking up out of the west pit.");
-				}
-				else if(plant == 2)
-				{
-					output = new String("\n\tThere is a huge beanstalk growing out of the west pit up to the hole.");
-				}
-				else
-				{
-					output = "";
-				}
-				break;
-				
-				
-			case PLANT2_:
+			case PLANT2: case PLANT2_:
 				if(plant == 1)
 				{
 					output = new String("\n\tThe top of a 12-foot-tall beanstalk is poking up out of the west pit.");
@@ -392,18 +365,7 @@ public enum GameObjects
 				output = new String("\n\t");
 				break;
 				
-			case DRAGON:
-				if(dragon)
-				{
-					output = new String("\n\tA huge green fierce dragon bars the way!");
-				}
-				else
-				{
-					output = new String("\n\tThe body of a huge green dead dragon is lying off to one side.");
-				}
-				break;		
-				
-			case DRAGON_:
+			case DRAGON: case DRAGON_:
 				if(dragon)
 				{
 					output = new String("\n\tA huge green fierce dragon bars the way!");
@@ -642,21 +604,14 @@ public enum GameObjects
 				}
 				break;	
 				
-			case CRYSTAL:
-				if(crystalBridge)
-				{
-					output = new String("\n\tA crystal bridge now spans the fissure.");
-				}
-				break;	
-				
-			case CRYSTAL_:
+			case CRYSTAL: case CRYSTAL_:
 				if(crystalBridge)
 				{
 					output = new String("\n\tA crystal bridge now spans the fissure.");
 				}
 				break;		
 				
-			case BRIDGE:
+			case BRIDGE: case BRIDGE_:
 				if(!collapse)
 				{
 					output = new String("\n\tA rickety wooden bridge extends across the chasm, vanishing into the mist. \n\tA sign posted on the bridge reads: \n\t\t\"Stop!  Pay Troll!\"");
@@ -667,38 +622,15 @@ public enum GameObjects
 				}
 				break;	
 				
-			case BRIDGE_:
-				if(!collapse)
-				{
-					output = new String("\n\tA rickety wooden bridge extends across the chasm, vanishing into the mist. \n\tA sign posted on the bridge reads: \n\t\t\"Stop!  Pay Troll!\"");
-				}
-				else
-				{
-					output = new String("\n\tThe wreckage of a bridge (and a dead bear) can be seen at the bottom of the chasm.");
-				}
-				break;	
-				
-			case SHADOW:
+			case SHADOW: case SHADOW_:
 				output = new String("\n\tThe shadowy figure seems to be trying to attract your attention.");
 				break;	
 				
-			case SHADOW_:
-				output = new String("\n\tThe shadowy figure seems to be trying to attract your attention.");
-				break;	
-				
-			case TROLL_:
+			case TROLL_: case TROLL:
 				output = new String("\n\tA burly troll stands by the bridge and insists you throw him a treasure before you may cross.");
 				break;	
 				
-			case TROLL:
-				output = new String("\n\tThe troll steps out from beneath the bridge and blocks your way.");
-				break;
-				
-			case TROLL2_:
-				output = new String("\n\tThe troll is nowhere to be seen.");
-				break;	
-				
-			case TROLL2:
+			case TROLL2_: case TROLL2:
 				output = new String("\n\tThe troll is nowhere to be seen.");
 				break;
 				

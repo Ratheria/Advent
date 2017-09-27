@@ -102,7 +102,7 @@ public enum Location
 	
 	public Location moveTo(Movement destination, Location here, boolean grate,
 			boolean gold, boolean crystalBridge, boolean snake, boolean emerald, boolean clam, 
-			boolean oyster, int plant, boolean oilDoor, boolean dragon, boolean troll,
+			boolean oyster, int plant, boolean oilDoor, boolean dragon, int troll,
 			boolean trollHere, int itemsInHand)
 	{
 		Location next = null;
@@ -1390,18 +1390,23 @@ public enum Location
 // TODO Fix This!!!
 					case SOUTHWEST: next = SCORR; break;
 					case OVER: case ACROSS: case CROSS: case NORTHEAST:
-						if(troll)
+						if(troll < 3)
 						{
-							if(trollHere)
-							{	next = REMARK;	}
-							else
-							{	next = NESIDE;	}
+							next = REMARK;
 						}
 						else
-						{	next = REMARK;}
-						break;
+						{	
+							if(troll == 3)
+							{
+								next = REMARK;
+							}
+							else
+							{
+								next = NESIDE;
+							}
+						}
 					case JUMP:
-						if(!troll)
+						if(troll == 3)
 						{	next = LOSE;	}
 						else
 						{	next = REMARK;	}
@@ -1512,17 +1517,24 @@ public enum Location
 				switch(destination)
 				{
 					case NORTHEAST: next = CORR; break;
-					case UP: next = SWSIDE; break;
 					case OVER: case ACROSS: case CROSS: case SOUTHWEST:
-						if(troll)
+						if(troll < 3)
 						{
-							if(trollHere)
-							{	next = REMARK;	}
-							else
-							{	next = SWSIDE;	}
+							next = REMARK;
 						}
 						else
-						{	next = REMARK;	}
+						{	
+							if(troll == 3)
+							{
+								next = REMARK;
+							}
+							else
+							{
+								next = NESIDE;
+							}
+							
+							//TODO bear
+						}
 						break;
 					case JUMP: next = REMARK; break;
 					case FORK: next = FORK; break;

@@ -41,7 +41,6 @@ public class AdventControl
 	private boolean snake;
 	private boolean oilDoor;
 	private boolean dragon;
-	private boolean troll;
 	private boolean birdInCage;
 	private boolean bearAxe;
 	private boolean usedBatteries;
@@ -67,20 +66,16 @@ public class AdventControl
 	private int lostTreasures;
 	private int plant;
 	private int bottle;
+	private int troll;
+	//there, hidden, dead, can pass;
 	private int bear;
-	//default, fed + idle, fed + following, dead
+	//default, fed + idle, fed + following, dead, was following ide
 	private int chain;
 	//locked to bear, unlocked, locked
-	//	private String beforeTurnBeforeLast;
-	//	private String turnBeforeLast;
-	//	private String turnLast;
 	private int west;
 	
 	public AdventControl()
 	{
-		//		beforeTurnBeforeLast = "";
-		//		turnBeforeLast = "";
-		//		turnLast = "";
 		currentLocation = Location.ROAD;
 		previousLocation = null;
 		eldestLocation = null;
@@ -96,7 +91,6 @@ public class AdventControl
 		snake = true;
 		oilDoor = false;
 		dragon = true;
-		troll = true;
 		birdInCage = false;
 		bearAxe = false;
 		broken = false;
@@ -119,6 +113,7 @@ public class AdventControl
 		lostTreasures = 0;
 		plant = 0;
 		bottle = 1;
+		troll = 0;
 		bear = 0;
 		chain = 0;
 		west = 0;
@@ -697,7 +692,7 @@ public class AdventControl
 						}
 						else if(object == GameObjects.VASE && broken == true)
 						{
-							//TODO trying to take broken vase
+							output = "You can't be serious!";
 						}
 						else if(things.canTake(object) && objectIsHere(object))
 						{
@@ -741,6 +736,32 @@ public class AdventControl
 						quest = 4;
 						increaseTurns = false;
 					}
+					else if(object == GameObjects.BEAR)
+					{
+						if(bear == 2)
+						{
+							if(objectIsHere(GameObjects.TROLL)||objectIsHere(GameObjects.TROLL_))
+							{
+								voidObject(GameObjects.TROLL);
+								voidObject(GameObjects.TROLL_);
+								dropObject(GameObjects.TROLL2_);
+								hash.dropObject(GameObjects.TROLL2, Location.SWSIDE);
+								troll = 2;
+								output = "The bear lumbers toward the troll, who lets out a startled shriek and scurries away. The bear soon gives up pursuit and wanders back.";
+							}
+							else
+							{
+								bear = 4;
+								output = okay;
+								//TODO
+							}
+						}
+						else
+						{
+							output = "You are not carrying it.";
+						}
+						 
+					}
 					else if(isInHand(object))
 					{
 						if(object == GameObjects.CAGE && birdInCage)
@@ -782,14 +803,7 @@ public class AdventControl
 							lostTreasures++;
 							itemsInHand++;
 							dropObject(GameObjects.BATTERIES);
-							//TODO change batteries?
-						}
-						else if(object == GameObjects.BEAR)
-						{
-							//TODO if the troll is here make it leave
-							/**
-							 * "The bear lumbers toward the troll, who lets out a startled shriek and scurries away. The bear soon gives up pursuit and wanders back."
-							 */
+							//TODO offer to change batteries?
 						}
 						else if(object == GameObjects.VASE && !(objectIsHere(GameObjects.PILLOW) || currentLocation == Location.SOFT))
 						{
@@ -1100,6 +1114,7 @@ public class AdventControl
 					break;
 					
 				case CALM:
+					//TODO
 					break;
 					
 				case GO:
@@ -1110,6 +1125,7 @@ public class AdventControl
 					break;
 					
 				case RELAX:
+					//TODO
 					break;
 					
 				case POUR:
@@ -1221,6 +1237,7 @@ public class AdventControl
 					break;
 					
 				case DRINK:
+					//TODO
 					break;
 					
 				case RUB:
@@ -1231,6 +1248,7 @@ public class AdventControl
 					break;
 					
 				case TOSS:
+					
 					break;
 					
 				case WAKE:
@@ -1689,9 +1707,29 @@ public class AdventControl
 					else if(currentLocation.equals(Location.SWSIDE) && destination != Movement.JUMP)
 					{
 						increaseTurns = false;
-						if(troll)
+						if(troll == 0)
 						{
 							output = "The troll refuses to let you cross.";
+						}
+						else if(troll == 1)
+						{
+							output = "\n\tThe troll steps out from beneath the bridge and blocks your way.";
+						}
+						else
+						{
+							output = "There is no longer any way across the chasm.";
+						}
+					}
+					else if(currentLocation.equals(Location.NESIDE) && destination != Movement.JUMP)
+					{
+						increaseTurns = false;
+						if(troll == 0)
+						{
+							output = "The troll refuses to let you cross.";
+						}
+						else if(troll == 1)
+						{
+							output = "\n\tThe troll steps out from beneath the bridge and blocks your way.";
 						}
 						else
 						{
@@ -1759,6 +1797,7 @@ public class AdventControl
 				else
 				{
 					setLocation(locationResult);
+					
 					if(!canISee(currentLocation))
 					{
 						//TODO death
@@ -1783,11 +1822,12 @@ public class AdventControl
 								output = new String(output + "\n\nA hollow voice says \"PLUGH\"");
 							}
 						}
-						if(bear == 2)
-						{
-							output = output + "You are being followed by a very large, tame bear.";
-						}
 					}
+				}
+				
+				if(bear == 2)
+				{
+					output = output + "You are being followed by a very large, tame bear.";
 				}
 			}
 //			catch(ClassCastException e)
