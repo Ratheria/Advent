@@ -32,6 +32,7 @@ public class AdventControl
 	private Location previousLocation;
 	private Location eldestLocation;
 	private String okay;
+	private String dontHave;
 	private boolean dead;
 	private boolean beginning;
 	private boolean closed;
@@ -82,6 +83,7 @@ public class AdventControl
 		actions = ActionWords.NOTHING;
 		things = GameObjects.NOTHING;
 		okay = new String("Okay.");
+		dontHave = new String("You are not carrying it!");
 		dead = false;
 		beginning = true;
 		closed = false;
@@ -726,7 +728,7 @@ public class AdventControl
 						}
 						else
 						{
-							output = "You aren't carrying anything";
+							output = "You aren't carrying anything.";
 							increaseTurns = false;
 						}
 					}
@@ -758,7 +760,7 @@ public class AdventControl
 						}
 						else
 						{
-							output = "You are not carrying it.";
+							output = dontHave;
 						}
 						 
 					}
@@ -821,7 +823,7 @@ public class AdventControl
 					}
 					else
 					{
-						output = new String("You aren't carrying it!");
+						output = dontHave;
 						increaseTurns = false;
 					}
 					
@@ -1077,7 +1079,7 @@ public class AdventControl
 					}
 					else if (!isInHand(object) && (object != GameObjects.ROD || !isInHand(GameObjects.ROD2)))
 					 {
-						output = new String("You aren't carrying it!");
+						output = dontHave;
 						increaseTurns = false;
 					 }
 					 else if(object != GameObjects.ROD || closed)
@@ -1248,10 +1250,59 @@ public class AdventControl
 					break;
 					
 				case TOSS:
-					
+					if(object == GameObjects.ROD && isInHand(GameObjects.ROD2) && !(isInHand(GameObjects.ROD)))
+					{
+						//TODO dynamite
+					}
+					else if(!(isInHand(object)))
+					{
+						output = dontHave;
+						increaseTurns = false;
+					}
+					else if((objectIsHere(GameObjects.TROLL_) || objectIsHere(GameObjects.TROLL)) && things.isTreasure(object))
+					{
+						voidObject(object);
+						voidObject(GameObjects.TROLL);
+						voidObject(GameObjects.TROLL_);
+						hash.dropObject(GameObjects.TROLL2, Location.SWSIDE);
+						hash.dropObject(GameObjects.TROLL2_, Location.NESIDE);
+						troll = 3;
+						output = "The troll catches your treasure and scurries away out of sight.";
+					}
+					else if(object == GameObjects.FOOD && objectIsHere(GameObjects.BEAR))
+					{
+						attemptAction(ActionWords.FEED, object, "");
+					}
+					else if(!(object == GameObjects.AXE))
+					{
+						attemptAction(ActionWords.DROP, object, alt);
+					}
+					else if(objectIsHere(GameObjects.DWARF))
+					{
+						//TODO attack dwarf
+					}
+					else if((objectIsHere(GameObjects.DRAGON_) || objectIsHere(GameObjects.DRAGON)) && dragon)
+					{
+						output = "The axe bounces harmlessly off the dragon's thick scales.";
+					}
+					else if((objectIsHere(GameObjects.TROLL_) || objectIsHere(GameObjects.TROLL)))
+					{
+						output = "The troll deftly catches the axe, examines it carefully, and tosses it back, declaring, \"Good workmanship, but it's not valuable enough.\"";
+					}
+					else if(objectIsHere(GameObjects.BEAR) && bear == 0)
+					{
+						bearAxe = true;
+						dropObject(GameObjects.AXE);
+						output = "The axe misses and lands near the bear where you can't get at it.";
+					}
+					else
+					{
+						attemptAction(ActionWords.DROP, object, alt);
+					}
 					break;
 					
 				case WAKE:
+					//TODO
 					break;
 					
 				case FEED:
@@ -1292,6 +1343,7 @@ public class AdventControl
 					break;
 					
 				case BLAST:
+					//TODO
 					break;
 					
 				case KILL:
@@ -1466,30 +1518,30 @@ public class AdventControl
 					break;
 					
 				case BRIEF:
-//					if(brief == 0)
-//					{
+					if(brief == 0)
+					{
 						brief = 1;
 						output = "Okay, from now on I'll only describe a place in full the first time you come to it. To get the full description, say \"LOOK\".";
-/*					}
+					}
 					else
 					{
 						brief = 0;
 						output = "Okay, I'll return to giving descriptions in the original fashion.";
 					}
-*/					break;
+					break;
 					
 				case VERBOSE:
-//					if(brief == 0)
-//					{
+					if(brief == 0)
+					{
 						brief = 2;
 						output = "Okay, from now on I'll describe a place in full every time you come to it.";
-/*					}
+					}
 					else
 					{
 						brief = 0;
 						output = "Okay, I'll return to giving descriptions in the original fashion.";
 					}
-*/					break;
+					break;
 					
 				case FIND:
 					if(isInHand(object))
@@ -1583,7 +1635,7 @@ public class AdventControl
 				Movement destination = hash.whichMovement(input);
 				Location locationResult = currentLocation.moveTo(destination, currentLocation, grateUnlocked,
 						haveGold, crystalBridge, snake, haveEmerald, haveClam, haveOyster, plant, oilDoor,
-						dragon, troll, trollIsHere, itemsInHand);
+						dragon, troll, trollIsHere, itemsInHand, collapse, bear);
 				if(closed && (locationResult.compareTo(Location.THEVOID) < 10))
 				{
 					output = "A mysterious recorded voice groans into life and announces: \n\t\"This exit is closed. Please leave via main office.\"";
@@ -1704,7 +1756,7 @@ public class AdventControl
 						output = "You can't go through a locked steel grate!";
 						increaseTurns = false;
 					}
-					else if(currentLocation.equals(Location.SWSIDE) && destination != Movement.JUMP)
+					else if((currentLocation.equals(Location.SWSIDE) || currentLocation.equals(Location.NESIDE)) && destination != Movement.JUMP)
 					{
 						increaseTurns = false;
 						if(troll == 0)
@@ -1714,22 +1766,11 @@ public class AdventControl
 						else if(troll == 1)
 						{
 							output = "\n\tThe troll steps out from beneath the bridge and blocks your way.";
-						}
-						else
-						{
-							output = "There is no longer any way across the chasm.";
-						}
-					}
-					else if(currentLocation.equals(Location.NESIDE) && destination != Movement.JUMP)
-					{
-						increaseTurns = false;
-						if(troll == 0)
-						{
-							output = "The troll refuses to let you cross.";
-						}
-						else if(troll == 1)
-						{
-							output = "\n\tThe troll steps out from beneath the bridge and blocks your way.";
+							troll = 0;
+							voidObject(GameObjects.TROLL2);
+							voidObject(GameObjects.TROLL2_);
+							hash.dropObject(GameObjects.TROLL, Location.SWSIDE);
+							hash.dropObject(GameObjects.TROLL_, Location.NESIDE);
 						}
 						else
 						{
@@ -1745,7 +1786,7 @@ public class AdventControl
 						}
 						else
 						{
-							output = "There is no way to cross the fissure";
+							output = "There is no way to cross the fissure.";
 						}
 					}
 					else if(currentLocation.equals(Location.HALLOFMOUNTAINKING))
@@ -2118,6 +2159,17 @@ public class AdventControl
 	public int getScore()
 	{
 		return score;
+	}
+	
+	public void collapse()
+	{
+		collapse = true;
+		bear = 3;
+	}
+	
+	public void crossBridge()
+	{
+		troll = 1;
 	}
 }
 
