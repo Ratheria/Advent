@@ -1858,14 +1858,6 @@ public class AdventControl
 		currentLocation = newLocation;
 	}
 
-	//	private String orderLog(String log)
-	//	{
-	//		this.beforeTurnBeforeLast = turnBeforeLast;
-	//		this.turnBeforeLast = turnLast;
-	//		this.turnLast = log;
-	//		return null;
-	//	}
-
 	private String getDescription(Location here, int brief)
 	{
 		String output = hash.getDescription(here, brief);

@@ -1077,7 +1077,9 @@ public class HashMaps
 	public String getDescription(Location here, int breif)
 	{
 		String description = null;
-		int visit = visits.get(here);
+		int visit = 0;
+		try{	visit = visits.get(here);	}
+		catch(NullPointerException e){}
 		if((longDescription.containsKey(here)) && ((breif == 0 && visit % 5 == 0) || (breif == 2) || (visits.get(here) == 0)))
 		{
 			description = longDescription.get(here);
