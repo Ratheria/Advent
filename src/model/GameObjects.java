@@ -66,7 +66,7 @@ public enum GameObjects
 	public boolean isLesserTreasure(GameObjects thisThing)
 	{
 		boolean treasure = false;
-		if(isTreasure(thisThing) && thisThing.ordinal() < GameObjects.CHEST.ordinal())
+		if(thisThing.ordinal() < GameObjects.CHEST.ordinal())
 		{
 			treasure = true;
 		}

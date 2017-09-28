@@ -50,12 +50,12 @@ public class AdventControl
 	private boolean collapse;
 	private boolean wayIsBlocked;
 	private boolean seriousQuestion;
-	
-	private boolean instructions;
-	private boolean enteredCave;
-	private boolean quit;
-	
 	private boolean increaseTurns;
+	
+	private boolean wellInCave;
+	private boolean quit;
+	private int hintDeduction;
+	
 	private int quest;
 	private int brief;
 	private int score;
@@ -100,10 +100,10 @@ public class AdventControl
 		collapse = false;
 		wayIsBlocked = false;
 		seriousQuestion = false;
-		instructions = false;
-		enteredCave = false;
-		quit = false;
 		increaseTurns = false;
+		wellInCave = false;
+		quit = false;
+		hintDeduction = 0;
 		quest = 0;
 		brief = 0;
 		score = 36;
@@ -139,7 +139,7 @@ public class AdventControl
 			//TODO your answer changes your score and lamp value
 			if(answer == 1)
 			{
-				instructions = true;
+				hintDeduction = 5;
 				output = "\tSomewhere nearby is Colossal Cave, where others have found great fortunes in "
 						+ "treasure and gold, though it is rumored that some who enter are never seen "
 						+ "again. Magic is said to work in the cave. I will be your eyes and hands. "
@@ -204,6 +204,10 @@ public class AdventControl
 			output = attemptAction(ActionWords.CLOSE, hash.whichObject(input), input);
 			quest = 0;
 			//TODO finish this venture (and all the rest)
+		}
+		else if(quest == 7)
+		{
+			//TODO hint
 		}
 		else
 		{
@@ -271,12 +275,9 @@ public class AdventControl
 			}
 			light = false;
 		}
-		if(!enteredCave)
+		if(!wellInCave)
 		{
-			if(!(currentLocation.outsideCave(currentLocation)))
-			{
-				enteredCave = true;
-			}
+			//TODO
 		}
 		if(input.equalsIgnoreCase("west"))
 		{
@@ -387,11 +388,11 @@ public class AdventControl
 			}
 			light = false;
 		}
-		if(!enteredCave)
+		if(!wellInCave)
 		{
 			if(!(currentLocation.outsideCave(currentLocation)))
 			{
-				enteredCave = true;
+				wellInCave = true;
 			}
 		}
 		if(input1.equalsIgnoreCase("west")||input2.equalsIgnoreCase("west"))
@@ -426,6 +427,12 @@ public class AdventControl
 		//wit - wit's end
 		//dark - alcove + plover - 5 points - 
 		//
+		return output;
+	}
+	
+	private String hintMessage(int cost)
+	{
+		String output = "\n\nI am prepared to give you a hind, but it will cost you " + cost + " points.";
 		return output;
 	}
 	
@@ -512,10 +519,6 @@ public class AdventControl
 						output = "Okay.";
 					}*/
 					output = "Okay.";
-					break;
-					
-				case LOOK:
-					
 					break;
 					
 				case TAKE:
@@ -671,7 +674,6 @@ public class AdventControl
 									itemsInHand--;
 									output = okay;
 								}
-								
 							}
 						}
 						else if(object == GameObjects.RUG)
@@ -762,7 +764,6 @@ public class AdventControl
 						{
 							output = dontHave;
 						}
-						 
 					}
 					else if(isInHand(object))
 					{
@@ -818,15 +819,13 @@ public class AdventControl
 						{
 							dropObject(object);
 							output = okay;
-						}
-						
+						}	
 					}
 					else
 					{
 						output = dontHave;
 						increaseTurns = false;
 					}
-					
 					break;
 					
 				case OPEN:
@@ -1115,19 +1114,11 @@ public class AdventControl
 					 }
 					break;
 					
-				case CALM:
-					//TODO
-					break;
-					
 				case GO:
 					if(alt.equals(""))
 					{	output = new String("Where?");	increaseTurns = false;	}
 					else
 					{	output = attemptMovement(alt);	}
-					break;
-					
-				case RELAX:
-					//TODO
 					break;
 					
 				case POUR:
@@ -1210,8 +1201,7 @@ public class AdventControl
 							output = new String("Your bottle is empty and the ground is wet.");
 						}
 						bottle = 0;
-					}
-						
+					}	
 					break;
 					
 				case EAT:
@@ -1237,11 +1227,7 @@ public class AdventControl
 						output = "I think I just lost my appetite.";
 					}
 					break;
-					
-				case DRINK:
-					//TODO
-					break;
-					
+
 				case RUB:
 					if(object == GameObjects.LAMP)
 					{	output = new String("Rubbing the electric lamp is not particularly rewarding. Anyway, nothing exciting happens.");	}
@@ -1279,7 +1265,7 @@ public class AdventControl
 					}
 					else if(objectIsHere(GameObjects.DWARF))
 					{
-						//TODO attack dwarf
+						//TODO battle dwarf
 					}
 					else if((objectIsHere(GameObjects.DRAGON_) || objectIsHere(GameObjects.DRAGON)) && dragon)
 					{
@@ -1300,17 +1286,7 @@ public class AdventControl
 						attemptAction(ActionWords.DROP, object, alt);
 					}
 					break;
-					
-				case WAKE:
-					//TODO
-					break;
-					
-				case FEED:
-					break;
-					
-				case FILL:
-					break;
-					
+
 				case BREAK:
 					if(object == GameObjects.VASE)
 					{
@@ -1336,18 +1312,26 @@ public class AdventControl
 						}
 						else
 						{
-							output = "You can not do that.";
+							output = "It is beyond your power to do that.";
 							increaseTurns = false;
 						}
 					}
 					break;
-					
-				case BLAST:
-					//TODO
-					break;
-					
+
 				case KILL:
-					if(object == GameObjects.BIRD)
+					if(object == GameObjects.BIRD && closed)
+					{
+						if(objectIsHere(GameObjects.BIRD))
+						{
+							output = new String("Oh, leave the poor unhappy bird alone.");
+						}
+						else
+						{
+							output = new String("I don't see any bird.");
+						}
+						increaseTurns = false;
+					}
+					else if(object == GameObjects.BIRD)
 					{
 						if(objectIsHere(GameObjects.BIRD))
 						{
@@ -1359,12 +1343,7 @@ public class AdventControl
 							output = new String("I don't see any bird.");
 							increaseTurns = false;
 						}
-					}
-					else if(object == GameObjects.BIRD && closed)
-					{
-						output = new String("Oh, leave the poor unhappy bird alone.");
-						increaseTurns = false;
-					}
+					} 
 					else if(object == GameObjects.CLAM || object == GameObjects.OYSTER)
 					{
 						if(objectIsPresent(object))
@@ -1408,9 +1387,16 @@ public class AdventControl
 						}
 						increaseTurns = false;
 					}
-					else if(object == GameObjects.TROLL && (objectIsHere(GameObjects.TROLL)|| objectIsHere(GameObjects.TROLL2)))
+					else if(object == GameObjects.TROLL)
 					{
-						output = new String("Trolls are close relatives with the rocks and have skin as tough as that of a rhinoceros. The troll fends off your blows effortlessly.");
+						if(objectIsHere(GameObjects.TROLL)|| objectIsHere(GameObjects.TROLL_))
+						{
+							output = new String("Trolls are close relatives with the rocks and have skin as tough as that of a rhinoceros. The troll fends off your blows effortlessly.");
+						}
+						else
+						{
+							output = new String("I don't see any troll.");
+						}
 						increaseTurns = false;
 					}
 					else if(object == GameObjects.BEAR)
@@ -1465,12 +1451,31 @@ public class AdventControl
 						if(!objectIsPresent(object) && !(object == GameObjects.NOTHING))
 						{
 							output = new String("I don't see any " + alt + ".");
+							increaseTurns = false;
 						}
 						else
 						{
-							output = new String("There is nothing here to attack.");
+							if(objectIsHere(GameObjects.DWARF))
+							{
+								attemptAction(ActionWords.TOSS, GameObjects.AXE, "");
+							}
+							else if(objectIsHere(GameObjects.SNAKE))
+							{
+								attemptAction(ActionWords.KILL, GameObjects.SNAKE, "");
+							}
+							else if(objectIsHere(GameObjects.TROLL) || objectIsHere(GameObjects.TROLL_))
+							{
+								attemptAction(ActionWords.KILL, GameObjects.TROLL, "");
+							}
+							else if(objectIsHere(GameObjects.BEAR))
+							{
+								attemptAction(ActionWords.KILL, GameObjects.BEAR, "");
+							}
+							else if(objectIsHere(GameObjects.BIRD))
+							{
+								attemptAction(ActionWords.KILL, GameObjects.BIRD, "");
+							}
 						}
-						increaseTurns = false;
 					}
 					break;
 					
@@ -1512,9 +1517,6 @@ public class AdventControl
 					{
 						
 					}
-					break;
-					
-				case FEEFIE:
 					break;
 					
 				case BRIEF:
@@ -1587,6 +1589,96 @@ public class AdventControl
 					seriousQuestion = true;
 					quest = 2;
 					increaseTurns = false;
+					break;
+					
+				case FEED:
+					output = "There is nothing here it wants to eat (except perhaps you).";
+					if(object == GameObjects.TROLL && (objectIsHere(GameObjects.TROLL) || objectIsHere(GameObjects.TROLL_)))
+					{
+						output = "Gluttony is not one of the troll's vices. Avarice, however, is.";
+					}
+					else if(object == GameObjects.DRAGON && (objectIsHere(GameObjects.DRAGON) || objectIsHere(GameObjects.DRAGON_)))
+					{
+						if(!dragon)
+						{
+							output = "Don't be ridiculous!";
+						}
+					}
+					else if(objectIsHere(object))
+					{
+						if(object == GameObjects.BIRD)
+						{
+							output = "It's not hungry (it's merely pinin' for the fjords). Besides, you have no bird seed.";
+						}
+						else if(object == GameObjects.SNAKE)
+						{
+							if(!closed && objectIsPresent(GameObjects.BIRD))
+							{
+								voidObject(GameObjects.BIRD);
+								output = "The snake has now devoured your bird.";
+							}
+						}
+						else if(object == GameObjects.BEAR)
+						{
+							output = "There is nothing here to eat.";
+							if(isInHand(GameObjects.FOOD))
+							{
+								voidObject(GameObjects.FOOD);
+								bear = 1;
+								bearAxe = false;
+								output = "The bear eagerly wolfs down your food, after which he seems to calm down considerably and even becomes rather friendly.";
+							}
+						}
+						else if(object == GameObjects.DWARF)
+						{
+							output = "There is nothing here to eat.";
+							if(isInHand(GameObjects.FOOD))
+							{
+								//TODO dflag ?
+								output = "You fool, dwarves eat only coal! Now you've made him REALLY mad!";
+							}
+						}
+						else
+						{
+							output = "I'm game. Would you care to explain how?";
+						}
+					}
+					else
+					{
+						if(object == GameObjects.NOTHING)
+						{
+							//TODO quest
+						}
+						else
+						{
+							output = "I don't see any " + alt + ".";
+							increaseTurns = false;
+						}
+					}
+					break;
+					
+				case LOOK:
+					break;
+					
+				case CALM:
+					break;
+					
+				case RELAX:
+					break;
+					
+				case DRINK:
+					break;
+					
+				case WAKE:
+					break;
+					
+				case FILL:
+					break;
+					
+				case BLAST:
+					break;
+					
+				case FEEFIE:
 					break;
 					
 				default:
@@ -1956,16 +2048,16 @@ public class AdventControl
 				{
 					if(things.isLesserTreasure(item))
 					{
-						currentScore = currentScore + 12;
+						currentScore = currentScore + 10;
 					}
 					else if(item == GameObjects.VASE && broken){	}
 					else if(item == GameObjects.CHEST)
 					{
-						currentScore = currentScore + 14;
+						currentScore = currentScore + 12;
 					}
 					else
 					{
-						currentScore = currentScore + 16;
+						currentScore = currentScore + 14;
 					}
 				}
 			}
@@ -1980,10 +2072,11 @@ public class AdventControl
 				}
 			}
 		}
-		if(instructions){	currentScore = currentScore - 5;	}
-		if(enteredCave){	currentScore = currentScore + 25;	}
+		//end  if(!instructions){	currentScore = currentScore + 5;	}
+		if(wellInCave){	currentScore = currentScore + 25;	}
 		if(closed){	currentScore = currentScore + 25;	}
 		if(!quit){	currentScore = currentScore + 4;	}
+		//45 points at the end
 
 		score = currentScore;
 		return currentScore;
