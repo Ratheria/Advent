@@ -1142,6 +1142,11 @@ public class AdventControl
 						output = new String("You can't pour that.");
 						increaseTurns = false;
 					}
+					else if(!isInHand(GameObjects.BOTTLE))
+					{
+						output = "You have nothing to pour.";
+						increaseTurns = false;
+					}
 					else if(object == GameObjects.WATER && bottle == 1)
 					{
 						if(currentLocation == Location.WESTPIT)
@@ -1503,19 +1508,22 @@ public class AdventControl
 					}
 					else if(objectIsPresent(GameObjects.MAG))
 					{
-						//TODO reading all these things
+						output = "I'm afraid the magazine is written in dwarvish.";
+						increaseTurns = false;
 					}
 					else if(objectIsPresent(GameObjects.TABLET))
 					{
-						
+						output = "'CONGRATULATIONS ON BRINGING LIGHT INTO THE DARK ROOM!'";
 					}
 					else if(objectIsPresent(GameObjects.MESSAGE))
 					{
-						
+						output = "'This is not the maze where the pirate hides his treasure chest.'";
 					}
 					else if(objectIsPresent(GameObjects.OYSTER))
 					{
-						
+						//TODO oyster hint
+						//if read output = "It says the same thing it did before."; increaseTurns = false;
+						//else trigger oyster hint.
 					}
 					break;
 					
@@ -1657,21 +1665,31 @@ public class AdventControl
 					}
 					break;
 					
-				case LOOK:
+				case WAKE:
+					if(closed && object == GameObjects.DWARF)
+					{
+						//TODO dwarfs upset
+						//output = "You wake the nearest dwarf, who wakes up grumpily, takes one look at you, curses, and grabs for his axe.";
+					}
+					else
+					{
+						output = "You can't be serious!";
+						increaseTurns = false;
+					}
 					break;
 					
+				case DRINK:
+					break;
+
+				case LOOK:
+					break;
+					h
 				case CALM:
 					break;
 					
 				case RELAX:
 					break;
-					
-				case DRINK:
-					break;
-					
-				case WAKE:
-					break;
-					
+
 				case FILL:
 					break;
 					
