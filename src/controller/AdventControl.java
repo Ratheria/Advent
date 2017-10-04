@@ -1679,18 +1679,35 @@ public class AdventControl
 					break;
 					
 				case DRINK:
+					boolean waterIsHere = currentLocation.isWaterHere(currentLocation);
+					output = "You have nothing to drink.";
+					if(waterIsHere && !(isInHand(GameObjects.BOTTLE) && bottle == 1))
+					{
+						output = "You have taken a drink from the stream. The water tastes strongly of minerals, but is not unpleasant. It is extremely cold.";
+					}
+					else if(isInHand(GameObjects.BOTTLE) && bottle == 1)
+					{
+							bottle = 0;
+							output = "The bottle of water is now empty.";
+					}
+					else if(!(object == GameObjects.WATER || object == GameObjects.NOTHING))
+					{
+						output = "You can't be serious!";
+						increaseTurns = false;
+					}
 					break;
 
 				case LOOK:
-					break;
-					h
-				case CALM:
+					output = "Sorry, but I am not allowed to give more detail. I will repeat the long description of your location.\n\n" + hash.getDescription(currentLocation, 2);
 					break;
 					
-				case RELAX:
+				case CALM:
+					output = "I'm game. Would you care to explain how?";
 					break;
 
 				case FILL:
+					//65
+					j
 					break;
 					
 				case BLAST:

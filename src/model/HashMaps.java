@@ -1095,7 +1095,7 @@ public class HashMaps
 	
 	public String getLongDescription(Location here)
 	{
-		String description = "Sorry, but I am not allowed to go into more detail. I will repeat the long description of your location.\n\n";
+		String description = "";
 		if(longDescription.containsKey(here))
 		{
 			description = longDescription.get(here);
