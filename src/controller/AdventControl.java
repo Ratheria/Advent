@@ -31,8 +31,10 @@ public class AdventControl
 	private Location currentLocation;
 	private Location previousLocation;
 	private Location eldestLocation;
+	private String[] feeFieFoe;
 	private String okay;
 	private String dontHave;
+	private String nothing;
 	private boolean dead;
 	private boolean beginning;
 	private boolean closed;
@@ -67,13 +69,14 @@ public class AdventControl
 	private int lostTreasures;
 	private int plant;
 	private int bottle;
-	private int troll;
+	public int troll;
 	//there, hidden, dead, can pass;
 	private int bear;
 	//default, fed + idle, fed + following, dead, was following ide
 	private int chain;
 	//locked to bear, unlocked, locked
 	private int west;
+	private int foo;
 	
 	public AdventControl()
 	{
@@ -82,8 +85,10 @@ public class AdventControl
 		eldestLocation = null;
 		actions = ActionWords.NOTHING;
 		things = GameObjects.NOTHING;
+		feeFieFoe = new String[]{"fee", "fie", "foe", "foo", "fum"};
 		okay = new String("Okay.");
 		dontHave = new String("You are not carrying it!");
+		nothing = new String("Nothing happens.");
 		dead = false;
 		beginning = true;
 		closed = false;
@@ -119,6 +124,7 @@ public class AdventControl
 		bear = 0;
 		chain = 0;
 		west = 0;
+		foo = 0;
 		currentLocation.setUp(this);
 		things.setUp();
 	}
@@ -129,10 +135,16 @@ public class AdventControl
 		increaseTurns = true;
 		int answer = askYesNo(input);
 		boolean thisIsAnObject = hash.isObject(input);
+		boolean thisIsAnAction = hash.isAction(input);
 		GameObjects itsAn = null;
+		ActionWords action = null;
 		if(thisIsAnObject)
 		{
 			itsAn = (hash.whichObject(input));
+		}
+		if(thisIsAnAction)
+		{
+			action = (hash.whichAction(input));
 		}
 		if(beginning)
 		{
@@ -205,7 +217,11 @@ public class AdventControl
 			quest = 0;
 			//TODO finish this venture (and all the rest)
 		}
-		else if(quest == 7)
+		else if(quest == 7 && thisIsAnAction && action == ActionWords.FEEFIE)
+		{
+			output = attemptAction(action, GameObjects.NOTHING, input);
+		}
+		else if(quest == 8)
 		{
 			//TODO hint
 		}
@@ -214,6 +230,7 @@ public class AdventControl
 			if(quest != 0)
 			{
 				quest = 0;
+				foo = 0;
 			}
 			if(input.length() > 5)
 			{
@@ -303,6 +320,7 @@ public class AdventControl
 		if(!seriousQuestion && quest != 0)
 		{
 			quest = 0;
+			foo = 0;
 		}
 		if(beginning||seriousQuestion)
 		{
@@ -351,6 +369,13 @@ public class AdventControl
 			else if(hash.isMovement(input22))
 			{
 				output = attemptMovement(input22);
+			}
+			else if(hash.isObject(input12) && hash.isObject(input22) && (hash.whichObject(input12) == GameObjects.WATER && hash.whichObject(input22) == GameObjects.PLANT || hash.whichObject(input22) == GameObjects.WATER && hash.whichObject(input12) == GameObjects.PLANT))
+			{
+				output = attemptAction(ActionWords.POUR, GameObjects.WATER, "");
+			}else if(hash.isObject(input12) && hash.isObject(input22) && (hash.whichObject(input12) == GameObjects.OIL && hash.whichObject(input22) == GameObjects.DOOR || hash.whichObject(input22) == GameObjects.OIL && hash.whichObject(input12) == GameObjects.DOOR))
+			{
+				output = attemptAction(ActionWords.POUR, GameObjects.OIL, "");
 			}
 			else if(hash.isObject(input12) && objectIsPresent(hash.whichObject(input12)) && hash.whichObject(input12) == GameObjects.KNIFE)
 			{
@@ -514,10 +539,6 @@ public class AdventControl
 			switch(verb)
 			{
 				case ABSTAIN:
-					/*if(other == GameObjects.NOTHING)
-					{
-						output = "Okay.";
-					}*/
 					output = "Okay.";
 					break;
 					
@@ -546,7 +567,7 @@ public class AdventControl
 						{
 							if(bottle == 0)
 							{
-								if(currentLocation == Location.ROAD || currentLocation == Location.BUILDING || currentLocation == Location.VALLEY || currentLocation == Location.SLIT || currentLocation == Location.WET || currentLocation == Location.FALLS || currentLocation == Location.RESER)
+								if(currentLocation.isWaterHere(currentLocation))
 								{
 									output = new String("You fill the bottle with water.");
 									bottle = 1;
@@ -562,6 +583,10 @@ public class AdventControl
 								output = new String("Your bottle is already full.");
 								increaseTurns = false;
 							}
+						}
+						else if(objectIsHere(GameObjects.BOTTLE) && bottle == 1)
+						{
+							output = attemptAction(verb, GameObjects.BOTTLE, alt);
 						}
 						else
 						{
@@ -591,6 +616,10 @@ public class AdventControl
 								output = new String("Your bottle is already full.");
 								increaseTurns = false;
 							}
+						}
+						else if(objectIsHere(GameObjects.BOTTLE) && bottle == 2)
+						{
+							output = attemptAction(verb, GameObjects.BOTTLE, alt);
 						}
 						else
 						{
@@ -757,7 +786,6 @@ public class AdventControl
 							{
 								bear = 4;
 								output = okay;
-								//TODO
 							}
 						}
 						else
@@ -1262,11 +1290,11 @@ public class AdventControl
 					}
 					else if(object == GameObjects.FOOD && objectIsHere(GameObjects.BEAR))
 					{
-						attemptAction(ActionWords.FEED, object, "");
+						output = attemptAction(ActionWords.FEED, object, "");
 					}
 					else if(!(object == GameObjects.AXE))
 					{
-						attemptAction(ActionWords.DROP, object, alt);
+						output = attemptAction(ActionWords.DROP, object, alt);
 					}
 					else if(objectIsHere(GameObjects.DWARF))
 					{
@@ -1288,7 +1316,7 @@ public class AdventControl
 					}
 					else
 					{
-						attemptAction(ActionWords.DROP, object, alt);
+						output = attemptAction(ActionWords.DROP, object, alt);
 					}
 					break;
 
@@ -1706,14 +1734,112 @@ public class AdventControl
 					break;
 
 				case FILL:
-					//65
-					j
+					boolean liquidHere = (currentLocation.isWaterHere(currentLocation) || currentLocation == Location.EASTPIT);
+					if(object == GameObjects.VASE)
+					{
+						if(!liquidHere)
+						{
+							output = "There is nothing here with which to fill the vase.";
+							increaseTurns = false;
+						}
+						else if(!isInHand(GameObjects.VASE))
+						{
+							output = "You aren't carrying it!";
+							increaseTurns = false;
+						}
+						else
+						{
+							broken = true;
+							hash.dropObject(GameObjects.VASE, currentLocation);
+							output = "The sudden change in temperature has delicately shattered the vase.";
+							lostTreasures ++;
+						}
+					}
+					else if(!(object == GameObjects.NOTHING || object == GameObjects.BOTTLE))
+					{
+						output = "You can not fill that.";
+						increaseTurns = false;
+					}
+					else if(!isInHand(GameObjects.BOTTLE))
+					{
+						increaseTurns = false;
+						if(object == GameObjects.NOTHING)
+						{
+							output = "You have nothing to fill.";
+						}
+						else
+						{
+							output = "You are not carrying it!";
+						}
+					}
+					else if(bottle != 0)
+					{
+						output = "Your bottle is already full.";
+						increaseTurns = false;
+					}
+					else if(!liquidHere)
+					{
+						output = "You have nothing with which to fill the bottle.";
+						increaseTurns = false;
+					}
+					else if(currentLocation == Location.EASTPIT)
+					{
+						output = new String("You fill the bottle with oil.");
+						bottle = 2;
+					}
+					else
+					{
+						output = new String("You fill the bottle with water.");
+						bottle = 1;
+					}
 					break;
 					
 				case BLAST:
+					if(!closed)
+					{
+						output = "Blasting requires dynamite.";
+					}
+					else
+					{
+						//62
+						//TODO endgame
+					}
 					break;
 					
 				case FEEFIE:
+					boolean fum = (alt.equals(feeFieFoe[foo]));
+					if(fum)
+					{
+						if(foo < 3)
+						{
+							quest = 7;
+							foo++;
+							output = okay;
+						}
+						else
+						{
+							quest = 0;
+							foo = 0;
+							if(hash.objectIsHere(GameObjects.EGGS, Location.GIANT))
+							{
+								output = nothing;
+							}
+							else if(currentLocation != Location.GIANT)
+							{
+								output = "Done!";
+							}
+							else
+							{
+								output = "There is a large nest here, full of golden eggs!";
+							}
+						}
+					}
+					else
+					{
+						output = "What's the matter, can't you read? Now you'd best start over.";
+						quest = 0;
+						foo = 0;
+					}
 					break;
 					
 				default:
@@ -1770,10 +1896,10 @@ public class AdventControl
 				}
 				else if(locationResult.equals(Location.THEVOID))
 				{
-					if(destination.equals(Movement.XYZZY)||destination.equals(Movement.PLUGH)||destination.equals(Movement.PLUGH))
+					if(destination.equals(Movement.XYZZY)||destination.equals(Movement.PLOVER)||destination.equals(Movement.PLUGH))
 					{
-						output = "Nothing happens.\n";
-						output = output + getDescription(currentLocation, brief);
+						output = nothing;
+						output = output + "\n" + getDescription(currentLocation, brief);
 						increaseTurns = false;
 					}
 					else if(destination.equals(Movement.NORTH) ||
@@ -1892,7 +2018,7 @@ public class AdventControl
 						}
 						else if(troll == 1)
 						{
-							output = "\n\tThe troll steps out from beneath the bridge and blocks your way.";
+							output = "The troll steps out from beneath the bridge and blocks your way.";
 							troll = 0;
 							voidObject(GameObjects.TROLL2);
 							voidObject(GameObjects.TROLL2_);
@@ -2293,11 +2419,6 @@ public class AdventControl
 	{
 		collapse = true;
 		bear = 3;
-	}
-	
-	public void crossBridge()
-	{
-		troll = 1;
 	}
 }
 

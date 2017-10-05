@@ -4,7 +4,6 @@
 
 package model;
 
-import java.util.ArrayList;
 
 import controller.AdventControl;
 
@@ -32,28 +31,20 @@ public enum Location
 	NESIDE, CORR, FORK, WARM, VIEW, CHAMBER, LIME, FBARR, BARR,
 	NEEND, SWEND,
 	CRACK, NECK, LOSE, CANT, CLIMB, CHECK, SNAKED, THRU, DUCK, SEWER, UPNOUT, DIDIT,
-	PPASS, PDROP, TROLL, REMARK;
+	REMARK;
 	
 	private AdventControl base;
 	public static Location[] locate = Location.values();
-	private ArrayList<Location> hasWater = new ArrayList<Location>();
 	
 	public void setUp(AdventControl base)
 	{	
 		this.base = base;
-		hasWater.add(ROAD);
-		hasWater.add(BUILDING);
-		hasWater.add(VALLEY);
-		hasWater.add(SLIT);
-		hasWater.add(WET);
-		hasWater.add(FALLS);
-		hasWater.add(RESER);
 	}
 	
 	public boolean isWaterHere(Location here)
 	{
 		boolean result = false;
-		if(hasWater.contains(here))
+		if(here == ROAD || here == BUILDING || here == VALLEY || here == SLIT || here == WET || here == FALLS || here == RESER)
 		{
 			result = true;
 		}
@@ -744,6 +735,7 @@ public enum Location
 					case NORTH: next = DEAD0; break;
 					case EAST: next = WEST; break;
 					case SOUTH: next = WESTLONG; break;
+					default: next = THEVOID; break;
 				}
 				break;
 				
@@ -1217,7 +1209,7 @@ public enum Location
 					case NORTHWEST: next = MISTY; break;
 					case CAVERN: next = MISTY; break;
 					case EAST: case PASSAGE: case PLOVER:
-						if(itemsInHand > 0 || (itemsInHand == 1 && emerald))
+						if(itemsInHand > 1 || (itemsInHand > 0 && !emerald))
 						{	next = REMARK;	}
 						else
 						{	next = PROOM;	}
@@ -1230,10 +1222,10 @@ public enum Location
 				switch(destination)
 				{
 					case WEST: case PASSAGE: case OUT: 
-						if(itemsInHand > 0 || (itemsInHand == 1 && emerald))
+						if(itemsInHand > 1 || (itemsInHand > 0 && !emerald))
 						{	next = REMARK;	}
 						else
-						{	next = PROOM;	}
+						{	next = ALCOVE;	}
 						break;
 					case PLOVER: 
 						if(emerald)
@@ -1241,6 +1233,7 @@ public enum Location
 							base.relocate();
 						}
 						next = Y2;
+						break;
 					case NORTHEAST: case DARK: next = DROOM; break;
 					default: next = THEVOID; break;
 				}
@@ -1391,26 +1384,19 @@ public enum Location
 // TODO Fix This!!!
 					case SOUTHWEST: next = SCORR; break;
 					case OVER: case ACROSS: case CROSS: case NORTHEAST:
-						if(troll < 2)
+						if(troll < 2 || collapse)
 						{
 							next = REMARK;
 						}
 						else
 						{	
-							if(collapse)
+							next = NESIDE;
+							if(troll == 3)
 							{
-								next = REMARK;
-							}
-							else
-							{
-								if(troll == 3)
-								{
-									next = NESIDE;
-									base.crossBridge();
-								}
-								next = NESIDE;
+								base.troll = 1;
 							}
 						}
+						break;
 					case JUMP:
 						if(collapse)
 						{	next = LOSE;	}
@@ -1539,7 +1525,7 @@ public enum Location
 								if(troll == 3)
 								{
 									next = SWSIDE;
-									base.crossBridge();
+									base.troll = 1;
 								}
 								else
 								{

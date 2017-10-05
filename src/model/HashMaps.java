@@ -211,6 +211,7 @@ public class HashMaps
 		objects.put("spice", GameObjects.SPICES);
 		objects.put("chain", GameObjects.CHAIN);
 		
+		actions.put("look", ActionWords.LOOK);
 		actions.put("descr", ActionWords.LOOK);
 		actions.put("take", ActionWords.TAKE);
 		actions.put("carry", ActionWords.TAKE);
