@@ -69,7 +69,7 @@ public class AdventControl
 	private int lostTreasures;
 	private int plant;
 	private int bottle;
-	public int troll;
+	private static int troll;
 	//there, hidden, dead, can pass;
 	private int bear;
 	//default, fed + idle, fed + following, dead, was following ide
@@ -80,7 +80,8 @@ public class AdventControl
 	
 	public AdventControl()
 	{
-		currentLocation = Location.ROAD;
+		//TODO currentLocation = Location.ROAD;
+currentLocation = Location.GIANT;
 		previousLocation = null;
 		eldestLocation = null;
 		actions = ActionWords.NOTHING;
@@ -120,6 +121,7 @@ public class AdventControl
 		lostTreasures = 0;
 		plant = 0;
 		bottle = 1;
+bottle = 2;
 		troll = 0;
 		bear = 0;
 		chain = 0;
@@ -2419,6 +2421,11 @@ public class AdventControl
 	{
 		collapse = true;
 		bear = 3;
+	}
+	
+	public static void setTroll()
+	{
+		troll = 1;
 	}
 }
 

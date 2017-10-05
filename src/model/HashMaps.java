@@ -761,6 +761,7 @@ public class HashMaps
 		
 		objectLocation.put(GameObjects.KEYS, Location.BUILDING);
 		objectLocation.put(GameObjects.LAMP, Location.BUILDING);
+objectLocation.put(GameObjects.LAMP, Location.INHAND);
 		objectLocation.put(GameObjects.GRATE, Location.OUTSIDE);
 		objectLocation.put(GameObjects.GRATE_, Location.INSIDE);
 		objectLocation.put(GameObjects.CAGE, Location.COBBLES);
@@ -782,6 +783,7 @@ public class HashMaps
 		objectLocation.put(GameObjects.KNIFE, Location.THEVOID);
 		objectLocation.put(GameObjects.FOOD, Location.BUILDING);
 		objectLocation.put(GameObjects.BOTTLE, Location.BUILDING);
+objectLocation.put(GameObjects.BOTTLE, Location.INHAND);
 		objectLocation.put(GameObjects.WATER, Location.THEVOID);
 		objectLocation.put(GameObjects.OIL, Location.THEVOID);
 		objectLocation.put(GameObjects.MIRROR, Location.MIRROR);
@@ -817,6 +819,7 @@ public class HashMaps
 		objectLocation.put(GameObjects.COINS, Location.WEST);
 		objectLocation.put(GameObjects.CHEST, Location.THEVOID);
 		objectLocation.put(GameObjects.EGGS, Location.GIANT);
+objectLocation.put(GameObjects.EGGS, Location.INHAND);
 		objectLocation.put(GameObjects.TRIDENT, Location.FALLS);
 		objectLocation.put(GameObjects.VASE, Location.ORIENTAL);
 		objectLocation.put(GameObjects.EMERALD, Location.PROOM);

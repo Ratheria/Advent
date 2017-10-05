@@ -1393,7 +1393,7 @@ public enum Location
 							next = NESIDE;
 							if(troll == 3)
 							{
-								base.troll = 1;
+								AdventControl.setTroll();
 							}
 						}
 						break;
@@ -1525,7 +1525,7 @@ public enum Location
 								if(troll == 3)
 								{
 									next = SWSIDE;
-									base.troll = 1;
+									AdventControl.setTroll();
 								}
 								else
 								{
