@@ -80,8 +80,7 @@ public class AdventControl
 	
 	public AdventControl()
 	{
-		//TODO currentLocation = Location.ROAD;
-currentLocation = Location.GIANT;
+		currentLocation = Location.ROAD;
 		previousLocation = null;
 		eldestLocation = null;
 		actions = ActionWords.NOTHING;
@@ -121,7 +120,6 @@ currentLocation = Location.GIANT;
 		lostTreasures = 0;
 		plant = 0;
 		bottle = 1;
-bottle = 2;
 		troll = 0;
 		bear = 0;
 		chain = 0;
@@ -1728,7 +1726,14 @@ bottle = 2;
 					break;
 
 				case LOOK:
-					output = "Sorry, but I am not allowed to give more detail. I will repeat the long description of your location.\n\n" + hash.getDescription(currentLocation, 2);
+					if(object == GameObjects.NOTHING)
+					{
+						output = hash.getDescription(currentLocation, 2);
+					}
+					else
+					{
+						output = "Sorry, but I am not allowed to give more detail. I will repeat the long description of your location.\n\n" + hash.getDescription(currentLocation, 2);
+					}
 					break;
 					
 				case CALM:
