@@ -37,6 +37,7 @@ public class AdventControl
 	private String nothing;
 	private boolean dead;
 	private boolean beginning;
+	private boolean closing;
 	private boolean closed;
 	private boolean grateUnlocked;
 	private boolean crystalBridge;
@@ -46,10 +47,12 @@ public class AdventControl
 	private boolean dragon;
 	private boolean birdInCage;
 	private boolean bearAxe;
-	private boolean usedBatteries;
 	private boolean broken;
 	private boolean haveGold;
 	private boolean collapse;
+	private boolean justCollapsed;
+	private boolean lampWarn;
+	private boolean panic;
 	private boolean wayIsBlocked;
 	private boolean seriousQuestion;
 	private boolean increaseTurns;
@@ -58,6 +61,8 @@ public class AdventControl
 	private boolean quit;
 	private int hintDeduction;
 	
+	private int clock1;
+	private int clock2;
 	private int quest;
 	private int brief;
 	private int score;
@@ -69,6 +74,7 @@ public class AdventControl
 	private int lostTreasures;
 	private int plant;
 	private int bottle;
+	private int usedBatteries;
 	private static int troll;
 	//there, hidden, dead, can pass;
 	private int bear;
@@ -102,24 +108,30 @@ public class AdventControl
 		bearAxe = false;
 		broken = false;
 		haveGold = false;
+		justCollapsed = false;
 		collapse = false;
+		lampWarn = false;
+		panic = false;
 		wayIsBlocked = false;
 		seriousQuestion = false;
 		increaseTurns = false;
 		wellInCave = false;
 		quit = false;
 		hintDeduction = 0;
+		clock1 = 15;
+		clock2 = 30;
 		quest = 0;
 		brief = 0;
 		score = 36;
 		turns = 1;
-		lamp = 1000;
+		lamp = 350;
 		itemsInHand = 0;
 		deaths = 3;
 		tally = 15;
 		lostTreasures = 0;
 		plant = 0;
 		bottle = 1;
+		usedBatteries = 0;
 		troll = 0;
 		bear = 0;
 		chain = 0;
@@ -149,6 +161,7 @@ public class AdventControl
 		if(beginning)
 		{
 			//TODO your answer changes your score and lamp value
+			lamp = 1000;
 			if(answer == 1)
 			{
 				hintDeduction = 5;
@@ -278,20 +291,9 @@ public class AdventControl
 				output = nonsense();
 			}
 		}
-		if(light)
-		{
-			lamp--;
-		}
-		if(lamp < 0)
-		{
-			//TODO batteries
-			output = output + "\nYour lamp has run out of power.";
-			if(!canISee(currentLocation))
-			{
-				output = output + "\nIt is now pitch dark. If you proceed you will likely fall into a pit.";
-			}
-			light = false;
-		}
+		
+		output = lamp(output);
+		
 		if(!wellInCave)
 		{
 			//TODO
@@ -652,7 +654,7 @@ public class AdventControl
 						}
 						else if(object == GameObjects.BEAR && bear == 3)
 						{
-							//TODO taking a dead bear
+							output = "You can't be serious!";
 							increaseTurns = false;
 						}
 						else if(object == GameObjects.BEAR && chain == 0)
@@ -834,7 +836,7 @@ public class AdventControl
 							lostTreasures++;
 							itemsInHand++;
 							dropObject(GameObjects.BATTERIES);
-							//TODO offer to change batteries?
+							usedBatteries = 1;
 						}
 						else if(object == GameObjects.VASE && !(objectIsHere(GameObjects.PILLOW) || currentLocation == Location.SOFT))
 						{
@@ -1119,25 +1121,31 @@ public class AdventControl
 					 }
 					 else if((currentLocation != Location.EASTFISSURE && currentLocation != Location.WESTFISSURE))
 					 {
-						output = new String("Nothing happens.");
+						output = nothing;
 						increaseTurns = false;
 					 }
 					 else
 					 {
-						 //TODO bridge destroyed when closing, I think
-						 if(!crystalBridge)
+						 if(!closing)
 						 {
-							 output = new String("A crystal bridge now spans the fissure.");
-							 hash.dropObject(GameObjects.CRYSTAL, Location.EASTFISSURE);
-							 hash.dropObject(GameObjects.CRYSTAL_, Location.WESTFISSURE);
-							 crystalBridge = true;
+							 if(!crystalBridge)
+							 {
+								 output = new String("A crystal bridge now spans the fissure.");
+								 hash.dropObject(GameObjects.CRYSTAL, Location.EASTFISSURE);
+								 hash.dropObject(GameObjects.CRYSTAL_, Location.WESTFISSURE);
+								 crystalBridge = true;
+							 }
+							 else
+							 {
+								 output = new String("The crystal bridge has vanished!");
+								 voidObject(GameObjects.CRYSTAL);
+								 voidObject(GameObjects.CRYSTAL_);
+								 crystalBridge = false;
+							 }
 						 }
 						 else
 						 {
-							 output = new String("The crystal bridge has vanished!");
-							 voidObject(GameObjects.CRYSTAL);
-							 voidObject(GameObjects.CRYSTAL_);
-							 crystalBridge = false;
+							 output = nothing;
 						 }
 					 }
 					break;
@@ -1901,6 +1909,23 @@ public class AdventControl
 					output = "A mysterious recorded voice groans into life and announces: \n\t\"This exit is closed. Please leave via main office.\"";
 					increaseTurns = false;
 				}
+				else if(justCollapsed)
+				{
+					setLocation(locationResult);
+					output = "Just as you reach the other side, the bridge buckles beneath the weight of the bear, who was still following you around. You scrabble desperately for support, but the bridge collapses you stumble back and fall into the chasm.";
+					justCollapsed = false;
+					int neordinal = currentLocation.getOrdinal(Location.NESIDE);
+					if(currentLocation.getOrdinal(hash.getObjectLocation(GameObjects.CHAIN)) >= neordinal)
+					{
+						lostTreasures++;
+						previousLocation = currentLocation;
+					}
+					if(currentLocation.getOrdinal(hash.getObjectLocation(GameObjects.SPICES)) >= neordinal)
+					{
+						lostTreasures++;
+						previousLocation = currentLocation;
+					}
+				}
 				else if(locationResult.equals(Location.THEVOID))
 				{
 					if(destination.equals(Movement.XYZZY)||destination.equals(Movement.PLOVER)||destination.equals(Movement.PLUGH))
@@ -2097,38 +2122,51 @@ public class AdventControl
 				}
 				else
 				{
-					setLocation(locationResult);
-					
-					if(!canISee(currentLocation))
+					if(closing && currentLocation.outsideCave(locationResult))
 					{
-						//TODO death
-						boolean pitifulDeath = fallInPit();
-						if(pitifulDeath)
+						if(!panic)
 						{
+							clock2 = 15;
+							panic = true;
+							output = "A mysterious recorded voice groans into life and announces: \n\t\"This exit is closed. Please leave via main office.\"";
+						}
+					}
+					//TODO else dwarf blocking 176
+					else
+					{
+						setLocation(locationResult);
+						
+						if(!canISee(currentLocation))
+						{
+							//TODO death
+							boolean pitifulDeath = fallInPit();
+							if(pitifulDeath)
+							{
 
+							}
+							else
+							{
+								output = new String("It is now pitch dark. If you proceed you will likely fall into a pit.");
+							}
 						}
 						else
 						{
-							output = new String("It is now pitch dark. If you proceed you will likely fall into a pit.");
-						}
-					}
-					else
-					{
-						output = getDescription(currentLocation, brief);
-						if(currentLocation.equals(Location.Y2))
-						{
-							if(Math.random() > .74)
+							output = getDescription(currentLocation, brief);
+							if(currentLocation.equals(Location.Y2))
 							{
-								//hollow voice
-								output = new String(output + "\n\nA hollow voice says \"PLUGH\"");
+								if(Math.random() > .74)
+								{
+									//hollow voice
+									output = new String(output + "\n\nA hollow voice says \"PLUGH\"");
+								}
 							}
 						}
 					}
-				}
-				
-				if(bear == 2)
-				{
-					output = output + "You are being followed by a very large, tame bear.";
+					
+					if(bear == 2)
+					{
+						output = output + "You are being followed by a very large, tame bear.";
+					}
 				}
 			}
 //			catch(ClassCastException e)
@@ -2300,6 +2338,102 @@ public class AdventControl
 		return pitifulDeath;
 	}
 	
+	private String lamp(String output)
+	{
+		if(tally == 0 && !(currentLocation.outsideCave(currentLocation)) && !(currentLocation == Location.Y2))
+		{
+			clock1--;
+		}
+		else if(clock1 == 0)
+		{
+			output = "A sepulchral voice, reverberating through the cave, says, \n\t\"Cave closing soon. All adventurers exit immediately through main office.\"";
+			clock1 = -1;
+			//TODO kill all dwarfs, can't unlock grate remove troll and bear (if not dead) 
+			closing = true;
+		}
+		else if(clock2 == 0)
+		{
+			output = "The sepulchral voice intones, \n\t\"The cave is now closed.\"\nAs the echoes fade, there is a blinding flash of light (and a small puff of orange smoke)...\nThen your eyes refocus: you look around and find...";
+			closed = true;
+			bonus = 10;
+			//page 88
+			//page 89
+			hash.dropObject(GameObjects.BOTTLE, Location.NEEND);
+			hash.dropObject(GameObjects.PLANT, Location.NEEND);
+			hash.dropObject(GameObjects.OYSTER, Location.NEEND);
+			hash.dropObject(GameObjects.LAMP, Location.NEEND);
+			hash.dropObject(GameObjects.ROD, Location.NEEND);
+			hash.dropObject(GameObjects.DWARF, Location.NEEND);
+			hash.dropObject(GameObjects.MIRROR, Location.NEEND);
+			currentLocation = Location.NEEND;
+			previousLocation = Location.NEEND;
+			hash.dropObject(GameObjects.GRATE, Location.SWEND);
+			hash.dropObject(GameObjects.SNAKE, Location.SWEND);
+			hash.dropObject(GameObjects.BIRD, Location.SWEND);
+			hash.dropObject(GameObjects.CAGE, Location.SWEND);
+			hash.dropObject(GameObjects.ROD2, Location.SWEND);
+			hash.dropObject(GameObjects.PILLOW, Location.SWEND);
+			hash.dropObject(GameObjects.MIRROR, Location.SWEND);
+			
+			hash.objectsHere(Location.INHAND);
+			ArrayList<GameObjects> inventory = hash.getResult();
+			if(inventory.size() > 0)
+			{
+				for(GameObjects item : inventory)
+				{
+					voidObject(item);
+				}
+			}
+			itemsInHand = 0;
+		}
+		else
+		{
+			if(light && increaseTurns)
+			{
+				lamp--;
+			}
+			else if(lamp < 0)
+			{
+				output = output + "\nYour lamp has run out of power.";
+				if(!canISee(currentLocation))
+				{
+					output = output + "\nIt is now pitch dark. If you proceed you will likely fall into a pit.";
+				}
+				light = false;
+			}
+			else if(lamp < 0 && currentLocation.outside(currentLocation))
+			{
+				output += "\n\nThere's not much point in wandering around out here, and you can't explore the gave without a lamp. So let's just call it a day.";
+				//TODO give_up
+			}
+			else if(lamp < 31 && usedBatteries == 1 && objectIsPresent(GameObjects.BATTERIES) && objectIsPresent(GameObjects.LAMP))
+			{
+				output += "\n\nYour lamp is getting dim. I'm taking the liberty of replacing the batteries.";
+				dropObject(GameObjects.BATTERIES);
+				usedBatteries = 2;
+				lamp = 2500;
+			}
+			else if(lamp < 31 && !lampWarn && objectIsPresent(GameObjects.LAMP))
+			{
+				String dim = "\n\nYour lamp is getting dim";
+				if(usedBatteries == 2)
+				{
+					output += dim + ", and you're out of spare batteries. You'd best start wrapping this up.";
+				}
+				else if(usedBatteries == 1)
+				{
+					output += dim + ". You'd best go back for those batteries.";
+				}
+				else
+				{
+					output += dim + ". You'd best start wrapping this up, unless you can find some fresh batteries. I seem to recall that there's a vending machine in the maze. Bring some coins with you.";
+				}
+				lampWarn = true;
+			}
+		}
+		return output;
+	}
+	
 	private void takeObject(GameObjects thing)
 	{
 		hash.takeObject(thing);
@@ -2424,6 +2558,7 @@ public class AdventControl
 	
 	public void collapse()
 	{
+		justCollapsed = true;
 		collapse = true;
 		bear = 3;
 	}

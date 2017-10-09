@@ -21,6 +21,7 @@ public class HashMaps
 	private HashMap<Location, String> shortDescription = new HashMap();
 	private HashMap<Location, String> title = new HashMap();
 	private HashMap<GameObjects, Location> objectLocation = new HashMap();
+	private ArrayList<GameObjects> result = null;
 	
 	public HashMaps()
 	{
@@ -906,7 +907,7 @@ public class HashMaps
 	
 	public ArrayList<GameObjects> objectsHere(Location here)
 	{
-		ArrayList<GameObjects> result = null;
+		result = null;
 		if(objectLocation.containsValue(here))
 		{
 			result = new ArrayList<GameObjects>();
@@ -1123,6 +1124,11 @@ public class HashMaps
 	public void wasFound(GameObjects thing)
 	{
 		found.put(thing, true);
+	}
+	
+	public ArrayList<GameObjects> getResult()
+	{
+		return result;
 	}
 	
 }

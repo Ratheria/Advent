@@ -74,11 +74,16 @@ public enum Location
 	public boolean upperCave(Location here)
 	{
 		boolean upper = false;
-		if(here.ordinal() > OUTSIDE.ordinal()&&here.ordinal() < OUTSIDE.ordinal())
+		if(here.ordinal() > OUTSIDE.ordinal() && here.ordinal() < OUTSIDE.ordinal())
 		{
 			upper = true;
 		}
 		return upper;
+	}
+	
+	public int getOrdinal(Location here)
+	{
+		return here.ordinal();
 	}
 	
 	public boolean dontNeedLamp(Location here)
@@ -1532,7 +1537,7 @@ public enum Location
 									next = SWSIDE;
 									if(bear == 2)
 									{
-										//TODO output
+										
 										base.collapse();
 									}
 								}

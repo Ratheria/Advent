@@ -85,7 +85,7 @@ public enum GameObjects
 
 	public String getItemDescription(Location location, GameObjects object, 
 			boolean light, boolean grate, int plant, int bottle, boolean cage, boolean oilDoor,
-			boolean bearAxe, boolean dragon, int bear, boolean usedBatteries, boolean broken,
+			boolean bearAxe, boolean dragon, int bear, int usedBatteries, boolean broken,
 			int chain, boolean gold, boolean crystalBridge, boolean collapse)
 	{
 		String output = "";
@@ -421,7 +421,7 @@ public enum GameObjects
 				break;
 				
 			case BATTERIES:
-				if(!usedBatteries)
+				if(usedBatteries == 1)
 				{
 					output = new String("\n\tThere are fresh batteries here.");
 				}
