@@ -6,21 +6,19 @@ package model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 
 public class HashMaps 
 {
-	private HashMap<String, Movement> movement = new HashMap();
-	private HashMap<String, GameObjects> objects =new HashMap();
-	private HashMap<String, ActionWords> actions = new HashMap();
-	private HashMap<String, MessageWords> mwords = new HashMap();
-	private HashMap<Location, Integer> visits = new HashMap();
-	private HashMap<GameObjects, Boolean> found = new HashMap();
-	private HashMap<Location, String> longDescription = new HashMap();
-	private HashMap<Location, String> shortDescription = new HashMap();
-	private HashMap<Location, String> title = new HashMap();
-	private HashMap<GameObjects, Location> objectLocation = new HashMap();
+	private HashMap<String, Movement> movement = new HashMap<String, Movement>();
+	private HashMap<String, GameObjects> objects =new HashMap<String, GameObjects>();
+	private HashMap<String, ActionWords> actions = new HashMap<String, ActionWords>();
+	private HashMap<String, MessageWords> mwords = new HashMap<String, MessageWords>();
+	private HashMap<Location, Integer> visits = new HashMap<Location, Integer>();
+	private HashMap<GameObjects, Boolean> found = new HashMap<GameObjects, Boolean>();
+	private HashMap<Location, String> longDescription = new HashMap<Location, String>();
+	private HashMap<Location, String> shortDescription = new HashMap<Location, String>();
+	private HashMap<Location, String> title = new HashMap<Location, String>();
+	private HashMap<GameObjects, Location> objectLocation = new HashMap<GameObjects, Location>();
 	private ArrayList<GameObjects> result = null;
 	
 	public HashMaps()

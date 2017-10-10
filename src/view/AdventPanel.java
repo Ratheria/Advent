@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
@@ -17,21 +16,18 @@ import controller.AdventControl;
 import javax.swing.SpringLayout;
 import javax.swing.UIManager;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
 import javax.swing.JTextArea;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Point;
 
 import javax.swing.border.LineBorder;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.MatteBorder;
-import javax.swing.text.Caret;
 import javax.swing.text.DefaultCaret;
 import javax.swing.JLabel;
 
 public class AdventPanel extends JPanel 
 {
+	private static final long serialVersionUID = 1L;
 	private AdventControl base;
 	private JTextField inputField;
 	private JTextArea displayLog;
@@ -148,7 +144,7 @@ public class AdventPanel extends JPanel
 			{
 				if(inputField.getText().length() > 0)
 				{
-					String log = displayLog.getText();
+					//String log = displayLog.getText();
 					String origin = inputField.getText();
 					String input = inputField.getText().toLowerCase();
 					

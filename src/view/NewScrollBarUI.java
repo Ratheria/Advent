@@ -5,14 +5,7 @@
 package view;
 
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Rectangle;
-
-import javax.swing.JComponent;
 import javax.swing.LookAndFeel;
-import javax.swing.UIManager;
-import javax.swing.plaf.UIResource;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 
 
@@ -29,7 +22,6 @@ public class NewScrollBarUI extends BasicScrollBarUI
 		thumbColor = Color.BLACK;
 		trackColor = Color.BLACK;
 		trackHighlightColor = Color.BLACK;
-
 	}
 
 	@Override

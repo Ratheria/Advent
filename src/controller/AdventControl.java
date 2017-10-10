@@ -54,6 +54,7 @@ public class AdventControl
 	private boolean lampWarn;
 	private boolean panic;
 	private boolean wayIsBlocked;
+	private boolean locationChange;
 	private boolean seriousQuestion;
 	private boolean increaseTurns;
 	
@@ -66,6 +67,7 @@ public class AdventControl
 	private int quest;
 	private int brief;
 	private int score;
+	private int bonus;
 	private int turns;
 	private int lamp;
 	private int itemsInHand;
@@ -113,6 +115,7 @@ public class AdventControl
 		lampWarn = false;
 		panic = false;
 		wayIsBlocked = false;
+		locationChange = false;
 		seriousQuestion = false;
 		increaseTurns = false;
 		wellInCave = false;
@@ -123,8 +126,9 @@ public class AdventControl
 		quest = 0;
 		brief = 0;
 		score = 36;
+		bonus = 0;
 		turns = 1;
-		lamp = 350;
+		lamp = 330;
 		itemsInHand = 0;
 		deaths = 3;
 		tally = 15;
@@ -139,6 +143,11 @@ public class AdventControl
 		foo = 0;
 		currentLocation.setUp(this);
 		things.setUp();
+	}
+	
+	private AdventControl(boolean temp)
+	{
+		//TODO load
 	}
 
 	public String determineAction(String input) 
@@ -160,8 +169,6 @@ public class AdventControl
 		}
 		if(beginning)
 		{
-			//TODO your answer changes your score and lamp value
-			lamp = 1000;
 			if(answer == 1)
 			{
 				hintDeduction = 5;
@@ -174,6 +181,7 @@ public class AdventControl
 						+ "(Should you get stuck, type \"help\" for some general hints. "
 						+ "For information on how to end your adventure, etc., type \"info\".)\n\n"
 						+ hash.getDescription(Location.ROAD, brief);
+				lamp = 1000;
 				beginning = false;
 			}
 			else if(answer == 2)
@@ -291,27 +299,11 @@ public class AdventControl
 				output = nonsense();
 			}
 		}
-		
-		output = lamp(output);
-		
-		if(!wellInCave)
-		{
-			//TODO
-		}
 		if(input.equalsIgnoreCase("west"))
 		{
 			west++;
 		}
-		if(increaseTurns)
-		{
-			turns++;
-		}
-		getCurrentScore();
-		output = output + checkForHints();
-		System.out.println("previous " + previousLocation);
-		System.out.println("current " + currentLocation);
-		System.out.println("lamp " + lamp);
-		System.out.println("items " + itemsInHand);
+		output = finishAction(output);
 		return output;
 	}
 
@@ -402,33 +394,38 @@ public class AdventControl
 				output = nonsense();
 			}
 		}
-		if(light)
-		{
-			lamp--;
-		}
-		if(lamp < 0)
-		{
-			output = output + "\nYour lamp has run out of power.";
-			if(!canISee(currentLocation))
-			{
-				output = output + "\nIt is now pitch dark. If you proceed you will likely fall into a pit.";
-			}
-			light = false;
-		}
-		if(!wellInCave)
-		{
-			if(!(currentLocation.outsideCave(currentLocation)))
-			{
-				wellInCave = true;
-			}
-		}
+	
 		if(input1.equalsIgnoreCase("west")||input2.equalsIgnoreCase("west"))
 		{
 			west++;
 		}
+		
+		output = finishAction(output);
+		
+		return output;
+	}
+	
+	private String finishAction(String output)
+	{
+		if(locationChange && increaseTurns)
+		{
+			output = lamp(output);
+			locationChange = false;
+		}
+		if(!wellInCave)
+		{
+			if(currentLocation.getOrdinal(currentLocation) > currentLocation.getOrdinal(Location.CROSS))
+			{
+				wellInCave = true;
+			}
+		}
 		if(increaseTurns)
 		{
 			turns++;
+		}
+		if(tally == lostTreasures && tally > 0 && lamp > 35)
+		{
+			lamp = 35;
 		}
 		getCurrentScore();
 		output = output + checkForHints();
@@ -1295,6 +1292,10 @@ public class AdventControl
 						hash.dropObject(GameObjects.TROLL2_, Location.NESIDE);
 						troll = 3;
 						output = "The troll catches your treasure and scurries away out of sight.";
+						if(object != GameObjects.EGGS)
+						{
+							lostTreasures++;
+						}
 					}
 					else if(object == GameObjects.FOOD && objectIsHere(GameObjects.BEAR))
 					{
@@ -1810,14 +1811,15 @@ public class AdventControl
 					break;
 					
 				case BLAST:
-					if(!closed)
+					if(closed )
 					{
-						output = "Blasting requires dynamite.";
+						bonus = (objectIsPresent(GameObjects.ROD2) ? 25 : currentLocation == Location.NEEND ? 30 : 45);
+						//62
+						//TODO endgame
 					}
 					else
 					{
-						//62
-						//TODO endgame
+						output = "Blasting requires dynamite.";
 					}
 					break;
 					
@@ -1892,6 +1894,7 @@ public class AdventControl
 		String output = "";
 		if(!wayIsBlocked)
 		{
+			locationChange = true;
 			haveGold = (hash.objectIsHere(GameObjects.GOLD, Location.INHAND));
 			boolean haveEmerald = (hash.objectIsHere(GameObjects.EMERALD, Location.INHAND));
 			boolean haveClam = (hash.objectIsHere(GameObjects.CLAM, Location.INHAND));
@@ -2278,11 +2281,11 @@ public class AdventControl
 				}
 			}
 		}
-		//end  if(!instructions){	currentScore = currentScore + 5;	}
+		currentScore -= hintDeduction;
 		if(wellInCave){	currentScore = currentScore + 25;	}
 		if(closed){	currentScore = currentScore + 25;	}
 		if(!quit){	currentScore = currentScore + 4;	}
-		//45 points at the end
+		currentScore += bonus;
 
 		score = currentScore;
 		return currentScore;
@@ -2386,13 +2389,9 @@ public class AdventControl
 			}
 			itemsInHand = 0;
 		}
-		else
+		else if(light)
 		{
-			if(light && increaseTurns)
-			{
-				lamp--;
-			}
-			else if(lamp < 0)
+			if(lamp < 0)
 			{
 				output = output + "\nYour lamp has run out of power.";
 				if(!canISee(currentLocation))
@@ -2429,6 +2428,10 @@ public class AdventControl
 					output += dim + ". You'd best start wrapping this up, unless you can find some fresh batteries. I seem to recall that there's a vending machine in the maze. Bring some coins with you.";
 				}
 				lampWarn = true;
+			}
+			else
+			{
+				lamp--;
 			}
 		}
 		return output;
@@ -2568,6 +2571,3 @@ public class AdventControl
 		troll = 1;
 	}
 }
-
-
-

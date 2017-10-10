@@ -633,6 +633,9 @@ public enum GameObjects
 			case TROLL2_: case TROLL2:
 				output = new String("\n\tThe troll is nowhere to be seen.");
 				break;
+		
+			default:
+				break;
 				
 		}
 		return output;

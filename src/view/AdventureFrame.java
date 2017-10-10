@@ -9,6 +9,9 @@ import controller.AdventControl;
 
 public class AdventureFrame extends JFrame 
 {
+
+	private static final long serialVersionUID = 1L;
+	@SuppressWarnings("unused")
 	private AdventControl base;
 	private AdventPanel panel;
 
