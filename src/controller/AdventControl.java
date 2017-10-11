@@ -72,6 +72,7 @@ public class AdventControl
 	private int lamp;
 	private int itemsInHand;
 	private int deaths;
+	private int fatality;
 	private int tally;
 	private int lostTreasures;
 	private int plant;
@@ -125,12 +126,15 @@ public class AdventControl
 		clock2 = 30;
 		quest = 0;
 		brief = 0;
-		score = 36;
+		score = 0;
 		bonus = 0;
-		turns = 1;
+		turns = 0;
 		lamp = 330;
 		itemsInHand = 0;
 		deaths = 3;
+		fatality = 0;
+		//default, pit
+		d
 		tally = 15;
 		lostTreasures = 0;
 		plant = 0;
@@ -428,11 +432,18 @@ public class AdventControl
 			lamp = 35;
 		}
 		getCurrentScore();
-		output = output + checkForHints();
-		System.out.println("previous " + previousLocation);
-		System.out.println("current " + currentLocation);
-		System.out.println("lamp " + lamp);
-		System.out.println("items " + itemsInHand);
+		if(dead)
+		{
+			output += death(output); 
+		}
+		else
+		{
+			output = output + checkForHints();
+			System.out.println("previous " + previousLocation);
+			System.out.println("current " + currentLocation);
+			System.out.println("lamp " + lamp);
+			System.out.println("items " + itemsInHand);
+		}
 		return output;
 	}
 	
@@ -441,7 +452,7 @@ public class AdventControl
 		String output = new String("");
 		if(west == 10)
 		{
-			output = "If you prefer, simply type W rather than WEST.";
+			output = "\nIf you prefer, simply type W rather than WEST.";
 		}
 		//15
 		//cave - outside - 2 points 
@@ -2337,9 +2348,23 @@ public class AdventControl
 	private boolean fallInPit()
 	{
 		boolean pitifulDeath = false;
-
+		//TODO chance of falling
 		return pitifulDeath;
 	}
+	
+	private String death(String output)
+	{
+		if(fatality == 1)
+		{
+			output = "\n\nYou fell into a pit and broke every bone in your body!";
+		}x
+		if(closing)
+		{
+			output += "\n\nIt looks as though you you're dead. Well, seeing as how it's so close to closing time anyway, let's just call it a day.";
+		}
+		return output;
+	}
+	
 	
 	private String lamp(String output)
 	{
@@ -2556,6 +2581,10 @@ public class AdventControl
 	
 	public int getScore()
 	{
+		if(beginning)
+		{
+			return 0;
+		}
 		return score;
 	}
 	

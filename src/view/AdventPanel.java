@@ -53,7 +53,7 @@ public class AdventPanel extends JPanel
 		outline = new Color(0, 255, 0);
 		scrollBar = scroll.getVerticalScrollBar();
 		lblTurns = new JLabel("Turns: 1");
-		lblScore = new JLabel("Score: 36/350");
+		lblScore = new JLabel("Score: 0/350");
 		lblTop = new JLabel("Colossal Cave Adventure");
 		
 		setUpPanel();
