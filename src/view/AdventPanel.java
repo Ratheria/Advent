@@ -169,18 +169,25 @@ public class AdventPanel extends JPanel
 					}
 					else
 					{
-						if(input.length() > 5)
+						if(inputField.isEditable())
 						{
-							input = input.substring(0, 5);
+							if(input.length() > 5)
+							{
+								input = input.substring(0, 5);
+							}
+							displayLog.append("\n\t> " + origin 
+									+ "\n\n" + base.determineAction(input) + "\n");
+							lblTurns.setText("Turns: " + base.getTurns());
+							lblScore.setText("Score: " + base.getScore() + "/350");
 						}
-						displayLog.append("\n\t> " + origin 
-								+ "\n\n" + base.determineAction(input) + "\n");
-						lblTurns.setText("Turns: " + base.getTurns());
-						lblScore.setText("Score: " + base.getScore() + "/350");
 					}
 					displayCaret = (DefaultCaret)displayLog.getCaret();
 					inputField.setText("");
 					inputField.requestFocusInWindow();
+					if(base.noMore())
+					{
+						inputField.setEditable(false);
+					}
 					//scroll.setViewportView(displayLog);
 				}
 			}

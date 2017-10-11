@@ -101,6 +101,7 @@ public enum Location
 			boolean oyster, int plant, boolean oilDoor, boolean dragon, int troll,
 			boolean trollHere, int itemsInHand, boolean collapse, int bear)
 	{
+		double chance = AdventControl.generate();
 		Location next = null;
 		switch(here)
 		{
@@ -153,19 +154,19 @@ public enum Location
 				{
 					case VALLEY: case EAST: case DOWN: next = VALLEY; break; 
 					case FOREST:
-						if(Math.random()>.49)
+						if(chance>.49)
 						{	next = FOREST;}
 						else 
 						{	next = WOODS;}
 						break; 
 					case FORWARD:
-						if(Math.random()<.51)
+						if(chance<.51)
 						{	next = FOREST;	}
 						else 
 						{	next = WOODS;	}
 						break; 
 					case NORTH:
-						if(Math.random()>.49)
+						if(chance>.49)
 						{	next = FOREST;	}
 						else 
 						{	next = WOODS;	}
@@ -958,30 +959,30 @@ public enum Location
 					case EAST: next = COMPLEX; break;
 					case WEST: next = CHEESE; break;
 					case SOUTH: 
-						if(Math.random() < .81)
+						if(chance < .81)
 						{	next = REMARK;	}
 						else
 						{	next = SLAB;	}
 						break;
 					case SLAB: next = SLAB; break;
 					case UP: 
-						if(Math.random() < .81)
+						if(chance < .81)
 						{	next = REMARK;	}
-						else if(Math.random() > .49)
+						else if(chance > .49)
 						{	next = ABOVEP;	}
 						else
 						{	next = DUSTY;	}
 						break;
 					case NORTH: 
-						if(Math.random() < .61)
+						if(chance < .61)
 						{	next = REMARK;	}
-						else if(Math.random() < .76)
+						else if(chance < .76)
 						{	next = LOW;	}
 						else
 						{	next = SJUNC;	}
 						break;
 					case DOWN: 
-						if(Math.random() < .81)
+						if(chance < .81)
 						{	next = REMARK;	}
 						else
 						{	next = ANTE;	}
@@ -996,7 +997,7 @@ public enum Location
 					case NORTHEAST: next = BEDQUILT; break;
 					case WEST: next = EAST2PIT; break;
 					case SOUTH: 
-						if(Math.random() < .81)
+						if(chance < .81)
 						{	next = REMARK;	}
 						else
 						{	next = TALL;	}
@@ -1004,7 +1005,7 @@ public enum Location
 					case CANYON: next = TALL; break;
 					case EAST: next = SOFT; break;
 					case NORTHWEST: 
-						if(Math.random() < .51)
+						if(chance < .51)
 						{	next = REMARK;	}
 						else
 						{	next = ORIENTAL;	}
@@ -1150,9 +1151,9 @@ public enum Location
 				{
 					case NORTH: next = ABOVEP; break;
 					case DOWN: case JUMP: case CLIMB:
-						if(Math.random() < .41)
+						if(chance < .41)
 						{	next = ALIKE6;	}
-						else if(Math.random() > .49)
+						else if(chance > .49)
 						{	next = ALIKE9;	}
 						else
 						{	next = ALIKE4;	} 
@@ -1537,8 +1538,7 @@ public enum Location
 									next = SWSIDE;
 									if(bear == 2)
 									{
-										
-										base.collapse();
+										AdventControl.collapse();
 									}
 								}
 							}
@@ -1666,8 +1666,9 @@ public enum Location
 	
 	private Location atWittsEnd()
 	{
+		double chance = AdventControl.generate();
 		Location result = REMARK;
-		if(Math.random() < .06)
+		if(chance < .06)
 		{	
 			result = ANTE;	
 		}

@@ -11,6 +11,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
+
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import model.ActionWords;
@@ -21,7 +23,8 @@ import view.AdventureFrame;
 
 public class AdventControl 
 {
-	private AdventureFrame frame = new AdventureFrame(this);;
+	private static Random random;
+	private AdventureFrame frame = new AdventureFrame(this);
 	private HashMaps hash = new HashMaps();
 	@SuppressWarnings("unused")
 	private MessageWords messages;
@@ -30,6 +33,7 @@ public class AdventControl
 	private GameObjects things;
 	private Location currentLocation;
 	private Location previousLocation;
+	@SuppressWarnings("unused")
 	private Location eldestLocation;
 	private String[] feeFieFoe;
 	private String okay;
@@ -49,14 +53,16 @@ public class AdventControl
 	private boolean bearAxe;
 	private boolean broken;
 	private boolean haveGold;
-	private boolean collapse;
-	private boolean justCollapsed;
+	private static boolean collapse;
+	private static boolean justCollapsed;
 	private boolean lampWarn;
 	private boolean panic;
+	private boolean over;
 	private boolean wayIsBlocked;
 	private boolean locationChange;
 	private boolean seriousQuestion;
 	private boolean increaseTurns;
+	private boolean noMore;
 	
 	private boolean wellInCave;
 	private boolean quit;
@@ -78,9 +84,12 @@ public class AdventControl
 	private int plant;
 	private int bottle;
 	private int usedBatteries;
+	private int dwarves;
+	//nothing, reached hall no dwarf, met dwarf no knives, knife misses, knife hit .095, .190, .285
+	private int deadDwarves;
 	private static int troll;
 	//there, hidden, dead, can pass;
-	private int bear;
+	private static int bear;
 	//default, fed + idle, fed + following, dead, was following ide
 	private int chain;
 	//locked to bear, unlocked, locked
@@ -89,6 +98,7 @@ public class AdventControl
 	
 	public AdventControl()
 	{
+		random = new Random();
 		currentLocation = Location.ROAD;
 		previousLocation = null;
 		eldestLocation = null;
@@ -114,6 +124,7 @@ public class AdventControl
 		justCollapsed = false;
 		collapse = false;
 		lampWarn = false;
+		over = false;
 		panic = false;
 		wayIsBlocked = false;
 		locationChange = false;
@@ -133,12 +144,13 @@ public class AdventControl
 		itemsInHand = 0;
 		deaths = 3;
 		fatality = 0;
-		//default, pit
-		d
+		//default, pit, dwarf
 		tally = 15;
 		lostTreasures = 0;
 		plant = 0;
 		bottle = 1;
+		dwarves = 0;
+		deadDwarves = 0;
 		usedBatteries = 0;
 		troll = 0;
 		bear = 0;
@@ -217,9 +229,10 @@ public class AdventControl
 		}
 		else if(quest == 2 && answer == 1)
 		{
-			//TODO game over
 			quest = 0;		
 			seriousQuestion = false;
+			quit = true;
+			output = quit(output);
 		}
 		else if(quest == 3 && thisIsAnObject && itsAn != GameObjects.NOTHING)
 		{
@@ -244,9 +257,39 @@ public class AdventControl
 		}
 		else if(quest == 7 && thisIsAnAction && action == ActionWords.FEEFIE)
 		{
+			quest = 0;
 			output = attemptAction(action, GameObjects.NOTHING, input);
 		}
 		else if(quest == 8)
+		{
+			quest = 50;
+			increaseTurns = false;
+			seriousQuestion = false;
+			if(answer == 2)
+			{
+				output = quit(output);
+			}
+			else
+			{
+				switch(deaths)
+				{
+					case 2:
+						dead = false;
+						output = "All right. But don't blame me if something goes wr......\n\t---POOF!!---\nYou are engulfed in a cloud of orange smoke. Coughing and gasping, you emerge from the smoke to find....\n" + hash.getDescription(currentLocation, brief); 
+						break;
+					case 1:
+						dead = false;
+						output = "Okay, now where did I put my resurrection kit?....\n\t>POOF!<\nEverything disappears in a dense cloud of orange smoke.\n" + hash.getDescription(currentLocation, brief);
+						break;
+					default:
+						output = "Okay, if you're so smart, do it yourself! I'm leaving!";
+						output = quit(output);
+						break;
+				}
+			}
+			
+		}
+		else if(quest == 20)
 		{
 			//TODO hint
 		}
@@ -432,12 +475,20 @@ public class AdventControl
 			lamp = 35;
 		}
 		getCurrentScore();
-		if(dead)
+		if(dead && quest != 50)
 		{
 			output += death(output); 
+			if(over)
+			{
+				output = quit(output);
+			}
 		}
 		else
 		{
+			if(quest == 50)
+			{
+				quest = 0;
+			}
 			output = output + checkForHints();
 			System.out.println("previous " + previousLocation);
 			System.out.println("current " + currentLocation);
@@ -504,11 +555,11 @@ public class AdventControl
 	private int askYesNo(String input)
 	{
 		int answer = 0;
-		if(input.contains("y"))
+		if(input.substring(0, 1).equals("y"))
 		{
 			answer = 1;
 		}
-		else if(input.contains("n"))
+		else if(input.substring(0, 1).equals("n"))
 		{
 			answer = 2;
 		}
@@ -822,7 +873,11 @@ public class AdventControl
 								voidObject(GameObjects.SNAKE);
 								snake = false;
 								output = new String("The little bird attacks the green snake, and in an astounding flurry drives the snake away.");
-								//TODO wake dwarves if closed
+								if(closed)
+								{
+									dead = true;
+									fatality = 2;
+								}
 							}
 							else if(objectIsHere(GameObjects.DRAGON) || objectIsHere(GameObjects.DRAGON_))
 							{
@@ -1356,7 +1411,8 @@ public class AdventControl
 						if(closed)
 						{
 							output = "You strike the mirror a resounding blow, whereupon it shatters into a myriad tiny fragments.";
-							//TODO dwarfs upset
+							dead = true;
+							fatality = 2;
 						}
 						else if(objectIsHere(GameObjects.MIRROR) || objectIsHere(GameObjects.MIRROR_))
 						{
@@ -1423,10 +1479,8 @@ public class AdventControl
 					}
 					else if(object == GameObjects.DWARF && closed)
 					{
-						//TODO dwarf end
-						/**
-							"The resulting ruckus has awakened the Dwarves. There are now several threatening little Dwarves in the room with you! Most of them throw knives at you! All of them get you!"
-						 */
+						dead = true;
+						fatality = 2;
 					}
 					else if(object == GameObjects.DWARF)
 					{
@@ -1716,8 +1770,9 @@ public class AdventControl
 				case WAKE:
 					if(closed && object == GameObjects.DWARF)
 					{
-						//TODO dwarfs upset
-						//output = "You wake the nearest dwarf, who wakes up grumpily, takes one look at you, curses, and grabs for his axe.";
+						output = "You wake the nearest dwarf, who wakes up grumpily, takes one look at you, curses, and grabs for his axe.";
+						dead = true;
+						fatality = 2;
 					}
 					else
 					{
@@ -1977,17 +2032,13 @@ public class AdventControl
 				{
 					output = "You are at the bottom of the pit with a broken neck.";
 					increaseTurns = false;
-					//
-					//TODO death
-					//
+					dead = true;
 				}
 				else if(locationResult.equals(Location.LOSE))
 				{
 					output = "You didn't make it.";
 					increaseTurns = false;
-					//
-					// TODO death 
-					//
+					dead = true;
 				}
 				else if(locationResult.equals(Location.CANT))
 				{
@@ -2152,11 +2203,11 @@ public class AdventControl
 						
 						if(!canISee(currentLocation))
 						{
-							//TODO death
 							boolean pitifulDeath = fallInPit();
-							if(pitifulDeath)
+							if(pitifulDeath && !canISee(previousLocation))
 							{
-
+								dead = true;
+								fatality = 1;
 							}
 							else
 							{
@@ -2168,7 +2219,8 @@ public class AdventControl
 							output = getDescription(currentLocation, brief);
 							if(currentLocation.equals(Location.Y2))
 							{
-								if(Math.random() > .74)
+								double chance = generate();
+								if(chance > .74)
 								{
 									//hollow voice
 									output = new String(output + "\n\nA hollow voice says \"PLUGH\"");
@@ -2183,10 +2235,6 @@ public class AdventControl
 					}
 				}
 			}
-//			catch(ClassCastException e)
-//			{
-//				output = "You can not do that.";
-//			}
 			catch(NullPointerException e)
 			{
 				output = "You can not do that.";
@@ -2222,7 +2270,7 @@ public class AdventControl
 	{
 		String output = null;
 		increaseTurns = false;
-		double randomOutput = Math.random();
+		double randomOutput = generate();
 		if(randomOutput < .34)
 		{
 			output = "I have no idea what you are talking about!";
@@ -2348,7 +2396,11 @@ public class AdventControl
 	private boolean fallInPit()
 	{
 		boolean pitifulDeath = false;
-		//TODO chance of falling
+		double chance = generate();
+		if(chance < .35)
+		{
+			pitifulDeath = true;
+		}
 		return pitifulDeath;
 	}
 	
@@ -2357,14 +2409,64 @@ public class AdventControl
 		if(fatality == 1)
 		{
 			output = "\n\nYou fell into a pit and broke every bone in your body!";
-		}x
+			previousLocation = currentLocation;
+		}
+		if(isInHand(GameObjects.LAMP))
+		{
+			light = false;
+			hash.dropObject(GameObjects.LAMP, Location.ROAD);
+		}
+		attemptAction(ActionWords.DROP, GameObjects.ALL, "");
+		currentLocation = Location.BUILDING;
+		previousLocation = Location.BUILDING;
+		fatality = 0;
 		if(closing)
 		{
 			output += "\n\nIt looks as though you you're dead. Well, seeing as how it's so close to closing time anyway, let's just call it a day.";
+			over = true;
+		}
+		else
+		{
+			seriousQuestion = true;
+			quest = 8;
+			currentLocation = Location.BUILDING;
+			switch(deaths)
+			{
+				case 3:
+					output += "\n\nOh dear, you seem to have gotten yourself killed. I might be able to help you out, but I've never really done this before. Do you want me to try to reincarnate you?";
+					break;
+				case 2:
+					output += "\n\nYou clumsy oaf, you've done it again! I don't know how long I can keep this up. Do you want me to try reincarnating you again?";
+					break;
+				default:
+					output += "\n\nNow you've really done it! I'm out of orange smoke! You don't expect me to do a decent reincarnation without any orange smoke, do you?";
+					break;	
+			}
+			deaths--;
 		}
 		return output;
 	}
 	
+	private String quit(String output)
+	{
+		getCurrentScore();
+		if(output == null)
+		{
+			output = "";
+		}
+		else
+		{
+			output += "\n\n";
+		}
+		output += "\tYou scored " + score + " points out of a possible 350, using " + turns + " turn";
+		if(turns > 1)
+		{
+			output += "s";
+		}
+		output += ".\n";
+		noMore = true;
+		return output;
+	}
 	
 	private String lamp(String output)
 	{
@@ -2428,7 +2530,7 @@ public class AdventControl
 			else if(lamp < 0 && currentLocation.outside(currentLocation))
 			{
 				output += "\n\nThere's not much point in wandering around out here, and you can't explore the gave without a lamp. So let's just call it a day.";
-				//TODO give_up
+				over = true;
 			}
 			else if(lamp < 31 && usedBatteries == 1 && objectIsPresent(GameObjects.BATTERIES) && objectIsPresent(GameObjects.LAMP))
 			{
@@ -2574,6 +2676,11 @@ public class AdventControl
 		hash.dropObject(GameObjects.EMERALD, currentLocation);
 	}
 
+	public boolean noMore()
+	{
+		return noMore;
+	}
+	
 	public int getTurns()
 	{
 		return turns;
@@ -2588,11 +2695,16 @@ public class AdventControl
 		return score;
 	}
 	
-	public void collapse()
+	public static void collapse()
 	{
 		justCollapsed = true;
 		collapse = true;
 		bear = 3;
+	}
+	
+	public static double generate()
+	{
+		return random.nextDouble();
 	}
 	
 	public static void setTroll()
