@@ -51,6 +51,16 @@ public enum Location
 		return result;
 	}
 	
+	public int minLoc()
+	{
+		return EASTMIST.ordinal();
+	}
+	
+	public int maxLoc()
+	{
+		return DEAD0.ordinal();
+	}
+	
 	public boolean outside(Location here)
 	{
 		boolean outside = false;
@@ -1620,7 +1630,7 @@ public enum Location
 				{
 					case WEST: case UP: next = LIME; break;
 					case FORK: next = FORK; break;
-					case EAST: case IN: case BARREN: case ENTER: next = FBARR; break;
+					case EAST: case IN: case BARREN: case ENTER: next = BARR; break;
 					case VIEW: next = VIEW; break;
 					default: next = THEVOID; break;
 				}

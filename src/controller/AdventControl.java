@@ -63,6 +63,7 @@ public class AdventControl
 	private boolean seriousQuestion;
 	private boolean increaseTurns;
 	private boolean noMore;
+	private boolean dwarfPresent;
 	
 	private boolean wellInCave;
 	private boolean quit;
@@ -87,6 +88,7 @@ public class AdventControl
 	private int dwarves;
 	//nothing, reached hall no dwarf, met dwarf no knives, knife misses, knife hit .095, .190, .285
 	private int deadDwarves;
+	private int dwarvesLeft;
 	private static int troll;
 	//there, hidden, dead, can pass;
 	private static int bear;
@@ -104,7 +106,7 @@ public class AdventControl
 		eldestLocation = null;
 		actions = ActionWords.NOTHING;
 		things = GameObjects.NOTHING;
-		feeFieFoe = new String[]{"fee", "fie", "foe", "foo", "fum"};
+		feeFieFoe = new String[]{"fee", "fie", "foe", "foo", "fum"};h
 		okay = new String("Okay.");
 		dontHave = new String("You are not carrying it!");
 		nothing = new String("Nothing happens.");
@@ -129,6 +131,8 @@ public class AdventControl
 		wayIsBlocked = false;
 		locationChange = false;
 		seriousQuestion = false;
+		noMore = false;
+		dwarfPresent = false;
 		increaseTurns = false;
 		wellInCave = false;
 		quit = false;
@@ -151,6 +155,7 @@ public class AdventControl
 		bottle = 1;
 		dwarves = 0;
 		deadDwarves = 0;
+		dwarvesLeft = 5;
 		usedBatteries = 0;
 		troll = 0;
 		bear = 0;
@@ -458,12 +463,18 @@ public class AdventControl
 		{
 			output = lamp(output);
 			locationChange = false;
+			
+	/*		if(dwarves > 0 &&) 
+			{
+				
+			}*/
 		}
 		if(!wellInCave)
 		{
-			if(currentLocation.getOrdinal(currentLocation) > currentLocation.getOrdinal(Location.CROSS))
+			if(currentLocation.getOrdinal(currentLocation) >= currentLocation.minLoc())
 			{
 				wellInCave = true;
+				dwarves = 1;
 			}
 		}
 		if(increaseTurns)
@@ -1890,7 +1901,8 @@ public class AdventControl
 					break;
 					
 				case FEEFIE:
-					boolean fum = (alt.equals(feeFieFoe[foo]));
+					boolean fum = false;
+					for
 					if(fum)
 					{
 						if(foo < 3)

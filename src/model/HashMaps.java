@@ -811,6 +811,7 @@ public class HashMaps
 		objectLocation.put(GameObjects.JEWELS, Location.SOUTH);
 		objectLocation.put(GameObjects.COINS, Location.WEST);
 		objectLocation.put(GameObjects.CHEST, Location.THEVOID);
+objectLocation.put(GameObjects.CHEST, Location.BUILDING);
 		objectLocation.put(GameObjects.EGGS, Location.GIANT);
 		objectLocation.put(GameObjects.TRIDENT, Location.FALLS);
 		objectLocation.put(GameObjects.VASE, Location.ORIENTAL);
