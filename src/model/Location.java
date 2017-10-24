@@ -481,9 +481,9 @@ public enum Location
 			case ALIKE11:
 				switch(destination)
 				{
-					case NORTH: case WEST: next = ALIKE11; break;
+					case NORTH: next = ALIKE1; break;
 					case EAST: next = DEAD1; break;
-					case SOUTH: next = ALIKE11; break;
+					case SOUTH: case WEST: next = ALIKE11; break;
 					default: next = THEVOID; break;
 				}
 				break;	

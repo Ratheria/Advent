@@ -98,6 +98,10 @@ public class AdventControl
 	private int west;
 	private int foo;
 	
+	
+
+	//new line before followed by bear notice
+	
 	public AdventControl()
 	{
 		random = new Random();
@@ -106,7 +110,7 @@ public class AdventControl
 		eldestLocation = null;
 		actions = ActionWords.NOTHING;
 		things = GameObjects.NOTHING;
-		feeFieFoe = new String[]{"fee", "fie", "foe", "foo", "fum"};h
+		feeFieFoe = new String[]{"fee", "fie", "foe", "foo", "fum"};
 		okay = new String("Okay.");
 		dontHave = new String("You are not carrying it!");
 		nothing = new String("Nothing happens.");
@@ -260,7 +264,7 @@ public class AdventControl
 			quest = 0;
 			//TODO finish this venture (and all the rest)
 		}
-		else if(quest == 7 && thisIsAnAction && action == ActionWords.FEEFIE)
+		else if(input.equals("fee") || (quest == 7 && thisIsAnAction && action == ActionWords.FEEFIE))
 		{
 			quest = 0;
 			output = attemptAction(action, GameObjects.NOTHING, input);
@@ -737,7 +741,7 @@ public class AdventControl
 							bear = 2;
 							output = "The bear is now following you.";
 						}
-						else if(object == GameObjects.CHAIN && chain == 2)
+						else if(object == GameObjects.CHAIN && chain != 1)
 						{
 							output = new String("The chain is still locked.");
 							increaseTurns = false;
@@ -1439,7 +1443,12 @@ public class AdventControl
 					break;
 
 				case KILL:
-					if(object == GameObjects.BIRD && closed)
+					if(object == GameObjects.NOTHING)
+					{
+						output = "What would you like to kill?";
+						//TODO question cycle
+					}
+					else if(object == GameObjects.BIRD && closed)
 					{
 						if(objectIsHere(GameObjects.BIRD))
 						{
@@ -1901,8 +1910,8 @@ public class AdventControl
 					break;
 					
 				case FEEFIE:
-					boolean fum = false;
-					for
+					boolean fum = (alt.equals(feeFieFoe[foo]));
+					System.out.println(alt + " " + fum);
 					if(fum)
 					{
 						if(foo < 3)
@@ -1922,10 +1931,12 @@ public class AdventControl
 							else if(currentLocation != Location.GIANT)
 							{
 								output = "Done!";
+								hash.dropObject(GameObjects.EGGS, Location.GIANT);
 							}
 							else
 							{
 								output = "There is a large nest here, full of golden eggs!";
+								hash.dropObject(GameObjects.EGGS, Location.GIANT);
 							}
 						}
 					}
@@ -2243,7 +2254,7 @@ public class AdventControl
 					
 					if(bear == 2)
 					{
-						output = output + "You are being followed by a very large, tame bear.";
+						output = output + "\n\tYou are being followed by a very large, tame bear.";
 					}
 				}
 			}
