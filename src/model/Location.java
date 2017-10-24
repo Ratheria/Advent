@@ -428,7 +428,7 @@ public enum Location
 					case DOWN: next = ALIKE7; break;
 					case WEST: next = ALIKE5; break;
 					case EAST: next = ALIKE3; break;
-					case SOUTH: next = ALIKE6; break;
+					case SOUTH: next = ALIKE8; break;
 					default: next = THEVOID; break;
 				}
 				break;	
@@ -520,7 +520,7 @@ public enum Location
 			case BRINK:
 				switch(destination)
 				{
-					case DOWN: next = BIRD; break;
+					case DOWN: case CLIMB: next = BIRD; break;
 					case WEST: next = ALIKE10; break;
 					case SOUTH: next = DEAD8; break;
 					case NORTH: next = ALIKE12; break;
