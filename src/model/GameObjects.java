@@ -86,7 +86,8 @@ public enum GameObjects
 	public String getItemDescription(Location location, GameObjects object, 
 			boolean light, boolean grate, int plant, int bottle, boolean cage, boolean oilDoor,
 			boolean bearAxe, boolean dragon, int bear, int usedBatteries, boolean broken,
-			int chain, boolean gold, boolean crystalBridge, boolean collapse)
+			int chain, boolean gold, boolean crystalBridge, boolean collapse, int rod1, int rod2,
+			int bottles, int lamps, int oysters, int pillows)
 	{
 		String output = "";
 		switch(object)
@@ -107,7 +108,7 @@ public enum GameObjects
 				{
 					output = new String("\n\t\tBrass Lantern");
 				}
-				else
+				else if(lamps == 0)
 				{
 					if(light)
 					{
@@ -117,6 +118,10 @@ public enum GameObjects
 					{
 						output = new String("\n\tThere is a shiny brass lamp nearby.");
 					}
+				}
+				else
+				{
+					output = "";
 				}
 				break;
 				
@@ -165,9 +170,13 @@ public enum GameObjects
 				{
 					output = new String("\n\t\tBlack Rod");
 				}
-				else
+				else if(rod1 == 0)
 				{
 					output = new String("\n\tA three foot black rod with a rusty star on an end lies nearby.");
+				}
+				else
+				{
+					output = "";
 				}
 				break;				
 				
@@ -176,9 +185,13 @@ public enum GameObjects
 				{
 					output = new String("\n\t\tBlack Rod");
 				}
-				else
+				else if(rod2 == 0)
 				{
 					output = new String("\n\tA three foot black rod with a rusty mark on an end lies nearby.");
+				}
+				else
+				{
+					output = "";
 				}
 				break;
 				
@@ -198,9 +211,13 @@ public enum GameObjects
 				{
 					output = new String("\n\t\tVelvet Pillow");
 				}
-				else
+				else if(pillows == 0)
 				{
 					output = new String("\n\tA small velvet pillow lies on the floor.");
+				}
+				else
+				{
+					output = "";
 				}
 				break;			
 				
@@ -247,9 +264,13 @@ public enum GameObjects
 				{
 					output = new String("\n\t\tGiant Oyster >GROAN!<");
 				}
-				else
+				else if(oysters == 0)
 				{
 					output = new String("\n\tThere is an enormous oyster here with its shell tightly closed. Interesting, there seems to be something written on the underside of the oyster.");
+				}
+				else
+				{
+					output = "";
 				}
 				break;		
 				
@@ -276,7 +297,11 @@ public enum GameObjects
 				break;		
 				
 			case BOTTLE:
-				if(bottle == 0)
+				if(bottles == 1)
+				{
+					output = "";
+				}
+				else if(bottle == 0)
 				{
 					if(location == Location.INHAND)
 					{

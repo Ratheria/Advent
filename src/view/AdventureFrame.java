@@ -28,4 +28,9 @@ public class AdventureFrame extends JFrame
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
+	public void setUp()
+	{
+		panel.setUpGame();
+	}
+	
 }

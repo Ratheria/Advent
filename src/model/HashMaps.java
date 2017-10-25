@@ -7,6 +7,8 @@ package model;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import controller.AdventControl;
+
 public class HashMaps 
 {
 	private HashMap<String, Movement> movement = new HashMap<String, Movement>();
@@ -811,7 +813,6 @@ public class HashMaps
 		objectLocation.put(GameObjects.JEWELS, Location.SOUTH);
 		objectLocation.put(GameObjects.COINS, Location.WEST);
 		objectLocation.put(GameObjects.CHEST, Location.THEVOID);
-objectLocation.put(GameObjects.CHEST, Location.BUILDING);
 		objectLocation.put(GameObjects.EGGS, Location.GIANT);
 		objectLocation.put(GameObjects.TRIDENT, Location.FALLS);
 		objectLocation.put(GameObjects.VASE, Location.ORIENTAL);
@@ -1043,6 +1044,18 @@ objectLocation.put(GameObjects.CHEST, Location.BUILDING);
 			if(objectIsHere(GameObjects.CHAIN, here))
 			{	result.add(GameObjects.CHAIN);}
 		}
+		for(GameObjects object : result)
+		{
+			if(found.containsKey(object))
+			{
+				if(found.get(object) != true)
+				{
+					AdventControl.updateTally();
+					found.put(object, true);
+				}
+			}
+		}
+		
 		return result;
 	}
 	

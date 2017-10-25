@@ -59,7 +59,6 @@ public class AdventPanel extends JPanel
 		setUpPanel();
 		setUpLayout();
 		setUpListeners();
-		setUpGame();
 	}
 
 	private void setUpPanel() 
@@ -125,7 +124,7 @@ public class AdventPanel extends JPanel
 		inputField.requestFocusInWindow();
 	}
 	
-	private void setUpGame()
+	public void setUpGame()
 	{
 		displayLog.setText(" Welcome to ADVENTURE!\n"
 				+ " Original development by William Crowther.\n"

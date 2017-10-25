@@ -24,8 +24,8 @@ import view.AdventureFrame;
 public class AdventControl 
 {
 	private static Random random;
-	private AdventureFrame frame = new AdventureFrame(this);
-	private HashMaps hash = new HashMaps();
+	private AdventureFrame frame;
+	private HashMaps hash;
 	@SuppressWarnings("unused")
 	private MessageWords messages;
 	@SuppressWarnings("unused")
@@ -80,7 +80,7 @@ public class AdventControl
 	private int itemsInHand;
 	private int deaths;
 	private int fatality;
-	private int tally;
+	private static int tally;
 	private int lostTreasures;
 	private int plant;
 	private int bottle;
@@ -97,6 +97,12 @@ public class AdventControl
 	//locked to bear, unlocked, locked
 	private int west;
 	private int foo;
+	private int rod1;
+	private int rod2;
+	private int bottles;
+	private int lamps;
+	private int pillows;
+	private int oysters;
 	
 	
 
@@ -104,16 +110,23 @@ public class AdventControl
 	
 	public AdventControl()
 	{
-		random = new Random();
-		currentLocation = Location.ROAD;
-		previousLocation = null;
-		eldestLocation = null;
+		frame = new AdventureFrame(this);
+		hash = new HashMaps();
 		actions = ActionWords.NOTHING;
 		things = GameObjects.NOTHING;
 		feeFieFoe = new String[]{"fee", "fie", "foe", "foo", "fum"};
 		okay = new String("Okay.");
 		dontHave = new String("You are not carrying it!");
 		nothing = new String("Nothing happens.");
+		random = new Random();
+		setUp();
+	}
+	
+	public void setUp()
+	{
+		currentLocation = Location.ROAD;
+		previousLocation = null;
+		eldestLocation = null;
 		dead = false;
 		beginning = true;
 		closed = false;
@@ -166,13 +179,15 @@ public class AdventControl
 		chain = 0;
 		west = 0;
 		foo = 0;
+		rod1 = 0;
+		rod2 = 0;
+		bottles = 0;
+		pillows = 0;
+		lamps = 0;
+		oysters = 0;
 		currentLocation.setUp(this);
 		things.setUp();
-	}
-	
-	private AdventControl(boolean temp)
-	{
-		//TODO load
+		frame.setUp();
 	}
 
 	public String determineAction(String input) 
@@ -241,7 +256,7 @@ public class AdventControl
 			quest = 0;		
 			seriousQuestion = false;
 			quit = true;
-			output = quit(output);
+			over = true;
 		}
 		else if(quest == 3 && thisIsAnObject && itsAn != GameObjects.NOTHING)
 		{
@@ -276,7 +291,7 @@ public class AdventControl
 			seriousQuestion = false;
 			if(answer == 2)
 			{
-				output = quit(output);
+				over = true;
 			}
 			else
 			{
@@ -292,11 +307,23 @@ public class AdventControl
 						break;
 					default:
 						output = "Okay, if you're so smart, do it yourself! I'm leaving!";
-						output = quit(output);
+						over = true;
 						break;
 				}
 			}
 			
+		}
+		else if(quest == 9)
+		{
+			if(answer == 1)
+			{
+				setUp();
+			}
+			else
+			{
+				noMore = true;
+				System.exit(0);
+			}
 		}
 		else if(quest == 20)
 		{
@@ -548,7 +575,7 @@ public class AdventControl
 			{
 				output = new String(output + things.getItemDescription(here, thing, 
 						light, grateUnlocked, plant, bottle, birdInCage, oilDoor, bearAxe, dragon,
-						bear, usedBatteries, broken, chain, haveGold, crystalBridge, collapse));
+						bear, usedBatteries, broken, chain, haveGold, crystalBridge, collapse, rod1, rod2, bottles, lamps, oysters, pillows));
 				
 				if(things.isTreasure(thing))
 				{
@@ -620,6 +647,13 @@ public class AdventControl
 					
 				case TAKE:
 					output = new String("You can't be serious!");
+					
+					if(object == GameObjects.ROD && rod1 != 0) { rod1 = 0; }
+					if(object == GameObjects.LAMP && lamps != 0) { lamps = 0; }
+					if(object == GameObjects.BOTTLE && bottles != 0) { bottles = 0; }
+					if(object == GameObjects.PILLOW && pillows != 0) { pillows = 0; }
+					if(object == GameObjects.OYSTER && oysters != 0) { oysters = 0; }
+					
 					if(object == GameObjects.ALL)
 					{
 						ArrayList<GameObjects> itemsHere = hash.objectsHere(currentLocation);
@@ -746,6 +780,10 @@ public class AdventControl
 							output = new String("The chain is still locked.");
 							increaseTurns = false;
 						}
+						else if(closed && (object == GameObjects.BIRD || object == GameObjects.CAGE))
+						{
+							output = new String("Oh, leave the poor unhappy bird alone.");
+						}
 						else if(itemsInHand >= 7)
 						{
 							output = new String("You can't carry anything more. You'll have to drop something first.");
@@ -793,6 +831,7 @@ public class AdventControl
 						else if(object == GameObjects.ROD && !objectIsHere(GameObjects.ROD) && objectIsHere(GameObjects.ROD2))
 						{
 							takeObject(GameObjects.ROD2);
+							if(rod2 != 0) {	rod2 = 0; }
 							output = okay;
 						}
 						else if(object == GameObjects.AXE && bearAxe && bear == 0)
@@ -820,7 +859,7 @@ public class AdventControl
 					output = new String("");
 					if(isInHand(GameObjects.ROD2) && object == GameObjects.ROD && !isInHand(GameObjects.ROD))
 					{
-						//TODO DYNAMITE
+						dropObject(GameObjects.ROD2);
 					}
 					if(object == GameObjects.ALL)
 					{
@@ -1357,7 +1396,7 @@ public class AdventControl
 				case TOSS:
 					if(object == GameObjects.ROD && isInHand(GameObjects.ROD2) && !(isInHand(GameObjects.ROD)))
 					{
-						//TODO dynamite
+						output = attemptAction(ActionWords.DROP, GameObjects.ROD, "");
 					}
 					else if(!(isInHand(object)))
 					{
@@ -1897,11 +1936,21 @@ public class AdventControl
 					break;
 					
 				case BLAST:
-					if(closed )
+					if(closed && rod2 == 0)
 					{
 						bonus = (objectIsPresent(GameObjects.ROD2) ? 25 : currentLocation == Location.NEEND ? 30 : 45);
-						//62
-						//TODO endgame
+						switch(bonus)
+						{
+							case 25:
+								output = "There is a loud explosion, and you are suddenly splashed across the walls of the room.";
+								break;
+							case 30:
+								output = "There is a loud explosion, and a twenty-foot hole appears in the far wall, burying the snakes in the rubble. A river of molten lava pours in through the hole, destroying everything in its path, including you!";
+								break;
+							default:
+								output = "There is a loud explosion, and a twenty-foot hole appears in the far wall, burying the dwarves in the rubble. You march through the hole and find yourself in the Main Office, where a cheering band of friendly elves carry the conquering adventurer off into the sunset.";		
+						}
+						over = true;
 					}
 					else
 					{
@@ -2056,12 +2105,14 @@ public class AdventControl
 					output = "You are at the bottom of the pit with a broken neck.";
 					increaseTurns = false;
 					dead = true;
+					fatality = 1;
 				}
 				else if(locationResult.equals(Location.LOSE))
 				{
 					output = "You didn't make it.";
 					increaseTurns = false;
 					dead = true;
+					fatality = 1;
 				}
 				else if(locationResult.equals(Location.CANT))
 				{
@@ -2223,6 +2274,9 @@ public class AdventControl
 					else
 					{
 						setLocation(locationResult);
+						
+						if(currentLocation.getOrdinal(currentLocation))
+							greater than westmist less than dead0
 						
 						if(!canISee(currentLocation))
 						{
@@ -2487,7 +2541,14 @@ public class AdventControl
 			output += "s";
 		}
 		output += ".\n";
-		noMore = true;
+		
+		//TODO ranking
+		
+		//TODO next ranking
+		
+		output += "/n/n/n/tWould you like to play again?";
+		quest = 9;
+		seriousQuestion = true;
 		return output;
 	}
 	
@@ -2527,6 +2588,12 @@ public class AdventControl
 			hash.dropObject(GameObjects.ROD2, Location.SWEND);
 			hash.dropObject(GameObjects.PILLOW, Location.SWEND);
 			hash.dropObject(GameObjects.MIRROR, Location.SWEND);
+			rod1 = 1;
+			rod2 = 1;
+			bottles = 1;
+			pillows = 1;
+			lamps = 1;
+			oysters = 1;
 			
 			hash.objectsHere(Location.INHAND);
 			ArrayList<GameObjects> inventory = hash.getResult();
@@ -2539,7 +2606,7 @@ public class AdventControl
 			}
 			itemsInHand = 0;
 		}
-		else if(light)
+		else if(light && !(closing || closed))
 		{
 			if(lamp < 0)
 			{
@@ -2716,6 +2783,11 @@ public class AdventControl
 			return 0;
 		}
 		return score;
+	}
+	
+	public static void updateTally()
+	{
+		tally--;
 	}
 	
 	public static void collapse()
