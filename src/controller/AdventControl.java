@@ -59,6 +59,7 @@ public class AdventControl
 	private boolean lampWarn;
 	private boolean panic;
 	private boolean over;
+	private boolean shortcut;
 	private boolean wayIsBlocked;
 	private boolean locationChange;
 	private boolean seriousQuestion;
@@ -148,6 +149,7 @@ public class AdventControl
 		collapse = false;
 		lampWarn = false;
 		over = false;
+		shortcut = true;
 		panic = false;
 		wayIsBlocked = false;
 		locationChange = false;
@@ -159,7 +161,7 @@ public class AdventControl
 		quit = false;
 		hintDeduction = 0;
 		clock1 = 15;
-		clock2 = 30;
+		clock2 = 15;
 		quest = 0;
 		brief = 0;
 		score = 0;
@@ -176,7 +178,7 @@ public class AdventControl
 		bottle = 1;
 		usedBatteries = 0;
 		pirate = 0;
-		movesWOEncounter = 0;
+		movesWOEncounter = 1;
 		dwarves = 0;
 		deadDwarves = 0;
 		dwarvesLeft = 5;
@@ -213,7 +215,11 @@ public class AdventControl
 		{
 			action = (hash.whichAction(input));
 		}
-		if(beginning)
+		if(shortcut)
+		{
+			output = lamp("");
+		}
+		else if(beginning)
 		{
 			if(answer == 1)
 			{
@@ -569,6 +575,7 @@ public class AdventControl
 			System.out.println("current " + currentLocation);
 			System.out.println("lamp " + lamp);
 			System.out.println("items " + itemsInHand);
+			System.out.println("tally " + tally);
 		}
 		return output;
 	}
@@ -2337,10 +2344,12 @@ public class AdventControl
 								if(pirate == 0)
 								{
 									movesWOEncounter++;
-									if(chance <= movesWOEncounter * (1/100))
+									double likely = (movesWOEncounter * 10 / 8)/3; 
+									if(chance * 100 <= likely)
 									{
 										pirate = 1;
 									}
+									System.out.println("likely " + likely + "\npirate " + pirate);
 								}
 							}
 							output = getDescription(currentLocation, brief);
@@ -2362,7 +2371,8 @@ public class AdventControl
 					}
 					if(relocate)
 					{
-						hash.dropObject(GameObjects.EMERALD, currentLocation);
+						hash.dropObject(GameObjects.EMERALD, Location.PROOM);
+						itemsInHand--;
 						relocate = false;
 					}
 				}
@@ -2609,22 +2619,34 @@ public class AdventControl
 	
 	private String lamp(String output)
 	{
-		if(tally == 0 && !(currentLocation.outsideCave(currentLocation)) && !(currentLocation == Location.Y2))
-		{
-			clock1--;
-		}
-		else if(clock1 == 0)
-		{
-			output = "A sepulchral voice, reverberating through the cave, says, \n\t\"Cave closing soon. All adventurers exit immediately through main office.\"";
-			clock1 = -1;
-			//TODO kill all dwarfs, can't unlock grate remove troll and bear (if not dead) 
-			closing = true;
-		}
-		else if(clock2 == 0)
+		if(clock2 == 0 || shortcut)
 		{
 			output = "The sepulchral voice intones, \n\t\"The cave is now closed.\"\nAs the echoes fade, there is a blinding flash of light (and a small puff of orange smoke)...\nThen your eyes refocus: you look around and find...";
 			closed = true;
 			bonus = 10;
+			attemptAction(ActionWords.DROP, GameObjects.ALL, "");
+			attemptAction(ActionWords.OFF, GameObjects.NOTHING, "");
+			if(shortcut)
+			{
+				wellInCave = true;
+				tally = 0;
+				hash.dropObject(GameObjects.GOLD, Location.BUILDING);
+				hash.dropObject(GameObjects.DIAMONDS, Location.BUILDING);
+				hash.dropObject(GameObjects.SILVER, Location.BUILDING);
+				hash.dropObject(GameObjects.JEWELS, Location.BUILDING);
+				hash.dropObject(GameObjects.COINS, Location.BUILDING);
+				hash.dropObject(GameObjects.CHEST, Location.BUILDING);
+				hash.dropObject(GameObjects.EGGS, Location.BUILDING);
+				hash.dropObject(GameObjects.TRIDENT, Location.BUILDING);
+				hash.dropObject(GameObjects.VASE, Location.BUILDING);
+				hash.dropObject(GameObjects.EMERALD, Location.BUILDING);
+				hash.dropObject(GameObjects.PYRAMID, Location.BUILDING);
+				hash.dropObject(GameObjects.PEARL, Location.BUILDING);
+				hash.dropObject(GameObjects.RUG, Location.BUILDING);
+				hash.dropObject(GameObjects.SPICES, Location.BUILDING);
+				hash.dropObject(GameObjects.CHAIN, Location.BUILDING);
+				hash.dropObject(GameObjects.MAG, Location.WITT);
+			}
 			//page 88
 			//page 89
 			hash.dropObject(GameObjects.BOTTLE, Location.NEEND);
@@ -2649,17 +2671,21 @@ public class AdventControl
 			pillows = 1;
 			lamps = 1;
 			oysters = 1;
-			
-			hash.objectsHere(Location.INHAND);
-			ArrayList<GameObjects> inventory = hash.getResult();
-			if(inventory.size() > 0)
-			{
-				for(GameObjects item : inventory)
-				{
-					voidObject(item);
-				}
-			}
-			itemsInHand = 0;
+		}
+		else if(clock1 == -1)
+		{
+			clock2--;
+		}
+		else if(clock1 == 0)
+		{
+			output = "A sepulchral voice, reverberating through the cave, says, \n\t\"Cave closing soon. All adventurers exit immediately through main office.\"";
+			clock1 = -1;
+			//TODO kill all dwarfs, can't unlock grate remove troll and bear (if not dead) 
+			closing = true;
+		}
+		else if(tally == 0 && !(currentLocation.outsideCave(currentLocation)) && !(currentLocation == Location.Y2))
+		{
+			clock1--;
 		}
 		else if(light && !(closing || closed))
 		{
