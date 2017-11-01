@@ -85,6 +85,8 @@ public class AdventControl
 	private int plant;
 	private int bottle;
 	private int usedBatteries;
+	private int pirate;
+	private int movesWOEncounter;
 	private int dwarves;
 	//nothing, reached hall no dwarf, met dwarf no knives, knife misses, knife hit .095, .190, .285
 	private int deadDwarves;
@@ -170,10 +172,12 @@ public class AdventControl
 		lostTreasures = 0;
 		plant = 0;
 		bottle = 1;
+		usedBatteries = 0;
+		pirate = 0;
+		movesWOEncounter = 0;
 		dwarves = 0;
 		deadDwarves = 0;
 		dwarvesLeft = 5;
-		usedBatteries = 0;
 		troll = 0;
 		bear = 0;
 		chain = 0;
@@ -490,16 +494,6 @@ public class AdventControl
 	
 	private String finishAction(String output)
 	{
-		if(locationChange && increaseTurns)
-		{
-			output = lamp(output);
-			locationChange = false;
-			
-	/*		if(dwarves > 0 &&) 
-			{
-				
-			}*/
-		}
 		if(!wellInCave)
 		{
 			if(currentLocation.getOrdinal(currentLocation) >= currentLocation.minLoc())
@@ -507,6 +501,43 @@ public class AdventControl
 				wellInCave = true;
 				dwarves = 1;
 			}
+		}
+		if(locationChange && increaseTurns)
+		{
+			output = lamp(output);
+			locationChange = false;
+			if(pirate == 1)
+			{
+				ArrayList<GameObjects> currentlyHolding = hash.objectsHere(Location.INHAND);
+				boolean treasure = false;
+				pirate = 2;
+				hash.dropObject(GameObjects.MESSAGE, Location.PONY);
+				hash.dropObject(GameObjects.CHEST, Location.DEAD2);
+				if(currentlyHolding != null)
+				{
+					for(GameObjects object : currentlyHolding)
+					{
+						if(things.isTreasure(object))
+						{
+							treasure = true;
+							hash.dropObject(object, Location.DEAD2);
+							itemsInHand--;
+						}
+					}
+				}
+				if(treasure)
+				{
+					output += "\n\nOut from the shadows behind you pounces a bearded pirate!\n\"Har, har,\" he chortles, \"I'll just take all this booty and hide it away with me chest deep in the maze!\"\nHe snatches your treasure and vanishes into the gloom.";
+				}
+				else
+				{
+					output += "\n\nThere are faint rustling noises from the darkness behind you. As you turn toward them, the beam of your lamp falls across a bearded pirate. He is carrying a large chest.\n\"Shiver me timbers!\" he cries, \"I've been spotted! I'd best hie meself off to the maze to hide me chest!\"\nWith that, he vanishes into the gloom.";
+				}
+			}
+	/*		if(dwarves > 0 &&) 
+			{
+				
+			}*/
 		}
 		if(increaseTurns)
 		{
@@ -520,10 +551,10 @@ public class AdventControl
 		if(dead && quest != 50)
 		{
 			output += death(output); 
-			if(over)
-			{
-				output = quit(output);
-			}
+		}
+		if(over)
+		{
+			output = quit(output);
 		}
 		else
 		{
@@ -2275,8 +2306,8 @@ public class AdventControl
 					{
 						setLocation(locationResult);
 						
-						if(currentLocation.getOrdinal(currentLocation))
-							greater than westmist less than dead0
+	//					if(currentLocation.getOrdinal(currentLocation))
+	//						greater than westmist less than dead0
 						
 						if(!canISee(currentLocation))
 						{
@@ -2293,6 +2324,18 @@ public class AdventControl
 						}
 						else
 						{
+							if(currentLocation.critters(currentLocation))
+							{
+								double chance = generate();
+								if(pirate == 0)
+								{
+									movesWOEncounter++;
+									if(chance <= movesWOEncounter * (1/100))
+									{
+										pirate = 1;
+									}
+								}
+							}
 							output = getDescription(currentLocation, brief);
 							if(currentLocation.equals(Location.Y2))
 							{
@@ -2546,7 +2589,7 @@ public class AdventControl
 		
 		//TODO next ranking
 		
-		output += "/n/n/n/tWould you like to play again?";
+		output += "\n\n\n\tWould you like to play again?";
 		quest = 9;
 		seriousQuestion = true;
 		return output;

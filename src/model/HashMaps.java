@@ -1044,14 +1044,17 @@ public class HashMaps
 			if(objectIsHere(GameObjects.CHAIN, here))
 			{	result.add(GameObjects.CHAIN);}
 		}
-		for(GameObjects object : result)
+		if(!(result == null))
 		{
-			if(found.containsKey(object))
+			for(GameObjects object : result)
 			{
-				if(found.get(object) != true)
+				if(found.containsKey(object))
 				{
-					AdventControl.updateTally();
-					found.put(object, true);
+					if(found.get(object) != true)
+					{
+						AdventControl.updateTally();
+						found.put(object, true);
+					}
 				}
 			}
 		}

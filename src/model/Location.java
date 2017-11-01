@@ -61,6 +61,16 @@ public enum Location
 		return DEAD0.ordinal();
 	}
 	
+	public boolean critters(Location here)
+	{
+		boolean result = false;
+		if(here.ordinal() > EASTMIST.ordinal() && here.ordinal() < DEAD0.ordinal())
+		{
+			result = true;
+		}
+		return result;
+	}
+	
 	public boolean outside(Location here)
 	{
 		boolean outside = false;
