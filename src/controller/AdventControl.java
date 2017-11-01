@@ -53,6 +53,7 @@ public class AdventControl
 	private boolean bearAxe;
 	private boolean broken;
 	private boolean haveGold;
+	private static boolean relocate;
 	private static boolean collapse;
 	private static boolean justCollapsed;
 	private boolean lampWarn;
@@ -142,6 +143,7 @@ public class AdventControl
 		bearAxe = false;
 		broken = false;
 		haveGold = false;
+		relocate = false;
 		justCollapsed = false;
 		collapse = false;
 		lampWarn = false;
@@ -1481,7 +1483,12 @@ public class AdventControl
 					break;
 
 				case BREAK:
-					if(object == GameObjects.VASE)
+					if(object == GameObjects.NOTHING)
+					{
+						output = "You can't be serious!";
+						increaseTurns = false;
+					}
+					else if(object == GameObjects.VASE)
 					{
 						if(isInHand(GameObjects.VASE))
 						{
@@ -2353,6 +2360,11 @@ public class AdventControl
 					{
 						output = output + "\n\tYou are being followed by a very large, tame bear.";
 					}
+					if(relocate)
+					{
+						hash.dropObject(GameObjects.EMERALD, currentLocation);
+						relocate = false;
+					}
 				}
 			}
 			catch(NullPointerException e)
@@ -2804,9 +2816,9 @@ public class AdventControl
 		return result;
 	}
 	
-	public void relocate()
+	public static void relocate()
 	{
-		hash.dropObject(GameObjects.EMERALD, currentLocation);
+		relocate = true;
 	}
 
 	public boolean noMore()

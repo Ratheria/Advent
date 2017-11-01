@@ -1256,7 +1256,7 @@ public enum Location
 					case PLOVER: 
 						if(emerald)
 						{
-							base.relocate();
+							AdventControl.relocate();
 						}
 						next = Y2;
 						break;
