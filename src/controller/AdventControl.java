@@ -215,13 +215,14 @@ public class AdventControl
 		{
 			action = (hash.whichAction(input));
 		}
-		if(shortcut)
-		{
-			output = lamp("");
-		}
 		else if(beginning)
 		{
-			if(answer == 1)
+			if(shortcut)
+			{
+				output = lamp("");
+				beginning = false;
+			}
+			else if(answer == 1)
 			{
 				hintDeduction = 5;
 				output = "\tSomewhere nearby is Colossal Cave, where others have found great fortunes in "
