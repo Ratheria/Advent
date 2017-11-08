@@ -107,10 +107,14 @@ public class AdventControl
 	private int lamps;
 	private int pillows;
 	private int oysters;
+	private int grates;
+	private int cages;
+	private int birds;
+	private int snakes;
 	
 	
 
-	//new line before followed by bear notice
+	//TODO new line before followed by bear notice
 	
 	public AdventControl()
 	{
@@ -193,6 +197,10 @@ public class AdventControl
 		pillows = 0;
 		lamps = 0;
 		oysters = 0;
+		grates = 0;
+		cages = 0;
+		birds = 0;
+		snakes = 0;
 		currentLocation.setUp(this);
 		things.setUp();
 		frame.setUp();
@@ -215,7 +223,7 @@ public class AdventControl
 		{
 			action = (hash.whichAction(input));
 		}
-		else if(beginning)
+		if(beginning)
 		{
 			if(shortcut)
 			{
@@ -616,7 +624,8 @@ public class AdventControl
 			{
 				output = new String(output + things.getItemDescription(here, thing, 
 						light, grateUnlocked, plant, bottle, birdInCage, oilDoor, bearAxe, dragon,
-						bear, usedBatteries, broken, chain, haveGold, crystalBridge, collapse, rod1, rod2, bottles, lamps, oysters, pillows));
+						bear, usedBatteries, broken, chain, haveGold, crystalBridge, collapse, rod1, 
+						rod2, bottles, lamps, oysters, pillows, grates, cages, birds, snakes));
 				
 				if(things.isTreasure(thing))
 				{
@@ -688,13 +697,11 @@ public class AdventControl
 					
 				case TAKE:
 					output = new String("You can't be serious!");
-					
 					if(object == GameObjects.ROD && rod1 != 0) { rod1 = 0; }
 					if(object == GameObjects.LAMP && lamps != 0) { lamps = 0; }
 					if(object == GameObjects.BOTTLE && bottles != 0) { bottles = 0; }
 					if(object == GameObjects.PILLOW && pillows != 0) { pillows = 0; }
 					if(object == GameObjects.OYSTER && oysters != 0) { oysters = 0; }
-					
 					if(object == GameObjects.ALL)
 					{
 						ArrayList<GameObjects> itemsHere = hash.objectsHere(currentLocation);
@@ -2447,7 +2454,8 @@ public class AdventControl
 	
 	private int getCurrentScore()
 	{
-		int currentScore = (2 + (2 * (15 - tally)) + (deaths * 10));
+		int currentScore = (2 + (2 * (
+				fixtally)) + (deaths * 10));
 		ArrayList<GameObjects> buildingItems = hash.objectsHere(Location.BUILDING);
 		ArrayList<GameObjects> witItems = hash.objectsHere(Location.WITT);
 		
@@ -2622,7 +2630,7 @@ public class AdventControl
 	{
 		if(clock2 == 0 || shortcut)
 		{
-			output = "The sepulchral voice intones, \n\t\"The cave is now closed.\"\nAs the echoes fade, there is a blinding flash of light (and a small puff of orange smoke)...\nThen your eyes refocus: you look around and find...";
+			output = "The sepulchral voice intones, \n\t\"The cave is now closed.\"\nAs the echoes fade, there is a blinding flash of light (and a small puff of orange smoke)...\nThen your eyes refocus: you look around and find...\n";
 			closed = true;
 			bonus = 10;
 			attemptAction(ActionWords.DROP, GameObjects.ALL, "");
@@ -2647,6 +2655,7 @@ public class AdventControl
 				hash.dropObject(GameObjects.SPICES, Location.BUILDING);
 				hash.dropObject(GameObjects.CHAIN, Location.BUILDING);
 				hash.dropObject(GameObjects.MAG, Location.WITT);
+				shortcut = false;
 			}
 			//page 88
 			//page 89
@@ -2672,6 +2681,11 @@ public class AdventControl
 			pillows = 1;
 			lamps = 1;
 			oysters = 1;
+			grates = 1;
+			cages = 1;
+			birds = 1;
+			snakes = 1;
+			output += hash.getDescription(currentLocation, brief);
 		}
 		else if(clock1 == -1)
 		{

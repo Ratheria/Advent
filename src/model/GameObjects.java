@@ -87,7 +87,8 @@ public enum GameObjects
 			boolean light, boolean grate, int plant, int bottle, boolean cage, boolean oilDoor,
 			boolean bearAxe, boolean dragon, int bear, int usedBatteries, boolean broken,
 			int chain, boolean gold, boolean crystalBridge, boolean collapse, int rod1, int rod2,
-			int bottles, int lamps, int oysters, int pillows)
+			int bottles, int lamps, int oysters, int pillows, int grates, int cages, int birds, 
+			int snakes)
 	{
 		String output = "";
 		switch(object)
@@ -126,7 +127,11 @@ public enum GameObjects
 				break;
 				
 			case GRATE: case GRATE_:
-				if(grate)
+				if(grates == 1)
+				{
+					output = "";
+				}
+				else if(grate)
 				{
 					output = new String("\n\tThe grate is open.");
 				}
@@ -137,7 +142,11 @@ public enum GameObjects
 				break;
 				
 			case CAGE:
-				if(location == Location.INHAND)
+				if(cages == 1)
+				{
+					output = "";
+				}
+				else if(location == Location.INHAND)
 				{
 					output = new String("\n\t\tWicker Cage");
 				}
@@ -148,7 +157,11 @@ public enum GameObjects
 				break;
 				
 			case BIRD:
-				if(location == Location.INHAND)
+				if(birds == 1)
+				{
+					output = "";
+				}
+				else if(location == Location.INHAND)
 				{
 					output = new String("\n\t\tLittle Bird in Cage");
 				}
@@ -240,7 +253,14 @@ public enum GameObjects
 				break;		
 				
 			case SNAKE:
-				output = new String("\n\tA huge green fierce snake bars the way!");
+				if(snakes == 1)
+				{
+					output = "";
+				}
+				else
+				{
+					output = new String("\n\tA huge green fierce snake bars the way!");
+				}
 				break;		
 				
 			case TABLET:
