@@ -56,7 +56,7 @@ public enum Location
 	public boolean critters(Location here)
 	{
 		boolean result = false;
-		if(here.ordinal() > EASTMIST.ordinal() && here.ordinal() < DEAD0.ordinal())
+		if(here.ordinal() > EASTMIST.ordinal() && here.ordinal() < DEAD0.ordinal() && !(here == PROOM) && !(here == DROOM))
 		{	result = true;	}
 		return result;
 	}
@@ -1651,9 +1651,7 @@ public enum Location
 		double chance = AdventControl.generate();
 		Location result = REMARK;
 		if(chance < .06)
-		{	
-			result = ANTE;	
-		}
+		{	result = ANTE;	}
 		return result;
 	}
 	
@@ -1661,9 +1659,7 @@ public enum Location
 	{
 		Location result = EASTFISSURE;
 		if(!bridge)
-		{	
-			result = REMARK;	
-		}
+		{	result = REMARK;	}
 		return result;
 	}
 	
@@ -1671,9 +1667,7 @@ public enum Location
 	{
 		Location result = WESTFISSURE;
 		if(!bridge)
-		{	
-			result = REMARK;	
-		}
+		{	result = REMARK;	}
 		return result;
 	}
 	
@@ -1681,9 +1675,7 @@ public enum Location
 	{
 		Location result = REMARK;
 		if(grate)
-		{	
-			result = INSIDE;	
-		}
+		{	result = INSIDE;	}
 		return result;
 	}
 	
@@ -1691,9 +1683,7 @@ public enum Location
 	{
 		Location result = REMARK;
 		if(grate)
-		{	
-			result = OUTSIDE;	
-		}
+		{	result = OUTSIDE;	}
 		return result;
 	}
 }
