@@ -113,8 +113,9 @@ public class AdventControl
 	private int snakes;
 	
 	
-
+	//TODO vase on the pillow altered text?
 	//TODO new line before followed by bear notice
+	//TODO take/drop items weird somewhere
 	
 	public AdventControl()
 	{
@@ -153,7 +154,7 @@ public class AdventControl
 		collapse = false;
 		lampWarn = false;
 		over = false;
-		shortcut = true;
+		shortcut = false;
 		panic = false;
 		wayIsBlocked = false;
 		locationChange = false;
@@ -176,7 +177,7 @@ public class AdventControl
 		deaths = 3;
 		fatality = 0;
 		//default, pit, dwarf
-		tally = 15;
+		tally = 0;
 		lostTreasures = 0;
 		plant = 0;
 		bottle = 1;
@@ -204,6 +205,7 @@ public class AdventControl
 		currentLocation.setUp(this);
 		things.setUp();
 		frame.setUp();
+		hash.setUpHashMaps();
 	}
 
 	public String determineAction(String input) 
@@ -560,7 +562,7 @@ public class AdventControl
 		{
 			turns++;
 		}
-		if(tally == lostTreasures && tally > 0 && lamp > 35)
+		if(15 - tally == lostTreasures && lamp > 35)
 		{
 			lamp = 35;
 		}
@@ -898,7 +900,11 @@ public class AdventControl
 					}
 					else
 					{
-						output = new String("I don't see any " + alt + ".");
+						if(closed && object == GameObjects.MIRROR){	}
+						else
+						{
+							output = new String("I don't see any " + alt + ".");
+						}
 						increaseTurns = false;
 					}
 				break;
@@ -940,8 +946,9 @@ public class AdventControl
 							{
 								voidObject(GameObjects.TROLL);
 								voidObject(GameObjects.TROLL_);
-								dropObject(GameObjects.TROLL2_);
+								hash.dropObject(GameObjects.TROLL2_, Location.NESIDE);
 								hash.dropObject(GameObjects.TROLL2, Location.SWSIDE);
+								bear = 4;
 								troll = 2;
 								output = "The bear lumbers toward the troll, who lets out a startled shriek and scurries away. The bear soon gives up pursuit and wanders back.";
 							}
@@ -1336,12 +1343,9 @@ public class AdventControl
 						else
 						{
 							object = GameObjects.NOTHING;
+							output = new String("You can't pour that.");
+							increaseTurns = false;
 						}					
-					}
-					if(object == GameObjects.NOTHING)
-					{
-						output = new String("You can't pour that.");
-						increaseTurns = false;
 					}
 					else if(!isInHand(GameObjects.BOTTLE))
 					{
@@ -1518,6 +1522,7 @@ public class AdventControl
 						if(closed)
 						{
 							output = "You strike the mirror a resounding blow, whereupon it shatters into a myriad tiny fragments.";
+							//TODO dwarves
 							dead = true;
 							fatality = 2;
 						}
@@ -1916,6 +1921,7 @@ public class AdventControl
 					if(object == GameObjects.NOTHING)
 					{
 						output = hash.getDescription(currentLocation, 2);
+						listItemsHere(currentLocation);
 					}
 					else
 					{
@@ -1946,7 +1952,7 @@ public class AdventControl
 							broken = true;
 							hash.dropObject(GameObjects.VASE, currentLocation);
 							output = "The sudden change in temperature has delicately shattered the vase.";
-							lostTreasures ++;
+							lostTreasures++;
 						}
 					}
 					else if(!(object == GameObjects.NOTHING || object == GameObjects.BOTTLE))
@@ -1978,18 +1984,20 @@ public class AdventControl
 					}
 					else if(currentLocation == Location.EASTPIT)
 					{
+						increaseTurns = true;
 						output = new String("You fill the bottle with oil.");
 						bottle = 2;
 					}
 					else
 					{
+						increaseTurns = true;
 						output = new String("You fill the bottle with water.");
 						bottle = 1;
 					}
 					break;
 					
 				case BLAST:
-					if(closed && rod2 == 0)
+					if(closed)
 					{
 						bonus = (objectIsPresent(GameObjects.ROD2) ? 25 : currentLocation == Location.NEEND ? 30 : 45);
 						switch(bonus)
@@ -2054,7 +2062,6 @@ public class AdventControl
 					output = new String("You broke something.");
 					increaseTurns = false;
 					break;
-					
 			}
 		}
 		catch(ClassCastException e)
@@ -2098,7 +2105,7 @@ public class AdventControl
 				Location locationResult = currentLocation.moveTo(destination, currentLocation, grateUnlocked,
 						haveGold, crystalBridge, snake, haveEmerald, haveClam, haveOyster, plant, oilDoor,
 						dragon, troll, trollIsHere, itemsInHand, collapse, bear);
-				if(closed && (locationResult.compareTo(Location.THEVOID) < 10))
+				if(closed && locationResult != Location.THEVOID && (locationResult.compareTo(Location.THEVOID) < 10))
 				{
 					output = "A mysterious recorded voice groans into life and announces: \n\t\"This exit is closed. Please leave via main office.\"";
 					increaseTurns = false;
@@ -2327,10 +2334,6 @@ public class AdventControl
 					else
 					{
 						setLocation(locationResult);
-						
-	//					if(currentLocation.getOrdinal(currentLocation))
-	//						greater than westmist less than dead0
-						
 						if(!canISee(currentLocation))
 						{
 							boolean pitifulDeath = fallInPit();
@@ -2397,8 +2400,6 @@ public class AdventControl
 			increaseTurns = false;
 			//TODO blocked by dwarf or something
 		}
-
-
 		return output;
 	}
 	
@@ -2454,8 +2455,7 @@ public class AdventControl
 	
 	private int getCurrentScore()
 	{
-		int currentScore = (2 + (2 * (
-				fixtally)) + (deaths * 10));
+		int currentScore = (2 + (2 * (tally)) + (deaths * 10));
 		ArrayList<GameObjects> buildingItems = hash.objectsHere(Location.BUILDING);
 		ArrayList<GameObjects> witItems = hash.objectsHere(Location.WITT);
 		
@@ -2620,9 +2620,9 @@ public class AdventControl
 		
 		//TODO next ranking
 		
-		output += "\n\n\n\tWould you like to play again?";
-		quest = 9;
-		seriousQuestion = true;
+		//output += "\n\n\n\tWould you like to play again?";
+		//quest = 9;
+		//seriousQuestion = true;
 		return output;
 	}
 	
@@ -2638,7 +2638,6 @@ public class AdventControl
 			if(shortcut)
 			{
 				wellInCave = true;
-				tally = 0;
 				hash.dropObject(GameObjects.GOLD, Location.BUILDING);
 				hash.dropObject(GameObjects.DIAMONDS, Location.BUILDING);
 				hash.dropObject(GameObjects.SILVER, Location.BUILDING);
@@ -2685,6 +2684,7 @@ public class AdventControl
 			cages = 1;
 			birds = 1;
 			snakes = 1;
+			plant = 3;
 			output += hash.getDescription(currentLocation, brief);
 		}
 		else if(clock1 == -1)
@@ -2698,7 +2698,7 @@ public class AdventControl
 			//TODO kill all dwarfs, can't unlock grate remove troll and bear (if not dead) 
 			closing = true;
 		}
-		else if(tally == 0 && !(currentLocation.outsideCave(currentLocation)) && !(currentLocation == Location.Y2))
+		else if(tally == 15 && !(currentLocation.outsideCave(currentLocation)) && !(currentLocation == Location.Y2))
 		{
 			clock1--;
 		}
@@ -2795,7 +2795,6 @@ public class AdventControl
 			case MAGIC:
 				result = new String("Good try, but that is an old worn-out magic word.");
 				break;
-			
 			case HELP:
 				result = new String("I know of places, actions, and things. "
 						+ "Most of my vocabulary describes places and is used to move you there."
@@ -2811,29 +2810,23 @@ public class AdventControl
 						+ "For example, \"building\" usually gets you to the building from anywhere above ground except when lost in the forest. "
 						+ "Also, note that cave passages turn a lot, and that leaving a room to the north does not guarantee entering the next from the south. \nGood luck!");
 				break;
-				
 			case TREE:
 				result = new String("The trees of the forest are large hardwood oak and maple, with an occasional grove of pine or spruce. "
 						+ "There is quite a bit of under-growth, largely birch and ash saplings plus nondescript bushes of various sorts. "
 						+ "This time of year visibility is quite restricted by all the leaves, but travel is quite easy if you detour around the spruce and berry bushes.");
 				break;
-				
 			case DIG:
 				result = new String("Digging without a shovel is quite impractical. Even with a shovel progress is unlikely.");
 				break;
-				
 			case LOST:
 				result = new String("I'm as confused as you are.");
 				break;
-				
 			case MIST:
 				result = new String("Mist is a white vapor, usually water, seen from time to time in caverns. It can be found anywhere but is frequently a sign of a deep pit leading down to water.");
 				break;
-				
 			case CUSS:
 				result = new String("Watch it!");
 				break;
-				
 			case INFO:
 				result = new String("If you want to end your adventure early, say \"quit\". "
 						+ "To get full credit for a treasure, you must have left it safely in the building, though you get partial credit just for locating it. "
@@ -2844,11 +2837,9 @@ public class AdventControl
 						+ "Finally, to save paper, you may specify \"brief\", which tells me never to repeat the full description of a place unless you explicitly ask me to. "
 						+ "You may also specify \"verbose\", which tells me only to repeat the long description of a place.");
 				break;
-				
 			case DENNIS:
 				result = new String("Thou cannotst go there. Who do you think thou art? A magistrate?!");
 				break;
-				
 			default:
 				result = new String("I don't know how.");
 				break;
@@ -2883,7 +2874,7 @@ public class AdventControl
 	
 	public static void updateTally()
 	{
-		tally--;
+		tally++;
 	}
 	
 	public static void collapse()

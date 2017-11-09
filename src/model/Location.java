@@ -37,37 +37,27 @@ public enum Location
 	public static Location[] locate = Location.values();
 	
 	public void setUp(AdventControl base)
-	{	
-		this.base = base;
-	}
+	{	this.base = base;	}
 	
 	public boolean isWaterHere(Location here)
 	{
 		boolean result = false;
 		if(here == ROAD || here == BUILDING || here == VALLEY || here == SLIT || here == WET || here == FALLS || here == RESER)
-		{
-			result = true;
-		}
+		{	result = true;	}
 		return result;
 	}
 	
 	public int minLoc()
-	{
-		return EASTMIST.ordinal();
-	}
+	{	return EASTMIST.ordinal();	}
 	
 	public int maxLoc()
-	{
-		return DEAD0.ordinal();
-	}
+	{	return DEAD0.ordinal();	}
 	
 	public boolean critters(Location here)
 	{
 		boolean result = false;
 		if(here.ordinal() > EASTMIST.ordinal() && here.ordinal() < DEAD0.ordinal())
-		{
-			result = true;
-		}
+		{	result = true;	}
 		return result;
 	}
 	
@@ -75,9 +65,7 @@ public enum Location
 	{
 		boolean outside = false;
 		if(here.ordinal() > INHAND.ordinal() && here.ordinal() < DEBRIS.ordinal())
-		{
-			outside = true;
-		}
+		{	outside = true;	}
 		return outside;
 	}
 	
@@ -85,9 +73,7 @@ public enum Location
 	{
 		boolean outside = false;
 		if(here.ordinal() > INHAND.ordinal() && here.ordinal() < INSIDE.ordinal())
-		{
-			outside = true;
-		}
+		{	outside = true;	}
 		return outside;
 	}
 	
@@ -95,24 +81,18 @@ public enum Location
 	{
 		boolean upper = false;
 		if(here.ordinal() > OUTSIDE.ordinal() && here.ordinal() < OUTSIDE.ordinal())
-		{
-			upper = true;
-		}
+		{	upper = true;	}
 		return upper;
 	}
 	
 	public int getOrdinal(Location here)
-	{
-		return here.ordinal();
-	}
+	{	return here.ordinal();	}
 	
 	public boolean dontNeedLamp(Location here)
 	{
 		boolean need = false;
 		if(outside(here)||here == VIEW||here == NEEND||here == SWEND||here == PROOM)
-		{
-			need = true;
-		}
+		{	need = true;	}
 		return need;
 	}
 	
@@ -1255,9 +1235,7 @@ public enum Location
 						break;
 					case PLOVER: 
 						if(emerald)
-						{
-							AdventControl.relocate();
-						}
+						{	AdventControl.relocate();	}
 						next = Y2;
 						break;
 					case NORTHEAST: case DARK: next = DROOM; break;
@@ -1407,20 +1385,15 @@ public enum Location
 			case SWSIDE:
 				switch(destination)
 				{
-// TODO Fix This!!!
 					case SOUTHWEST: next = SCORR; break;
 					case OVER: case ACROSS: case CROSS: case NORTHEAST:
 						if(troll < 2 || collapse)
-						{
-							next = REMARK;
-						}
+						{	next = REMARK;	}
 						else
 						{	
 							next = NESIDE;
 							if(troll == 3)
-							{
-								AdventControl.setTroll();
-							}
+							{	AdventControl.setTroll();	}
 						}
 						break;
 					case JUMP:
@@ -1531,7 +1504,6 @@ public enum Location
 				break;	
 				
 			case NESIDE:
-// TODO Fix This!!!
 				switch(destination)
 				{
 					case NORTHEAST: next = CORR; break;
@@ -1543,9 +1515,7 @@ public enum Location
 						else
 						{	
 							if(collapse)
-							{
-								next = REMARK;
-							}
+							{	next = REMARK;	}
 							else
 							{
 								if(troll == 3)
@@ -1557,9 +1527,7 @@ public enum Location
 								{
 									next = SWSIDE;
 									if(bear == 2)
-									{
-										AdventControl.collapse();
-									}
+									{	AdventControl.collapse();	}
 								}
 							}
 						}
@@ -1672,15 +1640,9 @@ public enum Location
 					default: next = THEVOID; break;
 				}
 				break;	
-				
-				
-				
-				
+
 			default: next = REMARK; break;
-				
-				
 		}
-		
 		return next;
 	}
 	
@@ -1734,6 +1696,4 @@ public enum Location
 		}
 		return result;
 	}
-	
-	
 }

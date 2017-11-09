@@ -28,7 +28,7 @@ public class HashMaps
 		setUpHashMaps();
 	}
 	
-	private void setUpHashMaps()
+	public void setUpHashMaps()
 	{
 		movement.put("road", Movement.ROAD);
 		movement.put("hill", Movement.HILL);

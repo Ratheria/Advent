@@ -40,7 +40,6 @@ public class AdventPanel extends JPanel
 	private JLabel lblScore;
 	private JLabel lblTop;
 	
-	
 	public AdventPanel(AdventControl base)
 	{
 		setBorder(null);
@@ -134,6 +133,11 @@ public class AdventPanel extends JPanel
 		inputField.requestFocusInWindow();
 	}
 	
+	public void done()
+	{
+		inputField.setEditable(false);
+	}
+	
 	private void setUpListeners() 
 	{
 		inputField.addActionListener(new ActionListener()
@@ -146,9 +150,7 @@ public class AdventPanel extends JPanel
 					//String log = displayLog.getText();
 					String origin = inputField.getText();
 					String input = inputField.getText().toLowerCase();
-					
 					input = removeWhitespace(input);
-					
 					if(input.contains(" "))
 					{
 						int space = input.indexOf(' ');
@@ -158,7 +160,6 @@ public class AdventPanel extends JPanel
 								+ "\n\n" + base.determineAction(first, second) + "\n");
 						lblTurns.setText("Turns: " + base.getTurns());
 						lblScore.setText("Score: " + base.getScore() + "/350");
-						
 					}
 					else if(input.equals("exception"))
 					{
