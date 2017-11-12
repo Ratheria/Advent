@@ -117,6 +117,7 @@ public class AdventControl
 	//TODO take/drop items maybe weird somewhere
 	//TODO open - I don't see any...
 	//TODO says The nest of golden eggs disappears! or something when they are with you then transported away by magic
+	//TODO something breaks when you reach end game. probably a variable needing to be set to false
 	
 	public AdventControl()
 	{
