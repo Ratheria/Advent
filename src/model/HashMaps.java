@@ -207,9 +207,6 @@ public class HashMaps
 		objects.put("spice", GameObjects.SPICES);
 		objects.put("chain", GameObjects.CHAIN);
 		
-		actions.put("absta", ActionWords.ABSTAIN);
-		actions.put("nothi", ActionWords.ABSTAIN);
-		actions.put("wait", ActionWords.ABSTAIN);
 		actions.put("look", ActionWords.LOOK);
 		actions.put("descr", ActionWords.LOOK);
 		actions.put("exami", ActionWords.LOOK);
@@ -250,6 +247,8 @@ public class HashMaps
 		actions.put("follo", ActionWords.GO);
 		actions.put("turn", ActionWords.GO);
 		actions.put("nothi", ActionWords.RELAX);
+		actions.put("absta", ActionWords.RELAX);
+		actions.put("wait", ActionWords.RELAX);
 		actions.put("pour", ActionWords.POUR);
 		actions.put("eat", ActionWords.EAT);
 		actions.put("devou", ActionWords.EAT);
@@ -1096,7 +1095,8 @@ public class HashMaps
 		int visit = 0;
 		try{	visit = visits.get(here);	}
 		catch(NullPointerException e){}
-		if((longDescription.containsKey(here)) && ((breif == 0 && visit % 5 == 0) || (breif == 2) || (visits.get(here) == 0)))
+		if((longDescription.containsKey(here)) && ((breif == 0 && visit % 5 == 0) || (breif == 2) 
+				|| (visits.get(here) == 0)))
 		{
 			description = longDescription.get(here);
 		}

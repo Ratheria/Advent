@@ -115,7 +115,6 @@ public class AdventControl
 	
 	
 	//TODO take/drop items weird somewhere
-	//TODO nothing/do nothing breaks things
 	
 	public AdventControl()
 	{
@@ -279,9 +278,11 @@ public class AdventControl
 				increaseTurns = false;
 			}
 		}
-		else if(quest == 1 && (input.toLowerCase().contains("yes") || input.equalsIgnoreCase("y") || input.toLowerCase().contains("yes")))
+		else if(quest == 1 && (input.toLowerCase().contains("yes") || input.equalsIgnoreCase("y") || 
+				input.toLowerCase().contains("yes")))
 		{
-			output = "Congratulations! You have just vanquished a dragon with your bare hands! (Unbelievable, isn't it?)";
+			output = "Congratulations! You have just vanquished a dragon with your bare hands! "
+					+ "(Unbelievable, isn't it?)";
 			quest = 0;
 			dragon = false;
 			currentLocation = Location.SCAN2;
@@ -342,11 +343,16 @@ public class AdventControl
 				{
 					case 2:
 						dead = false;
-						output = "All right. But don't blame me if something goes wr......\n\t---POOF!!---\nYou are engulfed in a cloud of orange smoke. Coughing and gasping, you emerge from the smoke to find....\n" + hash.getDescription(currentLocation, brief); 
+						output = "All right. But don't blame me if something goes wr......\n\t---POOF!!---"
+								+ "\nYou are engulfed in a cloud of orange smoke. Coughing and gasping, you "
+								+ "emerge from the smoke to find....\n" 
+								+ hash.getDescription(currentLocation, brief); 
 						break;
 					case 1:
 						dead = false;
-						output = "Okay, now where did I put my resurrection kit?....\n\t>POOF!<\nEverything disappears in a dense cloud of orange smoke.\n" + hash.getDescription(currentLocation, brief);
+						output = "Okay, now where did I put my resurrection kit?....\n\t>POOF!<"
+								+ "\nEverything disappears in a dense cloud of orange smoke.\n" 
+								+ hash.getDescription(currentLocation, brief);
 						break;
 					default:
 						output = "Okay, if you're so smart, do it yourself! I'm leaving!";
@@ -365,6 +371,16 @@ public class AdventControl
 				System.exit(0);
 			}
 		}
+		else if(quest == 10 && thisIsAnObject && itsAn != GameObjects.NOTHING)
+		{
+			output = attemptAction(ActionWords.KILL, hash.whichObject(input), input);
+			quest = 0;
+		}
+		else if(quest == 11 && thisIsAnObject && itsAn != GameObjects.NOTHING)
+		{
+			output = attemptAction(ActionWords.FEED, hash.whichObject(input), input);
+			quest = 0;
+		}
 		else if(quest == 20)
 		{
 			quest = 0;
@@ -373,7 +389,8 @@ public class AdventControl
 			{
 				read = true;
 				hint += 10;
-				output = "It says, 'There is something strange about this place, such that one of the words I've always known now has a new effect.'";
+				output = "It says, 'There is something strange about this place, such that one of the "
+						+ "words I've always known now has a new effect.'";
 			}
 			else
 			{	output = okay;	}
@@ -386,7 +403,8 @@ public class AdventControl
 		else if(quest == 31 && answer == 1)
 		{
 			giveHint(2);
-			output = "The grate is very solid and has a hardened steel lock. You cannot enter without a key, and there are no keys in sight. I would recommend looking elsewhere for the keys.";
+			output = "The grate is very solid and has a hardened steel lock. You cannot enter without a "
+					+ "key, and there are no keys in sight. I would recommend looking elsewhere for the keys.";
 		}
 		else if(quest == 22 && answer == 1)
 		{
@@ -396,7 +414,8 @@ public class AdventControl
 		else if(quest == 32 && answer == 1)
 		{
 			giveHint(2);
-			output = "Something seems to be frightening the bird just now and you cannot catch it no matter what you try. Perhaps you might try later.";
+			output = "Something seems to be frightening the bird just now and you cannot catch it no"
+					+ " matter what you try. Perhaps you might try later.";
 		}
 		else if(quest == 23 && answer == 1)
 		{
@@ -406,7 +425,8 @@ public class AdventControl
 		else if(quest == 33 && answer == 1)
 		{
 			giveHint(2);
-			output = "You can't kill the snake, or drive it away, or avoid it, or anything like that. There is a way to get by, but you don't have the necessary resources right now.";
+			output = "You can't kill the snake, or drive it away, or avoid it, or anything like that."
+					+ " There is a way to get by, but you don't have the necessary resources right now.";
 		}
 		else if(quest == 24 && answer == 1)
 		{
@@ -457,7 +477,8 @@ public class AdventControl
 			{				
 				output = attemptMovement(input);
 			}
-			else if(hash.isObject(input) && objectIsPresent(hash.whichObject(input)) && hash.whichObject(input) == GameObjects.KNIFE)
+			else if(hash.isObject(input) && objectIsPresent(hash.whichObject(input)) 
+					&& hash.whichObject(input) == GameObjects.KNIFE)
 			{
 				output = new String("The dwarves' knives vanish as they strike the walls of the cave.");
 				increaseTurns = false;
@@ -488,7 +509,6 @@ public class AdventControl
 			{
 				MessageWords message = hash.whichMessage(input);
 				output = getText(message);
-				increaseTurns = false;
 			}
 			else
 			{	output = nonsense();	}
@@ -522,13 +542,26 @@ public class AdventControl
 			{	input12 = input1.substring(0, 5);	}
 			if(input2.length() > 5)
 			{	input22 = input2.substring(0, 5);}
-			if(hash.isMovement(input12))
+			if(hash.isMessage(input12))
+			{
+				MessageWords message = hash.whichMessage(input12);
+				output = getText(message);
+			}
+			else if(hash.isMessage(input22))
+			{
+				MessageWords message = hash.whichMessage(input22);
+				output = getText(message);
+			}
+			else if(hash.isMovement(input12))
 			{
 				if(hash.whichMovement(input12) == Movement.ENTER)
 				{
 					if(input22.equalsIgnoreCase("water")||input22.equalsIgnoreCase("strea"))
 					{
-						if(currentLocation == Location.ROAD || currentLocation == Location.BUILDING || currentLocation == Location.VALLEY || currentLocation == Location.SLIT || currentLocation == Location.WET || currentLocation == Location.FALLS || currentLocation == Location.RESER)
+						if(currentLocation == Location.ROAD || currentLocation == Location.BUILDING 
+								|| currentLocation == Location.VALLEY || currentLocation == Location.SLIT 
+								|| currentLocation == Location.WET || currentLocation == Location.FALLS 
+								|| currentLocation == Location.RESER)
 						{
 							output = "Your feet are now wet.";
 							turns++;
@@ -552,19 +585,29 @@ public class AdventControl
 			{
 				output = attemptMovement(input22);
 			}
-			else if(hash.isObject(input12) && hash.isObject(input22) && (hash.whichObject(input12) == GameObjects.WATER && hash.whichObject(input22) == GameObjects.PLANT || hash.whichObject(input22) == GameObjects.WATER && hash.whichObject(input12) == GameObjects.PLANT))
+			else if(hash.isObject(input12) && hash.isObject(input22) 
+					&& (hash.whichObject(input12) == GameObjects.WATER 
+					&& hash.whichObject(input22) == GameObjects.PLANT 
+					|| hash.whichObject(input22) == GameObjects.WATER 
+					&& hash.whichObject(input12) == GameObjects.PLANT))
 			{
 				output = attemptAction(ActionWords.POUR, GameObjects.WATER, "");
-			}else if(hash.isObject(input12) && hash.isObject(input22) && (hash.whichObject(input12) == GameObjects.OIL && hash.whichObject(input22) == GameObjects.DOOR || hash.whichObject(input22) == GameObjects.OIL && hash.whichObject(input12) == GameObjects.DOOR))
+			}else if(hash.isObject(input12) && hash.isObject(input22) 
+					&& (hash.whichObject(input12) == GameObjects.OIL 
+					&& hash.whichObject(input22) == GameObjects.DOOR 
+					|| hash.whichObject(input22) == GameObjects.OIL 
+					&& hash.whichObject(input12) == GameObjects.DOOR))
 			{
 				output = attemptAction(ActionWords.POUR, GameObjects.OIL, "");
 			}
-			else if(hash.isObject(input12) && objectIsPresent(hash.whichObject(input12)) && hash.whichObject(input12) == GameObjects.KNIFE)
+			else if(hash.isObject(input12) && objectIsPresent(hash.whichObject(input12)) 
+					&& hash.whichObject(input12) == GameObjects.KNIFE)
 			{
 				output = new String("The dwarves' knives vanish as they strike the walls of the cave.");
 				increaseTurns = false;
 			}
-			else if(hash.isObject(input22) && objectIsPresent(hash.whichObject(input22)) && hash.whichObject(input22) == GameObjects.KNIFE)
+			else if(hash.isObject(input22) && objectIsPresent(hash.whichObject(input22)) 
+					&& hash.whichObject(input22) == GameObjects.KNIFE)
 			{
 				output = new String("The dwarves' knives vanish as they strike the walls of the cave.");
 				increaseTurns = false;
@@ -623,11 +666,17 @@ public class AdventControl
 				}
 				if(treasure)
 				{
-					output += "\n\nOut from the shadows behind you pounces a bearded pirate!\n\"Har, har,\" he chortles, \"I'll just take all this booty and hide it away with me chest deep in the maze!\"\nHe snatches your treasure and vanishes into the gloom.";
+					output += "\n\nOut from the shadows behind you pounces a bearded pirate!\n\"Har, har,\" he "
+							+ "chortles, \"I'll just take all this booty and hide it away with me chest deep in "
+							+ "the maze!\"\nHe snatches your treasure and vanishes into the gloom.";
 				}
 				else
 				{
-					output += "\n\nThere are faint rustling noises from the darkness behind you. As you turn toward them, the beam of your lamp falls across a bearded pirate. He is carrying a large chest.\n\"Shiver me timbers!\" he cries, \"I've been spotted! I'd best hie meself off to the maze to hide me chest!\"\nWith that, he vanishes into the gloom.";
+					output += "\n\nThere are faint rustling noises from the darkness behind you. "
+							+ "As you turn toward them, the beam of your lamp falls across a bearded pirate. "
+							+ "He is carrying a large chest.\n\"Shiver me timbers!\" he cries, \"I've been spotted!"
+							+ " I'd best hie meself off to the maze to hide me chest!\"\nWith that, he vanishes "
+							+ "into the gloom.";
 				}
 			}
 	/*		if(dwarves > 0 &&) 
@@ -716,7 +765,8 @@ public class AdventControl
 					h4++;
 				}	
 			}
-			if((currentLocation == Location.PROOM && !(objectIsPresent(GameObjects.LAMP))) || currentLocation == Location.ALCOVE)
+			if((currentLocation == Location.PROOM && !(objectIsPresent(GameObjects.LAMP))) 
+					|| currentLocation == Location.ALCOVE)
 			{
 				h5++;
 				if(h5 == 25)
@@ -742,7 +792,8 @@ public class AdventControl
 	
 	private String hintMessage(int cost)
 	{
-		String output = "\nI am prepared to give you a hint, but it will cost you " + cost + " points.\nDo you want the hint?";
+		String output = "\nI am prepared to give you a hint, but it will cost you " + cost + " points."
+				+ "\nDo you want the hint?";
 		return output;
 	}
 	
@@ -817,7 +868,7 @@ public class AdventControl
 			GameObjects object = (GameObjects) other;
 			switch(verb)
 			{
-				case NOTHING: case ABSTAIN:
+				case RELAX: case NOTHING: case ABSTAIN:
 					output = "Okay.";
 					break;
 					
@@ -832,7 +883,8 @@ public class AdventControl
 						output = attemptAction(ActionWords.TAKE, GameObjects.ROD2, alt);
 						if(rod2 != 0) {	rod2 = 0; }
 					}
-					else if(object == GameObjects.RUG && !objectIsHere(GameObjects.RUG) && objectIsHere(GameObjects.RUG_))
+					else if(object == GameObjects.RUG && !objectIsHere(GameObjects.RUG) 
+							&& objectIsHere(GameObjects.RUG_))
 					{
 						output = attemptAction(ActionWords.TAKE, GameObjects.RUG_, alt);
 					}
@@ -975,7 +1027,8 @@ public class AdventControl
 						{
 							if(hash.objectIsHere(GameObjects.ROD, Location.INHAND) && !birdInCage)
 							{
-								output = new String("The bird was unafraid when you entered, but as you approach it becomes disturbed and you cannot catch it.");
+								output = new String("The bird was unafraid when you entered, but as you approach "
+										+ "it becomes disturbed and you cannot catch it.");
 								h2++;
 								increaseTurns = false;
 							}
@@ -1084,7 +1137,8 @@ public class AdventControl
 								hash.dropObject(GameObjects.TROLL2, Location.SWSIDE);
 								bear = 4;
 								troll = 2;
-								output = "The bear lumbers toward the troll, who lets out a startled shriek and scurries away. The bear soon gives up pursuit and wanders back.";
+								output = "The bear lumbers toward the troll, who lets out a startled shriek and "
+										+ "scurries away. The bear soon gives up pursuit and wanders back.";
 							}
 							else
 							{
@@ -1115,7 +1169,8 @@ public class AdventControl
 								dropObject(GameObjects.BIRD);
 								voidObject(GameObjects.SNAKE);
 								snake = false;
-								output = new String("The little bird attacks the green snake, and in an astounding flurry drives the snake away.");
+								output = new String("The little bird attacks the green snake, and in an astounding "
+										+ "flurry drives the snake away.");
 								if(closed)
 								{
 									dead = true;
@@ -1124,7 +1179,8 @@ public class AdventControl
 							}
 							else if(objectIsHere(GameObjects.DRAGON) || objectIsHere(GameObjects.DRAGON_))
 							{
-								output = new String("The little bird attacks the green dragon, and in an astounding flurry gets burnt to a cinder. The ashes blow away.");
+								output = new String("The little bird attacks the green dragon, and in an astounding "
+										+ "flurry gets burnt to a cinder. The ashes blow away.");
 								birdInCage = false;
 								voidObject(GameObjects.BIRD);
 							}
@@ -1144,7 +1200,8 @@ public class AdventControl
 							dropObject(GameObjects.BATTERIES);
 							usedBatteries = 1;
 						}
-						else if(object == GameObjects.VASE && !(objectIsHere(GameObjects.PILLOW) || currentLocation == Location.SOFT))
+						else if(object == GameObjects.VASE && !(objectIsHere(GameObjects.PILLOW) 
+								|| currentLocation == Location.SOFT))
 						{
 							output = "The Ming vase drops with a delicate crash.";
 							dropObject(GameObjects.VASE);
@@ -1202,7 +1259,9 @@ public class AdventControl
 								voidObject(GameObjects.CLAM);
 								itemsInHand++;
 								dropObject(GameObjects.OYSTER);
-								output = new String("A glistening pearl falls out of the clam and rolls away. Goodness, this must really be an oyster! (I never was very good at identifying bivalves.)\nWhatever it is, it has now snapped shut again.");
+								output = new String("A glistening pearl falls out of the clam and rolls away. "
+										+ "Goodness, this must really be an oyster! (I never was very good at "
+										+ "identifying bivalves.)\nWhatever it is, it has now snapped shut again.");
 								hash.dropObject(GameObjects.PEARL, Location.CULDESAC);
 							}
 						}
@@ -1220,7 +1279,8 @@ public class AdventControl
 							}
 							else
 							{
-								output = new String("The oyster creaks open, revealing nothing but oyster inside. It promptly snaps shut again.");
+								output = new String("The oyster creaks open, revealing nothing but oyster inside. "
+										+ "It promptly snaps shut again.");
 							}
 						}
 						else if(object == GameObjects.DOOR)
@@ -1256,7 +1316,8 @@ public class AdventControl
 							{
 								if(bear != 1)
 								{
-									output = new String("There is no way to get past the bear to unlock the chain, which is probably just as well.");
+									output = new String("There is no way to get past the bear to unlock the chain, "
+											+ "which is probably just as well.");
 									increaseTurns = false;
 								}
 								else
@@ -1372,7 +1433,8 @@ public class AdventControl
 							}
 							else
 							{
-								output = new String("Your lamp is now on.\n\n" + getDescription(currentLocation, brief));
+								output = new String("Your lamp is now on.\n\n" 
+							+ getDescription(currentLocation, brief));
 								light = true;
 							}
 						}
@@ -1401,7 +1463,8 @@ public class AdventControl
 						output = new String("Your lamp is now off.");
 						if(!canISee(currentLocation))
 						{
-							output = output + "\n\nIt is now pitch dark. If you proceed you will likely fall into a pit.";
+							output = output + "\n\nIt is now pitch dark. If you proceed you will likely fall into a "
+									+ "pit.";
 						}
 					}
 					break;
@@ -1498,11 +1561,15 @@ public class AdventControl
 							plant++;
 							if(plant == 1)
 							{
-								output = new String("The plant spurts into furious growth for a few seconds.\n\n\tThere is a 12-foot-tall beanstalk stretching up out of the pit, bellowing \"Water!! Water!!\"");
+								output = new String("The plant spurts into furious growth for a few seconds."
+										+ "\n\n\tThere is a 12-foot-tall beanstalk stretching up out of the pit, "
+										+ "bellowing \"Water!! Water!!\"");
 							}
 							else if(plant == 2)
 							{
-								output = new String("The plant grows explosively, almost filling the bottom of the pit.\n\n\tThere is a gigantic beanstalk stretching all the way up to the hole.");
+								output = new String("The plant grows explosively, almost filling the bottom of "
+										+ "the pit.\n\n\tThere is a gigantic beanstalk stretching all the way up "
+										+ "to the hole.");
 							}
 							else if(plant == 3)
 							{
@@ -1533,7 +1600,8 @@ public class AdventControl
 						{
 							if(plant == 1)
 							{
-								output = new String("The plant indignantly shakes the oil off its leaves and asks: \"Water?\".");
+								output = new String("The plant indignantly shakes the oil off its leaves and asks: "
+										+ "\"Water?\".");
 							}
 							else
 							{
@@ -1543,7 +1611,8 @@ public class AdventControl
 						else if(objectIsPresent(GameObjects.DOOR))
 						{
 							oilDoor = true;
-							output = new String("The oil has freed up the hinges so that the door will now move, although it requires some effort.");
+							output = new String("The oil has freed up the hinges so that the door will now move,"
+									+ " although it requires some effort.");
 						}
 						else
 						{
@@ -1579,7 +1648,8 @@ public class AdventControl
 
 				case RUB:
 					if(object == GameObjects.LAMP)
-					{	output = new String("Rubbing the electric lamp is not particularly rewarding. Anyway, nothing exciting happens.");	}
+					{	output = new String("Rubbing the electric lamp is not particularly rewarding. Anyway, "
+							+ "nothing exciting happens.");	}
 					else
 					{	output = new String("Peculiar. Nothing unexpected happens.");	}
 					break;
@@ -1594,7 +1664,8 @@ public class AdventControl
 						output = dontHave;
 						increaseTurns = false;
 					}
-					else if((objectIsHere(GameObjects.TROLL_) || objectIsHere(GameObjects.TROLL)) && things.isTreasure(object))
+					else if((objectIsHere(GameObjects.TROLL_) || objectIsHere(GameObjects.TROLL)) 
+							&& things.isTreasure(object))
 					{
 						voidObject(object);
 						voidObject(GameObjects.TROLL);
@@ -1626,7 +1697,8 @@ public class AdventControl
 					}
 					else if((objectIsHere(GameObjects.TROLL_) || objectIsHere(GameObjects.TROLL)))
 					{
-						output = "The troll deftly catches the axe, examines it carefully, and tosses it back, declaring, \"Good workmanship, but it's not valuable enough.\"";
+						output = "The troll deftly catches the axe, examines it carefully, and tosses it back, "
+								+ "declaring, \"Good workmanship, but it's not valuable enough.\"";
 					}
 					else if(objectIsHere(GameObjects.BEAR) && bear == 0)
 					{
@@ -1660,7 +1732,8 @@ public class AdventControl
 					{
 						if(closed)
 						{
-							output = "You strike the mirror a resounding blow, whereupon it shatters into a myriad tiny fragments.";
+							output = "You strike the mirror a resounding blow, whereupon it shatters into "
+									+ "a myriad tiny fragments.";
 							//TODO dwarves
 							dead = true;
 							fatality = 2;
@@ -1682,7 +1755,8 @@ public class AdventControl
 					if(object == GameObjects.NOTHING)
 					{
 						output = "What would you like to kill?";
-						//TODO question cycle
+						quest = 10;
+						increaseTurns = false;
 					}
 					else if(object == GameObjects.BIRD && closed)
 					{
@@ -1754,7 +1828,8 @@ public class AdventControl
 					{
 						if(objectIsHere(GameObjects.TROLL)|| objectIsHere(GameObjects.TROLL_))
 						{
-							output = new String("Trolls are close relatives with the rocks and have skin as tough as that of a rhinoceros. The troll fends off your blows effortlessly.");
+							output = new String("Trolls are close relatives with the rocks and have skin as"
+									+ " tough as that of a rhinoceros. The troll fends off your blows effortlessly.");
 						}
 						else
 						{
@@ -1819,25 +1894,15 @@ public class AdventControl
 						else
 						{
 							if(objectIsHere(GameObjects.DWARF))
-							{
-								attemptAction(ActionWords.TOSS, GameObjects.AXE, "");
-							}
+							{	attemptAction(ActionWords.TOSS, GameObjects.AXE, "");	}
 							else if(objectIsHere(GameObjects.SNAKE))
-							{
-								attemptAction(ActionWords.KILL, GameObjects.SNAKE, "");
-							}
+							{	attemptAction(ActionWords.KILL, GameObjects.SNAKE, "");	}
 							else if(objectIsHere(GameObjects.TROLL) || objectIsHere(GameObjects.TROLL_))
-							{
-								attemptAction(ActionWords.KILL, GameObjects.TROLL, "");
-							}
+							{	attemptAction(ActionWords.KILL, GameObjects.TROLL, "");	}
 							else if(objectIsHere(GameObjects.BEAR))
-							{
-								attemptAction(ActionWords.KILL, GameObjects.BEAR, "");
-							}
+							{	attemptAction(ActionWords.KILL, GameObjects.BEAR, "");	}
 							else if(objectIsHere(GameObjects.BIRD))
-							{
-								attemptAction(ActionWords.KILL, GameObjects.BIRD, "");
-							}
+							{	attemptAction(ActionWords.KILL, GameObjects.BIRD, "");	}
 						}
 					}
 					break;
@@ -1885,7 +1950,8 @@ public class AdventControl
 						}
 						else
 						{
-							output = "Hmmm, this looks like a clue, which means it'll cost you 10 points to read it. Should I go ahead and read it anyway?";
+							output = "Hmmm, this looks like a clue, which means it'll cost you 10 points to read"
+									+ " it. Should I go ahead and read it anyway?";
 							quest = 20;
 							seriousQuestion = true;
 						}
@@ -1900,7 +1966,8 @@ public class AdventControl
 					if(brief == 0)
 					{
 						brief = 1;
-						output = "Okay, from now on I'll only describe a place in full the first time you come to it. To get the full description, say \"LOOK\".";
+						output = "Okay, from now on I'll only describe a place in full the first time you come "
+								+ "to it. To get the full description, say \"LOOK\".";
 					}
 					else
 					{
@@ -1934,7 +2001,8 @@ public class AdventControl
 					}
 					else
 					{
-						output = "I can only tell you what you see as you move about and manipulate things. I can not tell you where remote things are.";
+						output = "I can only tell you what you see as you move about and manipulate things. "
+								+ "I can not tell you where remote things are.";
 						increaseTurns = false;
 					}
 					break;
@@ -1955,7 +2023,8 @@ public class AdventControl
 					break;
 					
 				case SCORE:
-					output = "If you were to quit now, you would score " + getCurrentScore() + " out of a possible 350. \nDo you indeed wish to quit now?";
+					output = "If you were to quit now, you would score " + getCurrentScore() 
+					+ " out of a possible 350. \nDo you indeed wish to quit now?";
 					seriousQuestion = true;
 					quest = 2;
 					increaseTurns = false;
@@ -1970,11 +2039,13 @@ public class AdventControl
 					
 				case FEED:
 					output = "There is nothing here it wants to eat (except perhaps you).";
-					if(object == GameObjects.TROLL && (objectIsHere(GameObjects.TROLL) || objectIsHere(GameObjects.TROLL_)))
+					if(object == GameObjects.TROLL && (objectIsHere(GameObjects.TROLL) 
+							|| objectIsHere(GameObjects.TROLL_)))
 					{
 						output = "Gluttony is not one of the troll's vices. Avarice, however, is.";
 					}
-					else if(object == GameObjects.DRAGON && (objectIsHere(GameObjects.DRAGON) || objectIsHere(GameObjects.DRAGON_)))
+					else if(object == GameObjects.DRAGON && (objectIsHere(GameObjects.DRAGON) 
+							|| objectIsHere(GameObjects.DRAGON_)))
 					{
 						if(!dragon)
 						{
@@ -1985,7 +2056,8 @@ public class AdventControl
 					{
 						if(object == GameObjects.BIRD)
 						{
-							output = "It's not hungry (it's merely pinin' for the fjords). Besides, you have no bird seed.";
+							output = "It's not hungry (it's merely pinin' for the fjords). Besides, you have"
+									+ " no bird seed.";
 						}
 						else if(object == GameObjects.SNAKE)
 						{
@@ -2003,7 +2075,8 @@ public class AdventControl
 								voidObject(GameObjects.FOOD);
 								bear = 1;
 								bearAxe = false;
-								output = "The bear eagerly wolfs down your food, after which he seems to calm down considerably and even becomes rather friendly.";
+								output = "The bear eagerly wolfs down your food, after which he seems to "
+										+ "calm down considerably and even becomes rather friendly.";
 							}
 						}
 						else if(object == GameObjects.DWARF)
@@ -2011,20 +2084,20 @@ public class AdventControl
 							output = "There is nothing here to eat.";
 							if(isInHand(GameObjects.FOOD))
 							{
-								//TODO dflag ?
+								dwarves++;
 								output = "You fool, dwarves eat only coal! Now you've made him REALLY mad!";
 							}
 						}
 						else
-						{
-							output = "I'm game. Would you care to explain how?";
-						}
+						{	output = "I'm game. Would you care to explain how?";	}
 					}
 					else
 					{
 						if(object == GameObjects.NOTHING)
 						{
-							//TODO quest
+							output = "What would you like to feed?";
+							quest = 11;
+							increaseTurns = false;
 						}
 						else
 						{
@@ -2037,7 +2110,8 @@ public class AdventControl
 				case WAKE:
 					if(closed && object == GameObjects.DWARF)
 					{
-						output = "You wake the nearest dwarf, who wakes up grumpily, takes one look at you, curses, and grabs for his axe.";
+						output = "You wake the nearest dwarf, who wakes up grumpily, takes one look at you, "
+								+ "curses, and grabs for his axe.";
 						dead = true;
 						fatality = 2;
 					}
@@ -2053,12 +2127,13 @@ public class AdventControl
 					output = "You have nothing to drink.";
 					if(waterIsHere && !(isInHand(GameObjects.BOTTLE) && bottle == 1))
 					{
-						output = "You have taken a drink from the stream. The water tastes strongly of minerals, but is not unpleasant. It is extremely cold.";
+						output = "You have taken a drink from the stream. The water tastes strongly of "
+								+ "minerals, but is not unpleasant. It is extremely cold.";
 					}
 					else if(isInHand(GameObjects.BOTTLE) && bottle == 1)
 					{
-							bottle = 0;
-							output = "The bottle of water is now empty.";
+						bottle = 0;
+						output = "The bottle of water is now empty.";
 					}
 					else if(!(object == GameObjects.WATER || object == GameObjects.NOTHING))
 					{
@@ -2075,7 +2150,8 @@ public class AdventControl
 					}
 					else
 					{
-						output = "Sorry, but I am not allowed to give more detail. I will repeat the long description of your location.\n\n" + hash.getDescription(currentLocation, 2);
+						output = "Sorry, but I am not allowed to give more detail. I will repeat the long "
+								+ "description of your location.\n\n" + hash.getDescription(currentLocation, 2);
 					}
 					break;
 					
@@ -2084,7 +2160,8 @@ public class AdventControl
 					break;
 
 				case FILL:
-					boolean liquidHere = (currentLocation.isWaterHere(currentLocation) || currentLocation == Location.EASTPIT);
+					boolean liquidHere = (currentLocation.isWaterHere(currentLocation) 
+							|| currentLocation == Location.EASTPIT);
 					if(object == GameObjects.VASE)
 					{
 						if(!liquidHere)
@@ -2153,13 +2230,19 @@ public class AdventControl
 						switch(bonus)
 						{
 							case 25:
-								output = "There is a loud explosion, and you are suddenly splashed across the walls of the room.";
+								output = "There is a loud explosion, and you are suddenly splashed across the "
+										+ "walls of the room.";
 								break;
 							case 30:
-								output = "There is a loud explosion, and a twenty-foot hole appears in the far wall, burying the snakes in the rubble. A river of molten lava pours in through the hole, destroying everything in its path, including you!";
+								output = "There is a loud explosion, and a twenty-foot hole appears in the far"
+										+ " wall, burying the snakes in the rubble. A river of molten lava pours"
+										+ " in through the hole, destroying everything in its path, including you!";
 								break;
 							default:
-								output = "There is a loud explosion, and a twenty-foot hole appears in the far wall, burying the dwarves in the rubble. You march through the hole and find yourself in the Main Office, where a cheering band of friendly elves carry the conquering adventurer off into the sunset.";		
+								output = "There is a loud explosion, and a twenty-foot hole appears in the far "
+										+ "wall, burying the dwarves in the rubble. You march through the hole "
+										+ "and find yourself in the Main Office, where a cheering band of "
+										+ "friendly elves carry the conquering adventurer off into the sunset.";		
 						}
 						over = true;
 					}
@@ -2247,7 +2330,8 @@ public class AdventControl
 			boolean haveEmerald = (hash.objectIsHere(GameObjects.EMERALD, Location.INHAND));
 			boolean haveClam = (hash.objectIsHere(GameObjects.CLAM, Location.INHAND));
 			boolean haveOyster = (hash.objectIsHere(GameObjects.OYSTER, Location.INHAND));
-			boolean trollIsHere = (hash.getObjectLocation(GameObjects.TROLL) == currentLocation || hash.getObjectLocation(GameObjects.TROLL_) == currentLocation);
+			boolean trollIsHere = (hash.getObjectLocation(GameObjects.TROLL) == currentLocation 
+					|| hash.getObjectLocation(GameObjects.TROLL_) == currentLocation);
 
 			try
 			{
@@ -2257,13 +2341,16 @@ public class AdventControl
 						dragon, troll, trollIsHere, itemsInHand, collapse, bear);
 				if(closed && locationResult != Location.THEVOID && (locationResult.compareTo(Location.THEVOID) < 10))
 				{
-					output = "A mysterious recorded voice groans into life and announces: \n\t\"This exit is closed. Please leave via main office.\"";
+					output = "A mysterious recorded voice groans into life and announces: \n\t\"This exit is "
+							+ "closed. Please leave via main office.\"";
 					increaseTurns = false;
 				}
 				else if(justCollapsed)
 				{
 					setLocation(locationResult);
-					output = "Just as you reach the other side, the bridge buckles beneath the weight of the bear, who was still following you around. You scrabble desperately for support, but the bridge collapses you stumble back and fall into the chasm.";
+					output = "Just as you reach the other side, the bridge buckles beneath the weight of the "
+							+ "bear, who was still following you around. You scrabble desperately for support, "
+							+ "but the bridge collapses you stumble back and fall into the chasm.";
 					justCollapsed = false;
 					int neordinal = currentLocation.getOrdinal(Location.NESIDE);
 					if(currentLocation.getOrdinal(hash.getObjectLocation(GameObjects.CHAIN)) >= neordinal)
@@ -2279,7 +2366,8 @@ public class AdventControl
 				}
 				else if(locationResult.equals(Location.THEVOID))
 				{
-					if(destination.equals(Movement.XYZZY)||destination.equals(Movement.PLOVER)||destination.equals(Movement.PLUGH))
+					if(destination.equals(Movement.XYZZY)||destination.equals(Movement.PLOVER)
+							||destination.equals(Movement.PLUGH))
 					{
 						output = nothing;
 						output = output + "\n" + getDescription(currentLocation, brief);
@@ -2332,14 +2420,16 @@ public class AdventControl
 				else if(locationResult.equals(Location.CLIMB))
 				{
 					setLocation(Location.NARROW);
-					output = "You clamber up the plant and scurry through the hole at the top.\n" + getDescription(currentLocation, brief);
+					output = "You clamber up the plant and scurry through the hole at the top.\n" 
+					+ getDescription(currentLocation, brief);
 				}
 				else if(locationResult.equals(Location.CHECK))
 				{
 					if(plant == 1)
 					{
 						setLocation(Location.WEST2PIT);
-						output = "You have climbed up the plant and out of the pit.\n" + getDescription(currentLocation, brief);
+						output = "You have climbed up the plant and out of the pit.\n" 
+						+ getDescription(currentLocation, brief);
 					}
 					else
 					{
@@ -2355,16 +2445,19 @@ public class AdventControl
 				else if(locationResult.equals(Location.THRU))
 				{
 					setLocation(Location.WESTMIST);
-					output = "You have crawled through a very low wide passage parallel to and north of the Hall of Mists.\n" + getDescription(currentLocation, brief);
+					output = "You have crawled through a very low wide passage parallel to and north "
+							+ "of the Hall of Mists.\n" + getDescription(currentLocation, brief);
 				}
 				else if(locationResult.equals(Location.DUCK))
 				{
 					setLocation(Location.WESTFISSURE);
-					output = "You have crawled through a very low wide passage parallel to and north of the Hall of Mists.\n" + getDescription(currentLocation, brief);
+					output = "You have crawled through a very low wide passage parallel to and north "
+							+ "of the Hall of Mists.\n" + getDescription(currentLocation, brief);
 				}
 				else if(locationResult.equals(Location.SEWER))
 				{
-					output = "The stream flows out through a pair of 1-foot-diameter sewer pipes.\n\nIt would be advisable to use the exit.";
+					output = "The stream flows out through a pair of 1-foot-diameter sewer pipes."
+							+ "\n\nIt would be advisable to use the exit.";
 					increaseTurns = false;
 				}
 				else if(locationResult.equals(Location.UPNOUT))
@@ -2375,7 +2468,8 @@ public class AdventControl
 				else if(locationResult.equals(Location.DIDIT))
 				{
 					setLocation(Location.WEST2PIT);
-					output = "You have climbed up the plant and out of the pit.\n" + getDescription(currentLocation, brief);
+					output = "You have climbed up the plant and out of the pit.\n" 
+					+ getDescription(currentLocation, brief);
 				}
 				else if(locationResult.equals(Location.REMARK))
 				{
@@ -2384,13 +2478,15 @@ public class AdventControl
 						output = "You can't fit through a two-inch slit!";
 						increaseTurns = false;
 					}
-					else if(currentLocation.equals(Location.INSIDE)||currentLocation.equals(Location.OUTSIDE)||currentLocation.equals(Location.DEBRIS)||currentLocation.equals(Location.AWKWARD)||
+					else if(currentLocation.equals(Location.INSIDE)||currentLocation.equals(Location.OUTSIDE)
+							||currentLocation.equals(Location.DEBRIS)||currentLocation.equals(Location.AWKWARD)||
 							currentLocation.equals(Location.BIRD)||currentLocation.equals(Location.SMALLPIT))
 					{
 						output = "You can't go through a locked steel grate!";
 						increaseTurns = false;
 					}
-					else if((currentLocation.equals(Location.SWSIDE) || currentLocation.equals(Location.NESIDE)) && destination != Movement.JUMP)
+					else if((currentLocation.equals(Location.SWSIDE) || currentLocation.equals(Location.NESIDE)) 
+							&& destination != Movement.JUMP)
 					{
 						increaseTurns = false;
 						if(troll == 0)
@@ -2411,7 +2507,9 @@ public class AdventControl
 							output = "There is no longer any way across the chasm.";
 						}
 					}
-					else if(currentLocation.equals(Location.NESIDE)||currentLocation.equals(Location.SWSIDE)||currentLocation.equals(Location.EASTFISSURE)||currentLocation.equals(Location.WESTFISSURE))
+					else if(currentLocation.equals(Location.NESIDE)||currentLocation.equals(Location.SWSIDE)
+							||currentLocation.equals(Location.EASTFISSURE)
+							||currentLocation.equals(Location.WESTFISSURE))
 					{
 						increaseTurns = false;
 						if(destination.equals(Movement.JUMP))
@@ -2442,11 +2540,14 @@ public class AdventControl
 					}
 					else if(currentLocation.equals(Location.WITT)&&destination.equals(Movement.WEST))
 					{
-						output = "You have crawled around in some little holes and found your way blocked by a recent cave-in.\nYou are now back in the main passage.";
+						output = "You have crawled around in some little holes and found your way blocked"
+								+ " by a recent cave-in.\nYou are now back in the main passage.";
 					}
-					else if(currentLocation.equals(Location.WITT)||currentLocation.equals(Location.BEDQUILT)||currentLocation.equals(Location.CHEESE))
+					else if(currentLocation.equals(Location.WITT)||currentLocation.equals(Location.BEDQUILT)
+							||currentLocation.equals(Location.CHEESE))
 					{
-						output = "You have crawled around in some little holes and wound up back in the main passage.";
+						output = "You have crawled around in some little holes and wound up back in the main "
+								+ "passage.";
 					}
 					else if(currentLocation.equals(Location.IMMENSE))
 					{
@@ -2465,7 +2566,8 @@ public class AdventControl
 					}
 					else if(currentLocation.equals(Location.PROOM) || currentLocation.equals(Location.DROOM))
 					{
-						output = "Something you are carrying won't fit through the tunnel with you. You'd best take inventory and drop something.";
+						output = "Something you are carrying won't fit through the tunnel with you. "
+								+ "You'd best take inventory and drop something.";
 						increaseTurns = false;
 					}
 					else
@@ -2482,7 +2584,8 @@ public class AdventControl
 						{
 							clock2 = 15;
 							panic = true;
-							output = "A mysterious recorded voice groans into life and announces: \n\t\"This exit is closed. Please leave via main office.\"";
+							output = "A mysterious recorded voice groans into life and announces: "
+									+ "\n\t\"This exit is closed. Please leave via main office.\"";
 						}
 					}
 					//TODO else dwarf blocking 176
@@ -2499,7 +2602,8 @@ public class AdventControl
 							}
 							else
 							{
-								output = new String("It is now pitch dark. If you proceed you will likely fall into a pit.");
+								output = new String("It is now pitch dark. If you proceed you will likely "
+										+ "fall into a pit.");
 							}
 						}
 						else
@@ -2591,7 +2695,9 @@ public class AdventControl
 		{
 			canSee = true;
 		}
-		System.out.print("can see "); System.out.print(currentLocation.dontNeedLamp(here)); System.out.println("\n");
+		System.out.print("can see "); 
+		System.out.print(currentLocation.dontNeedLamp(here)); 
+		System.out.println("\n");
 		System.out.println(currentLocation);
 		return canSee;
 	}
@@ -2708,7 +2814,8 @@ public class AdventControl
 		fatality = 0;
 		if(closing)
 		{
-			output += "\n\nIt looks as though you you're dead. Well, seeing as how it's so close to closing time anyway, let's just call it a day.";
+			output += "\n\nIt looks as though you you're dead. Well, seeing as how it's so close to closing "
+					+ "time anyway, let's just call it a day.";
 			over = true;
 		}
 		else
@@ -2719,13 +2826,17 @@ public class AdventControl
 			switch(deaths)
 			{
 				case 3:
-					output += "\n\nOh dear, you seem to have gotten yourself killed. I might be able to help you out, but I've never really done this before. Do you want me to try to reincarnate you?";
+					output += "\n\nOh dear, you seem to have gotten yourself killed. "
+							+ "I might be able to help you out, but I've never really done this before. "
+							+ "Do you want me to try to reincarnate you?";
 					break;
 				case 2:
-					output += "\n\nYou clumsy oaf, you've done it again! I don't know how long I can keep this up. Do you want me to try reincarnating you again?";
+					output += "\n\nYou clumsy oaf, you've done it again! I don't know how long I can keep this"
+							+ " up. Do you want me to try reincarnating you again?";
 					break;
 				default:
-					output += "\n\nNow you've really done it! I'm out of orange smoke! You don't expect me to do a decent reincarnation without any orange smoke, do you?";
+					output += "\n\nNow you've really done it! I'm out of orange smoke! You don't expect me "
+							+ "to do a decent reincarnation without any orange smoke, do you?";
 					break;	
 			}
 			deaths--;
@@ -2776,7 +2887,9 @@ public class AdventControl
 	{
 		if(clock2 == 0 || shortcut)
 		{
-			output = "The sepulchral voice intones, \n\t\"The cave is now closed.\"\nAs the echoes fade, there is a blinding flash of light (and a small puff of orange smoke)...\nThen your eyes refocus: you look around and find...\n";
+			output = "The sepulchral voice intones, \n\t\"The cave is now closed.\"\nAs the echoes fade, "
+					+ "there is a blinding flash of light (and a small puff of orange smoke)..."
+					+ "\nThen your eyes refocus: you look around and find...\n";
 			closed = true;
 			bonus = 10;
 			attemptAction(ActionWords.DROP, GameObjects.ALL, "");
@@ -2835,7 +2948,8 @@ public class AdventControl
 		{	clock2--;	}
 		else if(clock1 == 0)
 		{
-			output = "A sepulchral voice, reverberating through the cave, says, \n\t\"Cave closing soon. All adventurers exit immediately through main office.\"";
+			output = "A sepulchral voice, reverberating through the cave, says, \n\t\"Cave closing soon. "
+					+ "All adventurers exit immediately through main office.\"";
 			clock1 = -1;
 			dwarvesLeft = 0;
 			voidObject(GameObjects.TROLL);
@@ -2847,7 +2961,6 @@ public class AdventControl
 				voidObject(GameObjects.BEAR);
 			}
 			grateUnlocked = false;
-			//TODO kill all dwarfs, can't unlock grate remove troll and bear (if not dead) 
 			closing = true;
 		}
 		else if(tally == 15 && !(currentLocation.outsideCave(currentLocation)) && !(currentLocation == Location.Y2))
@@ -2863,10 +2976,12 @@ public class AdventControl
 			}
 			else if(lamp < 0 && currentLocation.outside(currentLocation))
 			{
-				output += "\n\nThere's not much point in wandering around out here, and you can't explore the gave without a lamp. So let's just call it a day.";
+				output += "\n\nThere's not much point in wandering around out here, and you can't explore the "
+						+ "gave without a lamp. So let's just call it a day.";
 				over = true;
 			}
-			else if(lamp < 31 && usedBatteries == 1 && objectIsPresent(GameObjects.BATTERIES) && objectIsPresent(GameObjects.LAMP))
+			else if(lamp < 31 && usedBatteries == 1 && objectIsPresent(GameObjects.BATTERIES) 
+					&& objectIsPresent(GameObjects.LAMP))
 			{
 				output += "\n\nYour lamp is getting dim. I'm taking the liberty of replacing the batteries.";
 				dropObject(GameObjects.BATTERIES);
@@ -2881,7 +2996,9 @@ public class AdventControl
 				else if(usedBatteries == 1)
 				{	output += dim + ". You'd best go back for those batteries.";	}
 				else
-				{	output += dim + ". You'd best start wrapping this up, unless you can find some fresh batteries. I seem to recall that there's a vending machine in the maze. Bring some coins with you.";	}
+				{	output += dim + ". You'd best start wrapping this up, unless you can find some fresh "
+						+ "batteries. I seem to recall that there's a vending machine in the maze."
+						+ " Bring some coins with you.";	}
 				lampWarn = true;
 			}
 			else
@@ -2930,44 +3047,65 @@ public class AdventControl
 			case HELP:
 				result = new String("I know of places, actions, and things. "
 						+ "Most of my vocabulary describes places and is used to move you there."
-						+ "To move, try words like forest, building, downstream, enter, east, west, north, south, up, or down. "
+						+ "To move, try words like forest, building, downstream, enter, east, west, north, south,"
+						+ " up, or down. "
 						+ "I know about a few special objects, like a black rod hidden in the cave. "
 						+ "These objects can be manipulated using some of the action words that I know. "
-						+ "Usually you will need to give both the object and the action words (in either order), but sometimes I can infer the object from the verb alone. "
-						+ "Some objects also imply verbs; in particular, \"inventory\" implies \"take inventory\", which causes me to give you a list of what you are carrying. "
+						+ "Usually you will need to give both the object and the action words (in either order),"
+						+ " but sometimes I can infer the object from the verb alone. "
+						+ "Some objects also imply verbs; in particular, \"inventory\" implies \"take"
+						+ " inventory\", which causes me to give you a list of what you are carrying. "
 						+ "The objects have side effects; for instance, the rod scares the bird. "
 						+ "Usually people having trouble moving just need to try a few more words. "
-						+ "Usually people trying unsuccessfully to manupulate an object are attempting beyond their (or my!) capabilities and should try a completely different tack. "
+						+ "Usually people trying unsuccessfully to manupulate an object are attempting beyond "
+						+ "their (or my!) capabilities and should try a completely different tack. "
 						+ "To speed the game you can sometimes move long distances with a single word. "
-						+ "For example, \"building\" usually gets you to the building from anywhere above ground except when lost in the forest. "
-						+ "Also, note that cave passages turn a lot, and that leaving a room to the north does not guarantee entering the next from the south. \nGood luck!");
+						+ "For example, \"building\" usually gets you to the building from anywhere above ground "
+						+ "except when lost in the forest. "
+						+ "Also, note that cave passages turn a lot, and that leaving a room to the north does "
+						+ "not guarantee entering the next from the south. \nGood luck!");
 				break;
 			case TREE:
-				result = new String("The trees of the forest are large hardwood oak and maple, with an occasional grove of pine or spruce. "
-						+ "There is quite a bit of under-growth, largely birch and ash saplings plus nondescript bushes of various sorts. "
-						+ "This time of year visibility is quite restricted by all the leaves, but travel is quite easy if you detour around the spruce and berry bushes.");
+				result = new String("The trees of the forest are large hardwood oak and maple, with an occasional "
+						+ "grove of pine or spruce. "
+						+ "There is quite a bit of under-growth, largely birch and ash saplings plus nondescript"
+						+ " bushes of various sorts. "
+						+ "This time of year visibility is quite restricted by all the leaves, but travel is quite"
+						+ " easy if you detour around the spruce and berry bushes.");
 				break;
 			case DIG:
-				result = new String("Digging without a shovel is quite impractical. Even with a shovel progress is unlikely.");
+				result = new String("Digging without a shovel is quite impractical. Even with a shovel progress "
+						+ "is unlikely.");
 				break;
 			case LOST:
 				result = new String("I'm as confused as you are.");
 				break;
 			case MIST:
-				result = new String("Mist is a white vapor, usually water, seen from time to time in caverns. It can be found anywhere but is frequently a sign of a deep pit leading down to water.");
+				result = new String("Mist is a white vapor, usually water, seen from time to time in caverns. "
+						+ "It can be found anywhere but is frequently a sign of a deep pit leading down to water.");
 				break;
 			case CUSS:
 				result = new String("Watch it!");
 				break;
 			case INFO:
 				result = new String("If you want to end your adventure early, say \"quit\". "
-						+ "To get full credit for a treasure, you must have left it safely in the building, though you get partial credit just for locating it. "
+						+ "To get full credit for a treasure, you must have left it safely in the building, "
+						+ "though you get partial credit just for locating it. "
 						+ "You lose points for getting killed, or for quitting, though the former costs you more. "
-						+ "There are also points based on how much (if any) of the cave you've managed to explore; in particular, there is a large bonus just for getting in (to distinguish the beginners from the rest of the pack), and there are other ways to determine whether you've been through some of the more harrowing sections. "
-						+ "If you think you've found all the treasures, just keep exploring for a while. If nothing interesting happens, you haven't found them all yet. If something interesting DOES happen, it means you're getting a bonus and have an opportunity to garner many more points in the master's section. "
-						+ "I may occasionally offer hints if you seem to be having trouble. If I do, I will warn you in advance how much it will affect your score to accept the hints. "
-						+ "Finally, to save paper, you may specify \"brief\", which tells me never to repeat the full description of a place unless you explicitly ask me to. "
-						+ "You may also specify \"verbose\", which tells me only to repeat the long description of a place.");
+						+ "There are also points based on how much (if any) of the cave you've managed to "
+						+ "explore; in particular, there is a large bonus just for getting in (to distinguish "
+						+ "the beginners from the rest of the pack), and there are other ways to determine "
+						+ "whether you've been through some of the more harrowing sections. "
+						+ "If you think you've found all the treasures, just keep exploring for a while. "
+						+ "If nothing interesting happens, you haven't found them all yet. If something "
+						+ "interesting DOES happen, it means you're getting a bonus and have an opportunity"
+						+ " to garner many more points in the master's section. "
+						+ "I may occasionally offer hints if you seem to be having trouble. If I do, I will "
+						+ "warn you in advance how much it will affect your score to accept the hints. "
+						+ "Finally, to save paper, you may specify \"brief\", which tells me never to repeat "
+						+ "the full description of a place unless you explicitly ask me to. "
+						+ "You may also specify \"verbose\", which tells me only to repeat the long "
+						+ "description of a place.");
 				break;
 			case DENNIS:
 				result = new String("Thou cannotst go there. Who do you think thou art? A magistrate?!");
