@@ -181,7 +181,7 @@ public enum GameObjects
 					{	output = new String("\n\t\tMing Vase");}
 					else if(pillow)
 					{
-						output = "The vase is now resting, delicately, on a velvet pillow.";
+						output = "\n\tThe vase is now resting, delicately, on a velvet pillow.";
 					}
 					else
 					{	output = new String("\n\tThere is a delicate, precious, Ming vase here!");	}

@@ -1058,6 +1058,14 @@ public class HashMaps
 						found.put(object, true);
 					}
 				}
+				else if(object == GameObjects.RUG_)
+				{
+					if(found.get(GameObjects.RUG) != true)
+					{
+						AdventControl.updateTally();
+						found.put(GameObjects.RUG, true);
+					}
+				}
 			}
 		}
 		
