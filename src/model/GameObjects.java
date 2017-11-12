@@ -82,7 +82,7 @@ public enum GameObjects
 			boolean bearAxe, boolean dragon, int bear, int usedBatteries, boolean broken,
 			int chain, boolean gold, boolean crystalBridge, boolean collapse, int rod1, int rod2,
 			int bottles, int lamps, int oysters, int pillows, int grates, int cages, int birds, 
-			int snakes)
+			int snakes, boolean pillow)
 	{
 		String output = "";
 		switch(object)
@@ -179,6 +179,10 @@ public enum GameObjects
 				{
 					if(location == Location.INHAND)
 					{	output = new String("\n\t\tMing Vase");}
+					else if(pillow)
+					{
+						output = "The vase is now resting, delicately, on a velvet pillow.";
+					}
 					else
 					{	output = new String("\n\tThere is a delicate, precious, Ming vase here!");	}
 				}

@@ -207,6 +207,9 @@ public class HashMaps
 		objects.put("spice", GameObjects.SPICES);
 		objects.put("chain", GameObjects.CHAIN);
 		
+		actions.put("absta", ActionWords.ABSTAIN);
+		actions.put("nothi", ActionWords.ABSTAIN);
+		actions.put("wait", ActionWords.ABSTAIN);
 		actions.put("look", ActionWords.LOOK);
 		actions.put("descr", ActionWords.LOOK);
 		actions.put("exami", ActionWords.LOOK);

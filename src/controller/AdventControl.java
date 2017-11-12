@@ -114,8 +114,6 @@ public class AdventControl
 	private int snakes;
 	
 	
-	//TODO vase on the pillow altered text?
-	//TODO new line before followed by bear notice
 	//TODO take/drop items weird somewhere
 	//TODO nothing/do nothing breaks things
 	
@@ -169,7 +167,7 @@ public class AdventControl
 		collapse = false;
 		lampWarn = false;
 		over = false;
-		shortcut = true;
+		shortcut = false;
 		panic = false;
 		wayIsBlocked = false;
 		locationChange = false;
@@ -232,7 +230,7 @@ public class AdventControl
 
 	public String determineAction(String input) 
 	{
-		System.out.println(input);
+		System.out.println("\n" + input);
 		String output = null;
 		increaseTurns = true;
 		int answer = askYesNo(input);
@@ -323,7 +321,6 @@ public class AdventControl
 		{
 			output = attemptAction(ActionWords.CLOSE, hash.whichObject(input), input);
 			quest = 0;
-			//TODO finish this venture (and all the rest)
 		}
 		else if(input.equals("fee") || (quest == 7 && thisIsAnAction && action == ActionWords.FEEFIE))
 		{
@@ -445,7 +442,6 @@ public class AdventControl
 			giveHint(3);
 			output = "Don't go west.";
 		}
-		//
 		else
 		{
 			if(quest != 0)
@@ -505,7 +501,7 @@ public class AdventControl
 
 	public String determineAction(String input1, String input2) 
 	{
-		System.out.println(input1 + " " + input2);
+		System.out.println("\n" + input1 + " " + input2);
 		String output = null;
 		increaseTurns = true;
 		if(!seriousQuestion && quest != 0)
@@ -522,15 +518,10 @@ public class AdventControl
 		{
 			String input12 = input1;
 			String input22 = input2;
-			
 			if(input1.length() > 5)
-			{
-				input12 = input1.substring(0, 5);
-			}
+			{	input12 = input1.substring(0, 5);	}
 			if(input2.length() > 5)
-			{
-				input22 = input2.substring(0, 5);
-			}
+			{	input22 = input2.substring(0, 5);}
 			if(hash.isMovement(input12))
 			{
 				if(hash.whichMovement(input12) == Movement.ENTER)
@@ -683,14 +674,14 @@ public class AdventControl
 				h1++;
 				if(h1 == 4)
 				{	
-					output = "Are you trying to get into the cave?";	
+					output = "\nAre you trying to get into the cave?";	
 					quest = 21;
 					h1++;
 				}	
 			}
 			if(h2 == 5)
 			{
-				output = "Are you trying to catch the bird?";	
+				output = "\nAre you trying to catch the bird?";	
 				quest = 22;
 				h2++;
 			}
@@ -699,7 +690,7 @@ public class AdventControl
 				h3++;
 				if(h3 == 8)
 				{	
-					output = "Are you trying to deal somehow with the snake?";	
+					output = "\nAre you trying to deal somehow with the snake?";	
 					quest = 23;
 					h3++;
 				}	
@@ -720,7 +711,7 @@ public class AdventControl
 				h4++;
 				if(h4 == 75)
 				{	
-					output = "Do you need help getting out of the maze?";	
+					output = "\nDo you need help getting out of the maze?";	
 					quest = 24;
 					h4++;
 				}	
@@ -730,7 +721,7 @@ public class AdventControl
 				h5++;
 				if(h5 == 25)
 				{	
-					output = "Are you trying to explore beyond the Plover Room?";	
+					output = "\nAre you trying to explore beyond the Plover Room?";	
 					quest = 25;
 					h5++;
 				}	
@@ -740,20 +731,18 @@ public class AdventControl
 				h6++;
 				if(h6 == 20)
 				{	
-					output = "Do you need help getting out of here?";	
+					output = "\nDo you need help getting out of here?";	
 					quest = 26;
 					h6++;
 				}	
 			}		
 		}
-	
-		//dark - alcove + plover - 5 points - 
 		return output;
 	}
 	
 	private String hintMessage(int cost)
 	{
-		String output = "\n\nI am prepared to give you a hint, but it will cost you " + cost + " points.\nDo you want the hint?";
+		String output = "\nI am prepared to give you a hint, but it will cost you " + cost + " points.\nDo you want the hint?";
 		return output;
 	}
 	
@@ -774,21 +763,18 @@ public class AdventControl
 			//output = output + "\n";
 			for(GameObjects thing : objects)
 			{
+				boolean pillow = (objectIsHere(GameObjects.PILLOW));
 				output = new String(output + things.getItemDescription(here, thing, 
 						light, grateUnlocked, plant, bottle, birdInCage, oilDoor, bearAxe, dragon,
 						bear, usedBatteries, broken, chain, haveGold, crystalBridge, collapse, rod1, 
-						rod2, bottles, lamps, oysters, pillows, grates, cages, birds, snakes));
+						rod2, bottles, lamps, oysters, pillows, grates, cages, birds, snakes, pillow));
 				
 				if(things.isTreasure(thing))
 				{
 					if(!hash.haveIFound(GameObjects.RUG) && thing == GameObjects.RUG_)
-					{
-						hash.wasFound(GameObjects.RUG);
-					}
+					{	hash.wasFound(GameObjects.RUG);	}
 					else if(!hash.haveIFound(thing))
-					{
-						hash.wasFound(thing);
-					}
+					{	hash.wasFound(thing);	}
 				}
 				System.out.println(thing);
 			}
@@ -800,13 +786,9 @@ public class AdventControl
 	{
 		int answer = 0;
 		if(input.substring(0, 1).equals("y"))
-		{
-			answer = 1;
-		}
+		{	answer = 1;	}
 		else if(input.substring(0, 1).equals("n"))
-		{
-			answer = 2;
-		}
+		{	answer = 2;	}
 		return answer;
 	}
 	
@@ -814,30 +796,22 @@ public class AdventControl
 	{
 		Object result = GameObjects.NOTHING;
 		if(input.length() > 5)
-		{
-			input = input.substring(0, 5);
-		}
+		{	input = input.substring(0, 5);	}
 		if(hash.isMovement(input))
-		{
-			result = hash.whichMovement(input);
-		}
+		{	result = hash.whichMovement(input);	}
 		else if(hash.isObject(input))
-		{
-			result = hash.whichObject(input);
-		}
+		{	result = hash.whichObject(input);	}
 		return result;
 	}
 
 	private String attemptAction(ActionWords verb, Object other, String alt)
 	{
-		
 		String output = "I'm game. Would you care to explain how?";
 		if(!hash.isObject(other))
 		{
 			output = new String("I don't see any " + alt + ".");
 			increaseTurns = false;
 		}
-		
 		try
 		{
 			GameObjects object = (GameObjects) other;
@@ -1039,8 +1013,8 @@ public class AdventControl
 						}
 						else if(object == GameObjects.AXE && bearAxe && bear == 0)
 						{
-							//TODO this is the wrong text
-							output = "The axe misses and lands near the bear where you can't get at it.";
+							output = "There is no way past the bear to get the axe, which is probably just as well.";
+							increaseTurns = false;
 						}
 						else if(object == GameObjects.VASE && broken == true)
 						{
@@ -1172,7 +1146,7 @@ public class AdventControl
 						}
 						else if(object == GameObjects.VASE && !(objectIsHere(GameObjects.PILLOW) || currentLocation == Location.SOFT))
 						{
-							//TODO vase breaking text
+							output = "The Ming vase drops with a delicate crash.";
 							dropObject(GameObjects.VASE);
 							broken = true;
 							lostTreasures++;
@@ -2549,18 +2523,12 @@ public class AdventControl
 							{
 								double chance = generate();
 								if(chance > .74)
-								{
-									//hollow voice
-									output = new String(output + "\n\nA hollow voice says \"PLUGH\"");
-								}
+								{	output = new String(output + "\n\nA hollow voice says \"PLUGH\"");	}
 							}
 						}
 					}
-					
 					if(bear == 2)
-					{
-						output = output + "\n\tYou are being followed by a very large, tame bear.";
-					}
+					{	output += "\n\tYou are being followed by a very large, tame bear.";	}
 					if(relocate)
 					{
 						hash.dropObject(GameObjects.EMERALD, Location.PROOM);
@@ -2775,14 +2743,14 @@ public class AdventControl
 		output += "\tYou scored " + score + " points out of a possible 350, using " + turns + " turn";
 		if(turns > 1)
 		{	output += "s";	}
-		output += ".\n";
+		output += ".\n\t";
 		boolean found = false;
 		for(int i = 0; i < 9; i++)
 		{
 			if(!found && score <= scores[i])
 			{
 				found = true;
-				output += sMessages[i] + "\nTo achieve the next higher rating";
+				output += sMessages[i] + "\n\tTo achieve the next higher rating";
 				if(i < 8)
 				{	
 					int next = 1 + scores[i] - score;
@@ -2869,6 +2837,16 @@ public class AdventControl
 		{
 			output = "A sepulchral voice, reverberating through the cave, says, \n\t\"Cave closing soon. All adventurers exit immediately through main office.\"";
 			clock1 = -1;
+			dwarvesLeft = 0;
+			voidObject(GameObjects.TROLL);
+			voidObject(GameObjects.TROLL_);
+			hash.dropObject(GameObjects.TROLL2_, Location.NESIDE);
+			hash.dropObject(GameObjects.TROLL2, Location.SWSIDE);
+			if(bear != 3)
+			{
+				voidObject(GameObjects.BEAR);
+			}
+			grateUnlocked = false;
 			//TODO kill all dwarfs, can't unlock grate remove troll and bear (if not dead) 
 			closing = true;
 		}
