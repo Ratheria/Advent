@@ -117,6 +117,7 @@ public class AdventControl
 	//TODO vase on the pillow altered text?
 	//TODO new line before followed by bear notice
 	//TODO take/drop items weird somewhere
+	//TODO nothing/do nothing breaks things
 	
 	public AdventControl()
 	{
@@ -168,7 +169,7 @@ public class AdventControl
 		collapse = false;
 		lampWarn = false;
 		over = false;
-		shortcut = false;
+		shortcut = true;
 		panic = false;
 		wayIsBlocked = false;
 		locationChange = false;
@@ -231,6 +232,7 @@ public class AdventControl
 
 	public String determineAction(String input) 
 	{
+		System.out.println(input);
 		String output = null;
 		increaseTurns = true;
 		int answer = askYesNo(input);
@@ -503,6 +505,7 @@ public class AdventControl
 
 	public String determineAction(String input1, String input2) 
 	{
+		System.out.println(input1 + " " + input2);
 		String output = null;
 		increaseTurns = true;
 		if(!seriousQuestion && quest != 0)
@@ -840,17 +843,26 @@ public class AdventControl
 			GameObjects object = (GameObjects) other;
 			switch(verb)
 			{
-				case ABSTAIN:
+				case NOTHING: case ABSTAIN:
 					output = "Okay.";
 					break;
 					
 				case TAKE:
 					output = new String("You can't be serious!");
-					if(object == GameObjects.ROD && rod1 != 0) { rod1 = 0; }
+					if(object == GameObjects.ROD && objectIsHere(GameObjects.ROD)) { rod1 = 0; }
 					if(object == GameObjects.LAMP && lamps != 0) { lamps = 0; }
 					if(object == GameObjects.BOTTLE && bottles != 0) { bottles = 0; }
 					if(object == GameObjects.PILLOW && pillows != 0) { pillows = 0; }
-					if(object == GameObjects.ALL)
+					if(object == GameObjects.ROD && !objectIsHere(GameObjects.ROD) && objectIsHere(GameObjects.ROD2))
+					{
+						output = attemptAction(ActionWords.TAKE, GameObjects.ROD2, alt);
+						if(rod2 != 0) {	rod2 = 0; }
+					}
+					else if(object == GameObjects.RUG && !objectIsHere(GameObjects.RUG) && objectIsHere(GameObjects.RUG_))
+					{
+						output = attemptAction(ActionWords.TAKE, GameObjects.RUG_, alt);
+					}
+					else if(object == GameObjects.ALL)
 					{
 						ArrayList<GameObjects> itemsHere = hash.objectsHere(currentLocation);
 						if(!(itemsHere == null))
@@ -858,7 +870,7 @@ public class AdventControl
 							output = "";
 							for(GameObjects item : itemsHere)
 							{
-								output = output + attemptAction(ActionWords.TAKE, item, "") + "\n"; 
+								output += attemptAction(ActionWords.TAKE, item, "") + "\n"; 
 							}
 						}
 						else
@@ -1016,7 +1028,7 @@ public class AdventControl
 								}
 							}
 						}
-						else if(object == GameObjects.RUG)
+						else if(object == GameObjects.RUG || object == GameObjects.RUG_)
 						{
 							if(objectIsHere(GameObjects.RUG) || objectIsHere(GameObjects.RUG_))
 							{
@@ -1025,14 +1037,9 @@ public class AdventControl
 								output = okay;
 							}
 						}
-						else if(object == GameObjects.ROD && !objectIsHere(GameObjects.ROD) && objectIsHere(GameObjects.ROD2))
-						{
-							takeObject(GameObjects.ROD2);
-							if(rod2 != 0) {	rod2 = 0; }
-							output = okay;
-						}
 						else if(object == GameObjects.AXE && bearAxe && bear == 0)
 						{
+							//TODO this is the wrong text
 							output = "The axe misses and lands near the bear where you can't get at it.";
 						}
 						else if(object == GameObjects.VASE && broken == true)
@@ -1066,8 +1073,9 @@ public class AdventControl
 					if(isInHand(GameObjects.ROD2) && object == GameObjects.ROD && !isInHand(GameObjects.ROD))
 					{
 						dropObject(GameObjects.ROD2);
+						output = okay;
 					}
-					if(object == GameObjects.ALL)
+					else if(object == GameObjects.ALL)
 					{
 						ArrayList<GameObjects> itemsHere = hash.objectsHere(Location.INHAND);
 						if(!(itemsHere == null))
@@ -1075,7 +1083,7 @@ public class AdventControl
 							output = "";
 							for(GameObjects item : itemsHere)
 							{
-								output = output + attemptAction(ActionWords.DROP, item, "") + "\n"; 
+								output += attemptAction(ActionWords.DROP, item, "") + "\n"; 
 							}
 						}
 						else
@@ -2089,7 +2097,7 @@ public class AdventControl
 					if(object == GameObjects.NOTHING)
 					{
 						output = hash.getDescription(currentLocation, 2);
-						listItemsHere(currentLocation);
+						output += "\n" + listItemsHere(currentLocation);
 					}
 					else
 					{
@@ -2777,7 +2785,7 @@ public class AdventControl
 				output += sMessages[i] + "\nTo achieve the next higher rating";
 				if(i < 8)
 				{	
-					int next = scores[i+1] - score;
+					int next = 1 + scores[i] - score;
 					String s = "s";
 					if(next == 1)
 					{	s = "";	}
@@ -2789,9 +2797,7 @@ public class AdventControl
 				}
 			}
 		}
-
 		frame.done();
-		
 		//output += "\n\n\n\tWould you like to play again?";
 		//quest = 9;
 		//seriousQuestion = true;
@@ -2828,8 +2834,6 @@ public class AdventControl
 				hash.dropObject(GameObjects.MAG, Location.WITT);
 				shortcut = false;
 			}
-			//page 88
-			//page 89
 			hash.dropObject(GameObjects.BOTTLE, Location.NEEND);
 			hash.dropObject(GameObjects.PLANT, Location.NEEND);
 			hash.dropObject(GameObjects.OYSTER, Location.NEEND);
