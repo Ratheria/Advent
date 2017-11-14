@@ -114,14 +114,6 @@ public class AdventControl
 	private int snakes;
 	
 	
-	//TODO take/drop items maybe weird somewhere
-	//TODO open - I don't see any...
-	//TODO says The nest of golden eggs disappears! or something when they are with you then transported away by magic
-	//TODO something breaks when you reach end game. probably a variable needing to be set to false
-	//TODO dragon on rug text not working.
-	//TODO pirate too soon
-	//TODO sign in anteroom needs \t in front of all lines
-	
 	public AdventControl()
 	{
 		frame = new AdventureFrame(this);
@@ -1202,7 +1194,7 @@ public class AdventControl
 						{
 							voidObject(GameObjects.COINS);
 							lostTreasures++;
-							itemsInHand++;
+							//itemsInHand++;
 							dropObject(GameObjects.BATTERIES);
 							usedBatteries = 1;
 						}
@@ -1352,7 +1344,7 @@ public class AdventControl
 					}
 					else
 					{
-						output = new String("I don't know how to lock or unlock such a thing.");
+						output = new String("I don't see any " + alt + ".");
 						increaseTurns = false;
 					}
 					break;
@@ -1643,6 +1635,8 @@ public class AdventControl
 						else
 						{
 							voidObject(GameObjects.FOOD);
+							if(hash.getObjectLocation(GameObjects.FOOD) == Location.INHAND)
+							{	itemsInHand--;	}
 							output = "Thank you, it was delicious!";
 						}
 					}
@@ -1679,6 +1673,7 @@ public class AdventControl
 						hash.dropObject(GameObjects.TROLL2, Location.SWSIDE);
 						hash.dropObject(GameObjects.TROLL2_, Location.NESIDE);
 						troll = 3;
+						itemsInHand--;
 						output = "The troll catches your treasure and scurries away out of sight.";
 						if(object != GameObjects.EGGS)
 						{
@@ -1687,7 +1682,7 @@ public class AdventControl
 					}
 					else if(object == GameObjects.FOOD && objectIsHere(GameObjects.BEAR))
 					{
-						output = attemptAction(ActionWords.FEED, object, "");
+						output = attemptAction(ActionWords.FEED, GameObjects.BEAR, "");
 					}
 					else if(!(object == GameObjects.AXE))
 					{
@@ -1700,6 +1695,7 @@ public class AdventControl
 					else if((objectIsHere(GameObjects.DRAGON_) || objectIsHere(GameObjects.DRAGON)) && dragon)
 					{
 						output = "The axe bounces harmlessly off the dragon's thick scales.";
+						dropObject(GameObjects.AXE);
 					}
 					else if((objectIsHere(GameObjects.TROLL_) || objectIsHere(GameObjects.TROLL)))
 					{
@@ -2078,6 +2074,7 @@ public class AdventControl
 							output = "There is nothing here to eat.";
 							if(isInHand(GameObjects.FOOD))
 							{
+								itemsInHand--;
 								voidObject(GameObjects.FOOD);
 								bear = 1;
 								bearAxe = false;
@@ -2279,7 +2276,12 @@ public class AdventControl
 							}
 							else if(currentLocation != Location.GIANT)
 							{
-								output = "Done!";
+								if(hash.getObjectLocation(GameObjects.EGGS) == Location.INHAND)
+								{	itemsInHand--;	}
+								if(objectIsPresent(GameObjects.EGGS))
+								{	output = "The nest of golden eggs disappears!";	}
+								else
+								{	output = "Done!";	}
 								hash.dropObject(GameObjects.EGGS, Location.GIANT);
 							}
 							else
@@ -2620,7 +2622,7 @@ public class AdventControl
 								if(pirate == 0)
 								{
 									movesWOEncounter++;
-									double likely = (movesWOEncounter * 10 / 8)/3; 
+									double likely = (movesWOEncounter * 10 / 8)/8; 
 									if(chance * 100 <= likely)
 									{
 										pirate = 1;
@@ -2694,13 +2696,9 @@ public class AdventControl
 	{
 		boolean canSee = false;
 		if(currentLocation.dontNeedLamp(here))
-		{	
-			canSee = true;
-		}
+		{	canSee = true;	}
 		else if(light && objectIsPresent(GameObjects.LAMP))
-		{
-			canSee = true;
-		}
+		{	canSee = true;	}
 		System.out.print("can see "); 
 		System.out.print(currentLocation.dontNeedLamp(here)); 
 		System.out.println("\n");
@@ -2878,7 +2876,7 @@ public class AdventControl
 				}
 				else
 				{
-					output += " would be a neat trick!\nCongratulations!!";
+					output += " would be a neat trick!\n\tCongratulations!!";
 				}
 			}
 		}
@@ -2949,6 +2947,8 @@ public class AdventControl
 			snakes = 1;
 			plant = 3;
 			output += hash.getDescription(currentLocation, brief);
+			clock1 = -2;
+			clock2 = -2;
 		}
 		else if(clock1 == -1)
 		{	clock2--;	}
@@ -2963,9 +2963,7 @@ public class AdventControl
 			hash.dropObject(GameObjects.TROLL2_, Location.NESIDE);
 			hash.dropObject(GameObjects.TROLL2, Location.SWSIDE);
 			if(bear != 3)
-			{
-				voidObject(GameObjects.BEAR);
-			}
+			{	voidObject(GameObjects.BEAR);	}
 			grateUnlocked = false;
 			closing = true;
 		}

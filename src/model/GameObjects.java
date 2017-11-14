@@ -298,7 +298,7 @@ public enum GameObjects
 				{	output = new String("\n\tThe body of a huge green dead dragon is lying off to one side.");	}
 				break;		
 				
-			case RUG:
+			case RUG: case RUG_:
 				if(dragon)
 				{	output = new String("\n\tThe dragon is sprawled out on a persian rug!");	}
 				else if(location == Location.INHAND)

@@ -457,7 +457,7 @@ public class HashMaps
 		longDescription.put(Location.COMPLEX, "You are at a complex junction. A low hands and knees passage from the north joins a higher crawl from the east to make a walking passage going west. There is also a large room above. The air is damp here.");
 		longDescription.put(Location.SHELL, "You are in a large room carved out of sedimentary rock. The floor and walls are littered with bits of shells embedded in the stone. A shallow passage proceeds downward, and a somewhat steeper one leads up. A low hands-and-knees passage enters from the south.");
 		longDescription.put(Location.ARCH, "You are in an arched hall. A coral passage once continued up and east from here, but is now blocked by debris. The air smells of sea water.");
-		longDescription.put(Location.ANTE, "You are in an anteroom leading to a large passage to the east. Small passages go west and up. The remnants of recent digging are evident.\n\nA sign in midair here says \n\t\"CAVE UNDER CONSTRUCTION BEYOND THIS POINT.\n\tPROCEED AT OWN RISK\n\t[WITT CONSTRUCTION COMPANY]\"");
+		longDescription.put(Location.ANTE, "You are in an anteroom leading to a large passage to the east. Small passages go west and up. The remnants of recent digging are evident.\n\n\tA sign in midair here says \n\t\t\"CAVE UNDER CONSTRUCTION BEYOND THIS POINT.\n\t\tPROCEED AT OWN RISK\n\t\t[WITT CONSTRUCTION COMPANY]\"");
 		longDescription.put(Location.WITT, "You are at Witt's End. Passages lead off in \"all\" directions.");
 		longDescription.put(Location.BEDQUILT, "You are in Bedquilt, a long E/W passage with holes everywhere. \nTo explore at random select north, south, up or down.");
 		longDescription.put(Location.CHEESE, "You are in a room whose walls resemble swiss cheese. \nObvious passages go west, east, ne, and nw. Part of the room is occupied by a large bedrock block.");
@@ -628,7 +628,6 @@ public class HashMaps
 		shortDescription.put(Location.SWEND, "You're at SW end.");
 		
 		
-		//TODO titles
 		title.put(Location.ROAD, "End Of Road");
 		title.put(Location.HILL, "Hill");
 		title.put(Location.BUILDING, "Building");
