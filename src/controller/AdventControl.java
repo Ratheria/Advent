@@ -61,6 +61,7 @@ public class AdventControl
 	private boolean panic;
 	private boolean over;
 	private boolean shortcut;
+	private boolean dwarvesOn;
 	private boolean wayIsBlocked;
 	private boolean locationChange;
 	private boolean seriousQuestion;
@@ -165,6 +166,7 @@ public class AdventControl
 		lampWarn = false;
 		over = false;
 		shortcut = false;
+		dwarvesOn = true;
 		panic = false;
 		wayIsBlocked = false;
 		locationChange = false;
@@ -481,6 +483,10 @@ public class AdventControl
 				output = new String("The dwarves' knives vanish as they strike the walls of the cave.");
 				increaseTurns = false;
 			}
+			else if(hash.isAction(input))
+			{
+				output = attemptAction(hash.whichAction(input), GameObjects.NOTHING, "");
+			}
 			else if(hash.isObject(input))
 			{
 				GameObjects currentObject = hash.whichObject(input);
@@ -498,10 +504,6 @@ public class AdventControl
 					output = new String("I don't see any " + input + ".");
 					increaseTurns = false;
 				}
-			}
-			else if(hash.isAction(input))
-			{
-				output = attemptAction(hash.whichAction(input), GameObjects.NOTHING, "");
 			}
 			else if(hash.isMessage(input))
 			{
@@ -1224,8 +1226,8 @@ public class AdventControl
 					{
 						if(objectIsPresent(GameObjects.GRATE) || objectIsPresent(GameObjects.GRATE_))
 						{
-							output = new String("I don't see any grate");
-							increaseTurns = false;
+							output = new String("The grate is now unlocked.");
+							grateUnlocked = true;
 						}
 						else if(!objectIsPresent(GameObjects.KEYS))
 						{
@@ -1234,8 +1236,8 @@ public class AdventControl
 						}
 						else
 						{
-							output = new String("The grate is now unlocked.");
-							grateUnlocked = true;
+							output = new String("I don't see any grate");
+							increaseTurns = false;
 						}
 					}
 					else if(objectIsPresent(object))
@@ -2628,6 +2630,16 @@ public class AdventControl
 										pirate = 1;
 									}
 									System.out.println("likely " + likely + "\npirate " + pirate);
+								}
+								if(dwarvesOn)
+								{
+									//TODO dwarves won't follow into forbidden area but will wait outside
+									if(dwarvesLeft > 0)
+									{
+										double encounter = dwarvesLeft/40;
+										//switch()
+										//TODO dwarves
+									}
 								}
 							}
 							output = getDescription(currentLocation, brief);
