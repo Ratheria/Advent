@@ -497,7 +497,6 @@ public class HashMaps
 		longDescription.put(Location.NEEND, "You are at the northeast end of an immense room, even larger than the Giant Room. It appears to be a repository for the \"Adventure\" program. Massive torches far overhead bathe the room with smoky yellow light. Scattered about you can be seen a pile of bottles (all of them empty), a nursery of young beanstalks murmering quietly, a bed of oysters, a bundle of black rods with rusty stars on their ends, and a collection of brass lanterns. Off to one side a great many dwarves are sleeping on the floor, snoring loudly. \nA sign nearby reads:\n\t\"DO NOT DISTURB THE DWARVES!\"\nAn immense mirror is hanging against one wall, and stretches to the other end of the room, where various other sundry objects can be glimpsed dimly in the distance.");
 		longDescription.put(Location.SWEND, "You are at the southwest end of the repository. To one side is a pit full of fierce green snakes. On the other side is a row of small wicker cages, each of which contains a little sulking bird. In one corner is a bundle of black rods with rusty marks on their ends. A large number of velvet pillows are scattered about on the floor. A vast mirror stretches off to the northeast. At your feet is a large steel grate, next to which is a sign that reads, \n\t\"TREASURE VAULT. KEYS IN MAIN OFFICE.\"");
 		
-		
 		shortDescription.put(Location.ROAD, "You're at end of road again.");
 		shortDescription.put(Location.HILL, "You're at hill in road.");
 		shortDescription.put(Location.BUILDING, "You're inside building.");
@@ -626,7 +625,6 @@ public class HashMaps
 		shortDescription.put(Location.BARR, "You're in barren room.");
 		shortDescription.put(Location.NEEND, "You're at NE end.");
 		shortDescription.put(Location.SWEND, "You're at SW end.");
-		
 		
 		title.put(Location.ROAD, "End Of Road");
 		title.put(Location.HILL, "Hill");
@@ -1045,6 +1043,7 @@ public class HashMaps
 			if(objectIsHere(GameObjects.CHAIN, here))
 			{	result.add(GameObjects.CHAIN);}
 		}
+		
 		if(!(result == null))
 		{
 			for(GameObjects object : result)
@@ -1067,7 +1066,6 @@ public class HashMaps
 				}
 			}
 		}
-		
 		return result;
 	}
 	
