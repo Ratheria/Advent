@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
@@ -24,6 +26,8 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.DefaultCaret;
 import javax.swing.JLabel;
+import javax.swing.JButton;
+import javax.swing.SwingConstants;
 
 public class AdventPanel extends JPanel 
 {
@@ -39,6 +43,8 @@ public class AdventPanel extends JPanel
 	private JLabel lblTurns;
 	private JLabel lblScore;
 	private JLabel lblTop;
+	private JButton saveButton;
+	private JButton loadButton;
 	
 	public AdventPanel(AdventControl base)
 	{
@@ -54,6 +60,8 @@ public class AdventPanel extends JPanel
 		lblTurns = new JLabel("Turns: 1");
 		lblScore = new JLabel("Score: 0/350");
 		lblTop = new JLabel("Colossal Cave Adventure");
+		saveButton = new JButton(" Save ");
+		loadButton = new JButton(" Load ");
 		
 		setUpPanel();
 		setUpLayout();
@@ -68,6 +76,8 @@ public class AdventPanel extends JPanel
 		add(lblTurns);
 		add(lblScore);
 		add(lblTop);
+		add(saveButton);
+		add(loadButton);
 		
 		inputField.requestFocusInWindow();
 		displayCaret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
@@ -83,16 +93,35 @@ public class AdventPanel extends JPanel
 		displayLog.setWrapStyleWord(true);
 		displayLog.setTabSize(4);
 		displayLog.setLineWrap(true);
+		inputField.setColumns(20);
+		inputField.setText("");
+		saveButton.setFocusPainted(false);
+		saveButton.setContentAreaFilled(false);
+		loadButton.setFocusPainted(false);
+		loadButton.setContentAreaFilled(false);
+		lblTop.setForeground(Color.GREEN);
+		lblTurns.setForeground(Color.GREEN);
+		lblScore.setForeground(Color.GREEN);
 		displayLog.setForeground(Color.GREEN);
 		displayLog.setBackground(Color.BLACK);
+		saveButton.setBackground(Color.BLACK);
+		saveButton.setForeground(Color.GREEN);
+		loadButton.setBackground(Color.BLACK);
+		loadButton.setForeground(Color.GREEN);
+		inputField.setForeground(Color.GREEN);
+		inputField.setBackground(Color.BLACK);
+		lblTop.setFont(new Font("Monospaced", Font.PLAIN, 20));
+		lblTurns.setFont(new Font("Monospaced", Font.PLAIN, 12));
+		lblScore.setFont(new Font("Monospaced", Font.PLAIN, 12));
+		saveButton.setFont(new Font("Monospaced", Font.PLAIN, 12));
+		loadButton.setFont(new Font("Monospaced", Font.PLAIN, 12));
 		displayLog.setFont(new Font("DialogInput", Font.PLAIN, 15));
-		displayLog.setBorder(new EmptyBorder(5, 15, 5, 15));
-		springLayout.putConstraint(SpringLayout.WEST, inputField, 25, SpringLayout.WEST, this);
+		inputField.setFont(new Font("DialogInput", Font.PLAIN, 14));
 		springLayout.putConstraint(SpringLayout.WEST, scroll, 25, SpringLayout.WEST, this);
 		springLayout.putConstraint(SpringLayout.EAST, scroll, -25, SpringLayout.EAST, this);
 		springLayout.putConstraint(SpringLayout.NORTH, lblTop, 15, SpringLayout.NORTH, this);
-		springLayout.putConstraint(SpringLayout.WEST, lblTop, 0, SpringLayout.WEST, inputField);
 		springLayout.putConstraint(SpringLayout.SOUTH, lblTop, -10, SpringLayout.NORTH, scroll);
+		springLayout.putConstraint(SpringLayout.WEST, lblTop, 25, SpringLayout.WEST, this);
 		springLayout.putConstraint(SpringLayout.EAST, lblTop, -230, SpringLayout.EAST, this);
 		springLayout.putConstraint(SpringLayout.SOUTH, inputField, -15, SpringLayout.SOUTH, this);
 		springLayout.putConstraint(SpringLayout.WEST, lblScore, 15, SpringLayout.EAST, lblTop);
@@ -105,21 +134,19 @@ public class AdventPanel extends JPanel
 		springLayout.putConstraint(SpringLayout.NORTH, inputField, 15, SpringLayout.SOUTH, scroll);
 		springLayout.putConstraint(SpringLayout.EAST, inputField, 0, SpringLayout.EAST, scroll);
 		springLayout.putConstraint(SpringLayout.SOUTH, scroll, -60, SpringLayout.SOUTH, this);
-		lblTop.setFont(new Font("Monospaced", Font.PLAIN, 20));
-		lblTop.setForeground(Color.GREEN);
-		inputField.setColumns(20);
-		inputField.setText("");
-		inputField.setForeground(Color.GREEN);
-		inputField.setBackground(Color.BLACK);
-		inputField.setFont(new Font("DialogInput", Font.PLAIN, 14));
+		springLayout.putConstraint(SpringLayout.NORTH, saveButton, 15, SpringLayout.SOUTH, scroll);
+		springLayout.putConstraint(SpringLayout.SOUTH, saveButton, -15, SpringLayout.SOUTH, this);
+		springLayout.putConstraint(SpringLayout.WEST, saveButton, 25, SpringLayout.WEST, this);
+		springLayout.putConstraint(SpringLayout.WEST, inputField, 10, SpringLayout.EAST, loadButton);
+		springLayout.putConstraint(SpringLayout.NORTH, loadButton, 15, SpringLayout.SOUTH, scroll);
+		springLayout.putConstraint(SpringLayout.SOUTH, loadButton, -15, SpringLayout.SOUTH, this);
+		springLayout.putConstraint(SpringLayout.WEST, loadButton, 10, SpringLayout.EAST, saveButton);
+		displayLog.setBorder(new EmptyBorder(5, 15, 5, 15));
+		scroll.setBorder(new LineBorder(new Color(0, 255, 0)));
+		saveButton.setBorder(BorderFactory.createLineBorder(Color.GREEN));
+		loadButton.setBorder(BorderFactory.createLineBorder(Color.GREEN));
 		inputField.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(outline),
                 BorderFactory.createEmptyBorder(0, 55, 0, 0)));
-		scroll.setBorder(new LineBorder(new Color(0, 255, 0)));
-		lblTurns.setForeground(Color.GREEN);
-		lblTurns.setFont(new Font("Monospaced", Font.PLAIN, 12));
-		lblScore.setForeground(Color.GREEN);
-		lblScore.setFont(new Font("Monospaced", Font.PLAIN, 12));
-		inputField.setText("");
 		inputField.requestFocusInWindow();
 	}
 	
@@ -140,6 +167,32 @@ public class AdventPanel extends JPanel
 	
 	private void setUpListeners() 
 	{
+		saveButton.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent click) 
+			{
+				boolean saved = base.saveGame();
+				if(saved)
+				{
+					displayLog.append("\n\nGame successfully saved.\n");
+				}
+			}
+		});
+		
+		loadButton.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent click) 
+			{
+				boolean loaded = base.saveGame();
+				if(loaded)
+				{
+					displayLog.setText("\nGame successfully loaded.\n");
+				}
+			}
+		});
+		
 		inputField.addActionListener(new ActionListener()
 		{
 			@Override

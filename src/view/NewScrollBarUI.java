@@ -52,8 +52,8 @@ public class NewScrollBarUI extends BasicScrollBarUI
 		decrButton.setBackground(Color.BLACK);
 		decrButton.setForeground(Color.BLACK);
 		decrButton.setOpaque(true);
-		scrollbar.add(incrButton);
-		scrollbar.add(decrButton);
+		//scrollbar.add(incrButton);
+		//scrollbar.add(decrButton);
 		scrollbar.setEnabled(scrollbar.isEnabled());
 	}
 

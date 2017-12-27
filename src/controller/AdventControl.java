@@ -2738,8 +2738,7 @@ public class AdventControl
 		return currentScore;
 	}
 	
-	@SuppressWarnings("unused")
-	private boolean loadGame()
+	public boolean loadGame()
 	{
 		boolean result = false;
 		JFileChooser chooser = new JFileChooser();
@@ -2757,10 +2756,92 @@ public class AdventControl
 					line = updateLine(reader, row);
 				previousLocation = Location.locate[Integer.parseInt(line)];
 					line = updateLine(reader, row);
+					
+					
+					
+				currentLocation = Location.ROAD;
+				previousLocation = null;
+				eldestLocation = null;
+				dead = false;
+				beginning = true;
+				closed = false;
+				grateUnlocked = false;
+				crystalBridge = false;
+				light = false;
+				snake = true;
+				oilDoor = false;
+				dragon = true;
+				birdInCage = false;
+				bearAxe = false;
+				broken = false;
+				haveGold = false;
+				relocate = false;
+				justCollapsed = false;
+				collapse = false;
+				lampWarn = false;
+				over = false;
+				shortcut = false;
+				dwarvesOn = true;
+				battleUpdate = false;
+				panic = false;
+				wayIsBlocked = false;
+				justBlocked = false;
+				locationChange = false;
+				seriousQuestion = false;
+				noMore = false;
+				increaseTurns = false;
+				wellInCave = false;
+				read = false;
+				quit = false;
+				hint = 0;
+				h1 = 0;
+				h2 = 0;
+				h3 = 0;
+				h4 = 0;
+				h5 = 0;
+				h6 = 0;
+				clock1 = 15;
+				clock2 = 15;
+				quest = 0;
+				brief = 0;
+				score = 0;
+				bonus = 0;
+				turns = 0;
+				lamp = 330;
+				itemsInHand = 0;
+				deaths = 3;
+				fatality = 0;
+				//default, pit, dwarf
+				tally = 0;
+				lostTreasures = 0;
+				plant = 0;
+				bottle = 1;
+				usedBatteries = 0;
+				pirate = 0;
+				movesWOEncounter = 1;
+				dwarves = 0;
+				deadDwarves = 0;
+				dwarvesLeft = 5;
+				dwarfPresent = 0;
+				troll = 0;
+				bear = 0;
+				chain = 0;
+				west = 0;
+				foo = 0;
+				rod1 = 0;
+				rod2 = 0;
+				bottles = 0;
+				pillows = 0;
+				lamps = 0;
+				oysters = 0;
+				grates = 0;
+				cages = 0;
+				birds = 0;
+				snakes = 0;	
 				
 					
 					
-				//TODO
+				
 			}
 			catch(FileNotFoundException e){	}
 			catch(NullPointerException e){	}
@@ -2775,8 +2856,7 @@ public class AdventControl
 		return reader.readLine();
 	}
 	
-	@SuppressWarnings("unused")
-	private boolean saveGame()
+	public boolean saveGame()
 	{
 		boolean result = false;
 		//TODO save 
