@@ -680,12 +680,14 @@ public class AdventControl
 				}
 				else
 				{
-					output = "\n\nThere is a threatening little dwarf in the room with you!";
+					output += "\n\nThere is a threatening little dwarf in the room with you!";
+					dwarfPresent = 2;
+					hash.dropObject(GameObjects.DWARF, currentLocation);
 				}
 			}
 			else if (dwarfPresent == 2 && battleUpdate)
 			{
-				output = "\n\nThere is a threatening little dwarf in the room with you!\nOne sharp nasty knife is "
+				output += "\n\nThere is a threatening little dwarf in the room with you!\nOne sharp nasty knife is "
 						+ "thrown at you!";
 				boolean hit = false;
 				if(dwarves >= 3)
@@ -724,7 +726,6 @@ public class AdventControl
 			System.out.println("items " + itemsInHand);
 			System.out.println("tally " + tally);
 		}
-		battleUpdate = false;
 		return output;
 	}
 	
@@ -1680,10 +1681,12 @@ public class AdventControl
 					else if(object == GameObjects.FOOD && objectIsHere(GameObjects.BEAR))
 					{	output = attemptAction(ActionWords.FEED, GameObjects.BEAR, "");	}
 					else if(!(object == GameObjects.AXE))
-					{	output = attemptAction(ActionWords.DROP, object, alt);	}
+					{	
+						output = attemptAction(ActionWords.DROP, object, alt);	
+					}
 					else if(objectIsHere(GameObjects.DWARF))
 					{
-						if(generate() * 3 < 2)
+						if(generate() * 3 > 1)
 						{
 							deadDwarves++;
 							dwarvesLeft--;
@@ -2308,7 +2311,6 @@ public class AdventControl
 	
 	private String attemptMovement(String input)
 	{
-		battleUpdate = true;
 		String output = "";
 		locationChange = true;
 		haveGold = (hash.objectIsHere(GameObjects.GOLD, Location.INHAND));
@@ -2566,9 +2568,12 @@ public class AdventControl
 				{
 					if(justBlocked)
 					{
-						follow = true;
-						dwarfPresent = 1;
 						justBlocked = false;
+						if(locationResult.critters(locationResult))
+						{
+							follow = true;
+							dwarfPresent = 1;
+						}
 					}
 					else
 					{	
@@ -2614,9 +2619,10 @@ public class AdventControl
 								{	pirate = 1;	}
 								System.out.println("likely " + likely + "\npirate " + pirate);
 							}
-							if(pirate == 2 && dwarvesOn && dwarves > 0 && dwarvesLeft > 0 && !follow)
+							chance = generate();
+							if(dwarvesOn && dwarves > 0 && dwarvesLeft > 0 && !follow)
 							{
-								double encounter = (dwarvesLeft * 1000)/60;
+								double encounter = (dwarvesLeft * 1000)/50;
 								if(chance * 1000 <= encounter)
 								{	dwarfPresent = 1;	}
 								System.out.println("encounter " + encounter + "\nchance " + chance * 1000);
