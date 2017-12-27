@@ -2738,7 +2738,18 @@ public class AdventControl
 		return currentScore;
 	}
 	
-	public boolean loadGame()
+	public boolean loadGame(Location currentLocation, Location previousLocation, Location eldestLocation, Boolean dead,
+			Boolean beginning, Boolean closed, Boolean grateUnlocked, Boolean crystalBridge, Boolean light, Boolean snake,
+			Boolean oilDoor, Boolean dragon, Boolean birdInCage, Boolean bearAxe, Boolean broken, Boolean haveGold, 
+			Boolean relocate, Boolean justCollapsed, Boolean collapse, Boolean lampWarn, Boolean over, Boolean shortcut,
+			Boolean dwarvesOn, Boolean battleUpdate, Boolean panic, Boolean wayIsBlocked, Boolean justBlocked, 
+			Boolean locationChange, Boolean seriousQuestion, Boolean noMore, Boolean increaseTurns, Boolean wellInCave,
+			Boolean read, Boolean quit, int hint, int h1, int h2, int h3, int h4, int h5, int h6, int clock1, int clock2,
+			int quest, int brief, int score, int bonus, int turns, int lamp, int itemsInHand, int deaths, int fatality, 
+			int tally, int lostTreasures, int plant, int bottle, int usedBatteries, int pirate, int movesWOEncounter,
+			int dwarves, int deadDwarves, int dwarvesLeft, int dwarvesPresent, int troll, int bear, int chain, int west,
+			int foo, int rod1, int rod2, int bottles, int pillows, int lamps, int oysters, int grates, int cages, int birds,
+			int snakes)
 	{
 		boolean result = false;
 		JFileChooser chooser = new JFileChooser();
@@ -2756,88 +2767,11 @@ public class AdventControl
 					line = updateLine(reader, row);
 				previousLocation = Location.locate[Integer.parseInt(line)];
 					line = updateLine(reader, row);
+
 					
 					
-					
-				currentLocation = Location.ROAD;
-				previousLocation = null;
-				eldestLocation = null;
-				dead = false;
-				beginning = true;
-				closed = false;
-				grateUnlocked = false;
-				crystalBridge = false;
-				light = false;
-				snake = true;
-				oilDoor = false;
-				dragon = true;
-				birdInCage = false;
-				bearAxe = false;
-				broken = false;
-				haveGold = false;
-				relocate = false;
-				justCollapsed = false;
-				collapse = false;
-				lampWarn = false;
-				over = false;
-				shortcut = false;
-				dwarvesOn = true;
-				battleUpdate = false;
-				panic = false;
-				wayIsBlocked = false;
-				justBlocked = false;
-				locationChange = false;
-				seriousQuestion = false;
-				noMore = false;
-				increaseTurns = false;
-				wellInCave = false;
-				read = false;
-				quit = false;
-				hint = 0;
-				h1 = 0;
-				h2 = 0;
-				h3 = 0;
-				h4 = 0;
-				h5 = 0;
-				h6 = 0;
-				clock1 = 15;
-				clock2 = 15;
-				quest = 0;
-				brief = 0;
-				score = 0;
-				bonus = 0;
-				turns = 0;
-				lamp = 330;
-				itemsInHand = 0;
-				deaths = 3;
-				fatality = 0;
-				//default, pit, dwarf
-				tally = 0;
-				lostTreasures = 0;
-				plant = 0;
-				bottle = 1;
-				usedBatteries = 0;
-				pirate = 0;
-				movesWOEncounter = 1;
-				dwarves = 0;
-				deadDwarves = 0;
-				dwarvesLeft = 5;
-				dwarfPresent = 0;
-				troll = 0;
-				bear = 0;
-				chain = 0;
-				west = 0;
-				foo = 0;
-				rod1 = 0;
-				rod2 = 0;
-				bottles = 0;
-				pillows = 0;
-				lamps = 0;
-				oysters = 0;
-				grates = 0;
-				cages = 0;
-				birds = 0;
-				snakes = 0;	
+
+		
 				
 					
 					
