@@ -1303,7 +1303,6 @@ public enum Location
 				}
 				break;	
 				
-				
 			case SCAN2:
 				switch(destination)
 				{
@@ -1312,7 +1311,6 @@ public enum Location
 					default: next = THEVOID; break;
 				}
 				break;	
-				
 				
 			case SCAN3:
 				switch(destination)

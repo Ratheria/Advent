@@ -433,7 +433,7 @@ public class HashMaps
 		longDescription.put(Location.WOODS, "You are in open forest near both a valley and a road.");
 		longDescription.put(Location.SLIT, "At your feet all the water of the stream splashes into a 2-inch slit in the rock. Downstream the streambed is bare rock.");
 		longDescription.put(Location.OUTSIDE, "You are in a 20-foot depression floored with bare dirt. Set into the dirt is a strong steel grate mounted in concrete. A dry streambed leads into the depression.");
-		longDescription.put(Location.INSIDE, "You are in a small chamber beneath a 3x3 steel grate to the surface. A low crawl over cobbles leads inward to the West.");
+		longDescription.put(Location.INSIDE, "You are in a small chamber beneath a 3x3 steel grate to the surface. A low crawl over cobbles leads inward to the west.");
 		longDescription.put(Location.COBBLES, "You are crawling over cobbles in a low passage. There is a dim light at the east end of the pasage.");
 		longDescription.put(Location.DEBRIS, "You are in a debris room filled with stuff washed in from the surface. A low wide passage with cobbles becomes plugged with mud and debris here, but an awkward canyon leads upward and west. \nA note on the wall says:\n\tMagic Word \"XYZZY\"");
 		longDescription.put(Location.BIRD, "You are in a splendid chamber thirty feet high. The walls are frozen rivers of orange stone. An awkward canyon and a good passage exit from east and west sides of the chamber.");
@@ -599,7 +599,7 @@ public class HashMaps
 		shortDescription.put(Location.WIDE, "You're at a wide place in a very tight N/S canyon.");
 		shortDescription.put(Location.TIGHT, "The canyon here becomes too tight to go further south.");
 		shortDescription.put(Location.TALL, "You're in tall E/W canyon.");
-		shortDescription.put(Location.BOULDERS, "The conyon runs into a mass of boulders --- dead end.");
+		shortDescription.put(Location.BOULDERS, "The canyon runs into a mass of boulders --- dead end.");
 		shortDescription.put(Location.SCORR, "You are in sloping corridor.");
 		shortDescription.put(Location.SWSIDE, "You're on SW side of chasm.");
 		shortDescription.put(Location.DEAD0, "Dead end.");
@@ -828,69 +828,51 @@ public class HashMaps
 	{
 		boolean contains = false;
 		if(movement.containsKey(input))
-		{
-			contains = true;
-		}
+		{	contains = true;	}
 		return contains;
 	}
 	
 	public Movement whichMovement(String input)
-	{
-		return movement.get(input);
-	}
+	{	return movement.get(input);	}
 	
 	public boolean isAction(String input)
 	{
 		boolean contains = false;
 		if(actions.containsKey(input))
-		{
-			contains = true;
-		}
+		{	contains = true;	}
 		return contains;
 	}
 	
 	public ActionWords whichAction(String input)
-	{
-		return actions.get(input);
-	}
+	{	return actions.get(input);	}
 	
 	public boolean isMessage(String input)
 	{
 		boolean contains = false;
 		if(mwords.containsKey(input))
-		{
-			contains = true;
-		}
+		{	contains = true;	}
 		return contains;
 	}
 	
 	public MessageWords whichMessage(String input)
-	{
-		return mwords.get(input);
-	}
+	{	return mwords.get(input);	}
 	
 	public boolean isObject(String input)
 	{
 		boolean contains = false;
 		if(objects.containsKey(input))
-		{
-			contains = true;
-		}
+		{	contains = true;	}
 		return contains;
 	}
 	
 	public boolean isObject(Object input)
-	{
-		return objects.containsValue(input);
-	}
+	{	return objects.containsValue(input);	}
 	
 	public GameObjects whichObject(String input)
 	{
 		GameObjects result = GameObjects.NOTHING;
 		if(objects.containsKey(input))
-		{
-			result = objects.get(input);
-		}
+		{	result = objects.get(input);	}
 		return result;
 	}
 	
@@ -898,9 +880,7 @@ public class HashMaps
 	{
 		Location result = Location.THEVOID;
 		if(objectLocation.containsKey(object))
-		{
-			result = objectLocation.get(object);
-		}
+		{	result = objectLocation.get(object);	}
 		return result;
 	}
 	
@@ -1070,18 +1050,14 @@ public class HashMaps
 	}
 	
 	public boolean objectIsHere(GameObjects object, Location here)
-	{
-		return getObjectLocation(object) == here;
-	}
+	{	return getObjectLocation(object) == here;	}
 	
 	public boolean beenHere(Location here)
 	{
 		boolean result = false;
 		int visit = visits.get(here);
 		if(visit == 0 || visit % 5 == 0)
-		{
-			result = false;
-		}
+		{	result = false;	}
 		return result;
 	}
 	
@@ -1118,40 +1094,26 @@ public class HashMaps
 	{
 		String description = "";
 		if(longDescription.containsKey(here))
-		{
-			description = longDescription.get(here);
-		}
+		{	description = longDescription.get(here);	}
 		return description;
 	}
 	
 	public void takeObject(GameObjects thing)
-	{
-		objectLocation.put(thing, Location.INHAND);
-	}
+	{	objectLocation.put(thing, Location.INHAND);	}
 	
 	public void voidObject(GameObjects thing)
-	{
-		objectLocation.put(thing, Location.THEVOID);
-	}
+	{	objectLocation.put(thing, Location.THEVOID);	}
 	
 	public void dropObject(GameObjects thing, Location here)
-	{
-		objectLocation.put(thing, here);
-	}
+	{	objectLocation.put(thing, here);	}
 	
 	public boolean haveIFound(GameObjects thing)
-	{
-		return found.get(thing);
-	}
+	{	return found.get(thing);	}
 	
 	public void wasFound(GameObjects thing)
-	{
-		found.put(thing, true);
-	}
+	{	found.put(thing, true);	}
 	
 	public ArrayList<GameObjects> getResult()
-	{
-		return result;
-	}
+	{	return result;	}
 	
 }

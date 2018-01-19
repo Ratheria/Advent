@@ -372,8 +372,8 @@ public class AdventControl
 		}
 		else if(quest == 10 && thisIsAnObject && itsAn != GameObjects.NOTHING)
 		{
-			output = attemptAction(ActionWords.KILL, hash.whichObject(input), input);
 			quest = 0;
+			output = attemptAction(ActionWords.KILL, hash.whichObject(input), input);
 		}
 		else if(quest == 11 && thisIsAnObject && itsAn != GameObjects.NOTHING)
 		{
@@ -711,6 +711,7 @@ public class AdventControl
 				{	output += "\nIt misses!";	}
 			}
 		}
+		battleUpdate = false;
 		if(15 - tally == lostTreasures && lamp > 35)
 		{	lamp = 35;	}
 		getCurrentScore();
@@ -742,6 +743,7 @@ public class AdventControl
 			if(west == 10)
 			{
 				output = "\nIf you prefer, simply type W rather than WEST.";
+				west++;
 			}
 			if(!grateUnlocked && currentLocation == Location.OUTSIDE && !(objectIsPresent(GameObjects.KEYS)))
 			{
@@ -1491,14 +1493,7 @@ public class AdventControl
 				case WAVE:
 					if(object == GameObjects.NOTHING)
 					{
-						if(currentLocation == Location.EASTWINDOW || currentLocation == Location.WESTWINDOW)
-						{
-							//TODO figure waves back
-						}
-						else
-						{
-							output = new String("What would you like to wave?");
-						}
+						output = new String("What would you like to wave?");
 						increaseTurns = false;
 					}
 					else if (!isInHand(object) && (object != GameObjects.ROD || !isInHand(GameObjects.ROD2)))
@@ -1703,6 +1698,7 @@ public class AdventControl
 					}
 					else if(objectIsHere(GameObjects.DWARF))
 					{
+						battleUpdate = true;
 						if(generate() * 3 > 1)
 						{
 							deadDwarves++;
@@ -2296,7 +2292,14 @@ public class AdventControl
 					}
 					else
 					{
-						output = "What's the matter, can't you read? Now you'd best start over.";
+						if(foo > 0)
+						{
+							output = "What's the matter, can't you read? Now you'd best start over.";
+						}
+						else
+						{
+							output = "Nothing happens.";
+						}
 						quest = 0;
 						foo = 0;
 					}
@@ -2603,6 +2606,7 @@ public class AdventControl
 
 				if(wayIsBlocked)
 				{
+					battleUpdate = true;
 					locationChange = false;
 					output = "A little dwarf with a big knife blocks your way.";
 					wayIsBlocked = false;
