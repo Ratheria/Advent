@@ -380,6 +380,11 @@ public class AdventControl
 			output = attemptAction(ActionWords.FEED, hash.whichObject(input), input);
 			quest = 0;
 		}
+		else if(quest == 12 && thisIsAnObject && itsAn != GameObjects.NOTHING)
+		{
+			output = attemptAction(ActionWords.TOSS, hash.whichObject(input), input);
+			quest = 0;
+		}
 		else if(quest == 20)
 		{
 			quest = 0;
@@ -1486,7 +1491,14 @@ public class AdventControl
 				case WAVE:
 					if(object == GameObjects.NOTHING)
 					{
-						output = new String("What would you like to wave?");
+						if(currentLocation == Location.EASTWINDOW || currentLocation == Location.WESTWINDOW)
+						{
+							//TODO figure waves back
+						}
+						else
+						{
+							output = new String("What would you like to wave?");
+						}
 						increaseTurns = false;
 					}
 					else if (!isInHand(object) && (object != GameObjects.ROD || !isInHand(GameObjects.ROD2)))
@@ -1659,6 +1671,11 @@ public class AdventControl
 				case TOSS:
 					if(object == GameObjects.ROD && isInHand(GameObjects.ROD2) && !(isInHand(GameObjects.ROD)))
 					{	output = attemptAction(ActionWords.DROP, GameObjects.ROD, "");	}
+					else if(object == GameObjects.NOTHING)
+					{
+						output = "What would you like to throw?";
+						quest = 12;
+					}
 					else if(!(isInHand(object)))
 					{
 						output = dontHave;
@@ -1700,11 +1717,13 @@ public class AdventControl
 						else
 						{	output = "You attack a little dwarf, but he dodges out of the way.";	}
 						hash.dropObject(GameObjects.AXE, currentLocation);
+						itemsInHand--;
 					}
 					else if((objectIsHere(GameObjects.DRAGON_) || objectIsHere(GameObjects.DRAGON)) && dragon)
 					{
 						output = "The axe bounces harmlessly off the dragon's thick scales.";
-						dropObject(GameObjects.AXE);
+						hash.dropObject(GameObjects.AXE, currentLocation);
+						itemsInHand--;
 					}
 					else if((objectIsHere(GameObjects.TROLL_) || objectIsHere(GameObjects.TROLL)))
 					{
@@ -1714,7 +1733,8 @@ public class AdventControl
 					else if(objectIsHere(GameObjects.BEAR) && bear == 0)
 					{
 						bearAxe = true;
-						dropObject(GameObjects.AXE);
+						hash.dropObject(GameObjects.AXE, currentLocation);
+						itemsInHand--;
 						output = "The axe misses and lands near the bear where you can't get at it.";
 					}
 					else
@@ -2539,7 +2559,7 @@ public class AdventControl
 					output = "Don't be ridiculous!";
 					increaseTurns = false;
 				}
-				else if(currentLocation.equals(Location.PROOM) || currentLocation.equals(Location.DROOM))
+				else if(currentLocation.equals(Location.PROOM) || currentLocation.equals(Location.DROOM) || currentLocation.equals(Location.ALCOVE))
 				{
 					output = "Something you are carrying won't fit through the tunnel with you. "
 							+ "You'd best take inventory and drop something.";

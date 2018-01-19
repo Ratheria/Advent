@@ -234,14 +234,15 @@ public class AdventPanel extends JPanel
 							lblScore.setText("Score: " + base.getScore() + "/350");
 						}
 					}
-					displayCaret = (DefaultCaret)displayLog.getCaret();
+					//displayCaret = (DefaultCaret)displayLog.getCaret();
 					inputField.setText("");
 					inputField.requestFocusInWindow();
 					if(base.noMore())
 					{
 						inputField.setEditable(false);
 					}
-					//scroll.setViewportView(displayLog);
+					displayLog.setCaretPosition(displayLog.getDocument().getLength());
+					scroll.setViewportView(displayLog);
 				}
 			}
 		});

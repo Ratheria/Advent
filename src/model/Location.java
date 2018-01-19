@@ -155,9 +155,9 @@ public enum Location
 					case VALLEY: case EAST: case DOWN: next = VALLEY; break; 
 					case FOREST:
 						if(chance>.49)
-						{	next = FOREST;}
+						{	next = FOREST;	}
 						else 
-						{	next = WOODS;}
+						{	next = WOODS;	}
 						break; 
 					case FORWARD:
 						if(chance<.51)
