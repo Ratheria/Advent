@@ -2293,13 +2293,9 @@ public class AdventControl
 					else
 					{
 						if(foo > 0)
-						{
-							output = "What's the matter, can't you read? Now you'd best start over.";
-						}
+						{	output = "What's the matter, can't you read? Now you'd best start over.";	}
 						else
-						{
-							output = "Nothing happens.";
-						}
+						{	output = "Nothing happens.";	}
 						quest = 0;
 						foo = 0;
 					}
