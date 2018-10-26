@@ -12,16 +12,15 @@ import controller.AdventControl;
 public class HashMaps 
 {
 	private HashMap<String, Movement> movement = new HashMap<String, Movement>();
-	private HashMap<String, GameObjects> objects =new HashMap<String, GameObjects>();
+	private HashMap<String, GameObjects> objects = new HashMap<String, GameObjects>();
 	private HashMap<String, ActionWords> actions = new HashMap<String, ActionWords>();
 	private HashMap<String, MessageWords> mwords = new HashMap<String, MessageWords>();
-	private HashMap<Location, Integer> visits = new HashMap<Location, Integer>();
-	private HashMap<GameObjects, Boolean> found = new HashMap<GameObjects, Boolean>();
 	private HashMap<Location, String> longDescription = new HashMap<Location, String>();
 	private HashMap<Location, String> shortDescription = new HashMap<Location, String>();
 	private HashMap<Location, String> title = new HashMap<Location, String>();
-	private HashMap<GameObjects, Location> objectLocation = new HashMap<GameObjects, Location>();
-	private ArrayList<GameObjects> result = null;
+	public HashMap<Location, Integer> visits = new HashMap<Location, Integer>();
+	public HashMap<GameObjects, Boolean> found = new HashMap<GameObjects, Boolean>();
+	public HashMap<GameObjects, Location> objectLocation = new HashMap<GameObjects, Location>();
 	
 	public HashMaps()
 	{
@@ -886,7 +885,7 @@ public class HashMaps
 	
 	public ArrayList<GameObjects> objectsHere(Location here)
 	{
-		result = null;
+		ArrayList<GameObjects> result = null;
 		if(objectLocation.containsValue(here))
 		{
 			result = new ArrayList<GameObjects>();
@@ -1112,8 +1111,5 @@ public class HashMaps
 	
 	public void wasFound(GameObjects thing)
 	{	found.put(thing, true);	}
-	
-	public ArrayList<GameObjects> getResult()
-	{	return result;	}
 	
 }

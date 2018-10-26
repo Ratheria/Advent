@@ -165,6 +165,12 @@ public class AdventPanel extends JPanel
 		inputField.setEditable(false);
 	}
 	
+	private void setLabels()
+	{
+		lblTurns.setText("Turns: " + base.getTurns());
+		lblScore.setText("Score: " + base.getScore() + "/350");
+	}
+	
 	private void setUpListeners() 
 	{
 		saveButton.addActionListener(new ActionListener()
@@ -172,11 +178,9 @@ public class AdventPanel extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent click) 
 			{
-				boolean saved = base.saveGame();
-				if(saved)
-				{
-					displayLog.append("\n\nGame successfully saved.\n");
-				}
+				displayLog.append("\n\n" + base.writeData(displayLog.getText()) + "\n");
+				displayLog.setCaretPosition(displayLog.getDocument().getLength());
+				scroll.setViewportView(displayLog);
 			}
 		});
 		
@@ -185,11 +189,9 @@ public class AdventPanel extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent click) 
 			{
-				boolean loaded = base.saveGame();
-				if(loaded)
-				{
-					displayLog.setText("\nGame successfully loaded.\n");
-				}
+				displayLog.setText(base.loadGame(displayLog.getText()));
+				displayLog.setCaretPosition(displayLog.getDocument().getLength());
+				scroll.setViewportView(displayLog);
 			}
 		});
 		
@@ -198,27 +200,25 @@ public class AdventPanel extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent e) 
 			{
-				if(inputField.getText().length() > 0)
+				String inputText = inputField.getText().trim();
+				if(inputText.length() > 0)
 				{
 					//String log = displayLog.getText();
-					String origin = inputField.getText();
-					String input = inputField.getText().toLowerCase();
-					input = removeWhitespace(input);
-					if(input.contains(" "))
+					String origin = "" + inputText;
+					String input = "" + inputText.toLowerCase();
+					if(input.contains("exception"))
+					{
+						displayLog.append("\n\nI beg your pardon?\n");
+						setLabels();
+					}
+					else if(input.contains(" "))
 					{
 						int space = input.indexOf(' ');
-						String first = input.substring(0, space);
-						String second = input.substring(space + 1);
+						String first = input.substring(0, space).trim();
+						String second = input.substring(space + 1).trim();
 						displayLog.append("\n\t> " + origin 
 								+ "\n\n" + base.determineAction(first, second) + "\n");
-						lblTurns.setText("Turns: " + base.getTurns());
-						lblScore.setText("Score: " + base.getScore() + "/350");
-					}
-					else if(input.equals("exception"))
-					{
-						displayLog.append("I beg your pardon?\n");
-						lblTurns.setText("Turns: " + base.getTurns());
-						lblScore.setText("Score: " + base.getScore() + "/350");
+						setLabels();
 					}
 					else
 					{
@@ -230,8 +230,7 @@ public class AdventPanel extends JPanel
 							}
 							displayLog.append("\n\t> " + origin 
 									+ "\n\n" + base.determineAction(input) + "\n");
-							lblTurns.setText("Turns: " + base.getTurns());
-							lblScore.setText("Score: " + base.getScore() + "/350");
+							setLabels();
 						}
 					}
 					displayCaret = (DefaultCaret)displayLog.getCaret();
@@ -248,27 +247,4 @@ public class AdventPanel extends JPanel
 		});
 	}
 	
-	private String removeWhitespace(String input)
-	{
-		try
-		{
-			while(input.charAt(0)== ' ' && input.length() > 0)
-			{
-				input = input.substring(1);
-				System.out.println(input);
-			}
-			int lastIndex = input.length() - 1;
-			while(input.charAt(lastIndex)== ' ' && input.length() > 0)
-			{
-				input = input.substring(0, lastIndex);
-				lastIndex--;
-				System.out.println(input);
-			}
-		}
-		catch(IndexOutOfBoundsException e)
-		{
-			input = new String("exception");
-		}
-		return input;
-	}
 }

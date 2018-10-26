@@ -20,7 +20,7 @@ public enum GameObjects
 	CHEST, EGGS, TRIDENT, VASE, EMERALD, PYRAMID, PEARL, 
 	RUG, RUG_, SPICES, CHAIN;
 
-	private ArrayList<GameObjects> mobileObjects = new ArrayList<GameObjects>();
+	public static ArrayList<GameObjects> mobileObjects = new ArrayList<GameObjects>();
 	
 	public void setUp()
 	{

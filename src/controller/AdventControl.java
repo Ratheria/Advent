@@ -7,15 +7,21 @@ package controller;
 import model.Location;
 import model.MessageWords;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
-
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import model.ActionWords;
+import model.AdventSaveData;
 import model.GameObjects;
 import model.HashMaps;
 import model.Movement;
@@ -73,53 +79,65 @@ public class AdventControl
 	private boolean wellInCave;
 	private boolean read;
 	private boolean quit;
-	private int hint;
-	private int h1, h2, h3, h4, h5, h6;
+	private byte hint;
+	private byte h1, h2, h3, h4, h5, h6;
 	
-	private int clock1, clock2;
-	private int quest;
+	private byte clock1, clock2;
+	private byte quest;
 	private int brief;
 	private int score;
 	private int bonus;
-	private int turns;
+	private byte turns;
 	private int lamp;
-	private int itemsInHand;
-	private int deaths;
-	private int fatality;
+	private byte itemsInHand;
+	private byte deaths;
+	private byte fatality;
 	private static int tally;
-	private int lostTreasures;
-	private int plant;
-	private int bottle;
-	private int usedBatteries;
-	private int pirate;
-	private int movesWOEncounter;
-	private int dwarves;
+	private byte lostTreasures;
+	private byte plant;
+	private byte bottle;
+	private byte usedBatteries;
+	private byte pirate;
+	private byte movesWOEncounter;
+	private byte dwarves;
 	//nothing, reached hall no dwarf, met dwarf no knives, knife misses, knife hit .095, .190, .285
 	@SuppressWarnings("unused")
-	private int deadDwarves;
-	private int dwarvesLeft;
-	private int dwarfPresent;
+	private byte deadDwarves;
+	private byte dwarvesLeft;
+	private byte dwarfPresent;
 	//none, new, current, old
-	private static int troll;
+	private static byte troll;
 	//there, hidden, dead, can pass;
-	private static int bear;
+	private static byte bear;
 	//default, fed + idle, fed + following, dead, was following ide
-	private int chain;
+	private byte chain;
 	//locked to bear, unlocked, locked
-	private int west;
-	private int foo;
-	private int rod1, rod2;
-	private int bottles;
-	private int lamps;
-	private int pillows;
-	private int oysters;
-	private int grates;
-	private int cages;
-	private int birds;
-	private int snakes;
+	private byte west;
+	private byte foo;
+	private byte rod1, rod2;
+	private byte bottles;
+	private byte lamps;
+	private byte pillows;
+	private byte oysters;
+	private byte grates;
+	private byte cages;
+	private byte birds;
+	private byte snakes;
+	
+	private File dataFile;
+	private FileInputStream fileReader;
+	private ObjectInputStream objectReader;
+	private FileOutputStream fileWriter;
+	private ObjectOutputStream objectWriter;
+	
+	//private byte fileSlot;
+	// nothing, save, load
+	//private byte currentFileOperation;
+	//public static boolean choosingFileSlot;
 	
 	public AdventControl()
 	{
+		dataFile = new File(System.getProperty("user.home") + "/.AdventData");
 		frame = new AdventureFrame(this);
 		hash = new HashMaps();
 		actions = ActionWords.NOTHING;
@@ -226,6 +244,8 @@ public class AdventControl
 		cages = 0;
 		birds = 0;
 		snakes = 0;
+//		fileSlot = 0;
+//		currentFileOperation = 0;
 		currentLocation.setUp(this);
 		things.setUp();
 		frame.setUp();
@@ -2757,65 +2777,6 @@ public class AdventControl
 		score = currentScore;
 		return currentScore;
 	}
-	
-	public boolean loadGame(Location currentLocation, Location previousLocation, Location eldestLocation, Boolean dead,
-			Boolean beginning, Boolean closed, Boolean grateUnlocked, Boolean crystalBridge, Boolean light, Boolean snake,
-			Boolean oilDoor, Boolean dragon, Boolean birdInCage, Boolean bearAxe, Boolean broken, Boolean haveGold, 
-			Boolean relocate, Boolean justCollapsed, Boolean collapse, Boolean lampWarn, Boolean over, Boolean shortcut,
-			Boolean dwarvesOn, Boolean battleUpdate, Boolean panic, Boolean wayIsBlocked, Boolean justBlocked, 
-			Boolean locationChange, Boolean seriousQuestion, Boolean noMore, Boolean increaseTurns, Boolean wellInCave,
-			Boolean read, Boolean quit, int hint, int h1, int h2, int h3, int h4, int h5, int h6, int clock1, int clock2,
-			int quest, int brief, int score, int bonus, int turns, int lamp, int itemsInHand, int deaths, int fatality, 
-			int tally, int lostTreasures, int plant, int bottle, int usedBatteries, int pirate, int movesWOEncounter,
-			int dwarves, int deadDwarves, int dwarvesLeft, int dwarvesPresent, int troll, int bear, int chain, int west,
-			int foo, int rod1, int rod2, int bottles, int pillows, int lamps, int oysters, int grates, int cages, int birds,
-			int snakes)
-	{
-		boolean result = false;
-		JFileChooser chooser = new JFileChooser();
-	    FileNameExtensionFilter filter = new FileNameExtensionFilter("txt");
-		chooser.setFileFilter(filter);
-		int returnVal = chooser.showOpenDialog(frame);
-		if(returnVal == JFileChooser.APPROVE_OPTION) 
-		{
-			try
-			{
-				BufferedReader reader = new BufferedReader(new FileReader(chooser.getSelectedFile()));
-				int row = -1;
-				String line = updateLine(reader, row);
-				currentLocation = Location.locate[Integer.parseInt(line)];
-					line = updateLine(reader, row);
-				previousLocation = Location.locate[Integer.parseInt(line)];
-					line = updateLine(reader, row);
-
-					
-					
-
-		
-				
-					
-					
-				
-			}
-			catch(FileNotFoundException e){	}
-			catch(NullPointerException e){	}
-			catch(IOException e){	}
-		}
-		return result;
-	}
-	
-	private String updateLine(BufferedReader reader, int row) throws IOException
-	{
-		row++;
-		return reader.readLine();
-	}
-	
-	public boolean saveGame()
-	{
-		boolean result = false;
-		//TODO save 
-		return result;
-	}
 
 	private boolean fallInPit()
 	{
@@ -3074,6 +3035,243 @@ public class AdventControl
 	
 	private void voidObject(GameObjects thing)
 	{	hash.voidObject(thing);	}
+	
+	public AdventSaveData createSaveData(String currentLog)
+	{
+		AdventSaveData saveData = new AdventSaveData();
+		saveData.log = currentLog;
+		saveData.mobileObjectsData = GameObjects.mobileObjects;
+		saveData.visits = hash.visits;
+		saveData.found = hash.found;
+		saveData.objectLocation = hash.objectLocation;
+		saveData.currentLocation = this.currentLocation;
+		saveData.previousLocation = this.previousLocation;
+		saveData.scores = this.scores;
+		saveData.sMessages = this.sMessages;
+		saveData.feeFieFoe = this.feeFieFoe;
+		saveData.dead = this.dead;
+		saveData.beginning = this.beginning;
+		saveData.closing = this.closing;
+		saveData.closed = this.closed;
+		saveData.grateUnlocked = this.grateUnlocked;
+		saveData.crystalBridge = this.crystalBridge;
+		saveData.light = this.light;
+		saveData.snake = this.snake;
+		saveData.oilDoor = this.oilDoor;
+		saveData.dragon = this.dragon;
+		saveData.birdInCage = this.birdInCage;
+		saveData.bearAxe = this.bearAxe;
+		saveData.broken = this.broken;
+		saveData.haveGold = this.haveGold;
+		saveData.relocateData = AdventControl.relocate;
+		saveData.collapseData = AdventControl.collapse;
+		saveData.justCollapsedData = AdventControl.justCollapsed;
+		saveData.lampWarn = this.lampWarn;
+		saveData.panic = this.panic;
+		saveData.over = this.over;
+		saveData.shortcut = this.shortcut;
+		saveData.dwarvesOn = this.dwarvesOn;
+		saveData.battleUpdate = this.battleUpdate;
+		saveData.wayIsBlocked = this.wayIsBlocked;
+		saveData.justBlocked = this.justBlocked;
+		saveData.locationChange = this.locationChange;
+		saveData.seriousQuestion = this.seriousQuestion;
+		saveData.increaseTurns = this.increaseTurns;
+		saveData.noMore = this.noMore;
+
+		saveData.wellInCave = this.wellInCave;
+		saveData.read = this.read;
+		saveData.quit = this.quit;
+		saveData.hint = this.hint;
+		saveData.h1 = this.h1;
+		saveData.h2 = this.h2;
+		saveData.h3 = this.h3; 
+		saveData.h4 = this.h4; 
+		saveData.h5 = this.h5;
+		saveData.h6 = this.h6;
+
+		saveData.clock1 = this.clock1;
+		saveData.clock2 = this.clock2;
+		saveData.quest = this.quest;
+		saveData.brief = this.brief;
+		saveData.score = this.score;
+		saveData.bonus = this.bonus;
+		saveData.turns = this.turns;
+		saveData.lamp = this.lamp;
+		saveData.itemsInHand = this.itemsInHand;
+		saveData.deaths = this.deaths;
+		saveData.fatality = this.fatality;
+		saveData.tallyData = AdventControl.tally;
+		saveData.lostTreasures = this.lostTreasures;
+		saveData.plant = this.plant;
+		saveData.bottle = this.bottle;
+		saveData.usedBatteries = this.usedBatteries;
+		saveData.pirate = this.pirate;
+		saveData.movesWOEncounter = this.movesWOEncounter;
+		saveData.dwarves = this.dwarves;
+		saveData.dwarvesLeft = this.dwarvesLeft;
+		saveData.dwarfPresent = this.dwarfPresent;
+		saveData.trollData = AdventControl.troll;
+		saveData.bearData = AdventControl.bear;
+		saveData.chain = this.chain;
+		saveData.west = this.west;
+		saveData.foo = this.foo;
+		saveData.rod1 = this.rod1;
+		saveData.rod2 = this.rod2;
+		saveData.bottles = this.bottles;
+		saveData.lamps = this.lamps;
+		saveData.pillows = this.pillows;
+		saveData.oysters = this.oysters;
+		saveData.grates = this.grates;
+		saveData.cages = this.cages;
+		saveData.birds = this.birds;
+		saveData.snakes = this.snakes;
+		return saveData;
+	}
+	
+	public String writeData(String logData)
+	{
+		String result = "Game saved.";
+		try
+		{
+		    fileWriter = new FileOutputStream(dataFile);
+		    objectWriter = new ObjectOutputStream(fileWriter);
+		    objectWriter.writeObject(createSaveData(logData));
+		    objectWriter.close();
+		    fileWriter.close();
+		} 
+		catch (IOException e)
+		{
+			result = "Game not saved.";
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	public String loadGame(String currentLog)
+	{
+		String result = currentLog;
+		if(dataFile.exists())
+		{
+			result = readData() + "\n\nData Successfully Loaded\n";
+		}
+		else
+		{
+			result += "\n\nNo Load Data Available\n";
+		}
+		return result;
+	}
+	
+	private String readData()
+	{
+		String result = "Something went wrong.";
+		try
+		{
+			fileReader = new FileInputStream(dataFile);
+			objectReader = new ObjectInputStream(fileReader);
+			AdventSaveData saveData = (AdventSaveData) objectReader.readObject();
+			objectReader.close();
+			fileReader.close();
+			result = saveData.log;
+			updateGameData(saveData);
+			System.out.println("Data Loaded");
+		} 
+		catch (IOException | ClassNotFoundException e)
+		{
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	private void updateGameData(AdventSaveData saveData)
+	{
+		GameObjects.mobileObjects = saveData.mobileObjectsData;
+		hash.visits = saveData.visits;
+		hash.found = saveData.found;
+		hash.objectLocation = saveData.objectLocation;
+		this.currentLocation = saveData.currentLocation;
+		this.previousLocation = saveData.previousLocation;
+		this.scores = saveData.scores;
+		this.sMessages = saveData.sMessages;
+		this.feeFieFoe = saveData.feeFieFoe;
+		this.dead = saveData.dead;
+		this.beginning = saveData.beginning;
+		this.closing = saveData.closing;
+		this.closed = saveData.closed;
+		this.grateUnlocked = saveData.grateUnlocked;
+		this.crystalBridge = saveData.crystalBridge;
+		this.light = saveData.light;
+		this.snake = saveData.snake;
+		this.oilDoor = saveData.oilDoor;
+		this.dragon = saveData.dragon;
+		this.birdInCage = saveData.birdInCage;
+		this.bearAxe = saveData.bearAxe;
+		this.broken = saveData.broken;
+		this.haveGold = saveData.haveGold;
+		AdventControl.relocate = saveData.relocateData;
+		AdventControl.collapse = saveData.collapseData;
+		AdventControl.justCollapsed = saveData.justCollapsedData;
+		this.lampWarn = saveData.lampWarn;
+		this.panic = saveData.panic;
+		this.over = saveData.over;
+		this.shortcut = saveData.shortcut;
+		this.dwarvesOn = saveData.dwarvesOn;
+		this.battleUpdate = saveData.battleUpdate;
+		this.wayIsBlocked = saveData.wayIsBlocked;
+		this.justBlocked = saveData.justBlocked;
+		this.locationChange = saveData.locationChange;
+		this.seriousQuestion = saveData.seriousQuestion;
+		this.increaseTurns = saveData.increaseTurns;
+		this.noMore = saveData.noMore;
+
+		this.wellInCave = saveData.wellInCave;
+		this.read = saveData.read;
+		this.quit = saveData.quit;
+		this.hint = saveData.hint;
+		this.h1 = saveData.h1;
+		this.h2 = saveData.h2;
+		this.h3 = saveData.h3; 
+		this.h4 = saveData.h4; 
+		this.h5 = saveData.h5;
+		this.h6 = saveData.h6;
+
+		this.clock1 = saveData.clock1;
+		this.clock2 = saveData.clock2;
+		this.quest = saveData.quest;
+		this.brief = saveData.brief;
+		this.score = saveData.score;
+		this.bonus = saveData.bonus;
+		this.turns = saveData.turns;
+		this.lamp = saveData.lamp;
+		this.itemsInHand = saveData.itemsInHand;
+		this.deaths = saveData.deaths;
+		this.fatality = saveData.fatality;
+		AdventControl.tally = saveData.tallyData;
+		this.lostTreasures = saveData.lostTreasures;
+		this.plant = saveData.plant;
+		this.bottle = saveData.bottle;
+		this.usedBatteries = saveData.usedBatteries;
+		this.pirate = saveData.pirate;
+		this.movesWOEncounter = saveData.movesWOEncounter;
+		this.dwarves = saveData.dwarves;
+		this.dwarvesLeft = saveData.dwarvesLeft;
+		this.dwarfPresent = saveData.dwarfPresent;
+		AdventControl.troll = saveData.trollData;
+		AdventControl.bear = saveData.bearData;
+		this.chain = saveData.chain;
+		this.west = saveData.west;
+		this.foo = saveData.foo;
+		this.rod1 = saveData.rod1;
+		this.rod2 = saveData.rod2;
+		this.bottles = saveData.bottles;
+		this.lamps = saveData.lamps;
+		this.pillows = saveData.pillows;
+		this.oysters = saveData.oysters;
+		this.grates = saveData.grates;
+		this.cages = saveData.cages;
+		this.birds = saveData.birds;
+		this.snakes = saveData.snakes;
+	}
 	
 	public String getText(MessageWords input)
 	{
