@@ -13,7 +13,7 @@ public class AdventSaveData implements Serializable
 	private static final long serialVersionUID = -4962116536507971292L;
 	public String log;
 	public ArrayList<GameObjects> mobileObjectsData;
-	public HashMap<Location, Integer> visits;
+	public int[] visits;
 	public HashMap<GameObjects, Boolean> found;
 	public HashMap<GameObjects, Location> objectLocation;
 	public Location currentLocation;

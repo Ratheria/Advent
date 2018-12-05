@@ -29,11 +29,21 @@ import view.AdventureFrame;
 
 public class AdventControl 
 {
+	public static final String empty = "";
+	public static final String alikePassages = "You are in a maze of twisty little passages, all alike.";
+	public static final String alikeT = "Maze All Alike";
+	public static final String diffT = "Maze All Different";
+	public static final String secretCanyon = "Secret Canyon";
+	public static final String deadEnd = "Dead end.";
+	public static final String deadEndT = "Dead End";
+	
 	private static Random random;
 	private AdventureFrame frame;
 	private HashMaps hash;
 	@SuppressWarnings("unused")
 	private MessageWords messages;
+	@SuppressWarnings("unused")
+	private Location places;
 	@SuppressWarnings("unused")
 	private ActionWords actions;
 	private GameObjects things;
@@ -140,6 +150,7 @@ public class AdventControl
 		dataFile = new File(System.getProperty("user.home") + "/.AdventData");
 		frame = new AdventureFrame(this);
 		hash = new HashMaps();
+		places = Location.THEVOID;
 		actions = ActionWords.NOTHING;
 		things = GameObjects.NOTHING;
 		scores = new int[] {35, 100, 130, 200, 250, 300, 330, 349, 350};
@@ -246,7 +257,6 @@ public class AdventControl
 		snakes = 0;
 //		fileSlot = 0;
 //		currentFileOperation = 0;
-		currentLocation.setUp(this);
 		things.setUp();
 		frame.setUp();
 		hash.setUpHashMaps();
@@ -284,13 +294,13 @@ public class AdventControl
 						+ "\"northeast\" as \"ne\" to distinguish it from \"north\" "
 						+ "(Should you get stuck, type \"help\" for some general hints. "
 						+ "For information on how to end your adventure, etc., type \"info\".)\n\n"
-						+ hash.getDescription(Location.ROAD, brief);
+						+ places.getDescription(Location.ROAD, brief);
 				lamp = 1000;
 				beginning = false;
 			}
 			else if(answer == 2)
 			{
-				output = hash.getDescription(Location.ROAD, brief);
+				output = places.getDescription(Location.ROAD, brief);
 				beginning = false;
 			}
 			else
@@ -365,13 +375,13 @@ public class AdventControl
 						output = "All right. But don't blame me if something goes wr......\n\t---POOF!!---"
 								+ "\nYou are engulfed in a cloud of orange smoke. Coughing and gasping, you "
 								+ "emerge from the smoke to find....\n" 
-								+ hash.getDescription(currentLocation, brief); 
+								+ places.getDescription(currentLocation, brief); 
 						break;
 					case 1:
 						dead = false;
 						output = "Okay, now where did I put my resurrection kit?....\n\t>POOF!<"
 								+ "\nEverything disappears in a dense cloud of orange smoke.\n" 
-								+ hash.getDescription(currentLocation, brief);
+								+ places.getDescription(currentLocation, brief);
 						break;
 					default:
 						output = "Okay, if you're so smart, do it yourself! I'm leaving!";
@@ -954,7 +964,7 @@ public class AdventControl
 						{
 							if(bottle == 0)
 							{
-								if(currentLocation.isWaterHere(currentLocation))
+								if(currentLocation.hasWater)
 								{
 									output = new String("You fill the bottle with water.");
 									bottle = 1;
@@ -2150,7 +2160,7 @@ public class AdventControl
 					break;
 					
 				case DRINK:
-					boolean waterIsHere = currentLocation.isWaterHere(currentLocation);
+					boolean waterIsHere = currentLocation.hasWater;
 					output = "You have nothing to drink.";
 					if(waterIsHere && !(isInHand(GameObjects.BOTTLE) && bottle == 1))
 					{
@@ -2173,13 +2183,13 @@ public class AdventControl
 					battleUpdate = true;
 					if(object == GameObjects.NOTHING)
 					{
-						output = hash.getDescription(currentLocation, 2);
+						output = places.getDescription(currentLocation, 2);
 						output += "\n" + listItemsHere(currentLocation);
 					}
 					else
 					{
 						output = "Sorry, but I am not allowed to give more detail. I will repeat the long "
-								+ "description of your location.\n\n" + hash.getDescription(currentLocation, 2);
+								+ "description of your location.\n\n" + places.getDescription(currentLocation, 2);
 					}
 					break;
 					
@@ -2188,7 +2198,7 @@ public class AdventControl
 					break;
 
 				case FILL:
-					boolean liquidHere = (currentLocation.isWaterHere(currentLocation) 
+					boolean liquidHere = (currentLocation.hasWater 
 							|| currentLocation == Location.EASTPIT);
 					if(object == GameObjects.VASE)
 					{
@@ -2706,7 +2716,7 @@ public class AdventControl
 
 	private String getDescription(Location here, int brief)
 	{
-		String output = hash.getDescription(here, brief);
+		String output = places.getDescription(here, brief);
 		output = output + listItemsHere(currentLocation);
 		return output;
 	}
@@ -2940,7 +2950,7 @@ public class AdventControl
 			birds = 1;
 			snakes = 1;
 			plant = 3;
-			output += hash.getDescription(currentLocation, brief);
+			output += places.getDescription(currentLocation, brief);
 			clock1 = -2;
 			clock2 = -2;
 		}
@@ -3041,7 +3051,7 @@ public class AdventControl
 		AdventSaveData saveData = new AdventSaveData();
 		saveData.log = currentLog;
 		saveData.mobileObjectsData = GameObjects.mobileObjects;
-		saveData.visits = hash.visits;
+		saveData.visits = Location.getVisitsArray();
 		saveData.found = hash.found;
 		saveData.objectLocation = hash.objectLocation;
 		saveData.currentLocation = this.currentLocation;
@@ -3186,7 +3196,7 @@ public class AdventControl
 	private void updateGameData(AdventSaveData saveData)
 	{
 		GameObjects.mobileObjects = saveData.mobileObjectsData;
-		hash.visits = saveData.visits;
+		Location.loadVisits(saveData.visits);
 		hash.found = saveData.found;
 		hash.objectLocation = saveData.objectLocation;
 		this.currentLocation = saveData.currentLocation;

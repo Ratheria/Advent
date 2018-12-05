@@ -4,47 +4,812 @@
 
 package model;
 
-
 import controller.AdventControl;
 
 public enum Location
 {
-	THEVOID,INHAND, ROAD, HILL, BUILDING, VALLEY, FOREST, WOODS, SLIT, OUTSIDE, 
-	INSIDE, COBBLES, DEBRIS, AWKWARD, BIRD, SMALLPIT,
-	EASTMIST, NUGGET, EASTFISSURE, WESTFISSURE, WESTMIST,
-	ALIKE1, ALIKE2, ALIKE3, ALIKE4, ALIKE5, ALIKE6, ALIKE7, ALIKE8, ALIKE9, ALIKE10, ALIKE11, ALIKE12, ALIKE13, ALIKE14,
-	BRINK, EASTLONG, WESTLONG, 
-	DIFF0, DIFF1, DIFF2, DIFF3, DIFF4, DIFF5, DIFF6, DIFF7, DIFF8, DIFF9, DIFF10,
-	PONY, CROSS, HALLOFMOUNTAINKING, WEST, SOUTH, NS, Y2, JUMBLE, EASTWINDOW,
-	DIRTY, CLEAN, WET, DUSTY, COMPLEX, 
-	SHELL, ARCH, RAGGED, CULDESAC, ANTE, WITT, 
-	BEDQUILT, CHEESE, SOFT,
-	EAST2PIT, WEST2PIT, EASTPIT, WESTPIT, 
-	NARROW, GIANT, BLOCK, IMMENSE, 
-	FALLS, STEEP, ABOVEP, SJUNC, TIGHT, LOW, CRAWL, WESTWINDOW,
-	ORIENTAL, MISTY, ALCOVE, PROOM, DROOM, 
-	SLAB, ABOVER, MIRROR, RESER, 
-	SCAN1, SCAN2, SCAN3, SECRET, 
-	WIDE, STALACTITE, TALL, BOULDERS,
-	SCORR, SWSIDE, 
-	DEAD0, DEAD1, DEAD2, DEAD3, DEAD4, DEAD5, DEAD6, DEAD7, DEAD8, DEAD9, DEAD10, DEAD11,
-	NESIDE, CORR, FORK, WARM, VIEW, CHAMBER, LIME, FBARR, BARR,
-	NEEND, SWEND,
-	CRACK, NECK, LOSE, CANT, CLIMB, CHECK, SNAKED, THRU, DUCK, SEWER, UPNOUT, DIDIT,
-	REMARK;
+	THEVOID(),
+	INHAND(), 
+	ROAD
+	(
+			true,
+			"End Of Road",
+			"You're at end of road again.",
+			"You are standing at the end of a road before a small brick building. Around you is a forest. A small stream flows out of the building and down a gully."
+			), 
+	HILL
+	(
+			"Hill",
+			"You're at hill in road.",
+			"You have walked up a hill, still in the forest. The road slopes back down the other side of the hill. There is a building in the distance."
+			), 
+	BUILDING
+	(
+			true,
+			"Building",
+			"You're inside building.",
+			"You are inside a building, a well house for a large spring."
+			), 
+	VALLEY
+	(
+			true,
+			"Valley",
+			"You're in valley.",
+			"You are in a valley in the forest beside a stream tumbling along a rocky bed."
+			), 
+	FOREST
+	(
+			"Forest",
+			"You're in forest.",
+			"You are in open forest, with a deep valley to one side."
+			), 
+	WOODS
+	(
+			"Forest",
+			"You're in forest near a road.",
+			"You are in open forest near both a valley and a road."
+			), 
+	SLIT
+	(
+			true,
+			"Slit",
+			"You're at slit in streambed.",
+			"At your feet all the water of the stream splashes into a 2-inch slit in the rock. Downstream the streambed is bare rock."
+			), 
+	OUTSIDE
+	(
+			"Outside Grate",
+			"You're outside grate.",
+			"You are in a 20-foot depression floored with bare dirt. Set into the dirt is a strong steel grate mounted in concrete. A dry streambed leads into the depression."
+			), 
 	
-	private AdventControl base;
+	INSIDE
+	(
+			"Below Grate",
+			"You're below the grate.",
+			"You are in a small chamber beneath a 3x3 steel grate to the surface. A low crawl over cobbles leads inward to the west."
+			), 
+	COBBLES
+	(
+			"Cobble Crawl",
+			"You're in cobble crawl.",
+			"You are crawling over cobbles in a low passage. There is a dim light at the east end of the pasage."
+			), 
+	DEBRIS
+	(
+			"Debris Room",
+			"You're in debris room.",
+			"You are in a debris room filled with stuff washed in from the surface. A low wide passage with cobbles becomes plugged with mud and debris here, but an awkward canyon leads upward and west. \nA note on the wall says:\n\tMagic Word \"XYZZY\""
+			), 
+	AWKWARD
+	(
+			"Awkward Canyon",
+			"You are in an awkward sloping east/west canyon."
+			), 
+	BIRD
+	(
+			"Bird Chamber",
+			"You're in bird chamber.",
+			"You are in a splendid chamber thirty feet high. The walls are frozen rivers of orange stone. An awkward canyon and a good passage exit from east and west sides of the chamber."
+			), 
+	SMALLPIT
+	(
+			"Small Pit",
+			"You're at top of small pit.",
+			"At your feet is a small pit breathing traces of white mist. An east passage ends here except for a small crack leading on."
+			),
+	
+	EASTMIST
+	(
+			"Hall Of Mists",
+			"You're in Hall of Mists.",
+			"You are at one end of a vast hall stretching forward out of sight to the west. There are openings to either side. Nearby, a wide stone staircase leads downward. The hall is filled with wisps of white mist swaying to and fro almost as if alive. A cold wind blows up the staircase. There is a passage at the top of a dome behind you."
+			), 
+	NUGGET
+	(
+			"Nugget Of Gold Room",
+			"You're in nugget of gold room.",
+			"This is a low room with a crude note on the wall. The note says, \n\t\"You won't get it up the steps\"."
+			), 
+	EASTFISSURE
+	(
+			"East Bank",
+			"You're on east bank of fissure.",
+			"You are on the east bank of a fissure slicing clear across the hall. The mist is quite thick here, and the fissure is too wide to jump."
+			), 
+	WESTFISSURE
+	(
+			"West Bank",
+			"You're on the west side of the fissure in the Hall of Mists."
+			), 
+	WESTMIST
+	(	
+			"Hall Of Mists",
+			"You're at west end of Hall of Mists.",
+			"You are at the west end of Hall of Mists. A low wide crawl continues west and another goes north. To the south is a little passage 6 feet off the floor."
+			),
+	
+	ALIKE1
+	(
+			AdventControl.alikeT,
+			AdventControl.alikePassages
+			), 
+	ALIKE2
+	(
+			AdventControl.alikeT,
+			AdventControl.alikePassages
+			), 
+	ALIKE3
+	(
+			AdventControl.alikeT,
+			AdventControl.alikePassages
+		), 
+	ALIKE4
+	(
+			AdventControl.alikeT,
+			AdventControl.alikePassages
+		), 
+	ALIKE5
+	(
+			AdventControl.alikeT,
+			AdventControl.alikePassages
+		), 
+	ALIKE6
+	(
+			AdventControl.alikeT,
+			AdventControl.alikePassages
+		), 
+	ALIKE7
+	(
+			AdventControl.alikeT,
+			AdventControl.alikePassages
+		), 
+	ALIKE8
+	(
+			AdventControl.alikeT,
+			AdventControl.alikePassages
+		), 
+	ALIKE9
+	(
+			AdventControl.alikeT,
+			AdventControl.alikePassages
+		), 
+	ALIKE10
+	(
+			AdventControl.alikeT,
+			AdventControl.alikePassages
+		), 
+	ALIKE11
+	(
+			AdventControl.alikeT,
+			AdventControl.alikePassages
+		), 
+	ALIKE12
+	(
+			AdventControl.alikeT,
+			AdventControl.alikePassages
+		), 
+	ALIKE13
+	(
+			AdventControl.alikeT,
+			AdventControl.alikePassages
+		), 
+	ALIKE14
+	(
+			AdventControl.alikeT,
+			AdventControl.alikePassages
+		), 
+	
+	BRINK
+	(
+			"Brink Of Pit",
+			"You're at brink of pit.",
+			"You are on the brink of a thirty-foot pit with a massive orange column down one wall. You could climb down here but you could not get back up. The maze continues at this level."
+			),
+	EASTLONG
+	(
+			"Long Hall East",
+			"You are at east end of long hall.",
+			"You are at the east end of a very long hall apparently without side chambers. To the east a low wide crawl slants up. To the north a round two foot hole slants down."
+			),
+	WESTLONG
+	(
+			"Long Hall West",
+			"You are at west end of long hall.",
+			"You are at the west end of a very long featureless hall. The hall joins up with a narrow north/south passage."
+			),
+	
+	DIFF0
+	(
+			AdventControl.diffT,
+			"You are in a maze of twisty little passages, all different."
+			),
+	DIFF1
+	(
+			AdventControl.diffT,
+			"You are in a maze of twisting little passages, all different."
+			), 
+	DIFF2
+	(
+			AdventControl.diffT,
+			"You are in a little maze of twisty passages, all different."
+			),
+	DIFF3
+	(
+			AdventControl.diffT,
+			"You are in a twisting maze of little passages, all different."
+			),
+	DIFF4
+	(
+			AdventControl.diffT,
+			"You are in a twisting little maze of passages, all different."
+			),
+	DIFF5
+	(
+			AdventControl.diffT,
+			"You are in a twisty little maze of passages, all different."
+			),
+	DIFF6
+	(
+			AdventControl.diffT,
+			"You are in a twisty maze of little passages, all different."
+			),
+	DIFF7
+	(
+			AdventControl.diffT,
+			"You are in a little twisty maze of passages, all different."
+			),
+	DIFF8
+	(
+			AdventControl.diffT,
+			"You are in a maze of little twisting passages, all different."
+			),
+	DIFF9
+	(
+			AdventControl.diffT,
+			"You are in a maze of little twisty passages, all different."
+			),
+	DIFF10
+	(
+			AdventControl.diffT,
+			"You are in a little maze of twisting passages, all different."
+			),
+	
+	PONY
+	(
+			AdventControl.deadEndT,
+			AdventControl.deadEnd
+			),
+	CROSS
+	(
+			"Crossover",
+			"You are at a crossover of a high N/S passage and a low E/W one."
+			),
+	HALLOFMOUNTAINKING
+	(
+			"Hall Of The Mt. King",
+			"You're in Hall of Mt King.",
+			"You are in the Hall of the Mountain King, with passages off in all directions."
+			),
+	WEST
+	(
+			"West Side Chamber",
+			"You're in west side chamber.",
+			"You are in the west side chamber of the Hall of the Mountain King. A passage continues west and up here."
+			),
+	SOUTH
+	(
+			"South Side Chamber",
+			"You are in the south side chamber."	
+			),
+	NS
+	(
+			"North/South Passage",
+			"You're in a N/S passage.",
+			"You are in a low N/S passage at a hole in the floor. The hole goes down to an E/W passage."
+			),
+	Y2
+	(
+			"\"Y2\"",
+			"You're at \"Y2\".",
+			"You are in a large room, with a passage to the south, a passage to the west, and a wall of broken rock to the east. There is a large \"Y2\" on a rock in the room's center."
+			),
+	JUMBLE
+	(
+			"Rock Jumble",
+			"You are in a jumble of rock, with cracks everywhere."
+			),
+	EASTWINDOW
+	(
+			"Window",
+			"You're at window on pit.",
+			"You're at a low window overlooking a huge pit, which extends up out of sight.	A floor is indistinctly visible over 50 feet below. Traces of white mist cover the floor of the pit, becoming thicker to the right. Marks in the dust around the window would seem to indicate that someone has been here recently. Directly across the pit from you and 25 feet away there is a similar window looking into a lighted room. A shadowy figure can be seen there peering back at you."
+			),
+	
+	DIRTY
+	(
+			"Dirty Passage",
+			"You're in dirty passage.",
+			"You are in a dirty broken passage. To the east is a crawl. To the west is a large passage. Above you is a hole to another passage."
+			),
+	CLEAN
+	(
+			"Clean Pit",
+			"You're by a clean pit.",
+			"You are on the brink of a small clean climbable pit. A crawl leads west."
+			),
+	WET
+	(
+			true,
+			"Wet Pit",
+			"You're in pit by stream.",
+			"You are in the bottom of a small pit with a little stream, which enters and exits through tiny slits."
+			), 
+	DUSTY
+	(
+			"Dusty Room",
+			"You're in dusty rock room.",
+			"You are in a large room full of dusty rocks. There is a big hole in the floor. There are cracks everywhere, and a passage leading east."
+			),
+	COMPLEX
+	(
+			"Complex Junction",
+			"You're at complex junction.",
+			"You are at a complex junction. A low hands and knees passage from the north joins a higher crawl from the east to make a walking passage going west. There is also a large room above. The air is damp here."
+			),
+	
+	SHELL
+	(
+			"Shell Room",
+			"You're in Shell Room.",
+			"You are in a large room carved out of sedimentary rock. The floor and walls are littered with bits of shells embedded in the stone. A shallow passage proceeds downward, and a somewhat steeper one leads up. A low hands-and-knees passage enters from the south."
+			),
+	ARCH
+	(
+			"Arched Hall",
+			"You're in arched hall.",
+			"You are in an arched hall. A coral passage once continued up and east from here, but is now blocked by debris. The air smells of sea water."
+			),
+	RAGGED
+	(
+			"Ragged Corridor",
+			"You are in a long sloping corridor with ragged sharp walls."
+			),
+	CULDESAC
+	(
+			"Cul-de-sac",
+			"You are in a cul-de-sac about eight feet across."
+			),
+	ANTE
+	(
+			"Anteroom",
+			"You're in anteroom.",
+			"You are in an anteroom leading to a large passage to the east. Small passages go west and up. The remnants of recent digging are evident.\n\n\tA sign in midair here says \n\t\t\"CAVE UNDER CONSTRUCTION BEYOND THIS POINT.\n\t\tPROCEED AT OWN RISK\n\t\t[WITT CONSTRUCTION COMPANY]\""
+			),
+	WITT
+	(
+			"Witt's End",
+			"You are at Witt's End.",
+			"You are at Witt's End. Passages lead off in \"all\" directions."
+			),
+
+	BEDQUILT
+	(
+			"Bedquilt",
+			"You're in Bedquilt.",
+			"You are in Bedquilt, a long E/W passage with holes everywhere. \nTo explore at random select north, south, up or down."
+			), 
+	CHEESE
+	(
+			"Swiss Cheese Room",
+			"You're in Swiss Cheese Room.",
+			"You are in a room whose walls resemble swiss cheese. \nObvious passages go west, east, ne, and nw. Part of the room is occupied by a large bedrock block."
+			),
+	SOFT
+	(
+			"Soft Room",
+			"You're in Soft Room.",
+			"You are in the Soft Room. The walls are covered with heavy curtains, the floor with a thick pile carpet. Moss covers the ceiling."
+			),
+	
+	EAST2PIT
+	(
+			"East Twopit Room",
+			"You're at east end of Twopit Room.",
+			"You are at the east end of the twopit room. The floor here is littered with thin rock slabs, which make it easy to descend the pits. There is a path here bypassing the pits to connect passages from east and west. There are holes all over, but the only big one is on the wall directly over the west pit where you can't get at it."
+			),
+	WEST2PIT
+	(
+			"West Twopit Room",
+			"You're at west end of Twopit Room.",
+			"You are at the west end of the twopit room. There is a large hole in the wall above the pit at this end of the room."
+			),
+	EASTPIT
+	(
+			"East Pit",
+			"You're in east pit.",
+			"You are that the bottom of the eastern pit in the twopit room. There is a small pool of oil in one corner of the pit."
+			),
+	WESTPIT
+	(
+			"West Pit",
+			"You're in west pit.",
+			"You are at the bottom of the western pit in the twopit room. There is a large hole in the wall about 25 feet above you."
+			),
+	
+	NARROW
+	(
+			"Narrow Corridor",
+			"You're in narrow corridor.",
+			"You are in a long, narrow corridor stretching out of sight to the west. At the eastern end is a hole through which you can see a profusion of leaves."
+			),
+	GIANT
+	(
+			"Giant Room",
+			"You're in Giant Room.",
+			"You are in the Giant Room. The ceiling here is too high up for your lamp to show it. Cavernous passages lead east, north, and south. \n\nOn the west wall is scrawled the inscription, \n\t\"FEE FIE FOE FOO\"[sic]."
+			),
+	BLOCK
+	(
+			"Blocked Passage",
+			"The passage here is blocked by a recent cave-in."
+			),
+	IMMENSE
+	(
+			"Immense Passage",
+			"You are at one end of an immense north/south passage."
+			),
+
+	FALLS
+	(
+			true,
+			"Falls",
+			"You're in cavern with waterfall.",
+			"You are in a magnificet cavern with a rushing stream, which cascades over a sparkling waterfall into a roaring whirlpool that disappears through a hole in the floor.\nPassages exit to the south and west."
+			), 
+	STEEP
+	(
+			"Steep Incline",
+			"You're at steep incline above large room.",
+			"You are at the top of a steep incline above a large room. You could climb down here, but you would not be able to climb up. There is a passage leading back to the north."
+			),
+	ABOVEP
+	(
+			AdventControl.secretCanyon,
+			"You are in a secret N/S canyon above a sizable passage."
+			),
+	SJUNC
+	(
+			"Secret Canyon Junction",
+			"You're at junction of three secret canyons.",
+			"You are in a secret canyon at a junction of three canyons, bearing north, south, and SE. The north one is as tall as the other two combined."
+			),
+	TIGHT
+	(
+			"Tight Canyon",
+			"The canyon here becomes too tight to go further south."
+			),
+	LOW
+	(
+			"Low Room",
+			"You are in a large low room. Crawls lead north, SE, and SW."
+			),
+	CRAWL
+	(
+			"Dead End Crawl",
+			"Dead end crawl."
+			),
+	WESTWINDOW
+	(
+			"Window",
+			"You're at window on pit.",
+			"You're at a low window overlooking a huge pit, which extends up out of sight. A floor is indistinctly visible over 50 feet below. Traces of white mist cover the floor of the pit, becoming thicker to the left. Marks in the dust around the window would seem to indicate that someone has been here recently. Directly across the pit from you and 25 feet away there is a similar window looking into a lighted room. A shadowy figure can be seen there peering back at you."
+			),
+	
+	ORIENTAL
+	(
+			"Oriental Room",
+			"You're in Oriental Room.",
+			"This is the Oriental Room. Ancient oriental cave drawings cover the walls. A gently sloping passage leads upward to the north, another passage leads se, and a hands and knees crawl leads west."
+			),
+	MISTY
+	(
+			"Misty Cavern",
+			"You're in misty cavern.",
+			"You are following a wide path around the outer edge of a large cavern. Far below, through a heavy white mist, strange splashing noises can be heard. The mist rises up through a fissure in the ceiling. The path exits to the south and west."
+			),
+	ALCOVE
+	(
+			"Alcove",
+			"You're in alcove.",
+			"You are in an alcove. A small NW path seems to widen after a short distance. An extremely tight tunnel leads east. It looks like a very tight squeeze. An eerie light can be seen at the other end."
+			),
+	PROOM
+	(
+			"Plover Room",
+			"You are in Plover Room.",
+			"You're in a small chamber lit by an eerie green light. An extremely narrow tunnel exits to the west. A dark corridor leads NE."
+			),
+	DROOM
+	(
+			"Dark Room",
+			"You're in the Dark-Room.",
+			"You're in the Dark-Room. A corridor leading south is the only exit."
+			),
+
+	SLAB
+	(
+			"Slab Room",
+			"You're in Slab Room.",
+			"You are in a large low circular chamber whose floor is an immense slab fallen from the ceiling. (Slab Room). There once were large passages to the east and west, but they are now filled with boulders. Low small passages go north and south, and the south one quickly bends west around the boulders."
+			), 
+	ABOVER
+	(
+			AdventControl.secretCanyon,
+			"You are in a secret N/S canyon above a large room."
+			),
+	MIRROR
+	(
+			"Mirror Canyon",
+			"You're in mirror canyon.",
+			"You are in a north/south canyon about 25 feet across. The floor is covered by white mist seeping in from the north. The walls extend upward for well over 100 feet. Suspended from some unseen point far above you, an enormous two-sided mirror is hanging parallel to and midway between the canyon walls. (The mirror is obviously provided for the use of the dwarves, who as you know are extremely vain.) A small window can be seen in either wall, some fifty feet up."
+			),
+	RESER
+	(
+			true,
+			"Reservoir",
+			"You're at reservoir.",
+			"You are at the edge of a large underground reservoir. An opaque cloud of white mist fills the room and rises rapidly upward. The lake is fed by a stream, which tumbles out of a hole in the wall about 10 feet overhead and splashes noisily into the water somewhere within the mist. The only passage goes back toward the south."
+			), 
+	
+	SCAN1
+	(
+			AdventControl.secretCanyon,
+			"You're in a secret canyon that exits to the north and east."
+			), 
+	SCAN2
+	(
+			AdventControl.secretCanyon,
+			"You're in a secret canyon that exits to the north and east."
+			),
+	SCAN3
+	(
+			AdventControl.secretCanyon,
+			"You're in a secret canyon that exits to the north and east."
+			),
+	SECRET
+	(
+			AdventControl.secretCanyon,
+			"You're in secret E/W canyon above tight canyon.",
+			"You are in a secret canyon, which here runs E/W. It crosses over an very tight canyon 15 feet below. If you go down you may not be able to get back up."
+			),
+
+	WIDE
+	(
+			"Wide Place",
+			"You're at a wide place in a very tight N/S canyon."
+			), 
+	STALACTITE
+	(
+			"Stalactite",
+			"You're on top of stalactite.",
+			"A large stalactite extends from the roof and almost reaches the floor below. You could climb down, but you would be unable to reach it to climb back up."
+			), 
+	TALL
+	(
+			"Tall Canyon",
+			"You're in tall E/W canyon.",
+			"You are in a tall E/W canyon. A low tight crawl goes 3 feet north and seems to open up."
+			),
+	BOULDERS
+	(
+			AdventControl.deadEndT,
+			"The canyon runs into a mass of boulders --- dead end."
+			),
+	
+	SCORR
+	(
+			"Sloping Corridor",
+			"You are in sloping corridor.",
+			"You are in a long winding corridor sloping out of sight in both directions."
+			),
+	SWSIDE
+	(
+			"South West Side",
+			"You're on SW side of chasm.",
+			"You are on one side of a large, deep chasm. A heavy white mist rising up from below obscures all view of the far side. A SW path leads away from the chasm into a winding corridor."
+			),
+	
+	DEAD0
+	(
+			AdventControl.deadEndT,
+			AdventControl.deadEnd
+			),
+	DEAD1
+	(
+			AdventControl.deadEndT,
+			AdventControl.deadEnd
+			),
+	DEAD2
+	(
+			AdventControl.deadEndT,
+			AdventControl.deadEnd
+			),
+	DEAD3
+	(
+			AdventControl.deadEndT,
+			AdventControl.deadEnd
+			),
+	DEAD4
+	(
+			AdventControl.deadEndT,
+			AdventControl.deadEnd
+			), 
+	DEAD5
+	(
+			AdventControl.deadEndT,
+			AdventControl.deadEnd
+			),
+	DEAD6
+	(
+			AdventControl.deadEndT,
+			AdventControl.deadEnd
+			),
+	DEAD7
+	(
+			AdventControl.deadEndT,
+			AdventControl.deadEnd
+			),
+	DEAD8
+	(
+			AdventControl.deadEndT,
+			AdventControl.deadEnd
+			),
+	DEAD9
+	(
+			AdventControl.deadEndT,
+			AdventControl.deadEnd
+			),
+	DEAD10
+	(
+			AdventControl.deadEndT,
+			AdventControl.deadEnd
+			),
+	DEAD11
+	(
+			AdventControl.deadEndT,
+			AdventControl.deadEnd
+			),
+	
+	NESIDE
+	(
+			"North East Side",
+			"You're on NE side of chasm.",
+			"You are on the far side of the chasm. A NE path leads away from the chasm on this side."
+			),
+	CORR
+	(
+			"Corridor",
+			"You're in corridor.",
+			"You're in a long east/west corridor. A faint rumbling noise can be heard in the distance."
+			),
+	FORK
+	(
+			"Fork In Path",
+			"You're at fork in path.",
+			"The path forks here. The left fork leads northeast. A dull rumbling seems to get louder in that direction. The right fork leads southeast down a gentle slope. The main corridor enters from the west."
+			),
+	WARM
+	(
+			"Warm Junction",
+			"You're at junction with warm walls.",
+			"The walls are quite warm here. From the north can be heard a steady roar, so loud that the entire cave seems to be trembling. Another passage leads south, and a low crawl goes east."
+			),
+	VIEW
+	(
+			"Breath-Taking View",
+			"You're at breath-taking view.",
+			"You are on the edge of a breath-taking view. Far below you is an active volcano, from which great gouts of molten lava come surging out, cascading back down into the depths. The glowing rock fills the farthest reaches of the cavern with a blood-red glare, giving every-thing an eerie, macabre appearance. The air is filled with flickering sparks of ash and a heavy smell of brimstone. The walls are hot to the touch, and the thundering of the volcano drowns out all other sounds. Embedded in the jagged roof far overhead are myriad twisted formations, composed of pure white alabaster, which scatter the murky light into sinister apparitions upon the walls. To one side is a deep gorge, filled with a bizarre chaos of tortured rock that seems to have been crafted by the Devil himself. An immense river of fire crashes out from the depths of the volcano, burns its way through the gorge, and plummets into a bottomless pit far off to your left. To the right, am immense geyser of blistering steam erupts continuously from a barren island in the center of a sulfurous lake, which bubbles ominously. The far right wall is aflame with an incandescence of its own, which lends an additional infernal splendor to the already hellish scene. \nA dark, foreboding passage exits to the south."
+			),
+	CHAMBER
+	(
+			"Boulder Chamber",
+			"You're in chamber of boulders.",
+			"You are in a small chamber filled with large boulders. The walls are very warm, causing the air in the room to be almost stifling from the heat. The only exit is a crawl heading west, through which a low rumbling noise is coming."
+			),
+	LIME
+	(
+			"Limestone Passage",
+			"You're in limestone passage.",
+			"You are walking along a gently sloping north/south passage lined with oddly shapped limestone formations."
+			),
+	FBARR
+	(
+			"In Front Of Barren Room",
+			"You're in front of barren room.",
+			"You are standing at the entrance to a large, barren room. \nA sign posted above the entrance reads:\n\t\"CAUTION! BEAR IN ROOM!\""
+			),
+	BARR
+	(
+			"Barren Room",
+			"You're in barren room.",
+			"You are inside a barren room. The center of the room is completely empty except for some dust. Marks in the dust lead away toward the far end of the room. The only exit is the way you came in."
+			),
+	
+	NEEND
+	(
+			"North East End",
+			"You're at NE end.",
+			"You are at the northeast end of an immense room, even larger than the Giant Room. It appears to be a repository for the \"Adventure\" program. Massive torches far overhead bathe the room with smoky yellow light. Scattered about you can be seen a pile of bottles (all of them empty), a nursery of young beanstalks murmering quietly, a bed of oysters, a bundle of black rods with rusty stars on their ends, and a collection of brass lanterns. Off to one side a great many dwarves are sleeping on the floor, snoring loudly. \nA sign nearby reads:\n\t\"DO NOT DISTURB THE DWARVES!\"\nAn immense mirror is hanging against one wall, and stretches to the other end of the room, where various other sundry objects can be glimpsed dimly in the distance."
+			),
+	SWEND
+	(
+			"South West End",
+			"You're at SW end.",
+			"You are at the southwest end of the repository. To one side is a pit full of fierce green snakes. On the other side is a row of small wicker cages, each of which contains a little sulking bird. In one corner is a bundle of black rods with rusty marks on their ends. A large number of velvet pillows are scattered about on the floor. A vast mirror stretches off to the northeast. At your feet is a large steel grate, next to which is a sign that reads, \n\t\"TREASURE VAULT. KEYS IN MAIN OFFICE.\""
+			),
+	
+	CRACK(),
+	NECK(),
+	LOSE(),
+	CANT(),
+	CLIMB(),
+	CHECK(),
+	SNAKED(),
+	THRU(),
+	DUCK(),
+	SEWER(),
+	UPNOUT(),
+	DIDIT(),
+	
+	REMARK();
+	
 	public static Location[] locate = Location.values();
 	
-	public void setUp(AdventControl base)
-	{	this.base = base;	}
+	public final String title;
+	public final String shortDescription;
+	public final String longDescription;
+	public final boolean hasWater;
+	public int visits = 0;
 	
-	public boolean isWaterHere(Location here)
+	private Location()
 	{
-		boolean result = false;
-		if(here == ROAD || here == BUILDING || here == VALLEY || here == SLIT || here == WET || here == FALLS || here == RESER)
-		{	result = true;	}
-		return result;
+		this.title = AdventControl.empty;
+		this.shortDescription = AdventControl.empty;
+		this.longDescription = AdventControl.empty;
+		this.hasWater = false;
+	}
+	
+	private Location(String title, String shortDescription)
+	{
+		this.title = title;
+		this.shortDescription = shortDescription;
+		this.longDescription = AdventControl.empty;
+		this.hasWater = false;
+	}
+	
+	private Location(String title, String shortDescription, String longDescription)
+	{
+		this.title = title;
+		this.shortDescription = shortDescription;
+		this.longDescription = longDescription;
+		this.hasWater = false;
+	}
+	
+	private Location(boolean hasWater, String title, String shortDescription)
+	{
+		this.title = title;
+		this.shortDescription = shortDescription;
+		this.longDescription = AdventControl.empty;
+		this.hasWater = hasWater;
+	}
+	
+	private Location(boolean hasWater, String title, String shortDescription, String longDescription)
+	{
+		this.title = title;
+		this.shortDescription = shortDescription;
+		this.longDescription = longDescription;
+		this.hasWater = hasWater;
 	}
 	
 	public int minLoc()
@@ -94,6 +859,64 @@ public enum Location
 		if(outside(here)||here == VIEW||here == NEEND||here == SWEND||here == PROOM)
 		{	need = true;	}
 		return need;
+	}
+	
+	public String getDescription(Location here, int breif)
+	{
+		String description = null;
+		if(!(here.longDescription.equals(AdventControl.empty)) && ((breif == 0 && here.visits % 5 == 0) || (breif == 2) 
+				|| (here.visits == 0)))
+		{
+			description = here.longDescription;
+		}
+		else
+		{
+			description = here.shortDescription;
+		}
+		//here.visits++;
+		return description;
+	}
+	
+	public String getLongDescription(Location here)
+	{
+		String description = "";
+		if(!(here.longDescription.equals(AdventControl.empty)))
+		{	description = here.longDescription;	}
+		return description;
+	}
+	
+	public boolean beenHere(Location here)
+	{
+		boolean result = false;
+		if(here.visits == 0 || here.visits % 5 == 0)
+		{	result = false;	}
+		return result;
+	}
+	
+	public void visit(Location here, boolean canSee)
+	{
+		if(canSee)
+		{
+			here.visits++;
+		}
+	}
+	
+	public static int[] getVisitsArray()
+	{
+		int[] visitsArray = new int[locate.length];
+		for(int i = 0; i < locate.length; i++)
+		{
+			visitsArray[i] = locate[i].visits;
+		}
+		return visitsArray;
+	}
+	
+	public static void loadVisits(int[] visits)
+	{
+		for(int i = 0; i < locate.length; i++)
+		{
+			locate[i].visits = visits[i];
+		}
 	}
 	
 	public Location moveTo(Movement destination, Location here, boolean grate,
