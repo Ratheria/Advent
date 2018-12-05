@@ -257,7 +257,6 @@ public class AdventControl
 		snakes = 0;
 //		fileSlot = 0;
 //		currentFileOperation = 0;
-		things.setUp();
 		frame.setUp();
 		hash.setUpHashMaps();
 	}
@@ -319,8 +318,8 @@ public class AdventControl
 			currentLocation = Location.SCAN2;
 			voidObject(GameObjects.DRAGON_);
 			voidObject(GameObjects.RUG_);
-			hash.dropObject(GameObjects.DRAGON, currentLocation);
-			hash.dropObject(GameObjects.RUG, currentLocation);
+			places.dropObject(GameObjects.DRAGON, currentLocation);
+			places.dropObject(GameObjects.RUG, currentLocation);
 		}
 		else if(seriousQuestion && answer == 0)
 		{
@@ -669,8 +668,8 @@ public class AdventControl
 				ArrayList<GameObjects> currentlyHolding = hash.objectsHere(Location.INHAND);
 				boolean treasure = false;
 				pirate = 2;
-				hash.dropObject(GameObjects.MESSAGE, Location.PONY);
-				hash.dropObject(GameObjects.CHEST, Location.DEAD2);
+				places.dropObject(GameObjects.MESSAGE, Location.PONY);
+				places.dropObject(GameObjects.CHEST, Location.DEAD2);
 				if(currentlyHolding != null)
 				{
 					for(GameObjects object : currentlyHolding)
@@ -678,7 +677,7 @@ public class AdventControl
 						if(things.isTreasure(object))
 						{
 							treasure = true;
-							hash.dropObject(object, Location.DEAD2);
+							places.dropObject(object, Location.DEAD2);
 							itemsInHand--;
 						}
 					}
@@ -711,13 +710,13 @@ public class AdventControl
 					dwarvesLeft -= (Math.floor(generate() * 3));
 					output += "\n\nA little dwarf just walked around a corner, saw you, threw a little axe at you, "
 							+ "cursed, and ran away. (The axe missed.)";
-					hash.dropObject(GameObjects.AXE, currentLocation);
+					places.dropObject(GameObjects.AXE, currentLocation);
 				}
 				else
 				{
 					output += "\n\nThere is a threatening little dwarf in the room with you!";
 					dwarfPresent = 2;
-					hash.dropObject(GameObjects.DWARF, currentLocation);
+					places.dropObject(GameObjects.DWARF, currentLocation);
 				}
 			}
 			else if (dwarfPresent == 2 && battleUpdate)
@@ -960,7 +959,7 @@ public class AdventControl
 					}
 					else if(object == GameObjects.WATER)
 					{
-						if(hash.objectIsHere(GameObjects.BOTTLE, Location.INHAND))
+						if(GameObjects.BOTTLE.location == Location.INHAND)
 						{
 							if(bottle == 0)
 							{
@@ -991,7 +990,7 @@ public class AdventControl
 					}
 					else if(object == GameObjects.OIL)
 					{
-						if(hash.objectIsHere(GameObjects.BOTTLE, Location.INHAND))
+						if(GameObjects.BOTTLE.location == Location.INHAND)
 						{
 							if(bottle == 0)
 							{
@@ -1030,7 +1029,7 @@ public class AdventControl
 					}
 					else if(objectIsPresent(object))
 					{
-						if(hash.objectIsHere(object, Location.INHAND))
+						if(object.location == Location.INHAND)
 						{
 							output = new String("You are already carrying it!");
 							increaseTurns = false;
@@ -1076,14 +1075,14 @@ public class AdventControl
 						}
 						else if(object == GameObjects.BIRD && objectIsHere(GameObjects.BIRD))
 						{
-							if(hash.objectIsHere(GameObjects.ROD, Location.INHAND) && !birdInCage)
+							if(isInHand(GameObjects.ROD) && !birdInCage)
 							{
 								output = new String("The bird was unafraid when you entered, but as you approach "
 										+ "it becomes disturbed and you cannot catch it.");
 								h2++;
 								increaseTurns = false;
 							}
-							else if(!hash.objectIsHere(GameObjects.CAGE, Location.INHAND))
+							else if(!isInHand(GameObjects.CAGE))
 							{
 								output = new String("You can catch the bird, but you cannot carry it.");
 								increaseTurns = false;
@@ -1111,7 +1110,7 @@ public class AdventControl
 							if(objectIsHere(GameObjects.RUG) || objectIsHere(GameObjects.RUG_))
 							{
 								takeObject(GameObjects.RUG);
-								hash.voidObject(GameObjects.RUG_);
+								places.voidObject(GameObjects.RUG_);
 								output = okay;
 							}
 						}
@@ -1124,7 +1123,7 @@ public class AdventControl
 						{
 							output = "You can't be serious!";
 						}
-						else if(things.canTake(object) && objectIsHere(object))
+						else if(object.mobile && objectIsHere(object))
 						{
 							takeObject(object);
 							output = okay;
@@ -1184,8 +1183,8 @@ public class AdventControl
 							{
 								voidObject(GameObjects.TROLL);
 								voidObject(GameObjects.TROLL_);
-								hash.dropObject(GameObjects.TROLL2_, Location.NESIDE);
-								hash.dropObject(GameObjects.TROLL2, Location.SWSIDE);
+								places.dropObject(GameObjects.TROLL2_, Location.NESIDE);
+								places.dropObject(GameObjects.TROLL2, Location.SWSIDE);
 								bear = 4;
 								troll = 2;
 								output = "The bear lumbers toward the troll, who lets out a startled shriek and "
@@ -1213,7 +1212,7 @@ public class AdventControl
 						}
 						else if(object == GameObjects.BIRD)
 						{
-							if(hash.objectIsHere(GameObjects.SNAKE, currentLocation))
+							if(objectIsHere(GameObjects.SNAKE))
 							{
 								birdInCage = false;
 								itemsInHand++;
@@ -1313,7 +1312,7 @@ public class AdventControl
 								output = new String("A glistening pearl falls out of the clam and rolls away. "
 										+ "Goodness, this must really be an oyster! (I never was very good at "
 										+ "identifying bivalves.)\nWhatever it is, it has now snapped shut again.");
-								hash.dropObject(GameObjects.PEARL, Location.CULDESAC);
+								places.dropObject(GameObjects.PEARL, Location.CULDESAC);
 							}
 						}
 						else if(object == GameObjects.OYSTER)
@@ -1551,8 +1550,8 @@ public class AdventControl
 							 if(!crystalBridge)
 							 {
 								 output = new String("A crystal bridge now spans the fissure.");
-								 hash.dropObject(GameObjects.CRYSTAL, Location.EASTFISSURE);
-								 hash.dropObject(GameObjects.CRYSTAL_, Location.WESTFISSURE);
+								 places.dropObject(GameObjects.CRYSTAL, Location.EASTFISSURE);
+								 places.dropObject(GameObjects.CRYSTAL_, Location.WESTFISSURE);
 								 crystalBridge = true;
 							 }
 							 else
@@ -1676,7 +1675,7 @@ public class AdventControl
 						else
 						{
 							voidObject(GameObjects.FOOD);
-							if(hash.getObjectLocation(GameObjects.FOOD) == Location.INHAND)
+							if(isInHand(GameObjects.FOOD))
 							{	itemsInHand--;	}
 							output = "Thank you, it was delicious!";
 						}
@@ -1712,8 +1711,8 @@ public class AdventControl
 						voidObject(object);
 						voidObject(GameObjects.TROLL);
 						voidObject(GameObjects.TROLL_);
-						hash.dropObject(GameObjects.TROLL2, Location.SWSIDE);
-						hash.dropObject(GameObjects.TROLL2_, Location.NESIDE);
+						places.dropObject(GameObjects.TROLL2, Location.SWSIDE);
+						places.dropObject(GameObjects.TROLL2_, Location.NESIDE);
 						troll = 3;
 						itemsInHand--;
 						output = "The troll catches your treasure and scurries away out of sight.";
@@ -1742,13 +1741,13 @@ public class AdventControl
 						}
 						else
 						{	output = "You attack a little dwarf, but he dodges out of the way.";	}
-						hash.dropObject(GameObjects.AXE, currentLocation);
+						places.dropObject(GameObjects.AXE, currentLocation);
 						itemsInHand--;
 					}
 					else if((objectIsHere(GameObjects.DRAGON_) || objectIsHere(GameObjects.DRAGON)) && dragon)
 					{
 						output = "The axe bounces harmlessly off the dragon's thick scales.";
-						hash.dropObject(GameObjects.AXE, currentLocation);
+						places.dropObject(GameObjects.AXE, currentLocation);
 						itemsInHand--;
 					}
 					else if((objectIsHere(GameObjects.TROLL_) || objectIsHere(GameObjects.TROLL)))
@@ -1759,7 +1758,7 @@ public class AdventControl
 					else if(objectIsHere(GameObjects.BEAR) && bear == 0)
 					{
 						bearAxe = true;
-						hash.dropObject(GameObjects.AXE, currentLocation);
+						places.dropObject(GameObjects.AXE, currentLocation);
 						itemsInHand--;
 						output = "The axe misses and lands near the bear where you can't get at it.";
 					}
@@ -2215,7 +2214,7 @@ public class AdventControl
 						else
 						{
 							broken = true;
-							hash.dropObject(GameObjects.VASE, currentLocation);
+							places.dropObject(GameObjects.VASE, currentLocation);
 							output = "The sudden change in temperature has delicately shattered the vase.";
 							lostTreasures++;
 						}
@@ -2299,24 +2298,24 @@ public class AdventControl
 						{
 							quest = 0;
 							foo = 0;
-							if(hash.objectIsHere(GameObjects.EGGS, Location.GIANT))
+							if(GameObjects.EGGS.location == Location.GIANT)
 							{
 								output = nothing;
 							}
 							else if(currentLocation != Location.GIANT)
 							{
-								if(hash.getObjectLocation(GameObjects.EGGS) == Location.INHAND)
+								if(isInHand(GameObjects.EGGS))
 								{	itemsInHand--;	}
 								if(objectIsPresent(GameObjects.EGGS))
 								{	output = "The nest of golden eggs disappears!";	}
 								else
 								{	output = "Done!";	}
-								hash.dropObject(GameObjects.EGGS, Location.GIANT);
+								places.dropObject(GameObjects.EGGS, Location.GIANT);
 							}
 							else
 							{
 								output = "There is a large nest here, full of golden eggs!";
-								hash.dropObject(GameObjects.EGGS, Location.GIANT);
+								places.dropObject(GameObjects.EGGS, Location.GIANT);
 							}
 						}
 					}
@@ -2362,12 +2361,12 @@ public class AdventControl
 	{
 		String output = "";
 		locationChange = true;
-		haveGold = (hash.objectIsHere(GameObjects.GOLD, Location.INHAND));
-		boolean haveEmerald = (hash.objectIsHere(GameObjects.EMERALD, Location.INHAND));
-		boolean haveClam = (hash.objectIsHere(GameObjects.CLAM, Location.INHAND));
-		boolean haveOyster = (hash.objectIsHere(GameObjects.OYSTER, Location.INHAND));
-		boolean trollIsHere = (hash.getObjectLocation(GameObjects.TROLL) == currentLocation 
-				|| hash.getObjectLocation(GameObjects.TROLL_) == currentLocation);
+		haveGold = (isInHand(GameObjects.GOLD));
+		boolean haveEmerald = (isInHand(GameObjects.EMERALD));
+		boolean haveClam = (isInHand(GameObjects.CLAM));
+		boolean haveOyster = (isInHand(GameObjects.OYSTER));
+		boolean trollIsHere = (GameObjects.TROLL.location == currentLocation 
+				|| GameObjects.TROLL_.location == currentLocation);
 
 		try
 		{
@@ -2389,12 +2388,12 @@ public class AdventControl
 						+ "but the bridge collapses you stumble back and fall into the chasm.";
 				justCollapsed = false;
 				int neordinal = currentLocation.getOrdinal(Location.NESIDE);
-				if(currentLocation.getOrdinal(hash.getObjectLocation(GameObjects.CHAIN)) >= neordinal)
+				if(currentLocation.getOrdinal(GameObjects.CHAIN.location) >= neordinal)
 				{
 					lostTreasures++;
 					previousLocation = currentLocation;
 				}
-				if(currentLocation.getOrdinal(hash.getObjectLocation(GameObjects.SPICES)) >= neordinal)
+				if(currentLocation.getOrdinal(GameObjects.SPICES.location) >= neordinal)
 				{
 					lostTreasures++;
 					previousLocation = currentLocation;
@@ -2533,8 +2532,8 @@ public class AdventControl
 						troll = 0;
 						voidObject(GameObjects.TROLL2);
 						voidObject(GameObjects.TROLL2_);
-						hash.dropObject(GameObjects.TROLL, Location.SWSIDE);
-						hash.dropObject(GameObjects.TROLL_, Location.NESIDE);
+						places.dropObject(GameObjects.TROLL, Location.SWSIDE);
+						places.dropObject(GameObjects.TROLL_, Location.NESIDE);
 					}
 					else
 					{	output = "There is no longer any way across the chasm.";	}
@@ -2682,7 +2681,7 @@ public class AdventControl
 						if(bear == 2)
 						{	output += "\n\tYou are being followed by a very large, tame bear.";	}
 						if(follow)
-						{	hash.dropObject(GameObjects.DWARF, currentLocation);	}
+						{	places.dropObject(GameObjects.DWARF, currentLocation);	}
 						if(currentLocation.equals(Location.Y2))
 						{
 							double chance = generate();
@@ -2693,7 +2692,7 @@ public class AdventControl
 				}
 				if(relocate)
 				{
-					hash.dropObject(GameObjects.EMERALD, Location.PROOM);
+					places.dropObject(GameObjects.EMERALD, Location.PROOM);
 					itemsInHand--;
 					relocate = false;
 				}
@@ -2814,7 +2813,7 @@ public class AdventControl
 		if(isInHand(GameObjects.LAMP))
 		{
 			light = false;
-			hash.dropObject(GameObjects.LAMP, Location.ROAD);
+			places.dropObject(GameObjects.LAMP, Location.ROAD);
 		}
 		attemptAction(ActionWords.DROP, GameObjects.ALL, "");
 		currentLocation = Location.BUILDING;
@@ -2905,40 +2904,40 @@ public class AdventControl
 			if(shortcut)
 			{
 				wellInCave = true;
-				hash.dropObject(GameObjects.GOLD, Location.BUILDING);
-				hash.dropObject(GameObjects.DIAMONDS, Location.BUILDING);
-				hash.dropObject(GameObjects.SILVER, Location.BUILDING);
-				hash.dropObject(GameObjects.JEWELS, Location.BUILDING);
-				hash.dropObject(GameObjects.COINS, Location.BUILDING);
-				hash.dropObject(GameObjects.CHEST, Location.BUILDING);
-				hash.dropObject(GameObjects.EGGS, Location.BUILDING);
-				hash.dropObject(GameObjects.TRIDENT, Location.BUILDING);
-				hash.dropObject(GameObjects.VASE, Location.BUILDING);
-				hash.dropObject(GameObjects.EMERALD, Location.BUILDING);
-				hash.dropObject(GameObjects.PYRAMID, Location.BUILDING);
-				hash.dropObject(GameObjects.PEARL, Location.BUILDING);
-				hash.dropObject(GameObjects.RUG, Location.BUILDING);
-				hash.dropObject(GameObjects.SPICES, Location.BUILDING);
-				hash.dropObject(GameObjects.CHAIN, Location.BUILDING);
-				hash.dropObject(GameObjects.MAG, Location.WITT);
+				places.dropObject(GameObjects.GOLD, Location.BUILDING);
+				places.dropObject(GameObjects.DIAMONDS, Location.BUILDING);
+				places.dropObject(GameObjects.SILVER, Location.BUILDING);
+				places.dropObject(GameObjects.JEWELS, Location.BUILDING);
+				places.dropObject(GameObjects.COINS, Location.BUILDING);
+				places.dropObject(GameObjects.CHEST, Location.BUILDING);
+				places.dropObject(GameObjects.EGGS, Location.BUILDING);
+				places.dropObject(GameObjects.TRIDENT, Location.BUILDING);
+				places.dropObject(GameObjects.VASE, Location.BUILDING);
+				places.dropObject(GameObjects.EMERALD, Location.BUILDING);
+				places.dropObject(GameObjects.PYRAMID, Location.BUILDING);
+				places.dropObject(GameObjects.PEARL, Location.BUILDING);
+				places.dropObject(GameObjects.RUG, Location.BUILDING);
+				places.dropObject(GameObjects.SPICES, Location.BUILDING);
+				places.dropObject(GameObjects.CHAIN, Location.BUILDING);
+				places.dropObject(GameObjects.MAG, Location.WITT);
 				shortcut = false;
 			}
-			hash.dropObject(GameObjects.BOTTLE, Location.NEEND);
-			hash.dropObject(GameObjects.PLANT, Location.NEEND);
-			hash.dropObject(GameObjects.OYSTER, Location.NEEND);
-			hash.dropObject(GameObjects.LAMP, Location.NEEND);
-			hash.dropObject(GameObjects.ROD, Location.NEEND);
-			hash.dropObject(GameObjects.DWARF, Location.NEEND);
-			hash.dropObject(GameObjects.MIRROR, Location.NEEND);
+			places.dropObject(GameObjects.BOTTLE, Location.NEEND);
+			places.dropObject(GameObjects.PLANT, Location.NEEND);
+			places.dropObject(GameObjects.OYSTER, Location.NEEND);
+			places.dropObject(GameObjects.LAMP, Location.NEEND);
+			places.dropObject(GameObjects.ROD, Location.NEEND);
+			places.dropObject(GameObjects.DWARF, Location.NEEND);
+			places.dropObject(GameObjects.MIRROR, Location.NEEND);
 			currentLocation = Location.NEEND;
 			previousLocation = Location.NEEND;
-			hash.dropObject(GameObjects.GRATE, Location.SWEND);
-			hash.dropObject(GameObjects.SNAKE, Location.SWEND);
-			hash.dropObject(GameObjects.BIRD, Location.SWEND);
-			hash.dropObject(GameObjects.CAGE, Location.SWEND);
-			hash.dropObject(GameObjects.ROD2, Location.SWEND);
-			hash.dropObject(GameObjects.PILLOW, Location.SWEND);
-			hash.dropObject(GameObjects.MIRROR, Location.SWEND);
+			places.dropObject(GameObjects.GRATE, Location.SWEND);
+			places.dropObject(GameObjects.SNAKE, Location.SWEND);
+			places.dropObject(GameObjects.BIRD, Location.SWEND);
+			places.dropObject(GameObjects.CAGE, Location.SWEND);
+			places.dropObject(GameObjects.ROD2, Location.SWEND);
+			places.dropObject(GameObjects.PILLOW, Location.SWEND);
+			places.dropObject(GameObjects.MIRROR, Location.SWEND);
 			rod1 = 1;
 			rod2 = 1;
 			bottles = 1;
@@ -2964,8 +2963,8 @@ public class AdventControl
 			dwarvesLeft = 0;
 			voidObject(GameObjects.TROLL);
 			voidObject(GameObjects.TROLL_);
-			hash.dropObject(GameObjects.TROLL2_, Location.NESIDE);
-			hash.dropObject(GameObjects.TROLL2, Location.SWSIDE);
+			places.dropObject(GameObjects.TROLL2_, Location.NESIDE);
+			places.dropObject(GameObjects.TROLL2, Location.SWSIDE);
 			if(bear != 3)
 			{	voidObject(GameObjects.BEAR);	}
 			grateUnlocked = false;
@@ -3019,41 +3018,37 @@ public class AdventControl
 	
 	private void takeObject(GameObjects thing)
 	{
-		hash.takeObject(thing);
+		places.takeObject(thing);
 		itemsInHand++;
 	}
 
 	private boolean isInHand(GameObjects thing)
-	{	return hash.objectIsHere(thing, Location.INHAND);	}
+	{	return thing.location == Location.INHAND;	}
 	
 	private boolean objectIsHere(GameObjects thing)
-	{	return hash.objectIsHere(thing, currentLocation);	}
+	{	return thing.location == currentLocation;	}
 	
 	private boolean objectIsPresent(GameObjects thing)
 	{
-		boolean result = false;
-		if(objectIsHere(thing) || isInHand(thing))
-		{	result = true;	}
-		return result;
+		return objectIsHere(thing) || isInHand(thing);
 	}
 	
 	private void dropObject(GameObjects thing)
 	{
-		hash.dropObject(thing, currentLocation);
+		places.dropObject(thing, currentLocation);
 		itemsInHand--;
 	}
 	
 	private void voidObject(GameObjects thing)
-	{	hash.voidObject(thing);	}
+	{	places.voidObject(thing);	}
 	
 	public AdventSaveData createSaveData(String currentLog)
 	{
 		AdventSaveData saveData = new AdventSaveData();
 		saveData.log = currentLog;
-		saveData.mobileObjectsData = GameObjects.mobileObjects;
 		saveData.visits = Location.getVisitsArray();
 		saveData.found = hash.found;
-		saveData.objectLocation = hash.objectLocation;
+		saveData.objectLocation = GameObjects.getLocations();
 		saveData.currentLocation = this.currentLocation;
 		saveData.previousLocation = this.previousLocation;
 		saveData.scores = this.scores;
@@ -3195,10 +3190,9 @@ public class AdventControl
 	
 	private void updateGameData(AdventSaveData saveData)
 	{
-		GameObjects.mobileObjects = saveData.mobileObjectsData;
 		Location.loadVisits(saveData.visits);
+		GameObjects.loadLocations(saveData.objectLocation);
 		hash.found = saveData.found;
-		hash.objectLocation = saveData.objectLocation;
 		this.currentLocation = saveData.currentLocation;
 		this.previousLocation = saveData.previousLocation;
 		this.scores = saveData.scores;

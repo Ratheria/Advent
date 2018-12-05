@@ -16,7 +16,6 @@ public class HashMaps
 	private HashMap<String, ActionWords> actions = new HashMap<String, ActionWords>();
 	private HashMap<String, MessageWords> mwords = new HashMap<String, MessageWords>();
 	public HashMap<GameObjects, Boolean> found = new HashMap<GameObjects, Boolean>();
-	public HashMap<GameObjects, Location> objectLocation = new HashMap<GameObjects, Location>();
 	
 	public HashMaps()
 	{
@@ -327,74 +326,7 @@ public class HashMaps
 		found.put(GameObjects.RUG, false);
 		found.put(GameObjects.SPICES, false);
 		found.put(GameObjects.CHAIN, false);
-		
-		objectLocation.put(GameObjects.KEYS, Location.BUILDING);
-		objectLocation.put(GameObjects.LAMP, Location.BUILDING);
-		objectLocation.put(GameObjects.GRATE, Location.OUTSIDE);
-		objectLocation.put(GameObjects.GRATE_, Location.INSIDE);
-		objectLocation.put(GameObjects.CAGE, Location.COBBLES);
-		objectLocation.put(GameObjects.ROD, Location.DEBRIS);
-		objectLocation.put(GameObjects.ROD2, Location.THEVOID);
-		objectLocation.put(GameObjects.TREADS, Location.EASTMIST);
-		objectLocation.put(GameObjects.TREADS_, Location.SMALLPIT);
-		objectLocation.put(GameObjects.BIRD, Location.BIRD);
-		objectLocation.put(GameObjects.DOOR, Location.IMMENSE);
-		objectLocation.put(GameObjects.PILLOW, Location.SOFT);
-		objectLocation.put(GameObjects.SNAKE, Location.HALLOFMOUNTAINKING);
-		objectLocation.put(GameObjects.CRYSTAL, Location.EASTFISSURE);
-		objectLocation.put(GameObjects.CRYSTAL_, Location.WESTFISSURE);
-		objectLocation.put(GameObjects.TABLET, Location.DROOM);
-		objectLocation.put(GameObjects.CLAM, Location.SHELL);
-		objectLocation.put(GameObjects.OYSTER, Location.THEVOID);
-		objectLocation.put(GameObjects.MAG, Location.ANTE);
-		objectLocation.put(GameObjects.DWARF, Location.THEVOID);
-		objectLocation.put(GameObjects.KNIFE, Location.THEVOID);
-		objectLocation.put(GameObjects.FOOD, Location.BUILDING);
-		objectLocation.put(GameObjects.BOTTLE, Location.BUILDING);
-		objectLocation.put(GameObjects.WATER, Location.THEVOID);
-		objectLocation.put(GameObjects.OIL, Location.THEVOID);
-		objectLocation.put(GameObjects.MIRROR, Location.MIRROR);
-		objectLocation.put(GameObjects.MIRROR_, Location.THEVOID);
-		objectLocation.put(GameObjects.PLANT, Location.WESTPIT);
-		objectLocation.put(GameObjects.PLANT2, Location.WEST2PIT);
-		objectLocation.put(GameObjects.PLANT2_, Location.EAST2PIT);
-		objectLocation.put(GameObjects.STALACTITE, Location.STALACTITE);
-		objectLocation.put(GameObjects.SHADOW, Location.EASTWINDOW);
-		objectLocation.put(GameObjects.SHADOW_, Location.WESTWINDOW);
-		objectLocation.put(GameObjects.AXE, Location.THEVOID);
-		objectLocation.put(GameObjects.ART, Location.ORIENTAL);
-		objectLocation.put(GameObjects.PIRATE, Location.THEVOID);
-		objectLocation.put(GameObjects.DRAGON, Location.SCAN1);
-		objectLocation.put(GameObjects.DRAGON_, Location.SCAN3);
-		objectLocation.put(GameObjects.BRIDGE, Location.SWSIDE);
-		objectLocation.put(GameObjects.BRIDGE_, Location.NESIDE);
-		objectLocation.put(GameObjects.TROLL, Location.SWSIDE);
-		objectLocation.put(GameObjects.TROLL_, Location.NESIDE);
-		objectLocation.put(GameObjects.TROLL2, Location.THEVOID);
-		objectLocation.put(GameObjects.TROLL2_, Location.THEVOID);
-		objectLocation.put(GameObjects.BEAR, Location.BARR);
-		objectLocation.put(GameObjects.MESSAGE, Location.THEVOID);
-		objectLocation.put(GameObjects.GEYSER, Location.VIEW);
-		objectLocation.put(GameObjects.PONY, Location.PONY);
-		objectLocation.put(GameObjects.BATTERIES, Location.THEVOID);
-		objectLocation.put(GameObjects.MOSS, Location.SOFT);
-		
-		objectLocation.put(GameObjects.GOLD, Location.NUGGET);
-		objectLocation.put(GameObjects.DIAMONDS, Location.WESTFISSURE);
-		objectLocation.put(GameObjects.SILVER, Location.NS);
-		objectLocation.put(GameObjects.JEWELS, Location.SOUTH);
-		objectLocation.put(GameObjects.COINS, Location.WEST);
-		objectLocation.put(GameObjects.CHEST, Location.THEVOID);
-		objectLocation.put(GameObjects.EGGS, Location.GIANT);
-		objectLocation.put(GameObjects.TRIDENT, Location.FALLS);
-		objectLocation.put(GameObjects.VASE, Location.ORIENTAL);
-		objectLocation.put(GameObjects.EMERALD, Location.PROOM);
-		objectLocation.put(GameObjects.PYRAMID, Location.DROOM);
-		objectLocation.put(GameObjects.PEARL, Location.THEVOID);
-		objectLocation.put(GameObjects.RUG, Location.SCAN1);
-		objectLocation.put(GameObjects.RUG_, Location.SCAN3);
-		objectLocation.put(GameObjects.SPICES, Location.CHAMBER);
-		objectLocation.put(GameObjects.CHAIN, Location.BARR);
+
 	}
 	
 	public boolean isMovement(String input)
@@ -449,158 +381,15 @@ public class HashMaps
 		return result;
 	}
 	
-	public Location getObjectLocation(GameObjects object)
-	{
-		Location result = Location.THEVOID;
-		if(objectLocation.containsKey(object))
-		{	result = objectLocation.get(object);	}
-		return result;
-	}
-	
 	public ArrayList<GameObjects> objectsHere(Location here)
 	{
 		ArrayList<GameObjects> result = null;
-		if(objectLocation.containsValue(here))
+		for(GameObjects object : GameObjects.values())
 		{
-			result = new ArrayList<GameObjects>();
-			if(objectIsHere(GameObjects.KEYS, here))
-			{	result.add(GameObjects.KEYS);}
-			if(objectIsHere(GameObjects.LAMP, here))
-			{	result.add(GameObjects.LAMP);}
-			if(objectIsHere(GameObjects.GRATE, here))
-			{	result.add(GameObjects.GRATE);}
-			if(objectIsHere(GameObjects.GRATE_, here))
-			{	result.add(GameObjects.GRATE_);}
-			if(objectIsHere(GameObjects.CAGE, here))
-			{	result.add(GameObjects.CAGE);}
-			if(objectIsHere(GameObjects.ROD, here))
-			{	result.add(GameObjects.ROD);}
-			if(objectIsHere(GameObjects.ROD2, here))
-			{	result.add(GameObjects.ROD2);}
-			if(objectIsHere(GameObjects.TREADS, here))
-			{	result.add(GameObjects.TREADS);}
-			if(objectIsHere(GameObjects.TREADS_, here))
-			{	result.add(GameObjects.TREADS_);}
-			if(objectIsHere(GameObjects.BIRD, here))
-			{	result.add(GameObjects.BIRD);}
-			if(objectIsHere(GameObjects.DOOR, here))
-			{	result.add(GameObjects.DOOR);}
-			if(objectIsHere(GameObjects.PILLOW, here))
-			{	result.add(GameObjects.PILLOW);}
-			if(objectIsHere(GameObjects.SNAKE, here))
-			{	result.add(GameObjects.SNAKE);}
-			if(objectIsHere(GameObjects.CRYSTAL, here))
-			{	result.add(GameObjects.CRYSTAL);}
-			if(objectIsHere(GameObjects.CRYSTAL_, here))
-			{	result.add(GameObjects.CRYSTAL_);}
-			if(objectIsHere(GameObjects.TABLET, here))
-			{	result.add(GameObjects.TABLET);}
-			if(objectIsHere(GameObjects.CLAM, here))
-			{	result.add(GameObjects.CLAM);}
-			if(objectIsHere(GameObjects.OYSTER, here))
-			{	result.add(GameObjects.OYSTER);}
-			if(objectIsHere(GameObjects.MAG, here))
-			{	result.add(GameObjects.MAG);}
-			if(objectIsHere(GameObjects.DWARF, here))
-			{	result.add(GameObjects.DWARF);}
-			if(objectIsHere(GameObjects.KNIFE, here))
-			{	result.add(GameObjects.KNIFE);}
-			if(objectIsHere(GameObjects.FOOD, here))
-			{	result.add(GameObjects.FOOD);}
-			if(objectIsHere(GameObjects.BOTTLE, here))
-			{	result.add(GameObjects.BOTTLE);}
-			if(objectIsHere(GameObjects.WATER, here))
-			{	result.add(GameObjects.WATER);}
-			if(objectIsHere(GameObjects.OIL, here))
-			{	result.add(GameObjects.OIL);}
-			if(objectIsHere(GameObjects.MIRROR, here))
-			{	result.add(GameObjects.MIRROR);}
-			if(objectIsHere(GameObjects.MIRROR_, here))
-			{	result.add(GameObjects.MIRROR_);}
-			if(objectIsHere(GameObjects.PLANT, here))
-			{	result.add(GameObjects.PLANT);}
-			if(objectIsHere(GameObjects.PLANT2, here))
-			{	result.add(GameObjects.PLANT2);}
-			if(objectIsHere(GameObjects.PLANT2_, here))
-			{	result.add(GameObjects.PLANT2_);}
-			if(objectIsHere(GameObjects.STALACTITE, here))
-			{	result.add(GameObjects.STALACTITE);}
-			if(objectIsHere(GameObjects.SHADOW, here))
-			{	result.add(GameObjects.SHADOW);}
-			if(objectIsHere(GameObjects.SHADOW_, here))
-			{	result.add(GameObjects.SHADOW_);}
-			if(objectIsHere(GameObjects.AXE, here))
-			{	result.add(GameObjects.AXE);}
-			if(objectIsHere(GameObjects.ART, here))
-			{	result.add(GameObjects.ART);}
-			if(objectIsHere(GameObjects.PIRATE, here))
-			{	result.add(GameObjects.PIRATE);}
-			if(objectIsHere(GameObjects.DRAGON, here))
-			{	result.add(GameObjects.DRAGON);}
-			if(objectIsHere(GameObjects.DRAGON_, here))
-			{	result.add(GameObjects.DRAGON_);}
-			if(objectIsHere(GameObjects.BRIDGE, here))
-			{	result.add(GameObjects.BRIDGE);}
-			if(objectIsHere(GameObjects.BRIDGE_, here))
-			{	result.add(GameObjects.BRIDGE_);}
-			if(objectIsHere(GameObjects.TROLL, here))
-			{	result.add(GameObjects.TROLL);}
-			if(objectIsHere(GameObjects.TROLL_, here))
-			{	result.add(GameObjects.TROLL_);}
-			if(objectIsHere(GameObjects.TROLL2, here))
-			{	result.add(GameObjects.TROLL2);}
-			if(objectIsHere(GameObjects.TROLL2_, here))
-			{	result.add(GameObjects.TROLL2_);}
-			if(objectIsHere(GameObjects.BEAR, here))
-			{	result.add(GameObjects.BEAR);}
-			if(objectIsHere(GameObjects.MESSAGE, here))
-			{	result.add(GameObjects.MESSAGE);}
-			if(objectIsHere(GameObjects.GEYSER, here))
-			{	result.add(GameObjects.GEYSER);}
-			if(objectIsHere(GameObjects.PONY, here))
-			{	result.add(GameObjects.PONY);}
-			if(objectIsHere(GameObjects.BATTERIES, here))
-			{	result.add(GameObjects.BATTERIES);}
-			if(objectIsHere(GameObjects.MOSS, here))
-			{	result.add(GameObjects.MOSS);}
-			if(objectIsHere(GameObjects.GOLD, here))
-			{	result.add(GameObjects.GOLD);}
-			if(objectIsHere(GameObjects.DIAMONDS, here))
-			{	result.add(GameObjects.DIAMONDS);}
-			if(objectIsHere(GameObjects.SILVER, here))
-			{	result.add(GameObjects.SILVER);}
-			if(objectIsHere(GameObjects.JEWELS, here))
-			{	result.add(GameObjects.JEWELS);}
-			if(objectIsHere(GameObjects.COINS, here))
-			{	result.add(GameObjects.COINS);}
-			if(objectIsHere(GameObjects.CHEST, here))
-			{	result.add(GameObjects.CHEST);}
-			if(objectIsHere(GameObjects.EGGS, here))
-			{	result.add(GameObjects.EGGS);}
-			if(objectIsHere(GameObjects.TRIDENT, here))
-			{	result.add(GameObjects.TRIDENT);}
-			if(objectIsHere(GameObjects.VASE, here))
-			{	result.add(GameObjects.VASE);}
-			if(objectIsHere(GameObjects.EMERALD, here))
-			{	result.add(GameObjects.EMERALD);}
-			if(objectIsHere(GameObjects.PYRAMID, here))
-			{	result.add(GameObjects.PYRAMID);}
-			if(objectIsHere(GameObjects.PEARL, here))
-			{	result.add(GameObjects.PEARL);}
-			if(objectIsHere(GameObjects.RUG, here))
-			{	result.add(GameObjects.RUG);}
-			if(objectIsHere(GameObjects.RUG_, here))
-			{	result.add(GameObjects.RUG_);}
-			if(objectIsHere(GameObjects.SPICES, here))
-			{	result.add(GameObjects.SPICES);}
-			if(objectIsHere(GameObjects.CHAIN, here))
-			{	result.add(GameObjects.CHAIN);}
-		}
-		
-		if(!(result == null))
-		{
-			for(GameObjects object : result)
+			if(object.location == here)
 			{
+				if(result == null) {result = new ArrayList<GameObjects>();}
+				result.add(object);
 				if(found.containsKey(object))
 				{
 					if(found.get(object) != true)
@@ -621,18 +410,6 @@ public class HashMaps
 		}
 		return result;
 	}
-	
-	public boolean objectIsHere(GameObjects object, Location here)
-	{	return getObjectLocation(object) == here;	}
-	
-	public void takeObject(GameObjects thing)
-	{	objectLocation.put(thing, Location.INHAND);	}
-	
-	public void voidObject(GameObjects thing)
-	{	objectLocation.put(thing, Location.THEVOID);	}
-	
-	public void dropObject(GameObjects thing, Location here)
-	{	objectLocation.put(thing, here);	}
 	
 	public boolean haveIFound(GameObjects thing)
 	{	return found.get(thing);	}

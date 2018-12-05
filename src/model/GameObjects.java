@@ -4,53 +4,56 @@
 
 package model;
 
-import java.util.ArrayList;
-
 public enum GameObjects 
 {
-
-	NOTHING, ALL, KEYS, LAMP, GRATE, GRATE_, CAGE, ROD, ROD2,
-	TREADS, TREADS_, BIRD, DOOR, PILLOW, SNAKE, CRYSTAL, 
-	CRYSTAL_, TABLET, CLAM, OYSTER, MAG, DWARF, KNIFE, 
-	FOOD, BOTTLE, WATER, OIL, MIRROR, MIRROR_, PLANT,
-	PLANT2, PLANT2_, STALACTITE, SHADOW, SHADOW_, AXE, 
-	ART, PIRATE, DRAGON, DRAGON_, BRIDGE, BRIDGE_, TROLL, 
-	TROLL_, TROLL2, TROLL2_, BEAR, MESSAGE, GEYSER, PONY, 
-	BATTERIES, MOSS, GOLD, DIAMONDS, SILVER, JEWELS, COINS, 
-	CHEST, EGGS, TRIDENT, VASE, EMERALD, PYRAMID, PEARL, 
-	RUG, RUG_, SPICES, CHAIN;
-
-	public static ArrayList<GameObjects> mobileObjects = new ArrayList<GameObjects>();
+	NOTHING, ALL, KEYS(true, Location.BUILDING), LAMP(true, Location.BUILDING), 
+	GRATE(Location.OUTSIDE), GRATE_(Location.INSIDE), CAGE(true, Location.COBBLES), 
+	ROD(true, Location.DEBRIS), ROD2(true, Location.THEVOID),
+	TREADS(Location.EASTMIST), TREADS_(Location.SMALLPIT), 
+	BIRD(true, Location.BIRD), DOOR(Location.IMMENSE), PILLOW(true, Location.SOFT), 
+	SNAKE(Location.HALLOFMOUNTAINKING), CRYSTAL(Location.EASTFISSURE), 
+	CRYSTAL_(Location.WESTFISSURE), TABLET(Location.DROOM), 
+	CLAM(true, Location.SHELL), OYSTER(true, Location.THEVOID), 
+	MAG(true, Location.ANTE), DWARF, KNIFE, 
+	FOOD(true, Location.BUILDING), BOTTLE(true, Location.BUILDING), 
+	WATER, OIL, MIRROR(Location.MIRROR), MIRROR_, 
+	PLANT(Location.WESTPIT), PLANT2(Location.WEST2PIT), PLANT2_(Location.EAST2PIT), 
+	STALACTITE(Location.STALACTITE), SHADOW(Location.EASTWINDOW), SHADOW_(Location.WESTWINDOW), 
+	AXE(true, Location.THEVOID), ART(Location.ORIENTAL), PIRATE, 
+	DRAGON(Location.SCAN1), DRAGON_(Location.SCAN3), 
+	BRIDGE(Location.SWSIDE), BRIDGE_(Location.NESIDE), 
+	TROLL(Location.SWSIDE), TROLL_(Location.NESIDE), 
+	TROLL2(Location.THEVOID), TROLL2_(Location.THEVOID), 
+	BEAR(Location.BARR), MESSAGE, GEYSER(Location.VIEW), PONY(Location.PONY), 
+	BATTERIES(Location.THEVOID), MOSS(Location.SOFT), 
 	
-	public void setUp()
+	GOLD(true, Location.NUGGET), DIAMONDS(true, Location.WESTFISSURE), 
+	SILVER(true, Location.NS), JEWELS(true, Location.SOUTH), COINS(true, Location.WEST), 
+	CHEST(true, Location.THEVOID), EGGS(true, Location.GIANT), 
+	TRIDENT(true, Location.FALLS), VASE(true, Location.ORIENTAL), 
+	EMERALD(true, Location.PROOM), PYRAMID(true, Location.DROOM), PEARL(true, Location.THEVOID), 
+	RUG(true, Location.SCAN1), RUG_(true, Location.SCAN3), 
+	SPICES(true, Location.CHAMBER), CHAIN(true, Location.BARR);
+
+	public final boolean mobile;
+	public  Location location;
+	
+	private GameObjects()
 	{
-		mobileObjects.add(KEYS);
-		mobileObjects.add(LAMP);
-		mobileObjects.add(CAGE);
-		mobileObjects.add(ROD);
-		mobileObjects.add(ROD2);
-		mobileObjects.add(BIRD);
-		mobileObjects.add(PILLOW);
-		mobileObjects.add(CLAM);
-		mobileObjects.add(OYSTER);
-		mobileObjects.add(MAG);
-		mobileObjects.add(FOOD);
-		mobileObjects.add(BOTTLE);
-		mobileObjects.add(AXE);
-		mobileObjects.add(GOLD);
-		mobileObjects.add(DIAMONDS);
-		mobileObjects.add(SILVER);
-		mobileObjects.add(JEWELS);
-		mobileObjects.add(COINS);
-		mobileObjects.add(CHEST);
-		mobileObjects.add(EGGS);
-		mobileObjects.add(TRIDENT);
-		mobileObjects.add(VASE);
-		mobileObjects.add(EMERALD);
-		mobileObjects.add(PYRAMID);
-		mobileObjects.add(PEARL);
-		mobileObjects.add(SPICES);
-		mobileObjects.add(CHAIN);
+		this.mobile = false;
+		this.location = Location.THEVOID;
+	}
+	
+	private GameObjects(Location location)
+	{
+		this.mobile = false;
+		this.location = location;
+	}
+	
+	private GameObjects(boolean mobile, Location location)
+	{
+		this.mobile = mobile;
+		this.location = location;
 	}
 	
 	public boolean isTreasure(GameObjects thisThing)
@@ -69,12 +72,22 @@ public enum GameObjects
 		return treasure;
 	}
 	
-	public boolean canTake(GameObjects thisThing)
+	public static Location[] getLocations()
 	{
-		boolean result = false;
-		if(mobileObjects.contains(thisThing))
-		{	result = true;	}
-		return result;
+		Location[] locations = new Location[GameObjects.values().length];
+		for(int i = 0; i < GameObjects.values().length; i++)
+		{
+			locations[i] = GameObjects.values()[i].location;
+		}
+		return locations;
+	}
+	
+	public static void loadLocations(Location[] locations)
+	{
+		for(int i = 0; i < GameObjects.values().length; i++)
+		{
+			GameObjects.values()[i].location = locations[i];
+		}
 	}
 
 	public String getItemDescription(Location location, GameObjects object, 

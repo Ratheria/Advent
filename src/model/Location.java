@@ -919,6 +919,15 @@ public enum Location
 		}
 	}
 	
+	public void takeObject(GameObjects thing)
+	{	thing.location = INHAND;	}
+	
+	public void voidObject(GameObjects thing)
+	{	thing.location = THEVOID;	}
+	
+	public void dropObject(GameObjects thing, Location here)
+	{	thing.location = here;	}
+	
 	public Location moveTo(Movement destination, Location here, boolean grate,
 			boolean gold, boolean crystalBridge, boolean snake, boolean emerald, boolean clam, 
 			boolean oyster, int plant, boolean oilDoor, boolean dragon, int troll,

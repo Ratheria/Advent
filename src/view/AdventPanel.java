@@ -191,6 +191,7 @@ public class AdventPanel extends JPanel
 			{
 				displayLog.setText(base.loadGame(displayLog.getText()));
 				displayLog.setCaretPosition(displayLog.getDocument().getLength());
+				setLabels();
 				scroll.setViewportView(displayLog);
 			}
 		});

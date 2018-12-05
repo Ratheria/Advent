@@ -15,7 +15,7 @@ public class AdventSaveData implements Serializable
 	public ArrayList<GameObjects> mobileObjectsData;
 	public int[] visits;
 	public HashMap<GameObjects, Boolean> found;
-	public HashMap<GameObjects, Location> objectLocation;
+	public Location[] objectLocation;
 	public Location currentLocation;
 	public Location previousLocation;
 	public int[] scores;
