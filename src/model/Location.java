@@ -927,7 +927,7 @@ public enum Location
 	public void voidObject(GameObjects thing)
 	{	thing.location = THEVOID;	}
 	
-	public void dropObject(GameObjects thing, Location here)
+	public void placeObject(GameObjects thing, Location here)
 	{	thing.location = here;	}
 	
 	public Location moveTo(Movement destination, Location here, boolean grate,
