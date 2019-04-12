@@ -160,9 +160,9 @@ public class AdventPanel extends JPanel
 		inputField.requestFocusInWindow();
 	}
 	
-	public void done()
+	public void inputFieldEditable(boolean editable)
 	{
-		inputField.setEditable(false);
+		inputField.setEditable(editable);
 	}
 	
 	private void setLabels()

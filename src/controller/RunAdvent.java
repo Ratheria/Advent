@@ -6,6 +6,5 @@ public class RunAdvent
 	{
 		@SuppressWarnings("unused")
 		AdventControl advent = new AdventControl();
-//		advent.startGame();
 	}
 }

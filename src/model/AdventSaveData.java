@@ -18,9 +18,7 @@ public class AdventSaveData implements Serializable
 	public Location[] objectLocation;
 	public Location currentLocation;
 	public Location previousLocation;
-	public int[] scores;
-	public String[] sMessages;
-	public String[] feeFieFoe;
+
 	public boolean dead;
 	public boolean beginning;
 	public boolean closing, closed;
@@ -90,4 +88,5 @@ public class AdventSaveData implements Serializable
 	public byte cages;
 	public byte birds;
 	public byte snakes;
+	public boolean textField;
 }

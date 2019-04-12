@@ -27,11 +27,7 @@ public class AdventureFrame extends JFrame
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
-	
-	public void done()
-	{
-		panel.done();
-	}
+
 	
 	public void setUp()
 	{
