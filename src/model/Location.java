@@ -4,6 +4,8 @@
 
 package model;
 
+import java.util.ArrayList;
+
 import controller.AdventControl;
 
 public enum Location
@@ -2338,7 +2340,22 @@ public enum Location
 				{
 					case NORTHEAST: next = CORR; break;
 					case OVER: case ACROSS: case CROSS: case SOUTHWEST:
-						if(troll < 2)
+						System.out.println("troll " + troll);
+						if(troll == 1)
+						{
+							ArrayList<GameObjects> currentlyHolding = AdventControl.hash.objectsHere(Location.INHAND);
+							if(currentlyHolding != null)
+							{
+								for(GameObjects object : currentlyHolding)
+								{
+									if(object.isTreasure(object))
+									{
+										troll = 0;
+									}
+								}
+							}
+						}
+						if(troll == 0)
 						{
 							next = REMARK;
 						}

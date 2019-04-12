@@ -66,7 +66,7 @@ public class AdventControl
 			};
 	
 	private AdventureFrame frame;
-	private HashMaps hash;
+	public static HashMaps hash;
 	
 	private Location currentLocation;
 	private Location previousLocation;
@@ -378,13 +378,15 @@ public class AdventControl
 						output = "All right. But don't blame me if something goes wr......\n\t---POOF!!---"
 								+ "\nYou are engulfed in a cloud of orange smoke. Coughing and gasping, you "
 								+ "emerge from the smoke to find....\n" 
-								+ places.getDescription(currentLocation, brief); 
+								+ places.getDescription(currentLocation, brief)
+								+ listItemsHere(currentLocation); 
 						break;
 					case 1:
 						playerIsDead = false;
 						output = "Okay, now where did I put my resurrection kit?....\n\t>POOF!<"
 								+ "\nEverything disappears in a dense cloud of orange smoke.\n" 
-								+ places.getDescription(currentLocation, brief);
+								+ places.getDescription(currentLocation, brief)
+								+ listItemsHere(currentLocation); 
 						break;
 					default:
 						output = "Okay, if you're so smart, do it yourself! I'm leaving!";
@@ -601,11 +603,12 @@ public class AdventControl
 								|| currentLocation == Location.RESER)
 						{
 							output = "Your feet are now wet.";
-							turns++;
+							increaseTurns = true;
 						}
 						else
 						{
 							output = "I don't see any water.";
+							increaseTurns = false;
 						}
 					}
 					else
@@ -669,11 +672,12 @@ public class AdventControl
 			locationChange = false;
 			if(pirate == 1)
 			{
-				ArrayList<GameObjects> currentlyHolding = hash.objectsHere(Location.INHAND);
-				boolean treasure = false;
 				pirate = 2;
 				places.dropObject(GameObjects.MESSAGE, Location.PONY);
 				places.dropObject(GameObjects.CHEST, Location.DEAD2);
+				
+				ArrayList<GameObjects> currentlyHolding = hash.objectsHere(Location.INHAND);
+				boolean treasure = false;
 				if(currentlyHolding != null)
 				{
 					for(GameObjects object : currentlyHolding)
@@ -764,6 +768,7 @@ public class AdventControl
 			System.out.println("lamp " + lamp);
 			System.out.println("items " + itemsInHand);
 			System.out.println("tally " + tally);
+			System.out.println("turns " + turns);
 		}
 		return output;
 	}
@@ -1704,6 +1709,32 @@ public class AdventControl
 						output = "What would you like to throw?";
 						quest = 12;
 					}
+					else if(object == GameObjects.BEAR)
+					{
+						if(stateOfTheBear == 2)
+						{
+							if(objectIsHere(GameObjects.TROLL)||objectIsHere(GameObjects.TROLL_))
+							{
+								voidObject(GameObjects.TROLL);
+								voidObject(GameObjects.TROLL_);
+								places.dropObject(GameObjects.TROLL2_, Location.NESIDE);
+								places.dropObject(GameObjects.TROLL2, Location.SWSIDE);
+								stateOfTheBear = 4;
+								stateOfTheTroll = 2;
+								output = "The bear lumbers toward the troll, who lets out a startled shriek and "
+										+ "scurries away. The bear soon gives up pursuit and wanders back.";
+							}
+							else
+							{
+								stateOfTheBear = 4;
+								output = okay;
+							}
+						}
+						else
+						{
+							output = dontHave;
+						}
+					}
 					else if(!(isInHand(object)))
 					{
 						output = dontHave;
@@ -2412,6 +2443,11 @@ public class AdventControl
 					output = output + "\n" + getDescription(currentLocation, brief);
 					increaseTurns = false;
 				}
+				else if(!canISee(currentLocation))
+				{
+					output = pitchDark(output);
+					increaseTurns = false;
+				}
 				else if(destination.equals(Movement.NORTH) ||
 						destination.equals(Movement.SOUTH) ||
 						destination.equals(Movement.EAST)  ||
@@ -2421,9 +2457,9 @@ public class AdventControl
 						destination.equals(Movement.SOUTHEAST)||
 						destination.equals(Movement.SOUTHWEST))
 				{
+					increaseTurns = false;
 					output = "There are no exits in that direction.\n";
 					output = output + getDescription(currentLocation, brief);
-					increaseTurns = false;
 				}
 				else
 				{
@@ -2646,17 +2682,7 @@ public class AdventControl
 					setLocation(locationResult);
 					if(!canISee(currentLocation))
 					{
-						boolean pitifulDeath = fallInPit();
-						if(pitifulDeath && !canISee(previousLocation))
-						{
-							playerIsDead = true;
-							fatality = 1;
-						}
-						else
-						{
-							output = new String("It is now pitch dark. If you proceed you will likely "
-									+ "fall into a pit.");
-						}
+						output = pitchDark(output);
 					}
 					else
 					{
@@ -2706,6 +2732,22 @@ public class AdventControl
 		{
 			output = "You can not do that.";
 			increaseTurns = false;
+		}
+		return output;
+	}
+	
+	private String pitchDark(String output)
+	{
+		boolean pitifulDeath = fallInPit();
+		if(pitifulDeath && !canISee(previousLocation))
+		{
+			playerIsDead = true;
+			fatality = 1;
+		}
+		else
+		{
+			output = new String("It is now pitch dark. If you proceed you will likely "
+					+ "fall into a pit.");
 		}
 		return output;
 	}
