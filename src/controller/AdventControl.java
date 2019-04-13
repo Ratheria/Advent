@@ -110,7 +110,7 @@ public class AdventControl
 	private boolean read;
 	private boolean quit;
 	private byte hint;
-	private byte h1, h2, h3, h4, h5, h6;
+	private int h1, h2, h3, h4, h5, h6;
 	
 	private byte clock1, clock2;
 	private byte quest;
@@ -118,7 +118,7 @@ public class AdventControl
 	private int brief;
 	private int score;
 	private int bonus;
-	private byte turns;
+	private int turns;
 	private int lamp;
 	private byte itemsInHand;
 	private byte deaths;
@@ -1145,7 +1145,7 @@ public class AdventControl
 						}
 						increaseTurns = false;
 					}
-					if(object == GameObjects.OYSTER && endGameOystersState != 0) 
+					if(caveIsClosed && object == GameObjects.OYSTER && endGameOystersState != 0) 
 					{
 						endGameOystersState = 0; 
 						output = "Interesting. There seems to be something written on the under-side of the oyster.";
@@ -2171,6 +2171,12 @@ public class AdventControl
 					}
 					break;
 					
+				case PET:
+					//TODO
+					output = "TODO: implement";
+					increaseTurns = false;
+					break;
+					
 				case WAKE:
 					if(caveIsClosed && object == GameObjects.DWARF)
 					{
@@ -2844,7 +2850,7 @@ public class AdventControl
 		}
 		if(fatality == 2)
 		{
-			output = "The resulting ruckus has awakened the Dwarves.\nThere are now several threatening "
+			output = "\nThe resulting ruckus has awakened the Dwarves.\nThere are now several threatening "
 					+ "little Dwarves in the room with you! Most of them throw knives at you! All of them get you!";
 		}
 		if(isInHand(GameObjects.LAMP))

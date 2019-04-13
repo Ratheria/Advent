@@ -52,14 +52,14 @@ public class AdventSaveData implements Serializable
 	public boolean read;
 	public boolean quit;
 	public byte hint;
-	public byte h1, h2, h3, h4, h5, h6;
+	public int h1, h2, h3, h4, h5, h6;
 
 	public byte clock1, clock2;
 	public byte quest;
 	public int brief;
 	public int score;
 	public int bonus;
-	public byte turns;
+	public int turns;
 	public int lamp;
 	public byte itemsInHand;
 	public byte deaths;

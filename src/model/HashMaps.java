@@ -286,6 +286,7 @@ public class HashMaps
 		actions.put("inven", ActionWords.INVENTORY);
 		actions.put("score", ActionWords.SCORE);
 		actions.put("quit", ActionWords.QUIT);
+		actions.put("pet", ActionWords.PET);
 		
 		mwords.put("abra", MessageWords.MAGIC);
 		mwords.put("abrac", MessageWords.MAGIC);

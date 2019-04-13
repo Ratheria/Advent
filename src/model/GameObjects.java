@@ -226,7 +226,7 @@ public enum GameObjects
 				if(location == Location.INHAND)
 				{	output = new String("\n\t\tGiant Oyster >GROAN!<");	}
 				else if(oysters == 0)
-				{	output = new String("\n\tThere is an enormous oyster here with its shell tightly closed. Interesting, there seems to be something written on the underside of the oyster.");	}
+				{	output = new String("\n\tThere is an enormous oyster here with its shell tightly closed.");	}
 				else
 				{	output = "";	}
 				break;		
