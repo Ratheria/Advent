@@ -3178,18 +3178,25 @@ public class AdventControl
 	public String writeData(String logData)
 	{
 		String result = "Game saved.";
-		try
+		if(!playerIsDead)
 		{
-		    fileWriter = new FileOutputStream(dataFile);
-		    objectWriter = new ObjectOutputStream(fileWriter);
-		    objectWriter.writeObject(createSaveData(logData));
-		    objectWriter.close();
-		    fileWriter.close();
-		} 
-		catch (IOException e)
+			try
+			{
+			    fileWriter = new FileOutputStream(dataFile);
+			    objectWriter = new ObjectOutputStream(fileWriter);
+			    objectWriter.writeObject(createSaveData(logData));
+			    objectWriter.close();
+			    fileWriter.close();
+			} 
+			catch (IOException e)
+			{
+				result = "Exception encountered. Game not saved.";
+				e.printStackTrace();
+			}
+		}
+		else
 		{
-			result = "Game not saved.";
-			e.printStackTrace();
+			result = "You may not save now.";
 		}
 		return result;
 	}
