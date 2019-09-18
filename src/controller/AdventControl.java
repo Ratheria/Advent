@@ -21,64 +21,27 @@ import java.util.Random;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import model.ActionWords;
-import model.AdventSaveData;
+import model.AdventData;
 import model.GameObjects;
 import model.HashMaps;
 import model.Movement;
 import view.AdventureFrame;
 
-public class AdventControl 
+public class AdventControl
 {
-	public static Random random = new Random();
-	private static final Location places = Location.THEVOID;
-	@SuppressWarnings("unused")
-	private static final ActionWords actions = ActionWords.NOTHING;
-	private static final GameObjects things = GameObjects.NOTHING;
-	@SuppressWarnings("unused")
-	private static final MessageWords messages = MessageWords.DENNIS;
-	
-	public static boolean textFieldEditable = true;
-	
-	public static final String empty = "";
-	public static final String alikePassages = "You are in a maze of twisty little passages, all alike.";
-	public static final String alikeT = "Maze All Alike";
-	public static final String diffT = "Maze All Different";
-	public static final String secretCanyon = "Secret Canyon";
-	public static final String deadEnd = "Dead end.";
-	public static final String deadEndT = "Dead End";
-	public static final String okay = "Okay.";
-	public static final String dontHave = "You are not carrying it!";
-	public static final String nothing = "Nothing happens.";
-	
-	private static final String[] feeFieFoe = new String[] {"fee", "fie", "foe", "foo", "fum"};
-	public static final int[] scores = new int[] {35, 100, 130, 200, 250, 300, 330, 349, 350};
-	public static final String[] sMessages = new String[] 
-			{	
-				"You are obviously a rank amateur. Better luck next time.",
-				"Your score qualifies you as a novice class adventurer.",
-				"You have now achieved the rating 'Experienced Adventurer'.",
-				"You may now consider yourself a 'Seasoned Adventurer'.",
-				"You have reached 'Junior Master' status.",
-				"Your score puts you in Master Adventurer Class C.",
-				"Your score puts you in Master Adventurer Class B.",
-				"Your score puts you in Master Adventurer Class A.",
-				"All of Adventuredom gives tribute to you, Adventure Grandmaster!"
-			};
-	
-	private AdventureFrame frame;
-	public static HashMaps hash;
-	
 	private Location currentLocation;
 	private Location previousLocation;
 	@SuppressWarnings("unused")
 	private Location eldestLocation;
 	
+	public boolean textFieldEditable = true;
+	
 	private boolean shortcut;
 	private boolean dwarvesAllowed;
 	
-	private static boolean relocate;
-	private static boolean collapse;
-	private static boolean justCollapsed;
+	private boolean relocate;
+	private boolean collapse;
+	private boolean justCollapsed;
 	
 	private boolean playerIsDead;
 	private boolean beginningInstructionsOffer;
@@ -123,7 +86,7 @@ public class AdventControl
 	private byte itemsInHand;
 	private byte deaths;
 	private byte fatality;
-	private static int tally;
+	private int tally;
 	private byte lostTreasures;
 	private byte plant;
 	private byte bottle;
@@ -139,11 +102,11 @@ public class AdventControl
 	private byte dwarfPresent;
 	//none, new, current, old
 	
-	private static byte stateOfTheTroll;
+	public byte stateOfTheTroll;
 	//there, hidden, dead, can pass;
-	private static byte stateOfTheBear;
+	public byte stateOfTheBear;
 	//default, fed + idle, fed + following, dead, was following ide
-	private byte stateOfTheChain;
+	public byte stateOfTheChain;
 	//locked to bear, unlocked, locked
 	private byte westHintCounter;
 	private byte fooMagicWordProgression;
@@ -173,8 +136,7 @@ public class AdventControl
 	public AdventControl()
 	{
 		dataFile = new File(System.getProperty("user.home") + "/.AdventData");
-		frame = new AdventureFrame(this);
-		hash = new HashMaps();
+		AdventMain.hash = new HashMaps();
 
 		setUp();
 	}
@@ -264,8 +226,7 @@ public class AdventControl
 		endGameSnakesState = 0;
 //		fileSlot = 0;
 //		currentFileOperation = 0;
-		frame.setUp();
-		hash.setUpHashMaps();
+		AdventMain.hash.setUpHashMaps();
 	}
 
 	public String determineAction(String input) 
@@ -274,14 +235,14 @@ public class AdventControl
 		String output = null;
 		increaseTurns = true;
 		int answer = askYesNo(input);
-		boolean thisIsAnObject = hash.isObject(input);
-		boolean thisIsAnAction = hash.isAction(input);
+		boolean thisIsAnObject = AdventMain.hash.isObject(input);
+		boolean thisIsAnAction = AdventMain.hash.isAction(input);
 		GameObjects itsAn = null;
 		ActionWords action = null;
 		if(thisIsAnObject)
-		{	itsAn = (hash.whichObject(input));	}
+		{	itsAn = (AdventMain.hash.whichObject(input));	}
 		if(thisIsAnAction)
-		{	action = (hash.whichAction(input));	}
+		{	action = (AdventMain.hash.whichAction(input));	}
 		if(beginningInstructionsOffer)
 		{
 			if(shortcut)
@@ -300,13 +261,13 @@ public class AdventControl
 						+ "\"northeast\" as \"ne\" to distinguish it from \"north\" "
 						+ "(Should you get stuck, type \"help\" for some general hints. "
 						+ "For information on how to end your adventure, etc., type \"info\".)\n\n"
-						+ places.getDescription(Location.ROAD, brief);
+						+ AdventMain.places.getDescription(Location.ROAD, brief);
 				lamp = 1000;
 				beginningInstructionsOffer = false;
 			}
 			else if(answer == 2)
 			{
-				output = places.getDescription(Location.ROAD, brief);
+				output = AdventMain.places.getDescription(Location.ROAD, brief);
 				beginningInstructionsOffer = false;
 			}
 			else
@@ -325,8 +286,8 @@ public class AdventControl
 			currentLocation = Location.SCAN2;
 			voidObject(GameObjects.DRAGON_);
 			voidObject(GameObjects.RUG_);
-			places.placeObject(GameObjects.DRAGON, currentLocation);
-			places.placeObject(GameObjects.RUG, currentLocation);
+			AdventMain.places.placeObject(GameObjects.DRAGON, currentLocation);
+			AdventMain.places.placeObject(GameObjects.RUG, currentLocation);
 		}
 		else if(seriousQuestion && answer == 0)
 		{
@@ -344,7 +305,7 @@ public class AdventControl
 		else if(actionToAttempt != ActionWords.NOTHING && itsAn != GameObjects.NOTHING)
 		{
 			quest = 0;
-			output = attemptAction(actionToAttempt, hash.whichObject(input), input);
+			output = attemptAction(actionToAttempt, AdventMain.hash.whichObject(input), input);
 			actionToAttempt = ActionWords.NOTHING;
 		}
 		else if(input.equals("fee") || (quest == 7 && thisIsAnAction && action == ActionWords.FEEFIE))
@@ -380,16 +341,16 @@ public class AdventControl
 		else if(quest == 10 && thisIsAnObject && itsAn != GameObjects.NOTHING)
 		{
 			quest = 0;
-			output = attemptAction(ActionWords.KILL, hash.whichObject(input), input);
+			output = attemptAction(ActionWords.KILL, AdventMain.hash.whichObject(input), input);
 		}
 		else if(quest == 11 && thisIsAnObject && itsAn != GameObjects.NOTHING)
 		{
-			output = attemptAction(ActionWords.FEED, hash.whichObject(input), input);
+			output = attemptAction(ActionWords.FEED, AdventMain.hash.whichObject(input), input);
 			quest = 0;
 		}
 		else if(quest == 12 && thisIsAnObject && itsAn != GameObjects.NOTHING)
 		{
-			output = attemptAction(ActionWords.TOSS, hash.whichObject(input), input);
+			output = attemptAction(ActionWords.TOSS, AdventMain.hash.whichObject(input), input);
 			quest = 0;
 		}
 		else if(quest == 20)
@@ -404,7 +365,7 @@ public class AdventControl
 						+ "words I've always known now has a new effect.'";
 			}
 			else
-			{	output = okay;	}
+			{	output = AdventMain.okay;	}
 		}
 		else if(quest == 21 && answer == 1)
 		{
@@ -484,23 +445,23 @@ public class AdventControl
 			{
 				input = input.substring(0, 5);
 			}
-			if(hash.isMovement(input))
+			if(AdventMain.hash.isMovement(input))
 			{				
 				output = attemptMovement(input);
 			}
-			else if(hash.isObject(input) && objectIsPresent(hash.whichObject(input)) 
-					&& hash.whichObject(input) == GameObjects.KNIFE)
+			else if(AdventMain.hash.isObject(input) && objectIsPresent(AdventMain.hash.whichObject(input)) 
+					&& AdventMain.hash.whichObject(input) == GameObjects.KNIFE)
 			{
 				output = new String("The dwarves' knives vanish as they strike the walls of the cave.");
 				increaseTurns = false;
 			}
-			else if(hash.isAction(input))
+			else if(AdventMain.hash.isAction(input))
 			{
-				output = attemptAction(hash.whichAction(input), GameObjects.NOTHING, "");
+				output = attemptAction(AdventMain.hash.whichAction(input), GameObjects.NOTHING, "");
 			}
-			else if(hash.isObject(input))
+			else if(AdventMain.hash.isObject(input))
 			{
-				GameObjects currentObject = hash.whichObject(input);
+				GameObjects currentObject = AdventMain.hash.whichObject(input);
 				if(objectIsPresent(currentObject))
 				{
 					output = "What would you like to do with the " + input + "?";
@@ -516,9 +477,9 @@ public class AdventControl
 					increaseTurns = false;
 				}
 			}
-			else if(hash.isMessage(input))
+			else if(AdventMain.hash.isMessage(input))
 			{
-				MessageWords message = hash.whichMessage(input);
+				MessageWords message = AdventMain.hash.whichMessage(input);
 				output = getText(message);
 			}
 			else
@@ -549,23 +510,31 @@ public class AdventControl
 		{
 			String input12 = input1;
 			String input22 = input2;
+			
+			boolean isObject1 = AdventMain.hash.isObject(input12);
+			boolean isObject2 = AdventMain.hash.isObject(input22);
+			GameObjects object1 = GameObjects.NOTHING;
+			GameObjects object2 = GameObjects.NOTHING;
+			if(isObject1) { object1 = AdventMain.hash.whichObject(input12);	}
+			if(isObject2) { object2 = AdventMain.hash.whichObject(input22);	}
+			
 			if(input1.length() > 5)
 			{	input12 = input1.substring(0, 5);	}
 			if(input2.length() > 5)
 			{	input22 = input2.substring(0, 5);	}
-			if(hash.isMessage(input12))
+			if(AdventMain.hash.isMessage(input12))
 			{
-				MessageWords message = hash.whichMessage(input12);
+				MessageWords message = AdventMain.hash.whichMessage(input12);
 				output = getText(message);
 			}
-			else if(hash.isMessage(input22))
+			else if(AdventMain.hash.isMessage(input22))
 			{
-				MessageWords message = hash.whichMessage(input22);
+				MessageWords message = AdventMain.hash.whichMessage(input22);
 				output = getText(message);
 			}
-			else if(hash.isMovement(input12))
+			else if(AdventMain.hash.isMovement(input12))
 			{
-				if(hash.whichMovement(input12) == Movement.ENTER)
+				if(AdventMain.hash.whichMovement(input12) == Movement.ENTER)
 				{
 					if(input22.equalsIgnoreCase("water")||input22.equalsIgnoreCase("strea"))
 					{
@@ -589,36 +558,31 @@ public class AdventControl
 				else
 				{	output = attemptMovement(input12);	}
 			}
-			else if(hash.isMovement(input22))
+			else if(AdventMain.hash.isMovement(input22))
 			{	output = attemptMovement(input22);	}
-			else if(hash.isObject(input12) && hash.isObject(input22) 
-					&& (hash.whichObject(input12) == GameObjects.WATER 
-					&& hash.whichObject(input22) == GameObjects.PLANT 
-					|| hash.whichObject(input22) == GameObjects.WATER 
-					&& hash.whichObject(input12) == GameObjects.PLANT))
+			else if(isObject1 && isObject2 
+					&& (object1 == GameObjects.WATER 
+					&& object2 == GameObjects.PLANT 
+					|| object2 == GameObjects.WATER 
+					&& object1 == GameObjects.PLANT))
 			{	output = attemptAction(ActionWords.POUR, GameObjects.WATER, "");	}
-			else if(hash.isObject(input12) && hash.isObject(input22) 
-					&& (hash.whichObject(input12) == GameObjects.OIL 
-					&& hash.whichObject(input22) == GameObjects.DOOR 
-					|| hash.whichObject(input22) == GameObjects.OIL 
-					&& hash.whichObject(input12) == GameObjects.DOOR))
+			else if(isObject1 && isObject2
+					&& (object1 == GameObjects.OIL 
+					&& object2 == GameObjects.DOOR 
+					|| object2 == GameObjects.OIL 
+					&& object1 == GameObjects.DOOR))
 			{	output = attemptAction(ActionWords.POUR, GameObjects.OIL, "");	}
-			else if(hash.isObject(input12) && objectIsPresent(hash.whichObject(input12)) 
-					&& hash.whichObject(input12) == GameObjects.KNIFE)
+			else if(isObject1 && objectIsPresent(object1) && object1 == GameObjects.KNIFE ||
+					isObject2 && objectIsPresent(object2) && object2 == GameObjects.KNIFE)
 			{
+				//TODO evaluate this
 				output = new String("The dwarves' knives vanish as they strike the walls of the cave.");
 				increaseTurns = false;
 			}
-			else if(hash.isObject(input22) && objectIsPresent(hash.whichObject(input22)) 
-					&& hash.whichObject(input22) == GameObjects.KNIFE)
-			{
-				output = new String("The dwarves' knives vanish as they strike the walls of the cave.");
-				increaseTurns = false;
-			}
-			else if(hash.isAction(input12))
-			{	output = attemptAction(hash.whichAction(input12), determineNature(input22), input2);	}
-			else if(hash.isAction(input22))
-			{	output = attemptAction(hash.whichAction(input22), determineNature(input12), input1);	}
+			else if(AdventMain.hash.isAction(input12))
+			{	output = attemptAction(AdventMain.hash.whichAction(input12), determineNature(input22), input2);	}
+			else if(AdventMain.hash.isAction(input22))
+			{	output = attemptAction(AdventMain.hash.whichAction(input22), determineNature(input12), input1);	}
 			else
 			{	output = nonsense();	}
 		}
@@ -645,19 +609,19 @@ public class AdventControl
 			if(pirate == 1)
 			{
 				pirate = 2;
-				places.placeObject(GameObjects.MESSAGE, Location.PONY);
-				places.placeObject(GameObjects.CHEST, Location.DEAD2);
+				AdventMain.places.placeObject(GameObjects.MESSAGE, Location.PONY);
+				AdventMain.places.placeObject(GameObjects.CHEST, Location.DEAD2);
 				
-				ArrayList<GameObjects> currentlyHolding = hash.objectsHere(Location.INHAND);
+				ArrayList<GameObjects> currentlyHolding = AdventMain.hash.objectsHere(Location.INHAND);
 				boolean treasure = false;
 				if(currentlyHolding != null)
 				{
 					for(GameObjects object : currentlyHolding)
 					{
-						if(things.isTreasure(object))
+						if(AdventMain.things.isTreasure(object))
 						{
 							treasure = true;
-							places.placeObject(object, Location.DEAD2);
+							AdventMain.places.placeObject(object, Location.DEAD2);
 							itemsInHand--;
 						}
 					}
@@ -690,13 +654,13 @@ public class AdventControl
 					dwarvesLeft -= (Math.floor(generate() * 3));
 					output += "\n\nA little dwarf just walked around a corner, saw you, threw a little axe at you, "
 							+ "cursed, and ran away. (The axe missed.)";
-					places.placeObject(GameObjects.AXE, currentLocation);
+					AdventMain.places.placeObject(GameObjects.AXE, currentLocation);
 				}
 				else
 				{
 					output += "\n\nThere is a threatening little dwarf in the room with you!";
 					dwarfPresent = 2;
-					places.placeObject(GameObjects.DWARF, currentLocation);
+					AdventMain.places.placeObject(GameObjects.DWARF, currentLocation);
 				}
 			}
 			else if (dwarfPresent == 2 && battleUpdate)
@@ -844,14 +808,14 @@ public class AdventControl
 				output = "All right. But don't blame me if something goes wr......\n\t---POOF!!---"
 						+ "\nYou are engulfed in a cloud of orange smoke. Coughing and gasping, you "
 						+ "emerge from the smoke to find....\n" 
-						+ places.getDescription(currentLocation, brief)
+						+ AdventMain.places.getDescription(currentLocation, brief)
 						+ listItemsHere(currentLocation); 
 				break;
 			case 1:
 				playerIsDead = false;
 				output = "Okay, now where did I put my resurrection kit?....\n\t>POOF!<"
 						+ "\nEverything disappears in a dense cloud of orange smoke.\n" 
-						+ places.getDescription(currentLocation, brief)
+						+ AdventMain.places.getDescription(currentLocation, brief)
 						+ listItemsHere(currentLocation); 
 				break;
 			default:
@@ -873,24 +837,24 @@ public class AdventControl
 	private String listItemsHere(Location here)
 	{
 		String output = "";
-		ArrayList<GameObjects> objects = hash.objectsHere(here);
+		ArrayList<GameObjects> objects = AdventMain.hash.objectsHere(here);
 		if(objects != null)
 		{
 			//output = output + "\n";
 			for(GameObjects thing : objects)
 			{
 				boolean pillow = (objectIsHere(GameObjects.PILLOW));
-				output = new String(output + things.getItemDescription(here, thing, 
+				output = new String(output + AdventMain.things.getItemDescription(here, thing, 
 						lampIsLit, grateIsUnlocked, plant, bottle, birdInCage, doorHasBeenOiled, bearAxe, dragonInSecretCanyon,
 						stateOfTheBear, spareBatteriesState, vaseIsBroken, stateOfTheChain, goldInInventory, crystalBridgeIsThere, collapse, rod1, 
 						rod2, endGameBottlesState, endGameLampsState, endGameOystersState, endGamePillowsState, endGameGratesState, endGameCagesState, endGameBirdsState, endGameSnakesState, pillow));
 				
-				if(things.isTreasure(thing))
+				if(AdventMain.things.isTreasure(thing))
 				{
-					if(!hash.haveIFound(GameObjects.RUG) && thing == GameObjects.RUG_)
-					{	hash.wasFound(GameObjects.RUG);	}
-					else if(!(thing == GameObjects.RUG_) && !hash.haveIFound(thing))
-					{	hash.wasFound(thing);	}
+					if(!AdventMain.hash.haveIFound(GameObjects.RUG) && thing == GameObjects.RUG_)
+					{	AdventMain.hash.wasFound(GameObjects.RUG);	}
+					else if(!(thing == GameObjects.RUG_) && !AdventMain.hash.haveIFound(thing))
+					{	AdventMain.hash.wasFound(thing);	}
 				}
 				System.out.println(thing);
 			}
@@ -913,17 +877,17 @@ public class AdventControl
 		Object result = GameObjects.NOTHING;
 		if(input.length() > 5)
 		{	input = input.substring(0, 5);	}
-		if(hash.isMovement(input))
-		{	result = hash.whichMovement(input);	}
-		else if(hash.isObject(input))
-		{	result = hash.whichObject(input);	}
+		if(AdventMain.hash.isMovement(input))
+		{	result = AdventMain.hash.whichMovement(input);	}
+		else if(AdventMain.hash.isObject(input))
+		{	result = AdventMain.hash.whichObject(input);	}
 		return result;
 	}
 
 	private String attemptAction(ActionWords verb, Object other, String alt)
 	{
 		String output = "I'm game. Would you care to explain how?";
-		if(!hash.isObject(other))
+		if(!AdventMain.hash.isObject(other))
 		{
 			output = new String("I don't see any " + alt + ".");
 			increaseTurns = false;
@@ -953,7 +917,7 @@ public class AdventControl
 					{	output = attemptAction(ActionWords.TAKE, GameObjects.RUG_, alt);	}
 					else if(object == GameObjects.ALL)
 					{
-						ArrayList<GameObjects> itemsHere = hash.objectsHere(currentLocation);
+						ArrayList<GameObjects> itemsHere = AdventMain.hash.objectsHere(currentLocation);
 						if(!(itemsHere == null))
 						{
 							output = "";
@@ -1100,7 +1064,7 @@ public class AdventControl
 							{
 								birdInCage = true;
 								takeObject(GameObjects.BIRD);
-								output = okay;
+								output = AdventMain.okay;
 							}
 							else
 							{
@@ -1108,7 +1072,7 @@ public class AdventControl
 								{
 									takeObject(GameObjects.BIRD);
 									takeObject(GameObjects.CAGE);
-									output = okay;
+									output = AdventMain.okay;
 								}
 							}
 						}
@@ -1117,8 +1081,8 @@ public class AdventControl
 							if(objectIsHere(GameObjects.RUG) || objectIsHere(GameObjects.RUG_))
 							{
 								takeObject(GameObjects.RUG);
-								places.voidObject(GameObjects.RUG_);
-								output = okay;
+								AdventMain.places.voidObject(GameObjects.RUG_);
+								output = AdventMain.okay;
 							}
 						}
 						else if(object == GameObjects.AXE && bearAxe && stateOfTheBear == 0)
@@ -1133,7 +1097,7 @@ public class AdventControl
 						else if(object.mobile && objectIsHere(object))
 						{
 							takeObject(object);
-							output = okay;
+							output = AdventMain.okay;
 						}
 					}
 					else
@@ -1157,11 +1121,11 @@ public class AdventControl
 					if(isInHand(GameObjects.ROD2) && object == GameObjects.ROD && !isInHand(GameObjects.ROD))
 					{
 						dropObject(GameObjects.ROD2);
-						output = okay;
+						output = AdventMain.okay;
 					}
 					else if(object == GameObjects.ALL)
 					{
-						ArrayList<GameObjects> itemsHere = hash.objectsHere(Location.INHAND);
+						ArrayList<GameObjects> itemsHere = AdventMain.hash.objectsHere(Location.INHAND);
 						if(!(itemsHere == null))
 						{
 							output = "";
@@ -1190,8 +1154,8 @@ public class AdventControl
 							{
 								voidObject(GameObjects.TROLL);
 								voidObject(GameObjects.TROLL_);
-								places.placeObject(GameObjects.TROLL2_, Location.NESIDE);
-								places.placeObject(GameObjects.TROLL2, Location.SWSIDE);
+								AdventMain.places.placeObject(GameObjects.TROLL2_, Location.NESIDE);
+								AdventMain.places.placeObject(GameObjects.TROLL2, Location.SWSIDE);
 								stateOfTheBear = 4;
 								stateOfTheTroll = 2;
 								output = "The bear lumbers toward the troll, who lets out a startled shriek and "
@@ -1200,12 +1164,12 @@ public class AdventControl
 							else
 							{
 								stateOfTheBear = 4;
-								output = okay;
+								output = AdventMain.okay;
 							}
 						}
 						else
 						{
-							output = dontHave;
+							output = AdventMain.dontHave;
 						}
 					}
 					else if(isInHand(object))
@@ -1214,7 +1178,7 @@ public class AdventControl
 						{
 							dropObject(GameObjects.CAGE);
 							dropObject(GameObjects.BIRD);
-							output = okay;
+							output = AdventMain.okay;
 						}
 						else if(object == GameObjects.BIRD)
 						{
@@ -1241,9 +1205,9 @@ public class AdventControl
 							}
 							else
 							{
-								output = okay;
+								output = AdventMain.okay;
 								birdInCage = false;
-								places.placeObject(GameObjects.BIRD, currentLocation);
+								AdventMain.places.placeObject(GameObjects.BIRD, currentLocation);
 							}
 						}
 						else if(object == GameObjects.COINS && objectIsHere(GameObjects.PONY))
@@ -1264,12 +1228,12 @@ public class AdventControl
 						else
 						{
 							dropObject(object);
-							output = okay;
+							output = AdventMain.okay;
 						}	
 					}
 					else
 					{
-						output = dontHave;
+						output = AdventMain.dontHave;
 						increaseTurns = false;
 					}
 					break;
@@ -1310,11 +1274,11 @@ public class AdventControl
 							else
 							{
 								voidObject(GameObjects.CLAM);
-								places.placeObject(GameObjects.OYSTER, currentLocation);
+								AdventMain.places.placeObject(GameObjects.OYSTER, currentLocation);
 								output = new String("A glistening pearl falls out of the clam and rolls away. "
 										+ "Goodness, this must really be an oyster! (I never was very good at "
 										+ "identifying bivalves.)\nWhatever it is, it has now snapped shut again.");
-								places.placeObject(GameObjects.PEARL, Location.CULDESAC);
+								AdventMain.places.placeObject(GameObjects.PEARL, Location.CULDESAC);
 							}
 						}
 						else if(object == GameObjects.OYSTER)
@@ -1339,7 +1303,7 @@ public class AdventControl
 						{
 							if(doorHasBeenOiled)
 							{
-								output = okay;
+								output = AdventMain.okay;
 							}
 							else
 							{
@@ -1529,7 +1493,7 @@ public class AdventControl
 					}
 					else if (!isInHand(object) && (object != GameObjects.ROD || !isInHand(GameObjects.ROD2)))
 					 {
-						output = dontHave;
+						output = AdventMain.dontHave;
 						increaseTurns = false;
 					 }
 					 else if(object != GameObjects.ROD || caveIsClosed)
@@ -1542,7 +1506,7 @@ public class AdventControl
 					 }
 					 else if((currentLocation != Location.EASTFISSURE && currentLocation != Location.WESTFISSURE))
 					 {
-						output = nothing;
+						output = AdventMain.nothing;
 						increaseTurns = false;
 					 }
 					 else
@@ -1552,8 +1516,8 @@ public class AdventControl
 							 if(!crystalBridgeIsThere)
 							 {
 								 output = new String("A crystal bridge now spans the fissure.");
-								 places.placeObject(GameObjects.CRYSTAL, Location.EASTFISSURE);
-								 places.placeObject(GameObjects.CRYSTAL_, Location.WESTFISSURE);
+								 AdventMain.places.placeObject(GameObjects.CRYSTAL, Location.EASTFISSURE);
+								 AdventMain.places.placeObject(GameObjects.CRYSTAL_, Location.WESTFISSURE);
 								 crystalBridgeIsThere = true;
 							 }
 							 else
@@ -1565,7 +1529,7 @@ public class AdventControl
 							 }
 						 }
 						 else
-						 {	output = nothing;	}
+						 {	output = AdventMain.nothing;	}
 					 }
 					break;
 					
@@ -1710,8 +1674,8 @@ public class AdventControl
 							{
 								voidObject(GameObjects.TROLL);
 								voidObject(GameObjects.TROLL_);
-								places.placeObject(GameObjects.TROLL2_, Location.NESIDE);
-								places.placeObject(GameObjects.TROLL2, Location.SWSIDE);
+								AdventMain.places.placeObject(GameObjects.TROLL2_, Location.NESIDE);
+								AdventMain.places.placeObject(GameObjects.TROLL2, Location.SWSIDE);
 								stateOfTheBear = 4;
 								stateOfTheTroll = 2;
 								output = "The bear lumbers toward the troll, who lets out a startled shriek and "
@@ -1720,27 +1684,27 @@ public class AdventControl
 							else
 							{
 								stateOfTheBear = 4;
-								output = okay;
+								output = AdventMain.okay;
 							}
 						}
 						else
 						{
-							output = dontHave;
+							output = AdventMain.dontHave;
 						}
 					}
 					else if(!(isInHand(object)))
 					{
-						output = dontHave;
+						output = AdventMain.dontHave;
 						increaseTurns = false;
 					}
 					else if((objectIsHere(GameObjects.TROLL_) || objectIsHere(GameObjects.TROLL)) 
-							&& things.isTreasure(object))
+							&& AdventMain.things.isTreasure(object))
 					{
 						voidObject(object);
 						voidObject(GameObjects.TROLL);
 						voidObject(GameObjects.TROLL_);
-						places.placeObject(GameObjects.TROLL2, Location.SWSIDE);
-						places.placeObject(GameObjects.TROLL2_, Location.NESIDE);
+						AdventMain.places.placeObject(GameObjects.TROLL2, Location.SWSIDE);
+						AdventMain.places.placeObject(GameObjects.TROLL2_, Location.NESIDE);
 						stateOfTheTroll = 3;
 						itemsInHand--;
 						output = "The troll catches your treasure and scurries away out of sight.";
@@ -1769,13 +1733,13 @@ public class AdventControl
 						}
 						else
 						{	output = "You attack a little dwarf, but he dodges out of the way.";	}
-						places.placeObject(GameObjects.AXE, currentLocation);
+						AdventMain.places.placeObject(GameObjects.AXE, currentLocation);
 						itemsInHand--;
 					}
 					else if((objectIsHere(GameObjects.DRAGON_) || objectIsHere(GameObjects.DRAGON)) && dragonInSecretCanyon)
 					{
 						output = "The axe bounces harmlessly off the dragon's thick scales.";
-						places.placeObject(GameObjects.AXE, currentLocation);
+						AdventMain.places.placeObject(GameObjects.AXE, currentLocation);
 						itemsInHand--;
 					}
 					else if((objectIsHere(GameObjects.TROLL_) || objectIsHere(GameObjects.TROLL)))
@@ -1786,7 +1750,7 @@ public class AdventControl
 					else if(objectIsHere(GameObjects.BEAR) && stateOfTheBear == 0)
 					{
 						bearAxe = true;
-						places.placeObject(GameObjects.AXE, currentLocation);
+						AdventMain.places.placeObject(GameObjects.AXE, currentLocation);
 						itemsInHand--;
 						output = "The axe misses and lands near the bear where you can't get at it.";
 					}
@@ -2220,13 +2184,13 @@ public class AdventControl
 					}
 					else if(object == GameObjects.NOTHING)
 					{
-						output = places.getDescription(currentLocation, 2);
+						output = AdventMain.places.getDescription(currentLocation, 2);
 						output += "\n" + listItemsHere(currentLocation);
 					}
 					else
 					{
 						output = "Sorry, but I am not allowed to give more detail. I will repeat the long "
-								+ "description of your location.\n\n" + places.getDescription(currentLocation, 2);
+								+ "description of your location.\n\n" + AdventMain.places.getDescription(currentLocation, 2);
 					}
 					break;
 					
@@ -2252,7 +2216,7 @@ public class AdventControl
 						else
 						{
 							vaseIsBroken = true;
-							places.placeObject(GameObjects.VASE, currentLocation);
+							AdventMain.places.placeObject(GameObjects.VASE, currentLocation);
 							output = "The sudden change in temperature has delicately shattered the vase.";
 							lostTreasures++;
 						}
@@ -2322,7 +2286,7 @@ public class AdventControl
 					break;
 					
 				case FEEFIE:
-					boolean fum = (alt.equals(feeFieFoe[fooMagicWordProgression]));
+					boolean fum = (alt.equals(AdventMain.feeFieFoe[fooMagicWordProgression]));
 					System.out.println(alt + " " + fum);
 					if(fum)
 					{
@@ -2330,7 +2294,7 @@ public class AdventControl
 						{
 							quest = 7;
 							fooMagicWordProgression++;
-							output = okay;
+							output = AdventMain.okay;
 						}
 						else
 						{
@@ -2338,7 +2302,7 @@ public class AdventControl
 							fooMagicWordProgression = 0;
 							if(GameObjects.EGGS.location == Location.GIANT)
 							{
-								output = nothing;
+								output = AdventMain.nothing;
 							}
 							else if(currentLocation != Location.GIANT)
 							{
@@ -2348,12 +2312,12 @@ public class AdventControl
 								{	output = "The nest of golden eggs disappears!";	}
 								else
 								{	output = "Done!";	}
-								places.placeObject(GameObjects.EGGS, Location.GIANT);
+								AdventMain.places.placeObject(GameObjects.EGGS, Location.GIANT);
 							}
 							else
 							{
 								output = "There is a large nest here, full of golden eggs!";
-								places.placeObject(GameObjects.EGGS, Location.GIANT);
+								AdventMain.places.placeObject(GameObjects.EGGS, Location.GIANT);
 							}
 						}
 					}
@@ -2408,7 +2372,7 @@ public class AdventControl
 
 		try
 		{
-			Movement destination = hash.whichMovement(input);
+			Movement destination = AdventMain.hash.whichMovement(input);
 			Location locationResult = currentLocation.moveTo(destination, currentLocation, grateIsUnlocked,
 					goldInInventory, crystalBridgeIsThere, snakeInHotMK, haveEmerald, haveClam, haveOyster, plant, doorHasBeenOiled,
 					dragonInSecretCanyon, stateOfTheTroll, trollIsHere, itemsInHand, collapse, stateOfTheBear);
@@ -2442,7 +2406,7 @@ public class AdventControl
 				if(destination.equals(Movement.XYZZY)||destination.equals(Movement.PLOVER)
 						||destination.equals(Movement.PLUGH))
 				{
-					output = nothing;
+					output = AdventMain.nothing;
 					output = output + "\n" + getDescription(currentLocation, brief);
 					increaseTurns = false;
 				}
@@ -2575,8 +2539,8 @@ public class AdventControl
 						stateOfTheTroll = 0;
 						voidObject(GameObjects.TROLL2);
 						voidObject(GameObjects.TROLL2_);
-						places.placeObject(GameObjects.TROLL, Location.SWSIDE);
-						places.placeObject(GameObjects.TROLL_, Location.NESIDE);
+						AdventMain.places.placeObject(GameObjects.TROLL, Location.SWSIDE);
+						AdventMain.places.placeObject(GameObjects.TROLL_, Location.NESIDE);
 					}
 					else
 					{	output = "There is no longer any way across the chasm.";	}
@@ -2714,7 +2678,7 @@ public class AdventControl
 						if(stateOfTheBear == 2)
 						{	output += "\n\tYou are being followed by a very large, tame bear.";	}
 						if(follow)
-						{	places.placeObject(GameObjects.DWARF, currentLocation);	}
+						{	AdventMain.places.placeObject(GameObjects.DWARF, currentLocation);	}
 						if(currentLocation.equals(Location.Y2))
 						{
 							double chance = generate();
@@ -2725,7 +2689,7 @@ public class AdventControl
 				}
 				if(relocate)
 				{
-					places.placeObject(GameObjects.EMERALD, Location.PROOM);
+					AdventMain.places.placeObject(GameObjects.EMERALD, Location.PROOM);
 					itemsInHand--;
 					relocate = false;
 				}
@@ -2764,7 +2728,7 @@ public class AdventControl
 
 	private String getDescription(Location here, int brief)
 	{
-		String output = places.getDescription(here, brief);
+		String output = AdventMain.places.getDescription(here, brief);
 		output = output + listItemsHere(currentLocation);
 		return output;
 	}
@@ -2794,16 +2758,16 @@ public class AdventControl
 	private int getCurrentScore()
 	{
 		int currentScore = (2 + (2 * (tally)) + (deaths * 10));
-		ArrayList<GameObjects> buildingItems = hash.objectsHere(Location.BUILDING);
-		ArrayList<GameObjects> witItems = hash.objectsHere(Location.WITT);
+		ArrayList<GameObjects> buildingItems = AdventMain.hash.objectsHere(Location.BUILDING);
+		ArrayList<GameObjects> witItems = AdventMain.hash.objectsHere(Location.WITT);
 		
 		if(!(buildingItems == null))
 		{
 			for(GameObjects item : buildingItems)
 			{
-				if(things.isTreasure(item))
+				if(AdventMain.things.isTreasure(item))
 				{
-					if(things.isLesserTreasure(item))
+					if(AdventMain.things.isLesserTreasure(item))
 					{	currentScore = currentScore + 10;	}
 					else if(item == GameObjects.VASE && vaseIsBroken){	}
 					else if(item == GameObjects.CHEST)
@@ -2856,7 +2820,7 @@ public class AdventControl
 		if(isInHand(GameObjects.LAMP))
 		{
 			lampIsLit = false;
-			places.placeObject(GameObjects.LAMP, Location.ROAD);
+			AdventMain.places.placeObject(GameObjects.LAMP, Location.ROAD);
 		}
 		attemptAction(ActionWords.DROP, GameObjects.ALL, "");
 		currentLocation = Location.BUILDING;
@@ -2909,13 +2873,13 @@ public class AdventControl
 		boolean found = false;
 		for(int i = 0; i < 9; i++)
 		{
-			if(!found && score <= scores[i])
+			if(!found && score <= AdventMain.scores[i])
 			{
 				found = true;
-				output += sMessages[i] + "\n\tTo achieve the next higher rating";
+				output += AdventMain.sMessages[i] + "\n\tTo achieve the next higher rating";
 				if(i < 8)
 				{	
-					int next = 1 + scores[i] - score;
+					int next = 1 + AdventMain.scores[i] - score;
 					String s = "s";
 					if(next == 1)
 					{	s = "";	}
@@ -2946,41 +2910,43 @@ public class AdventControl
 			attemptAction(ActionWords.OFF, GameObjects.NOTHING, "");
 			if(shortcut)
 			{
+				/*
 				wellInCave = true;
-				places.placeObject(GameObjects.GOLD, Location.BUILDING);
-				places.placeObject(GameObjects.DIAMONDS, Location.BUILDING);
-				places.placeObject(GameObjects.SILVER, Location.BUILDING);
-				places.placeObject(GameObjects.JEWELS, Location.BUILDING);
-				places.placeObject(GameObjects.COINS, Location.BUILDING);
-				places.placeObject(GameObjects.CHEST, Location.BUILDING);
-				places.placeObject(GameObjects.EGGS, Location.BUILDING);
-				places.placeObject(GameObjects.TRIDENT, Location.BUILDING);
-				places.placeObject(GameObjects.VASE, Location.BUILDING);
-				places.placeObject(GameObjects.EMERALD, Location.BUILDING);
-				places.placeObject(GameObjects.PYRAMID, Location.BUILDING);
-				places.placeObject(GameObjects.PEARL, Location.BUILDING);
-				places.placeObject(GameObjects.RUG, Location.BUILDING);
-				places.placeObject(GameObjects.SPICES, Location.BUILDING);
-				places.placeObject(GameObjects.CHAIN, Location.BUILDING);
-				places.placeObject(GameObjects.MAG, Location.WITT);
+				AdventMain.places.placeObject(GameObjects.GOLD, Location.BUILDING);
+				AdventMain.places.placeObject(GameObjects.DIAMONDS, Location.BUILDING);
+				AdventMain.places.placeObject(GameObjects.SILVER, Location.BUILDING);
+				AdventMain.places.placeObject(GameObjects.JEWELS, Location.BUILDING);
+				AdventMain.places.placeObject(GameObjects.COINS, Location.BUILDING);
+				AdventMain.places.placeObject(GameObjects.CHEST, Location.BUILDING);
+				AdventMain.places.placeObject(GameObjects.EGGS, Location.BUILDING);
+				AdventMain.places.placeObject(GameObjects.TRIDENT, Location.BUILDING);
+				AdventMain.places.placeObject(GameObjects.VASE, Location.BUILDING);
+				AdventMain.places.placeObject(GameObjects.EMERALD, Location.BUILDING);
+				AdventMain.places.placeObject(GameObjects.PYRAMID, Location.BUILDING);
+				AdventMain.places.placeObject(GameObjects.PEARL, Location.BUILDING);
+				AdventMain.places.placeObject(GameObjects.RUG, Location.BUILDING);
+				AdventMain.places.placeObject(GameObjects.SPICES, Location.BUILDING);
+				AdventMain.places.placeObject(GameObjects.CHAIN, Location.BUILDING);
+				AdventMain.places.placeObject(GameObjects.MAG, Location.WITT);
 				shortcut = false;
+				*/
 			}
-			places.placeObject(GameObjects.BOTTLE, Location.NEEND);
-			places.placeObject(GameObjects.PLANT, Location.NEEND);
-			places.placeObject(GameObjects.OYSTER, Location.NEEND);
-			places.placeObject(GameObjects.LAMP, Location.NEEND);
-			places.placeObject(GameObjects.ROD, Location.NEEND);
-			places.placeObject(GameObjects.DWARF, Location.NEEND);
-			places.placeObject(GameObjects.MIRROR, Location.NEEND);
+			AdventMain.places.placeObject(GameObjects.BOTTLE, Location.NEEND);
+			AdventMain.places.placeObject(GameObjects.PLANT, Location.NEEND);
+			AdventMain.places.placeObject(GameObjects.OYSTER, Location.NEEND);
+			AdventMain.places.placeObject(GameObjects.LAMP, Location.NEEND);
+			AdventMain.places.placeObject(GameObjects.ROD, Location.NEEND);
+			AdventMain.places.placeObject(GameObjects.DWARF, Location.NEEND);
+			AdventMain.places.placeObject(GameObjects.MIRROR, Location.NEEND);
 			currentLocation = Location.NEEND;
 			previousLocation = Location.NEEND;
-			places.placeObject(GameObjects.GRATE, Location.SWEND);
-			places.placeObject(GameObjects.SNAKE, Location.SWEND);
-			places.placeObject(GameObjects.BIRD, Location.SWEND);
-			places.placeObject(GameObjects.CAGE, Location.SWEND);
-			places.placeObject(GameObjects.ROD2, Location.SWEND);
-			places.placeObject(GameObjects.PILLOW, Location.SWEND);
-			places.placeObject(GameObjects.MIRROR, Location.SWEND);
+			AdventMain.places.placeObject(GameObjects.GRATE, Location.SWEND);
+			AdventMain.places.placeObject(GameObjects.SNAKE, Location.SWEND);
+			AdventMain.places.placeObject(GameObjects.BIRD, Location.SWEND);
+			AdventMain.places.placeObject(GameObjects.CAGE, Location.SWEND);
+			AdventMain.places.placeObject(GameObjects.ROD2, Location.SWEND);
+			AdventMain.places.placeObject(GameObjects.PILLOW, Location.SWEND);
+			AdventMain.places.placeObject(GameObjects.MIRROR, Location.SWEND);
 			rod1 = 1;
 			rod2 = 1;
 			endGameBottlesState = 1;
@@ -2992,7 +2958,7 @@ public class AdventControl
 			endGameBirdsState = 1;
 			endGameSnakesState = 1;
 			plant = 3;
-			output += places.getDescription(currentLocation, brief);
+			output += AdventMain.places.getDescription(currentLocation, brief);
 			clock1 = -2;
 			clock2 = -2;
 		}
@@ -3006,8 +2972,8 @@ public class AdventControl
 			dwarvesLeft = 0;
 			voidObject(GameObjects.TROLL);
 			voidObject(GameObjects.TROLL_);
-			places.placeObject(GameObjects.TROLL2_, Location.NESIDE);
-			places.placeObject(GameObjects.TROLL2, Location.SWSIDE);
+			AdventMain.places.placeObject(GameObjects.TROLL2_, Location.NESIDE);
+			AdventMain.places.placeObject(GameObjects.TROLL2, Location.SWSIDE);
 			if(stateOfTheBear != 3)
 			{	voidObject(GameObjects.BEAR);	}
 			grateIsUnlocked = false;
@@ -3034,7 +3000,7 @@ public class AdventControl
 					&& objectIsPresent(GameObjects.LAMP))
 			{
 				output += "\n\nYour lamp is getting dim. I'm taking the liberty of replacing the batteries.";
-				places.placeObject(GameObjects.BATTERIES, currentLocation);
+				AdventMain.places.placeObject(GameObjects.BATTERIES, currentLocation);
 				spareBatteriesState = 2;
 				lamp = 2500;
 			}
@@ -3061,7 +3027,7 @@ public class AdventControl
 	
 	private void takeObject(GameObjects thing)
 	{
-		places.takeObject(thing);
+		AdventMain.places.takeObject(thing);
 		if(thing != GameObjects.BIRD){	itemsInHand++;	}
 	}
 
@@ -3078,40 +3044,40 @@ public class AdventControl
 	
 	private void dropObject(GameObjects thing)
 	{
-		places.placeObject(thing, currentLocation);
+		AdventMain.places.placeObject(thing, currentLocation);
 		if(thing != GameObjects.BIRD){	itemsInHand--;	}
 	}
 	
 	private void voidObject(GameObjects thing)
-	{	places.voidObject(thing);	}
+	{	AdventMain.places.voidObject(thing);	}
 	
-	public AdventSaveData createSaveData(String currentLog)
+	public AdventData createSaveData(String currentLog)
 	{
-		AdventSaveData saveData = new AdventSaveData();
+		AdventData saveData = new AdventData();
 		saveData.textField = textFieldEditable;
 		saveData.log = currentLog;
 		saveData.visits = Location.getVisitsArray();
-		saveData.found = hash.found;
+		saveData.found = AdventMain.hash.found;
 		saveData.objectLocation = GameObjects.getLocations();
 		saveData.currentLocation = this.currentLocation;
 		saveData.previousLocation = this.previousLocation;
-		saveData.dead = this.playerIsDead;
-		saveData.beginning = this.beginningInstructionsOffer;
-		saveData.closing = this.caveIsClosing;
-		saveData.closed = this.caveIsClosed;
-		saveData.grateUnlocked = this.grateIsUnlocked;
-		saveData.crystalBridge = this.crystalBridgeIsThere;
-		saveData.light = this.lampIsLit;
-		saveData.snake = this.snakeInHotMK;
-		saveData.oilDoor = this.doorHasBeenOiled;
-		saveData.dragon = this.dragonInSecretCanyon;
+		saveData.playerIsDead = this.playerIsDead;
+		saveData.beginningInstructionsOffer = this.beginningInstructionsOffer;
+		saveData.caveIsClosing = this.caveIsClosing;
+		saveData.caveIsClosed = this.caveIsClosed;
+		saveData.grateIsUnlocked = this.grateIsUnlocked;
+		saveData.crystalBridgeIsThere = this.crystalBridgeIsThere;
+		saveData.lampIsLit = this.lampIsLit;
+		saveData.snakeInHotMK = this.snakeInHotMK;
+		saveData.doorHasBeenOiled = this.doorHasBeenOiled;
+		saveData.dragonInSecretCanyon = this.dragonInSecretCanyon;
 		saveData.birdInCage = this.birdInCage;
 		saveData.bearAxe = this.bearAxe;
-		saveData.broken = this.vaseIsBroken;
-		saveData.haveGold = this.goldInInventory;
-		saveData.relocateData = AdventControl.relocate;
-		saveData.collapseData = AdventControl.collapse;
-		saveData.justCollapsedData = AdventControl.justCollapsed;
+		saveData.vaseIsBroken = this.vaseIsBroken;
+		saveData.goldInInventory = this.goldInInventory;
+		saveData.relocateData = this.relocate;
+		saveData.collapseData = this.collapse;
+		saveData.justCollapsedData = this.justCollapsed;
 		saveData.lampWarn = this.lampLowBatteryWarning;
 		saveData.panic = this.allowExtraMovesForPanic;
 		saveData.over = this.over;
@@ -3147,7 +3113,7 @@ public class AdventControl
 		saveData.itemsInHand = this.itemsInHand;
 		saveData.deaths = this.deaths;
 		saveData.fatality = this.fatality;
-		saveData.tallyData = AdventControl.tally;
+		saveData.tallyData = tally;
 		saveData.lostTreasures = this.lostTreasures;
 		saveData.plant = this.plant;
 		saveData.bottle = this.bottle;
@@ -3157,8 +3123,8 @@ public class AdventControl
 		saveData.dwarves = this.dwarves;
 		saveData.dwarvesLeft = this.dwarvesLeft;
 		saveData.dwarfPresent = this.dwarfPresent;
-		saveData.trollData = AdventControl.stateOfTheTroll;
-		saveData.bearData = AdventControl.stateOfTheBear;
+		saveData.trollData = this.stateOfTheTroll;
+		saveData.bearData = this.stateOfTheBear;
 		saveData.chain = this.stateOfTheChain;
 		saveData.west = this.westHintCounter;
 		saveData.foo = this.fooMagicWordProgression;
@@ -3222,7 +3188,7 @@ public class AdventControl
 		{
 			fileReader = new FileInputStream(dataFile);
 			objectReader = new ObjectInputStream(fileReader);
-			AdventSaveData saveData = (AdventSaveData) objectReader.readObject();
+			AdventData saveData = (AdventData) objectReader.readObject();
 			objectReader.close();
 			fileReader.close();
 			result = saveData.log;
@@ -3236,31 +3202,31 @@ public class AdventControl
 		return result;
 	}
 	
-	private void updateGameData(AdventSaveData saveData)
+	private void updateGameData(AdventData saveData)
 	{
 		Location.loadVisits(saveData.visits);
 		GameObjects.loadLocations(saveData.objectLocation);
-		hash.found = saveData.found;
+		AdventMain.hash.found = saveData.found;
 		textFieldEditable = saveData.textField;
 		this.currentLocation = saveData.currentLocation;
 		this.previousLocation = saveData.previousLocation;
-		this.playerIsDead = saveData.dead;
-		this.beginningInstructionsOffer = saveData.beginning;
-		this.caveIsClosing = saveData.closing;
-		this.caveIsClosed = saveData.closed;
-		this.grateIsUnlocked = saveData.grateUnlocked;
-		this.crystalBridgeIsThere = saveData.crystalBridge;
-		this.lampIsLit = saveData.light;
-		this.snakeInHotMK = saveData.snake;
-		this.doorHasBeenOiled = saveData.oilDoor;
-		this.dragonInSecretCanyon = saveData.dragon;
+		this.playerIsDead = saveData.playerIsDead;
+		this.beginningInstructionsOffer = saveData.beginningInstructionsOffer;
+		this.caveIsClosing = saveData.caveIsClosing;
+		this.caveIsClosed = saveData.caveIsClosed;
+		this.grateIsUnlocked = saveData.grateIsUnlocked;
+		this.crystalBridgeIsThere = saveData.crystalBridgeIsThere;
+		this.lampIsLit = saveData.lampIsLit;
+		this.snakeInHotMK = saveData.snakeInHotMK;
+		this.doorHasBeenOiled = saveData.doorHasBeenOiled;
+		this.dragonInSecretCanyon = saveData.dragonInSecretCanyon;
 		this.birdInCage = saveData.birdInCage;
 		this.bearAxe = saveData.bearAxe;
-		this.vaseIsBroken = saveData.broken;
-		this.goldInInventory = saveData.haveGold;
-		AdventControl.relocate = saveData.relocateData;
-		AdventControl.collapse = saveData.collapseData;
-		AdventControl.justCollapsed = saveData.justCollapsedData;
+		this.vaseIsBroken = saveData.vaseIsBroken;
+		this.goldInInventory = saveData.goldInInventory;
+		this.relocate = saveData.relocateData;
+		this.collapse = saveData.collapseData;
+		this.justCollapsed = saveData.justCollapsedData;
 		this.lampLowBatteryWarning = saveData.lampWarn;
 		this.allowExtraMovesForPanic = saveData.panic;
 		this.over = saveData.over;
@@ -3296,7 +3262,7 @@ public class AdventControl
 		this.itemsInHand = saveData.itemsInHand;
 		this.deaths = saveData.deaths;
 		this.fatality = saveData.fatality;
-		AdventControl.tally = saveData.tallyData;
+		this.tally = saveData.tallyData;
 		this.lostTreasures = saveData.lostTreasures;
 		this.plant = saveData.plant;
 		this.bottle = saveData.bottle;
@@ -3306,8 +3272,8 @@ public class AdventControl
 		this.dwarves = saveData.dwarves;
 		this.dwarvesLeft = saveData.dwarvesLeft;
 		this.dwarfPresent = saveData.dwarfPresent;
-		AdventControl.stateOfTheTroll = saveData.trollData;
-		AdventControl.stateOfTheBear = saveData.bearData;
+		this.stateOfTheTroll = saveData.trollData;
+		this.stateOfTheBear = saveData.bearData;
 		this.stateOfTheChain = saveData.chain;
 		this.westHintCounter = saveData.west;
 		this.fooMagicWordProgression = saveData.foo;
@@ -3405,7 +3371,7 @@ public class AdventControl
 		return result;
 	}
 	
-	public static void relocate()
+	public void relocate()
 	{	relocate = true;	}
 
 	public boolean noMore()
@@ -3421,10 +3387,10 @@ public class AdventControl
 		return score;
 	}
 	
-	public static void updateTally()
+	public void updateTally()
 	{	tally++;	}
 	
-	public static void collapse()
+	public void collapse()
 	{
 		justCollapsed = true;
 		collapse = true;
@@ -3432,9 +3398,9 @@ public class AdventControl
 	}
 	
 	public static double generate()
-	{	return random.nextDouble();	}
+	{	return AdventMain.random.nextDouble();	}
 	
-	public static void setTroll()
+	public void setTroll()
 	{	stateOfTheTroll = 1;	}
 	
 }

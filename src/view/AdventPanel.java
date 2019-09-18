@@ -15,6 +15,8 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 
 import controller.AdventControl;
+import controller.AdventMain;
+
 import javax.swing.SpringLayout;
 import javax.swing.UIManager;
 import javax.swing.JTextField;
@@ -46,10 +48,10 @@ public class AdventPanel extends JPanel
 	private JButton saveButton;
 	private JButton loadButton;
 	
-	public AdventPanel(AdventControl base)
+	public AdventPanel()
 	{
 		setBorder(null);
-		this.base = base;
+		base = AdventMain.ADVENT;
 		springLayout = new SpringLayout();
 		displayLog = new JTextArea();
 		displayCaret = (DefaultCaret)displayLog.getCaret();

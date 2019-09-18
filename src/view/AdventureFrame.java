@@ -11,14 +11,11 @@ public class AdventureFrame extends JFrame
 {
 
 	private static final long serialVersionUID = 1L;
-	@SuppressWarnings("unused")
-	private AdventControl base;
 	private AdventPanel panel;
 
-	public AdventureFrame(AdventControl base)
+	public AdventureFrame()
 	{
-		this.base = base;
-		panel = new AdventPanel(base);
+		panel = new AdventPanel();
 		setName("Colossal Cave Adventure");
 		this.setTitle("Adventure!");
 		this.

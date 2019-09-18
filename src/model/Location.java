@@ -7,6 +7,7 @@ package model;
 import java.util.ArrayList;
 
 import controller.AdventControl;
+import controller.AdventMain;
 
 public enum Location
 {
@@ -133,73 +134,73 @@ public enum Location
 	
 	ALIKE1
 	(
-			AdventControl.alikeT,
-			AdventControl.alikePassages
+			AdventMain.alikeT,
+			AdventMain.alikePassages
 			), 
 	ALIKE2
 	(
-			AdventControl.alikeT,
-			AdventControl.alikePassages
+			AdventMain.alikeT,
+			AdventMain.alikePassages
 			), 
 	ALIKE3
 	(
-			AdventControl.alikeT,
-			AdventControl.alikePassages
+			AdventMain.alikeT,
+			AdventMain.alikePassages
 		), 
 	ALIKE4
 	(
-			AdventControl.alikeT,
-			AdventControl.alikePassages
+			AdventMain.alikeT,
+			AdventMain.alikePassages
 		), 
 	ALIKE5
 	(
-			AdventControl.alikeT,
-			AdventControl.alikePassages
+			AdventMain.alikeT,
+			AdventMain.alikePassages
 		), 
 	ALIKE6
 	(
-			AdventControl.alikeT,
-			AdventControl.alikePassages
+			AdventMain.alikeT,
+			AdventMain.alikePassages
 		), 
 	ALIKE7
 	(
-			AdventControl.alikeT,
-			AdventControl.alikePassages
+			AdventMain.alikeT,
+			AdventMain.alikePassages
 		), 
 	ALIKE8
 	(
-			AdventControl.alikeT,
-			AdventControl.alikePassages
+			AdventMain.alikeT,
+			AdventMain.alikePassages
 		), 
 	ALIKE9
 	(
-			AdventControl.alikeT,
-			AdventControl.alikePassages
+			AdventMain.alikeT,
+			AdventMain.alikePassages
 		), 
 	ALIKE10
 	(
-			AdventControl.alikeT,
-			AdventControl.alikePassages
+			AdventMain.alikeT,
+			AdventMain.alikePassages
 		), 
 	ALIKE11
 	(
-			AdventControl.alikeT,
-			AdventControl.alikePassages
+			AdventMain.alikeT,
+			AdventMain.alikePassages
 		), 
 	ALIKE12
 	(
-			AdventControl.alikeT,
-			AdventControl.alikePassages
+			AdventMain.alikeT,
+			AdventMain.alikePassages
 		), 
 	ALIKE13
 	(
-			AdventControl.alikeT,
-			AdventControl.alikePassages
+			AdventMain.alikeT,
+			AdventMain.alikePassages
 		), 
 	ALIKE14
 	(
-			AdventControl.alikeT,
-			AdventControl.alikePassages
+			AdventMain.alikeT,
+			AdventMain.alikePassages
 		), 
 	
 	BRINK
@@ -223,64 +224,64 @@ public enum Location
 	
 	DIFF0
 	(
-			AdventControl.diffT,
+			AdventMain.diffT,
 			"You are in a maze of twisty little passages, all different."
 			),
 	DIFF1
 	(
-			AdventControl.diffT,
+			AdventMain.diffT,
 			"You are in a maze of twisting little passages, all different."
 			), 
 	DIFF2
 	(
-			AdventControl.diffT,
+			AdventMain.diffT,
 			"You are in a little maze of twisty passages, all different."
 			),
 	DIFF3
 	(
-			AdventControl.diffT,
+			AdventMain.diffT,
 			"You are in a twisting maze of little passages, all different."
 			),
 	DIFF4
 	(
-			AdventControl.diffT,
+			AdventMain.diffT,
 			"You are in a twisting little maze of passages, all different."
 			),
 	DIFF5
 	(
-			AdventControl.diffT,
+			AdventMain.diffT,
 			"You are in a twisty little maze of passages, all different."
 			),
 	DIFF6
 	(
-			AdventControl.diffT,
+			AdventMain.diffT,
 			"You are in a twisty maze of little passages, all different."
 			),
 	DIFF7
 	(
-			AdventControl.diffT,
+			AdventMain.diffT,
 			"You are in a little twisty maze of passages, all different."
 			),
 	DIFF8
 	(
-			AdventControl.diffT,
+			AdventMain.diffT,
 			"You are in a maze of little twisting passages, all different."
 			),
 	DIFF9
 	(
-			AdventControl.diffT,
+			AdventMain.diffT,
 			"You are in a maze of little twisty passages, all different."
 			),
 	DIFF10
 	(
-			AdventControl.diffT,
+			AdventMain.diffT,
 			"You are in a little maze of twisting passages, all different."
 			),
 	
 	PONY
 	(
-			AdventControl.deadEndT,
-			AdventControl.deadEnd
+			AdventMain.deadEndT,
+			AdventMain.deadEnd
 			),
 	CROSS
 	(
@@ -477,7 +478,7 @@ public enum Location
 			),
 	ABOVEP
 	(
-			AdventControl.secretCanyon,
+			AdventMain.secretCanyon,
 			"You are in a secret N/S canyon above a sizable passage."
 			),
 	SJUNC
@@ -547,7 +548,7 @@ public enum Location
 			), 
 	ABOVER
 	(
-			AdventControl.secretCanyon,
+			AdventMain.secretCanyon,
 			"You are in a secret N/S canyon above a large room."
 			),
 	MIRROR
@@ -566,22 +567,22 @@ public enum Location
 	
 	SCAN1
 	(
-			AdventControl.secretCanyon,
+			AdventMain.secretCanyon,
 			"You're in a secret canyon that exits to the north and east."
 			), 
 	SCAN2
 	(
-			AdventControl.secretCanyon,
+			AdventMain.secretCanyon,
 			"You're in a secret canyon that exits to the north and east."
 			),
 	SCAN3
 	(
-			AdventControl.secretCanyon,
+			AdventMain.secretCanyon,
 			"You're in a secret canyon that exits to the north and east."
 			),
 	SECRET
 	(
-			AdventControl.secretCanyon,
+			AdventMain.secretCanyon,
 			"You're in secret E/W canyon above tight canyon.",
 			"You are in a secret canyon, which here runs E/W. It crosses over an very tight canyon 15 feet below. If you go down you may not be able to get back up."
 			),
@@ -605,7 +606,7 @@ public enum Location
 			),
 	BOULDERS
 	(
-			AdventControl.deadEndT,
+			AdventMain.deadEndT,
 			"The canyon runs into a mass of boulders --- dead end."
 			),
 	
@@ -624,63 +625,63 @@ public enum Location
 	
 	DEAD0
 	(
-			AdventControl.deadEndT,
-			AdventControl.deadEnd
+			AdventMain.deadEndT,
+			AdventMain.deadEnd
 			),
 	DEAD1
 	(
-			AdventControl.deadEndT,
-			AdventControl.deadEnd
+			AdventMain.deadEndT,
+			AdventMain.deadEnd
 			),
 	DEAD2
 	(
-			AdventControl.deadEndT,
-			AdventControl.deadEnd
+			AdventMain.deadEndT,
+			AdventMain.deadEnd
 			),
 	DEAD3
 	(
-			AdventControl.deadEndT,
-			AdventControl.deadEnd
+			AdventMain.deadEndT,
+			AdventMain.deadEnd
 			),
 	DEAD4
 	(
-			AdventControl.deadEndT,
-			AdventControl.deadEnd
+			AdventMain.deadEndT,
+			AdventMain.deadEnd
 			), 
 	DEAD5
 	(
-			AdventControl.deadEndT,
-			AdventControl.deadEnd
+			AdventMain.deadEndT,
+			AdventMain.deadEnd
 			),
 	DEAD6
 	(
-			AdventControl.deadEndT,
-			AdventControl.deadEnd
+			AdventMain.deadEndT,
+			AdventMain.deadEnd
 			),
 	DEAD7
 	(
-			AdventControl.deadEndT,
-			AdventControl.deadEnd
+			AdventMain.deadEndT,
+			AdventMain.deadEnd
 			),
 	DEAD8
 	(
-			AdventControl.deadEndT,
-			AdventControl.deadEnd
+			AdventMain.deadEndT,
+			AdventMain.deadEnd
 			),
 	DEAD9
 	(
-			AdventControl.deadEndT,
-			AdventControl.deadEnd
+			AdventMain.deadEndT,
+			AdventMain.deadEnd
 			),
 	DEAD10
 	(
-			AdventControl.deadEndT,
-			AdventControl.deadEnd
+			AdventMain.deadEndT,
+			AdventMain.deadEnd
 			),
 	DEAD11
 	(
-			AdventControl.deadEndT,
-			AdventControl.deadEnd
+			AdventMain.deadEndT,
+			AdventMain.deadEnd
 			),
 	
 	NESIDE
@@ -776,9 +777,9 @@ public enum Location
 	
 	private Location()
 	{
-		this.title = AdventControl.empty;
-		this.shortDescription = AdventControl.empty;
-		this.longDescription = AdventControl.empty;
+		this.title = AdventMain.empty;
+		this.shortDescription = AdventMain.empty;
+		this.longDescription = AdventMain.empty;
 		this.hasWater = false;
 	}
 	
@@ -786,7 +787,7 @@ public enum Location
 	{
 		this.title = title;
 		this.shortDescription = shortDescription;
-		this.longDescription = AdventControl.empty;
+		this.longDescription = AdventMain.empty;
 		this.hasWater = false;
 	}
 	
@@ -802,7 +803,7 @@ public enum Location
 	{
 		this.title = title;
 		this.shortDescription = shortDescription;
-		this.longDescription = AdventControl.empty;
+		this.longDescription = AdventMain.empty;
 		this.hasWater = hasWater;
 	}
 	
@@ -866,7 +867,7 @@ public enum Location
 	public String getDescription(Location here, int breif)
 	{
 		String description = null;
-		if(!(here.longDescription.equals(AdventControl.empty)) && ((breif == 0 && here.visits % 5 == 0) || (breif == 2) 
+		if(!(here.longDescription.equals(AdventMain.empty)) && ((breif == 0 && here.visits % 5 == 0) || (breif == 2) 
 				|| (here.visits == 0)))
 		{
 			description = here.longDescription;
@@ -882,7 +883,7 @@ public enum Location
 	public String getLongDescription(Location here)
 	{
 		String description = "";
-		if(!(here.longDescription.equals(AdventControl.empty)))
+		if(!(here.longDescription.equals(AdventMain.empty)))
 		{	description = here.longDescription;	}
 		return description;
 	}
@@ -2069,7 +2070,7 @@ public enum Location
 						break;
 					case PLOVER: 
 						if(emerald)
-						{	AdventControl.relocate();	}
+						{	AdventMain.ADVENT.relocate();	}
 						next = Y2;
 						break;
 					case NORTHEAST: case DARK: next = DROOM; break;
@@ -2225,7 +2226,7 @@ public enum Location
 						{	
 							next = NESIDE;
 							if(troll == 3)
-							{	AdventControl.setTroll();	}
+							{	AdventMain.ADVENT.setTroll();	}
 						}
 						break;
 					case JUMP:
@@ -2343,14 +2344,14 @@ public enum Location
 						System.out.println("troll " + troll);
 						if(troll == 1)
 						{
-							ArrayList<GameObjects> currentlyHolding = AdventControl.hash.objectsHere(Location.INHAND);
+							ArrayList<GameObjects> currentlyHolding = AdventMain.hash.objectsHere(Location.INHAND);
 							if(currentlyHolding != null)
 							{
 								for(GameObjects object : currentlyHolding)
 								{
 									if(object.isTreasure(object))
 									{
-										troll = 0;
+										AdventMain.ADVENT.stateOfTheTroll = 0;
 									}
 								}
 							}
@@ -2368,13 +2369,13 @@ public enum Location
 								if(troll == 3)
 								{
 									next = SWSIDE;
-									AdventControl.setTroll();
+									AdventMain.ADVENT.stateOfTheTroll = 1;
 								}
 								else
 								{
 									next = SWSIDE;
 									if(bear == 2)
-									{	AdventControl.collapse();	}
+									{	AdventMain.ADVENT.collapse();	}
 								}
 							}
 						}

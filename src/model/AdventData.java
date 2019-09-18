@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class AdventSaveData implements Serializable
+public class AdventData implements Serializable
 {
 	private static final long serialVersionUID = -4962116536507971292L;
 	public String log;
@@ -19,19 +19,19 @@ public class AdventSaveData implements Serializable
 	public Location currentLocation;
 	public Location previousLocation;
 
-	public boolean dead;
-	public boolean beginning;
-	public boolean closing, closed;
-	public boolean grateUnlocked;
-	public boolean crystalBridge;
-	public boolean light;
-	public boolean snake;
-	public boolean oilDoor;
-	public boolean dragon;
+	public boolean playerIsDead;
+	public boolean beginningInstructionsOffer;
+	public boolean caveIsClosing, caveIsClosed;
+	public boolean grateIsUnlocked;
+	public boolean crystalBridgeIsThere;
+	public boolean lampIsLit;
+	public boolean snakeInHotMK;
+	public boolean doorHasBeenOiled;
+	public boolean dragonInSecretCanyon;
 	public boolean birdInCage;
 	public boolean bearAxe;
-	public boolean broken;
-	public boolean haveGold;
+	public boolean vaseIsBroken;
+	public boolean goldInInventory;
 	public boolean relocateData;
 	public boolean collapseData;
 	public boolean justCollapsedData;

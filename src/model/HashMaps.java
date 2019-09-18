@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import controller.AdventControl;
+import controller.AdventMain;
 
 public class HashMaps 
 {
@@ -395,7 +396,7 @@ public class HashMaps
 				{
 					if(found.get(object) != true)
 					{
-						AdventControl.updateTally();
+						AdventMain.ADVENT.updateTally();
 						found.put(object, true);
 					}
 				}
@@ -403,7 +404,7 @@ public class HashMaps
 				{
 					if(found.get(GameObjects.RUG) != true)
 					{
-						AdventControl.updateTally();
+						AdventMain.ADVENT.updateTally();
 						found.put(GameObjects.RUG, true);
 					}
 				}
