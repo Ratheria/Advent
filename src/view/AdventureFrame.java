@@ -18,7 +18,6 @@ public class AdventureFrame extends JFrame
 		panel = new AdventPanel();
 		setName("Colossal Cave Adventure");
 		this.setTitle("Adventure!");
-		this.
 		setContentPane(panel);
 		setSize(750, 700);
 		setVisible(true);

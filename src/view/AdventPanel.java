@@ -180,7 +180,7 @@ public class AdventPanel extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent click) 
 			{
-				displayLog.append("\n\n" + base.writeData(displayLog.getText()) + "\n");
+				displayLog.append("\n\n" + AdventMain.stateHandler.writeData(displayLog.getText()) + "\n");
 				displayLog.setCaretPosition(displayLog.getDocument().getLength());
 				scroll.setViewportView(displayLog);
 			}
@@ -191,7 +191,7 @@ public class AdventPanel extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent click) 
 			{
-				displayLog.setText(base.loadGame(displayLog.getText()));
+				displayLog.setText(AdventMain.stateHandler.loadGame(displayLog.getText()));
 				displayLog.setCaretPosition(displayLog.getDocument().getLength());
 				setLabels();
 				scroll.setViewportView(displayLog);

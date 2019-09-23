@@ -9,6 +9,11 @@ import model.Location;
 import model.MessageWords;
 import view.AdventureFrame;
 
+
+//TODO beginning/normal/serious question/etc. enum instead of ints
+//TODO maybe change AdventData to have n save slots for advent games 
+
+
 public class AdventMain 
 {
 	public static AdventControl ADVENT;
@@ -47,11 +52,14 @@ public class AdventMain
 			};
 	
 	public static AdventureFrame frame;
+	public static GameStateHandler stateHandler = new GameStateHandler();
 	
 	public static void main(String[] args)
 	{
+		hash = new HashMaps();
 		ADVENT = new AdventControl();
 		frame = new AdventureFrame();
 		frame.setUp();
 	}
+	
 }

@@ -16,7 +16,6 @@ public class HashMaps
 	private HashMap<String, GameObjects> objects = new HashMap<String, GameObjects>();
 	private HashMap<String, ActionWords> actions = new HashMap<String, ActionWords>();
 	private HashMap<String, MessageWords> mwords = new HashMap<String, MessageWords>();
-	public HashMap<GameObjects, Boolean> found = new HashMap<GameObjects, Boolean>();
 	
 	public HashMaps()
 	{
@@ -312,23 +311,6 @@ public class HashMaps
 		mwords.put("infor", MessageWords.INFO);
 		mwords.put("swim", MessageWords.SWIM);
 		mwords.put("denni", MessageWords.DENNIS);
-		
-		found.put(GameObjects.GOLD, false);
-		found.put(GameObjects.DIAMONDS, false);
-		found.put(GameObjects.SILVER, false);
-		found.put(GameObjects.JEWELS, false);
-		found.put(GameObjects.COINS, false);
-		found.put(GameObjects.CHEST, false);
-		found.put(GameObjects.EGGS, false);
-		found.put(GameObjects.TRIDENT, false);
-		found.put(GameObjects.VASE, false);
-		found.put(GameObjects.EMERALD, false);
-		found.put(GameObjects.PYRAMID, false);
-		found.put(GameObjects.PEARL, false);
-		found.put(GameObjects.RUG, false);
-		found.put(GameObjects.SPICES, false);
-		found.put(GameObjects.CHAIN, false);
-
 	}
 	
 	public boolean isMovement(String input)
@@ -392,31 +374,25 @@ public class HashMaps
 			{
 				if(result == null) {result = new ArrayList<GameObjects>();}
 				result.add(object);
-				if(found.containsKey(object))
+				if(AdventMain.ADVENT.found.containsKey(object))
 				{
-					if(found.get(object) != true)
+					if(AdventMain.ADVENT.found.get(object) != true)
 					{
 						AdventMain.ADVENT.updateTally();
-						found.put(object, true);
+						AdventMain.ADVENT.found.put(object, true);
 					}
 				}
 				else if(object == GameObjects.RUG_)
 				{
-					if(found.get(GameObjects.RUG) != true)
+					if(AdventMain.ADVENT.found.get(GameObjects.RUG) != true)
 					{
 						AdventMain.ADVENT.updateTally();
-						found.put(GameObjects.RUG, true);
+						AdventMain.ADVENT.found.put(GameObjects.RUG, true);
 					}
 				}
 			}
 		}
 		return result;
 	}
-	
-	public boolean haveIFound(GameObjects thing)
-	{	return found.get(thing);	}
-	
-	public void wasFound(GameObjects thing)
-	{	found.put(thing, true);	}
 	
 }
