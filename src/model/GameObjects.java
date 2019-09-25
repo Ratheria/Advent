@@ -6,51 +6,51 @@ package model;
 
 public enum GameObjects 
 {
-	NOTHING, ALL, KEYS(true, Location.BUILDING), LAMP(true, Location.BUILDING), 
-	GRATE(Location.OUTSIDE), GRATE_(Location.INSIDE), CAGE(true, Location.COBBLES), 
-	ROD(true, Location.DEBRIS), ROD2(true, Location.THEVOID),
-	TREADS(Location.EASTMIST), TREADS_(Location.SMALLPIT), 
-	BIRD(true, Location.BIRD), DOOR(Location.IMMENSE), PILLOW(true, Location.SOFT), 
-	SNAKE(Location.HALLOFMOUNTAINKING), CRYSTAL(Location.EASTFISSURE), 
-	CRYSTAL_(Location.WESTFISSURE), TABLET(Location.DROOM), 
-	CLAM(true, Location.SHELL), OYSTER(true, Location.THEVOID), 
-	MAG(true, Location.ANTE), DWARF, KNIFE, 
-	FOOD(true, Location.BUILDING), BOTTLE(true, Location.BUILDING), 
-	WATER, OIL, MIRROR(Location.MIRROR), MIRROR_, 
-	PLANT(Location.WESTPIT), PLANT2(Location.WEST2PIT), PLANT2_(Location.EAST2PIT), 
-	STALACTITE(Location.STALACTITE), SHADOW(Location.EASTWINDOW), SHADOW_(Location.WESTWINDOW), 
-	AXE(true, Location.THEVOID), ART(Location.ORIENTAL), PIRATE, 
-	DRAGON(Location.SCAN1), DRAGON_(Location.SCAN3), 
-	BRIDGE(Location.SWSIDE), BRIDGE_(Location.NESIDE), 
-	TROLL(Location.SWSIDE), TROLL_(Location.NESIDE), 
-	TROLL2(Location.THEVOID), TROLL2_(Location.THEVOID), 
-	BEAR(Location.BARR), MESSAGE, GEYSER(Location.VIEW), PONY(Location.PONY), 
-	BATTERIES(Location.THEVOID), MOSS(Location.SOFT), 
+	NOTHING, ALL, KEYS(true, Locations.BUILDING), LAMP(true, Locations.BUILDING), 
+	GRATE(Locations.OUTSIDE), GRATE_(Locations.INSIDE), CAGE(true, Locations.COBBLES), 
+	ROD(true, Locations.DEBRIS), ROD2(true, Locations.THEVOID),
+	TREADS(Locations.EASTMIST), TREADS_(Locations.SMALLPIT), 
+	BIRD(true, Locations.BIRD), DOOR(Locations.IMMENSE), PILLOW(true, Locations.SOFT), 
+	SNAKE(Locations.HALLOFMOUNTAINKING), CRYSTAL(Locations.EASTFISSURE), 
+	CRYSTAL_(Locations.WESTFISSURE), TABLET(Locations.DROOM), 
+	CLAM(true, Locations.SHELL), OYSTER(true, Locations.THEVOID), 
+	MAG(true, Locations.ANTE), DWARF, KNIFE, 
+	FOOD(true, Locations.BUILDING), BOTTLE(true, Locations.BUILDING), 
+	WATER, OIL, MIRROR(Locations.MIRROR), MIRROR_, 
+	PLANT(Locations.WESTPIT), PLANT2(Locations.WEST2PIT), PLANT2_(Locations.EAST2PIT), 
+	STALACTITE(Locations.STALACTITE), SHADOW(Locations.EASTWINDOW), SHADOW_(Locations.WESTWINDOW), 
+	AXE(true, Locations.THEVOID), ART(Locations.ORIENTAL), PIRATE, 
+	DRAGON(Locations.SCAN1), DRAGON_(Locations.SCAN3), 
+	BRIDGE(Locations.SWSIDE), BRIDGE_(Locations.NESIDE), 
+	TROLL(Locations.SWSIDE), TROLL_(Locations.NESIDE), 
+	TROLL2(Locations.THEVOID), TROLL2_(Locations.THEVOID), 
+	BEAR(Locations.BARR), MESSAGE, GEYSER(Locations.VIEW), PONY(Locations.PONY), 
+	BATTERIES(Locations.THEVOID), MOSS(Locations.SOFT), 
 	
-	GOLD(true, Location.NUGGET), DIAMONDS(true, Location.WESTFISSURE), 
-	SILVER(true, Location.NS), JEWELS(true, Location.SOUTH), COINS(true, Location.WEST), 
-	CHEST(true, Location.THEVOID), EGGS(true, Location.GIANT), 
-	TRIDENT(true, Location.FALLS), VASE(true, Location.ORIENTAL), 
-	EMERALD(true, Location.PROOM), PYRAMID(true, Location.DROOM), PEARL(true, Location.THEVOID), 
-	RUG(true, Location.SCAN1), RUG_(true, Location.SCAN3), 
-	SPICES(true, Location.CHAMBER), CHAIN(true, Location.BARR);
+	GOLD(true, Locations.NUGGET), DIAMONDS(true, Locations.WESTFISSURE), 
+	SILVER(true, Locations.NS), JEWELS(true, Locations.SOUTH), COINS(true, Locations.WEST), 
+	CHEST(true, Locations.THEVOID), EGGS(true, Locations.GIANT), 
+	TRIDENT(true, Locations.FALLS), VASE(true, Locations.ORIENTAL), 
+	EMERALD(true, Locations.PROOM), PYRAMID(true, Locations.DROOM), PEARL(true, Locations.THEVOID), 
+	RUG(true, Locations.SCAN1), RUG_(true, Locations.SCAN3), 
+	SPICES(true, Locations.CHAMBER), CHAIN(true, Locations.BARR);
 
 	public final boolean mobile;
-	public  Location location;
+	public  Locations location;
 	
 	private GameObjects()
 	{
 		this.mobile = false;
-		this.location = Location.THEVOID;
+		this.location = Locations.THEVOID;
 	}
 	
-	private GameObjects(Location location)
+	private GameObjects(Locations location)
 	{
 		this.mobile = false;
 		this.location = location;
 	}
 	
-	private GameObjects(boolean mobile, Location location)
+	private GameObjects(boolean mobile, Locations location)
 	{
 		this.mobile = mobile;
 		this.location = location;
@@ -72,9 +72,9 @@ public enum GameObjects
 		return treasure;
 	}
 	
-	public static Location[] getLocations()
+	public static Locations[] getLocations()
 	{
-		Location[] locations = new Location[GameObjects.values().length];
+		Locations[] locations = new Locations[GameObjects.values().length];
 		for(int i = 0; i < GameObjects.values().length; i++)
 		{
 			locations[i] = GameObjects.values()[i].location;
@@ -82,7 +82,7 @@ public enum GameObjects
 		return locations;
 	}
 	
-	public static void loadLocations(Location[] locations)
+	public static void loadLocations(Locations[] locations)
 	{
 		for(int i = 0; i < GameObjects.values().length; i++)
 		{
@@ -90,7 +90,7 @@ public enum GameObjects
 		}
 	}
 
-	public String getItemDescription(Location location, GameObjects object, 
+	public String getItemDescription(Locations location, GameObjects object, 
 			boolean light, boolean grate, int plant, int bottle, boolean cage, boolean oilDoor,
 			boolean bearAxe, boolean dragon, int bear, int usedBatteries, boolean broken,
 			int chain, boolean gold, boolean crystalBridge, boolean collapse, int rod1, int rod2,
@@ -101,14 +101,14 @@ public enum GameObjects
 		switch(object)
 		{
 			case KEYS:
-				if(location == Location.INHAND)
+				if(location == Locations.INHAND)
 				{	output = new String("\n\t\tSet of Keys");	}
 				else
 				{	output = new String("\n\tThere are some keys on the ground here.");	}
 				break;
 				
 			case LAMP:
-				if(location == Location.INHAND)
+				if(location == Locations.INHAND)
 				{	output = new String("\n\t\tBrass Lantern");	}
 				else if(lamps == 0)
 				{
@@ -133,7 +133,7 @@ public enum GameObjects
 			case CAGE:
 				if(cages == 1)
 				{	output = "";	}
-				else if(location == Location.INHAND)
+				else if(location == Locations.INHAND)
 				{	output = new String("\n\t\tWicker Cage");	}
 				else
 				{	output = new String("\n\tThere is a small wicker cage discarded nearby.");	}
@@ -142,7 +142,7 @@ public enum GameObjects
 			case BIRD:
 				if(birds == 1)
 				{	output = "";	}
-				else if(location == Location.INHAND)
+				else if(location == Locations.INHAND)
 				{	output = new String("\n\t\tLittle Bird in Cage");	}
 				else
 				{
@@ -154,7 +154,7 @@ public enum GameObjects
 				break;
 				
 			case ROD:
-				if(location == Location.INHAND)
+				if(location == Locations.INHAND)
 				{	output = new String("\n\t\tBlack Rod");	}
 				else if(rod1 == 0)
 				{	output = new String("\n\tA three foot black rod with a rusty star on an end lies nearby.");	}
@@ -163,7 +163,7 @@ public enum GameObjects
 				break;				
 				
 			case ROD2:
-				if(location == Location.INHAND)
+				if(location == Locations.INHAND)
 				{	output = new String("\n\t\tBlack Rod");	}
 				else if(rod2 == 0)
 				{	output = new String("\n\tA three foot black rod with a rusty mark on an end lies nearby.");	}
@@ -179,7 +179,7 @@ public enum GameObjects
 				break;
 				
 			case PILLOW:
-				if(location == Location.INHAND)
+				if(location == Locations.INHAND)
 				{	output = new String("\n\t\tVelvet Pillow");	}
 				else if(pillows == 0)
 				{	output = new String("\n\tA small velvet pillow lies on the floor.");	}
@@ -190,7 +190,7 @@ public enum GameObjects
 			case VASE:
 				if(!broken)
 				{
-					if(location == Location.INHAND)
+					if(location == Locations.INHAND)
 					{	output = new String("\n\t\tMing Vase");}
 					else if(pillow)
 					{
@@ -216,14 +216,14 @@ public enum GameObjects
 				break;		
 				
 			case CLAM:
-				if(location == Location.INHAND)
+				if(location == Locations.INHAND)
 				{	output = new String("\n\t\tGiant Clam >GRUNT!<");	}
 				else
 				{	output = new String("\n\tThere is an enormous clam here with its shell tightly closed.");	}
 				break;		
 				
 			case OYSTER:
-				if(location == Location.INHAND)
+				if(location == Locations.INHAND)
 				{	output = new String("\n\t\tGiant Oyster >GROAN!<");	}
 				else if(oysters == 0)
 				{	output = new String("\n\tThere is an enormous oyster here with its shell tightly closed.");	}
@@ -232,14 +232,14 @@ public enum GameObjects
 				break;		
 				
 			case MAG:
-				if(location == Location.INHAND)
+				if(location == Locations.INHAND)
 				{	output = new String("\n\t\t\"Spelunker Today\"");	}
 				else
 				{	output = new String("\n\tThere are a few recent issues of \"Spelunker Today\" magazine here.");	}
 				break;		
 				
 			case FOOD:
-				if(location == Location.INHAND)
+				if(location == Locations.INHAND)
 				{	output = new String("\n\t\tTasty Food");	}
 				else
 				{	output = new String("\n\tThere is tasty food here.");	}
@@ -250,21 +250,21 @@ public enum GameObjects
 				{	output = "";	}
 				else if(bottle == 0)
 				{
-					if(location == Location.INHAND)
+					if(location == Locations.INHAND)
 					{	output = new String("\n\t\tSmall Bottle");	}
 					else
 					{	output = new String("\n\tThere is an empty bottle here.");	}
 				}
 				else if(bottle == 1)
 				{
-					if(location == Location.INHAND)
+					if(location == Locations.INHAND)
 					{	output = new String("\n\t\tBottle of Water");	}
 					else
 					{	output = new String("\n\tThere is a bottle of water here.");	}
 				}
 				else if(bottle == 2)
 				{
-					if(location == Location.INHAND)
+					if(location == Locations.INHAND)
 					{	output = new String("\n\t\tBottle of Oil");	}
 					else
 					{	output = new String("\n\tThere is a bottle of oil here.");	}
@@ -292,7 +292,7 @@ public enum GameObjects
 				break;
 				
 			case AXE:
-				if(location == Location.INHAND)
+				if(location == Locations.INHAND)
 				{	output = new String("\n\t\tDwarf's Axe");	}
 				else if(bearAxe)
 				{	output = new String("\n\tThere is a little axe lying beside the bear.");	}
@@ -314,7 +314,7 @@ public enum GameObjects
 			case RUG: case RUG_:
 				if(dragon)
 				{	output = new String("\n\tThe dragon is sprawled out on a persian rug!");	}
-				else if(location == Location.INHAND)
+				else if(location == Locations.INHAND)
 				{	output = new String("\n\t\tPersian Rug");	}
 				else
 				{	output = new String("\n\tThere is a persian rug spread out on the floor!");	}
@@ -353,91 +353,91 @@ public enum GameObjects
 				break;
 				
 			case GOLD:
-				if(location == Location.INHAND)
+				if(location == Locations.INHAND)
 				{	output = new String("\n\t\tLarge Gold Nugget");	}
 				else
 				{	output = new String("\n\tThere is a large sparkling nugget of gold here!");	}
 				break;		
 				
 			case DIAMONDS:
-				if(location == Location.INHAND)
+				if(location == Locations.INHAND)
 				{	output = new String("\n\t\tSeveral Diamonds");	}
 				else
 				{	output = new String("\n\tThere are diamonds here!");	}
 				break;		
 				
 			case SILVER:
-				if(location == Location.INHAND)
+				if(location == Locations.INHAND)
 				{	output = new String("\n\t\tBars of Silver");	}
 				else
 				{	output = new String("\n\tThere are bars of silver here!");	}
 				break;		
 				
 			case JEWELS:
-				if(location == Location.INHAND)
+				if(location == Locations.INHAND)
 				{	output = new String("\n\t\tPrecious Jewelry");	}
 				else
 				{	output = new String("\n\tThere is precious jewelry here!");	}
 				break;		
 
 			case COINS:
-				if(location == Location.INHAND)
+				if(location == Locations.INHAND)
 				{	output = new String("\n\t\tRare coins");	}
 				else
 				{	output = new String("\n\tThere are many coins here!");	}
 				break;		
 				
 			case CHEST:
-				if(location == Location.INHAND)
+				if(location == Locations.INHAND)
 				{	output = new String("\n\t\tTreasure Chest");	}
 				else
 				{	output = new String("\n\tThe pirate's treasure chest is here!");	}
 				break;		
 				
 			case EGGS:
-				if(location == Location.INHAND)
+				if(location == Locations.INHAND)
 				{	output = new String("\n\t\tGolden Eggs");	}
 				else
 				{	output = new String("\n\tThere is a large nest here, full of golden eggs!");	}
 				break;		
 				
 			case TRIDENT:
-				if(location == Location.INHAND)
+				if(location == Locations.INHAND)
 				{	output = new String("\n\t\tJeweled Trident");	}
 				else
 				{	output = new String("\n\tThere is a jewel-encrusted trident here!");	}
 				break;			
 				
 			case EMERALD:
-				if(location == Location.INHAND)
+				if(location == Locations.INHAND)
 				{	output = new String("\n\t\tEgg-Sized Emerald");	}
 				else
 				{	output = new String("\n\tThere is an emerald here the size of a plover's egg!");	}
 				break;		
 				
 			case PYRAMID:
-				if(location == Location.INHAND)
+				if(location == Locations.INHAND)
 				{	output = new String("\n\t\tPlatinum Pyramid");	}
 				else
 				{	output = new String("\n\tThere is a platinum pyramid here, 8 inches on a side!");	}
 				break;		
 				
 			case PEARL:
-				if(location == Location.INHAND)
+				if(location == Locations.INHAND)
 				{	output = new String("\n\t\tGlistening Pearl");	}
 				else
 				{	output = new String("\n\tOff to one side lies a glistening pearl!");	}
 				break;		
 				
 			case SPICES:
-				if(location == Location.INHAND)
+				if(location == Locations.INHAND)
 				{	output = new String("\n\t\tRare Spices");	}
 				else
 				{	output = new String("\n\tThere are rare spices here!");	}
 				break;		
 				
 			case CHAIN:
-				if(location == Location.INHAND)
+				if(location == Locations.INHAND)
 				{	output = new String("\n\t\tGolden Chain");	}
 				else
 				{

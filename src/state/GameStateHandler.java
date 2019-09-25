@@ -1,4 +1,4 @@
-package controller;
+package state;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,9 +8,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import controller.AdventMain;
-import model.AdventData;
 import model.GameObjects;
-import model.Location;
+import model.Locations;
 
 public class GameStateHandler 
 {
@@ -48,7 +47,7 @@ public class GameStateHandler
 			result = saveData.log;
 			AdventMain.ADVENT = saveData.game;
 			GameObjects.loadLocations(saveData.mobileObjectsLocations);
-			Location.loadVisits(saveData.visits);
+			Locations.loadVisits(saveData.visits);
 			System.out.println("Data Loaded");
 		} 
 		catch (IOException | ClassNotFoundException e)

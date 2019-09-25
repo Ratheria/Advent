@@ -7,17 +7,18 @@ package model;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import controller.AdventControl;
+import controller.AdventGame;
 import controller.AdventMain;
 
-public class HashMaps 
+public class WordTypeMappings 
 {
 	private HashMap<String, Movement> movement = new HashMap<String, Movement>();
 	private HashMap<String, GameObjects> objects = new HashMap<String, GameObjects>();
 	private HashMap<String, ActionWords> actions = new HashMap<String, ActionWords>();
 	private HashMap<String, MessageWords> mwords = new HashMap<String, MessageWords>();
+	private HashMap<String, YesAndNo> answers = new HashMap<String, YesAndNo>();
 	
-	public HashMaps()
+	public WordTypeMappings()
 	{
 		setUpHashMaps();
 	}
@@ -311,48 +312,38 @@ public class HashMaps
 		mwords.put("infor", MessageWords.INFO);
 		mwords.put("swim", MessageWords.SWIM);
 		mwords.put("denni", MessageWords.DENNIS);
+		
+		answers.put("yes", YesAndNo.YES);
+		answers.put("y", YesAndNo.YES);
+		answers.put("yeah", YesAndNo.YES);
+		answers.put("okay", YesAndNo.YES);
+		answers.put("no", YesAndNo.NO);
+		answers.put("n", YesAndNo.NO);
+		answers.put("nah", YesAndNo.NO);
+		answers.put("nope", YesAndNo.NO);
+		answers.put("maybe", YesAndNo.MAYBE);
 	}
 	
 	public boolean isMovement(String input)
-	{
-		boolean contains = false;
-		if(movement.containsKey(input))
-		{	contains = true;	}
-		return contains;
-	}
+	{	return movement.containsKey(input);	}
 	
 	public Movement whichMovement(String input)
 	{	return movement.get(input);	}
 	
 	public boolean isAction(String input)
-	{
-		boolean contains = false;
-		if(actions.containsKey(input))
-		{	contains = true;	}
-		return contains;
-	}
+	{	return actions.containsKey(input);	}
 	
 	public ActionWords whichAction(String input)
 	{	return actions.get(input);	}
 	
 	public boolean isMessage(String input)
-	{
-		boolean contains = false;
-		if(mwords.containsKey(input))
-		{	contains = true;	}
-		return contains;
-	}
+	{	return mwords.containsKey(input);	}
 	
 	public MessageWords whichMessage(String input)
 	{	return mwords.get(input);	}
 	
 	public boolean isObject(String input)
-	{
-		boolean contains = false;
-		if(objects.containsKey(input))
-		{	contains = true;	}
-		return contains;
-	}
+	{	return objects.containsKey(input);	}
 	
 	public boolean isObject(Object input)
 	{	return objects.containsValue(input);	}
@@ -365,7 +356,7 @@ public class HashMaps
 		return result;
 	}
 	
-	public ArrayList<GameObjects> objectsHere(Location here)
+	public ArrayList<GameObjects> objectsHere(Locations here)
 	{
 		ArrayList<GameObjects> result = null;
 		for(GameObjects object : GameObjects.values())

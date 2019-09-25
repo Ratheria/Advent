@@ -14,7 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 
-import controller.AdventControl;
+import controller.AdventGame;
 import controller.AdventMain;
 
 import javax.swing.SpringLayout;
@@ -34,7 +34,7 @@ import javax.swing.SwingConstants;
 public class AdventPanel extends JPanel 
 {
 	private static final long serialVersionUID = 1L;
-	private AdventControl base;
+	private AdventGame base;
 	private JTextField inputField;
 	private JTextArea displayLog;
 	private DefaultCaret displayCaret;

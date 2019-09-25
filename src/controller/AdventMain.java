@@ -4,26 +4,28 @@ import java.util.Random;
 
 import model.ActionWords;
 import model.GameObjects;
-import model.HashMaps;
-import model.Location;
+import model.WordTypeMappings;
+import model.Locations;
 import model.MessageWords;
+import state.GameStateHandler;
 import view.AdventureFrame;
 
 
 //TODO beginning/normal/serious question/etc. enum instead of ints
 //TODO maybe change AdventData to have n save slots for advent games 
+//TODO questions as enums
 
 
 public class AdventMain 
 {
-	public static AdventControl ADVENT;
+	public static AdventGame ADVENT;
 	
 	public static Random random = new Random();
-	public static final Location places = Location.THEVOID;
+	public static final Locations places = Locations.THEVOID;
 	public static final ActionWords actions = ActionWords.NOTHING;
 	public static final GameObjects things = GameObjects.NOTHING;
 	public static final MessageWords messages = MessageWords.DENNIS;
-	public static HashMaps hash;
+	public static WordTypeMappings wordTypes;
 	
 	public static final String empty = "";
 	public static final String alikePassages = "You are in a maze of twisty little passages, all alike.";
@@ -56,8 +58,8 @@ public class AdventMain
 	
 	public static void main(String[] args)
 	{
-		hash = new HashMaps();
-		ADVENT = new AdventControl();
+		wordTypes = new WordTypeMappings();
+		ADVENT = new AdventGame();
 		frame = new AdventureFrame();
 		frame.setUp();
 	}

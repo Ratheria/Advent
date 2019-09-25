@@ -4,44 +4,29 @@
 
 package controller;
 
-import model.Location;
+import model.Locations;
 import model.MessageWords;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.Random;
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import model.ActionWords;
-import model.AdventData;
 import model.GameObjects;
-import model.HashMaps;
 import model.Movement;
-import view.AdventureFrame;
 
-public class AdventControl implements Serializable
+public class AdventGame implements Serializable
 {
 	private static final long serialVersionUID = 216265234662749493L;
 
-	public HashMap<GameObjects, Boolean> found = new HashMap<GameObjects, Boolean>();
+	public EnumMap<GameObjects, Boolean> found = new EnumMap<>(GameObjects.class);
 	
-	private Location currentLocation;
-	private Location previousLocation;
+	private Locations currentLocation;
+	private Locations previousLocation;
 	@SuppressWarnings("unused")
-	private Location eldestLocation;
+	private Locations eldestLocation;
 	
 	public boolean textFieldEditable = true;
 	
-	private boolean shortcut;
 	private boolean dwarvesAllowed;
 	
 	private boolean relocate;
@@ -132,20 +117,21 @@ public class AdventControl implements Serializable
 	//private byte currentFileOperation;
 	//public static boolean choosingFileSlot;
 	
-	public AdventControl()
+	public AdventGame()
 	{
 		setUp();
 	}
 	
 	public void setUp()
 	{
+		//No treasure found yet
 		for(GameObjects object : GameObjects.values())
 		{
 			if(object.isTreasure(object) && object != GameObjects.RUG_) 
 			{	found.put(object, false);	}
 		}
 		
-		currentLocation = Location.ROAD;
+		currentLocation = Locations.ROAD;
 		previousLocation = null;
 		eldestLocation = null;
 		playerIsDead = false;
@@ -166,7 +152,6 @@ public class AdventControl implements Serializable
 		collapse = false;
 		lampLowBatteryWarning = false;
 		over = false;
-		shortcut = false;
 		dwarvesAllowed = true;
 		battleUpdate = false;
 		allowExtraMovesForPanic = false;
@@ -228,31 +213,31 @@ public class AdventControl implements Serializable
 		endGameSnakesState = 0;
 //		fileSlot = 0;
 //		currentFileOperation = 0;
-		AdventMain.hash.setUpHashMaps();
+		AdventMain.wordTypes.setUpHashMaps();
 	}
 
+	/*
+	 * Determine what happens given a single word of input.
+	 */
 	public String determineAction(String input) 
 	{
-		System.out.println("\n" + input);
+//		System.out.println("\n" + input);
 		String output = null;
 		increaseTurns = true;
 		int answer = askYesNo(input);
-		boolean thisIsAnObject = AdventMain.hash.isObject(input);
-		boolean thisIsAnAction = AdventMain.hash.isAction(input);
+		
+		boolean thisIsAnObject = AdventMain.wordTypes.isObject(input);
+		boolean thisIsAnAction = AdventMain.wordTypes.isAction(input);
 		GameObjects itsAn = null;
 		ActionWords action = null;
 		if(thisIsAnObject)
-		{	itsAn = (AdventMain.hash.whichObject(input));	}
+		{	itsAn = (AdventMain.wordTypes.whichObject(input));	}
 		if(thisIsAnAction)
-		{	action = (AdventMain.hash.whichAction(input));	}
+		{	action = (AdventMain.wordTypes.whichAction(input));	}
+		
 		if(beginningInstructionsOffer)
 		{
-			if(shortcut)
-			{
-				output = lamp("");
-				beginningInstructionsOffer = false;
-			}
-			else if(answer == 1)
+			if(answer == 1)
 			{
 				hint = 5;
 				output = "\tSomewhere nearby is Colossal Cave, where others have found great fortunes in "
@@ -263,13 +248,13 @@ public class AdventControl implements Serializable
 						+ "\"northeast\" as \"ne\" to distinguish it from \"north\" "
 						+ "(Should you get stuck, type \"help\" for some general hints. "
 						+ "For information on how to end your adventure, etc., type \"info\".)\n\n"
-						+ AdventMain.places.getDescription(Location.ROAD, brief);
+						+ AdventMain.places.getDescription(Locations.ROAD, brief);
 				lamp = 1000;
 				beginningInstructionsOffer = false;
 			}
 			else if(answer == 2)
 			{
-				output = AdventMain.places.getDescription(Location.ROAD, brief);
+				output = AdventMain.places.getDescription(Locations.ROAD, brief);
 				beginningInstructionsOffer = false;
 			}
 			else
@@ -285,7 +270,7 @@ public class AdventControl implements Serializable
 					+ "(Unbelievable, isn't it?)";
 			quest = 0;
 			dragonInSecretCanyon = false;
-			currentLocation = Location.SCAN2;
+			currentLocation = Locations.SCAN2;
 			voidObject(GameObjects.DRAGON_);
 			voidObject(GameObjects.RUG_);
 			AdventMain.places.placeObject(GameObjects.DRAGON, currentLocation);
@@ -307,7 +292,7 @@ public class AdventControl implements Serializable
 		else if(actionToAttempt != ActionWords.NOTHING && itsAn != GameObjects.NOTHING)
 		{
 			quest = 0;
-			output = attemptAction(actionToAttempt, AdventMain.hash.whichObject(input), input);
+			output = attemptAction(actionToAttempt, AdventMain.wordTypes.whichObject(input), input);
 			actionToAttempt = ActionWords.NOTHING;
 		}
 		else if(input.equals("fee") || (quest == 7 && thisIsAnAction && action == ActionWords.FEEFIE))
@@ -343,16 +328,16 @@ public class AdventControl implements Serializable
 		else if(quest == 10 && thisIsAnObject && itsAn != GameObjects.NOTHING)
 		{
 			quest = 0;
-			output = attemptAction(ActionWords.KILL, AdventMain.hash.whichObject(input), input);
+			output = attemptAction(ActionWords.KILL, AdventMain.wordTypes.whichObject(input), input);
 		}
 		else if(quest == 11 && thisIsAnObject && itsAn != GameObjects.NOTHING)
 		{
-			output = attemptAction(ActionWords.FEED, AdventMain.hash.whichObject(input), input);
+			output = attemptAction(ActionWords.FEED, AdventMain.wordTypes.whichObject(input), input);
 			quest = 0;
 		}
 		else if(quest == 12 && thisIsAnObject && itsAn != GameObjects.NOTHING)
 		{
-			output = attemptAction(ActionWords.TOSS, AdventMain.hash.whichObject(input), input);
+			output = attemptAction(ActionWords.TOSS, AdventMain.wordTypes.whichObject(input), input);
 			quest = 0;
 		}
 		else if(quest == 20)
@@ -447,23 +432,23 @@ public class AdventControl implements Serializable
 			{
 				input = input.substring(0, 5);
 			}
-			if(AdventMain.hash.isMovement(input))
+			if(AdventMain.wordTypes.isMovement(input))
 			{				
 				output = attemptMovement(input);
 			}
-			else if(AdventMain.hash.isObject(input) && objectIsPresent(AdventMain.hash.whichObject(input)) 
-					&& AdventMain.hash.whichObject(input) == GameObjects.KNIFE)
+			else if(AdventMain.wordTypes.isObject(input) && objectIsPresent(AdventMain.wordTypes.whichObject(input)) 
+					&& AdventMain.wordTypes.whichObject(input) == GameObjects.KNIFE)
 			{
 				output = new String("The dwarves' knives vanish as they strike the walls of the cave.");
 				increaseTurns = false;
 			}
-			else if(AdventMain.hash.isAction(input))
+			else if(AdventMain.wordTypes.isAction(input))
 			{
-				output = attemptAction(AdventMain.hash.whichAction(input), GameObjects.NOTHING, "");
+				output = attemptAction(AdventMain.wordTypes.whichAction(input), GameObjects.NOTHING, "");
 			}
-			else if(AdventMain.hash.isObject(input))
+			else if(AdventMain.wordTypes.isObject(input))
 			{
-				GameObjects currentObject = AdventMain.hash.whichObject(input);
+				GameObjects currentObject = AdventMain.wordTypes.whichObject(input);
 				if(objectIsPresent(currentObject))
 				{
 					output = "What would you like to do with the " + input + "?";
@@ -479,9 +464,9 @@ public class AdventControl implements Serializable
 					increaseTurns = false;
 				}
 			}
-			else if(AdventMain.hash.isMessage(input))
+			else if(AdventMain.wordTypes.isMessage(input))
 			{
-				MessageWords message = AdventMain.hash.whichMessage(input);
+				MessageWords message = AdventMain.wordTypes.whichMessage(input);
 				output = getText(message);
 			}
 			else
@@ -493,6 +478,9 @@ public class AdventControl implements Serializable
 		return output;
 	}
 
+	/*
+	 * Determine what happens given two words of input
+	 */
 	public String determineAction(String input1, String input2) 
 	{
 		System.out.println("\n" + input1 + " " + input2);
@@ -513,37 +501,37 @@ public class AdventControl implements Serializable
 			String input12 = input1;
 			String input22 = input2;
 			
-			boolean isObject1 = AdventMain.hash.isObject(input12);
-			boolean isObject2 = AdventMain.hash.isObject(input22);
+			boolean isObject1 = AdventMain.wordTypes.isObject(input12);
+			boolean isObject2 = AdventMain.wordTypes.isObject(input22);
 			GameObjects object1 = GameObjects.NOTHING;
 			GameObjects object2 = GameObjects.NOTHING;
-			if(isObject1) { object1 = AdventMain.hash.whichObject(input12);	}
-			if(isObject2) { object2 = AdventMain.hash.whichObject(input22);	}
+			if(isObject1) { object1 = AdventMain.wordTypes.whichObject(input12);	}
+			if(isObject2) { object2 = AdventMain.wordTypes.whichObject(input22);	}
 			
 			if(input1.length() > 5)
 			{	input12 = input1.substring(0, 5);	}
 			if(input2.length() > 5)
 			{	input22 = input2.substring(0, 5);	}
-			if(AdventMain.hash.isMessage(input12))
+			if(AdventMain.wordTypes.isMessage(input12))
 			{
-				MessageWords message = AdventMain.hash.whichMessage(input12);
+				MessageWords message = AdventMain.wordTypes.whichMessage(input12);
 				output = getText(message);
 			}
-			else if(AdventMain.hash.isMessage(input22))
+			else if(AdventMain.wordTypes.isMessage(input22))
 			{
-				MessageWords message = AdventMain.hash.whichMessage(input22);
+				MessageWords message = AdventMain.wordTypes.whichMessage(input22);
 				output = getText(message);
 			}
-			else if(AdventMain.hash.isMovement(input12))
+			else if(AdventMain.wordTypes.isMovement(input12))
 			{
-				if(AdventMain.hash.whichMovement(input12) == Movement.ENTER)
+				if(AdventMain.wordTypes.whichMovement(input12) == Movement.ENTER)
 				{
 					if(input22.equalsIgnoreCase("water")||input22.equalsIgnoreCase("strea"))
 					{
-						if(currentLocation == Location.ROAD || currentLocation == Location.BUILDING 
-								|| currentLocation == Location.VALLEY || currentLocation == Location.SLIT 
-								|| currentLocation == Location.WET || currentLocation == Location.FALLS 
-								|| currentLocation == Location.RESER)
+						if(currentLocation == Locations.ROAD || currentLocation == Locations.BUILDING 
+								|| currentLocation == Locations.VALLEY || currentLocation == Locations.SLIT 
+								|| currentLocation == Locations.WET || currentLocation == Locations.FALLS 
+								|| currentLocation == Locations.RESER)
 						{
 							output = "Your feet are now wet.";
 							increaseTurns = true;
@@ -560,7 +548,7 @@ public class AdventControl implements Serializable
 				else
 				{	output = attemptMovement(input12);	}
 			}
-			else if(AdventMain.hash.isMovement(input22))
+			else if(AdventMain.wordTypes.isMovement(input22))
 			{	output = attemptMovement(input22);	}
 			else if(isObject1 && isObject2 
 					&& (object1 == GameObjects.WATER 
@@ -581,10 +569,10 @@ public class AdventControl implements Serializable
 				output = new String("The dwarves' knives vanish as they strike the walls of the cave.");
 				increaseTurns = false;
 			}
-			else if(AdventMain.hash.isAction(input12))
-			{	output = attemptAction(AdventMain.hash.whichAction(input12), determineNature(input22), input2);	}
-			else if(AdventMain.hash.isAction(input22))
-			{	output = attemptAction(AdventMain.hash.whichAction(input22), determineNature(input12), input1);	}
+			else if(AdventMain.wordTypes.isAction(input12))
+			{	output = attemptAction(AdventMain.wordTypes.whichAction(input12), determineNature(input22), input2);	}
+			else if(AdventMain.wordTypes.isAction(input22))
+			{	output = attemptAction(AdventMain.wordTypes.whichAction(input22), determineNature(input12), input1);	}
 			else
 			{	output = nonsense();	}
 		}
@@ -611,10 +599,10 @@ public class AdventControl implements Serializable
 			if(pirate == 1)
 			{
 				pirate = 2;
-				AdventMain.places.placeObject(GameObjects.MESSAGE, Location.PONY);
-				AdventMain.places.placeObject(GameObjects.CHEST, Location.DEAD2);
+				AdventMain.places.placeObject(GameObjects.MESSAGE, Locations.PONY);
+				AdventMain.places.placeObject(GameObjects.CHEST, Locations.DEAD2);
 				
-				ArrayList<GameObjects> currentlyHolding = AdventMain.hash.objectsHere(Location.INHAND);
+				ArrayList<GameObjects> currentlyHolding = AdventMain.wordTypes.objectsHere(Locations.INHAND);
 				boolean treasure = false;
 				if(currentlyHolding != null)
 				{
@@ -623,7 +611,7 @@ public class AdventControl implements Serializable
 						if(AdventMain.things.isTreasure(object))
 						{
 							treasure = true;
-							AdventMain.places.placeObject(object, Location.DEAD2);
+							AdventMain.places.placeObject(object, Locations.DEAD2);
 							itemsInHand--;
 						}
 					}
@@ -721,7 +709,7 @@ public class AdventControl implements Serializable
 				output = "\nIf you prefer, simply type W rather than WEST.";
 				westHintCounter++;
 			}
-			if(!grateIsUnlocked && currentLocation == Location.OUTSIDE && !(objectIsPresent(GameObjects.KEYS)))
+			if(!grateIsUnlocked && currentLocation == Locations.OUTSIDE && !(objectIsPresent(GameObjects.KEYS)))
 			{
 				h1++;
 				if(h1 == 4)
@@ -747,18 +735,18 @@ public class AdventControl implements Serializable
 					h3++;
 				}	
 			}
-			if(currentLocation == Location.ALIKE1 || 
-					currentLocation == Location.ALIKE2 || currentLocation == Location.ALIKE3 || 
-					currentLocation == Location.ALIKE4 || currentLocation == Location.ALIKE5 || 
-					currentLocation == Location.ALIKE6 || currentLocation == Location.ALIKE7 || 
-					currentLocation == Location.ALIKE8 || currentLocation == Location.ALIKE9 || 
-					currentLocation == Location.ALIKE10 || currentLocation == Location.ALIKE11 || 
-					currentLocation == Location.ALIKE12 || currentLocation == Location.ALIKE13 || 
-					currentLocation == Location.ALIKE14 || currentLocation == Location.DEAD1 || 
-					currentLocation == Location.DEAD3 || currentLocation == Location.DEAD4 || 
-					currentLocation == Location.DEAD5 || currentLocation == Location.DEAD6 || 
-					currentLocation == Location.DEAD7 || currentLocation == Location.DEAD9 || 
-					currentLocation == Location.DEAD10 || currentLocation == Location.DEAD11)
+			if(currentLocation == Locations.ALIKE1 || 
+					currentLocation == Locations.ALIKE2 || currentLocation == Locations.ALIKE3 || 
+					currentLocation == Locations.ALIKE4 || currentLocation == Locations.ALIKE5 || 
+					currentLocation == Locations.ALIKE6 || currentLocation == Locations.ALIKE7 || 
+					currentLocation == Locations.ALIKE8 || currentLocation == Locations.ALIKE9 || 
+					currentLocation == Locations.ALIKE10 || currentLocation == Locations.ALIKE11 || 
+					currentLocation == Locations.ALIKE12 || currentLocation == Locations.ALIKE13 || 
+					currentLocation == Locations.ALIKE14 || currentLocation == Locations.DEAD1 || 
+					currentLocation == Locations.DEAD3 || currentLocation == Locations.DEAD4 || 
+					currentLocation == Locations.DEAD5 || currentLocation == Locations.DEAD6 || 
+					currentLocation == Locations.DEAD7 || currentLocation == Locations.DEAD9 || 
+					currentLocation == Locations.DEAD10 || currentLocation == Locations.DEAD11)
 			{
 				h4++;
 				if(h4 == 75)
@@ -768,8 +756,8 @@ public class AdventControl implements Serializable
 					h4++;
 				}	
 			}
-			if((currentLocation == Location.PROOM && !(objectIsPresent(GameObjects.LAMP))) 
-					|| currentLocation == Location.ALCOVE)
+			if((currentLocation == Locations.PROOM && !(objectIsPresent(GameObjects.LAMP))) 
+					|| currentLocation == Locations.ALCOVE)
 			{
 				h5++;
 				if(h5 == 25)
@@ -779,7 +767,7 @@ public class AdventControl implements Serializable
 					h5++;
 				}	
 			}
-			if(currentLocation == Location.WITT)
+			if(currentLocation == Locations.WITT)
 			{
 				h6++;
 				if(h6 == 20)
@@ -836,10 +824,10 @@ public class AdventControl implements Serializable
 		{	lamp += 30 * cost;	}
 	}
 	
-	private String listItemsHere(Location here)
+	private String listItemsHere(Locations here)
 	{
 		String output = "";
-		ArrayList<GameObjects> objects = AdventMain.hash.objectsHere(here);
+		ArrayList<GameObjects> objects = AdventMain.wordTypes.objectsHere(here);
 		if(objects != null)
 		{
 			//output = output + "\n";
@@ -879,17 +867,17 @@ public class AdventControl implements Serializable
 		Object result = GameObjects.NOTHING;
 		if(input.length() > 5)
 		{	input = input.substring(0, 5);	}
-		if(AdventMain.hash.isMovement(input))
-		{	result = AdventMain.hash.whichMovement(input);	}
-		else if(AdventMain.hash.isObject(input))
-		{	result = AdventMain.hash.whichObject(input);	}
+		if(AdventMain.wordTypes.isMovement(input))
+		{	result = AdventMain.wordTypes.whichMovement(input);	}
+		else if(AdventMain.wordTypes.isObject(input))
+		{	result = AdventMain.wordTypes.whichObject(input);	}
 		return result;
 	}
 
 	private String attemptAction(ActionWords verb, Object other, String alt)
 	{
 		String output = "I'm game. Would you care to explain how?";
-		if(!AdventMain.hash.isObject(other))
+		if(!AdventMain.wordTypes.isObject(other))
 		{
 			output = new String("I don't see any " + alt + ".");
 			increaseTurns = false;
@@ -919,7 +907,7 @@ public class AdventControl implements Serializable
 					{	output = attemptAction(ActionWords.TAKE, GameObjects.RUG_, alt);	}
 					else if(object == GameObjects.ALL)
 					{
-						ArrayList<GameObjects> itemsHere = AdventMain.hash.objectsHere(currentLocation);
+						ArrayList<GameObjects> itemsHere = AdventMain.wordTypes.objectsHere(currentLocation);
 						if(!(itemsHere == null))
 						{
 							output = "";
@@ -934,7 +922,7 @@ public class AdventControl implements Serializable
 					}
 					else if(object == GameObjects.WATER)
 					{
-						if(GameObjects.BOTTLE.location == Location.INHAND)
+						if(GameObjects.BOTTLE.location == Locations.INHAND)
 						{
 							if(bottle == 0)
 							{
@@ -965,11 +953,11 @@ public class AdventControl implements Serializable
 					}
 					else if(object == GameObjects.OIL)
 					{
-						if(GameObjects.BOTTLE.location == Location.INHAND)
+						if(GameObjects.BOTTLE.location == Locations.INHAND)
 						{
 							if(bottle == 0)
 							{
-								if(Location.EASTPIT == currentLocation)
+								if(Locations.EASTPIT == currentLocation)
 								{
 									output = new String("You fill the bottle with oil.");
 									bottle = 2;
@@ -1004,7 +992,7 @@ public class AdventControl implements Serializable
 					}
 					else if(objectIsPresent(object))
 					{
-						if(object.location == Location.INHAND)
+						if(object.location == Locations.INHAND)
 						{
 							output = new String("You are already carrying it!");
 							increaseTurns = false;
@@ -1127,7 +1115,7 @@ public class AdventControl implements Serializable
 					}
 					else if(object == GameObjects.ALL)
 					{
-						ArrayList<GameObjects> itemsHere = AdventMain.hash.objectsHere(Location.INHAND);
+						ArrayList<GameObjects> itemsHere = AdventMain.wordTypes.objectsHere(Locations.INHAND);
 						if(!(itemsHere == null))
 						{
 							output = "";
@@ -1156,8 +1144,8 @@ public class AdventControl implements Serializable
 							{
 								voidObject(GameObjects.TROLL);
 								voidObject(GameObjects.TROLL_);
-								AdventMain.places.placeObject(GameObjects.TROLL2_, Location.NESIDE);
-								AdventMain.places.placeObject(GameObjects.TROLL2, Location.SWSIDE);
+								AdventMain.places.placeObject(GameObjects.TROLL2_, Locations.NESIDE);
+								AdventMain.places.placeObject(GameObjects.TROLL2, Locations.SWSIDE);
 								stateOfTheBear = 4;
 								stateOfTheTroll = 2;
 								output = "The bear lumbers toward the troll, who lets out a startled shriek and "
@@ -1220,7 +1208,7 @@ public class AdventControl implements Serializable
 							spareBatteriesState = 1;
 						}
 						else if(object == GameObjects.VASE && !(objectIsHere(GameObjects.PILLOW) 
-								|| currentLocation == Location.SOFT))
+								|| currentLocation == Locations.SOFT))
 						{
 							output = "The Ming vase drops with a delicate crash.";
 							dropObject(GameObjects.VASE);
@@ -1280,7 +1268,7 @@ public class AdventControl implements Serializable
 								output = new String("A glistening pearl falls out of the clam and rolls away. "
 										+ "Goodness, this must really be an oyster! (I never was very good at "
 										+ "identifying bivalves.)\nWhatever it is, it has now snapped shut again.");
-								AdventMain.places.placeObject(GameObjects.PEARL, Location.CULDESAC);
+								AdventMain.places.placeObject(GameObjects.PEARL, Locations.CULDESAC);
 							}
 						}
 						else if(object == GameObjects.OYSTER)
@@ -1419,7 +1407,7 @@ public class AdventControl implements Serializable
 							}
 							else if(stateOfTheChain == 1)
 							{
-								if(!(currentLocation == Location.BARR))
+								if(!(currentLocation == Locations.BARR))
 								{
 									output = new String("There is nothing here to which the chain can be locked.");
 									increaseTurns = false;
@@ -1506,7 +1494,7 @@ public class AdventControl implements Serializable
 							increaseTurns = false;
 						 }
 					 }
-					 else if((currentLocation != Location.EASTFISSURE && currentLocation != Location.WESTFISSURE))
+					 else if((currentLocation != Locations.EASTFISSURE && currentLocation != Locations.WESTFISSURE))
 					 {
 						output = AdventMain.nothing;
 						increaseTurns = false;
@@ -1518,8 +1506,8 @@ public class AdventControl implements Serializable
 							 if(!crystalBridgeIsThere)
 							 {
 								 output = new String("A crystal bridge now spans the fissure.");
-								 AdventMain.places.placeObject(GameObjects.CRYSTAL, Location.EASTFISSURE);
-								 AdventMain.places.placeObject(GameObjects.CRYSTAL_, Location.WESTFISSURE);
+								 AdventMain.places.placeObject(GameObjects.CRYSTAL, Locations.EASTFISSURE);
+								 AdventMain.places.placeObject(GameObjects.CRYSTAL_, Locations.WESTFISSURE);
 								 crystalBridgeIsThere = true;
 							 }
 							 else
@@ -1566,7 +1554,7 @@ public class AdventControl implements Serializable
 					}
 					else if(object == GameObjects.WATER && bottle == 1)
 					{
-						if(currentLocation == Location.WESTPIT)
+						if(currentLocation == Locations.WESTPIT)
 						{
 							plant++;
 							if(plant == 1)
@@ -1604,7 +1592,7 @@ public class AdventControl implements Serializable
 					}
 					else if(object == GameObjects.OIL && bottle == 2)
 					{
-						if(currentLocation == Location.WESTPIT)
+						if(currentLocation == Locations.WESTPIT)
 						{
 							if(plant == 1)
 							{
@@ -1676,8 +1664,8 @@ public class AdventControl implements Serializable
 							{
 								voidObject(GameObjects.TROLL);
 								voidObject(GameObjects.TROLL_);
-								AdventMain.places.placeObject(GameObjects.TROLL2_, Location.NESIDE);
-								AdventMain.places.placeObject(GameObjects.TROLL2, Location.SWSIDE);
+								AdventMain.places.placeObject(GameObjects.TROLL2_, Locations.NESIDE);
+								AdventMain.places.placeObject(GameObjects.TROLL2, Locations.SWSIDE);
 								stateOfTheBear = 4;
 								stateOfTheTroll = 2;
 								output = "The bear lumbers toward the troll, who lets out a startled shriek and "
@@ -1705,8 +1693,8 @@ public class AdventControl implements Serializable
 						voidObject(object);
 						voidObject(GameObjects.TROLL);
 						voidObject(GameObjects.TROLL_);
-						AdventMain.places.placeObject(GameObjects.TROLL2, Location.SWSIDE);
-						AdventMain.places.placeObject(GameObjects.TROLL2_, Location.NESIDE);
+						AdventMain.places.placeObject(GameObjects.TROLL2, Locations.SWSIDE);
+						AdventMain.places.placeObject(GameObjects.TROLL2_, Locations.NESIDE);
 						stateOfTheTroll = 3;
 						itemsInHand--;
 						output = "The troll catches your treasure and scurries away out of sight.";
@@ -2045,7 +2033,7 @@ public class AdventControl implements Serializable
 				case INVENTORY:
 					if(itemsInHand > 0)
 					{
-						output = "\t   -----" + listItemsHere(Location.INHAND) + "\n\t   -----";
+						output = "\t   -----" + listItemsHere(Locations.INHAND) + "\n\t   -----";
 						if(stateOfTheBear == 2)
 						{	output = output + "\n\nYou are being followed by a very large, tame bear.";	}
 					}
@@ -2202,7 +2190,7 @@ public class AdventControl implements Serializable
 
 				case FILL:
 					boolean liquidHere = (currentLocation.hasWater 
-							|| currentLocation == Location.EASTPIT);
+							|| currentLocation == Locations.EASTPIT);
 					if(object == GameObjects.VASE)
 					{
 						if(!liquidHere)
@@ -2246,7 +2234,7 @@ public class AdventControl implements Serializable
 						output = "You have nothing with which to fill the bottle.";
 						increaseTurns = false;
 					}
-					else if(currentLocation == Location.EASTPIT)
+					else if(currentLocation == Locations.EASTPIT)
 					{
 						increaseTurns = true;
 						output = new String("You fill the bottle with oil.");
@@ -2263,7 +2251,7 @@ public class AdventControl implements Serializable
 				case BLAST:
 					if(caveIsClosed)
 					{
-						bonus = (objectIsPresent(GameObjects.ROD2) ? 25 : currentLocation == Location.NEEND ? 30 : 45);
+						bonus = (objectIsPresent(GameObjects.ROD2) ? 25 : currentLocation == Locations.NEEND ? 30 : 45);
 						switch(bonus)
 						{
 							case 25:
@@ -2302,11 +2290,11 @@ public class AdventControl implements Serializable
 						{
 							quest = 0;
 							fooMagicWordProgression = 0;
-							if(GameObjects.EGGS.location == Location.GIANT)
+							if(GameObjects.EGGS.location == Locations.GIANT)
 							{
 								output = AdventMain.nothing;
 							}
-							else if(currentLocation != Location.GIANT)
+							else if(currentLocation != Locations.GIANT)
 							{
 								if(isInHand(GameObjects.EGGS))
 								{	itemsInHand--;	}
@@ -2314,12 +2302,12 @@ public class AdventControl implements Serializable
 								{	output = "The nest of golden eggs disappears!";	}
 								else
 								{	output = "Done!";	}
-								AdventMain.places.placeObject(GameObjects.EGGS, Location.GIANT);
+								AdventMain.places.placeObject(GameObjects.EGGS, Locations.GIANT);
 							}
 							else
 							{
 								output = "There is a large nest here, full of golden eggs!";
-								AdventMain.places.placeObject(GameObjects.EGGS, Location.GIANT);
+								AdventMain.places.placeObject(GameObjects.EGGS, Locations.GIANT);
 							}
 						}
 					}
@@ -2374,11 +2362,11 @@ public class AdventControl implements Serializable
 
 		try
 		{
-			Movement destination = AdventMain.hash.whichMovement(input);
-			Location locationResult = currentLocation.moveTo(destination, currentLocation, grateIsUnlocked,
+			Movement destination = AdventMain.wordTypes.whichMovement(input);
+			Locations locationResult = currentLocation.moveTo(destination, currentLocation, grateIsUnlocked,
 					goldInInventory, crystalBridgeIsThere, snakeInHotMK, haveEmerald, haveClam, haveOyster, plant, doorHasBeenOiled,
 					dragonInSecretCanyon, stateOfTheTroll, trollIsHere, itemsInHand, collapse, stateOfTheBear);
-			if(caveIsClosed && locationResult != Location.THEVOID && (locationResult.compareTo(Location.THEVOID) < 10))
+			if(caveIsClosed && locationResult != Locations.THEVOID && (locationResult.compareTo(Locations.THEVOID) < 10))
 			{
 				output = "A mysterious recorded voice groans into life and announces: \n\t\"This exit is "
 						+ "closed. Please leave via main office.\"";
@@ -2391,7 +2379,7 @@ public class AdventControl implements Serializable
 						+ "bear, who was still following you around. You scrabble desperately for support, "
 						+ "but the bridge collapses you stumble back and fall into the chasm.";
 				justCollapsed = false;
-				int neordinal = currentLocation.getOrdinal(Location.NESIDE);
+				int neordinal = currentLocation.getOrdinal(Locations.NESIDE);
 				if(currentLocation.getOrdinal(GameObjects.CHAIN.location) >= neordinal)
 				{
 					lostTreasures++;
@@ -2403,7 +2391,7 @@ public class AdventControl implements Serializable
 					previousLocation = currentLocation;
 				}
 			}
-			else if(locationResult.equals(Location.THEVOID))
+			else if(locationResult.equals(Locations.THEVOID))
 			{
 				if(destination.equals(Movement.XYZZY)||destination.equals(Movement.PLOVER)
 						||destination.equals(Movement.PLUGH))
@@ -2437,41 +2425,41 @@ public class AdventControl implements Serializable
 					increaseTurns = false;
 				}
 			}
-			else if(locationResult.equals(Location.CRACK))
+			else if(locationResult.equals(Locations.CRACK))
 			{
 				output = "That crack is far too small for you to follow.";
 				increaseTurns = false;
 			}
-			else if(locationResult.equals(Location.NECK))
+			else if(locationResult.equals(Locations.NECK))
 			{
 				output = "You are at the bottom of the pit with a broken neck.";
 				increaseTurns = false;
 				playerIsDead = true;
 				fatality = 1;
 			}
-			else if(locationResult.equals(Location.LOSE))
+			else if(locationResult.equals(Locations.LOSE))
 			{
 				output = "You didn't make it.";
 				increaseTurns = false;
 				playerIsDead = true;
 				fatality = 1;
 			}
-			else if(locationResult.equals(Location.CANT))
+			else if(locationResult.equals(Locations.CANT))
 			{
 				output = "The dome is unclimbable.";
 				increaseTurns = false;
 			}
-			else if(locationResult.equals(Location.CLIMB))
+			else if(locationResult.equals(Locations.CLIMB))
 			{
-				setLocation(Location.NARROW);
+				setLocation(Locations.NARROW);
 				output = "You clamber up the plant and scurry through the hole at the top.\n" 
 						+ getDescription(currentLocation, brief);
 			}
-			else if(locationResult.equals(Location.CHECK))
+			else if(locationResult.equals(Locations.CHECK))
 			{
 				if(plant == 1)
 				{
-					setLocation(Location.WEST2PIT);
+					setLocation(Locations.WEST2PIT);
 					output = "You have climbed up the plant and out of the pit.\n" 
 							+ getDescription(currentLocation, brief);
 				}
@@ -2481,55 +2469,55 @@ public class AdventControl implements Serializable
 					increaseTurns = false;
 				}
 			}
-			else if(locationResult.equals(Location.SNAKED))
+			else if(locationResult.equals(Locations.SNAKED))
 			{
 				output = "You can't get by the snake.";
 				increaseTurns = false;
 			}
-			else if(locationResult.equals(Location.THRU))
+			else if(locationResult.equals(Locations.THRU))
 			{
-				setLocation(Location.WESTMIST);
+				setLocation(Locations.WESTMIST);
 				output = "You have crawled through a very low wide passage parallel to and north "
 						+ "of the Hall of Mists.\n" + getDescription(currentLocation, brief);
 			}
-			else if(locationResult.equals(Location.DUCK))
+			else if(locationResult.equals(Locations.DUCK))
 			{
-				setLocation(Location.WESTFISSURE);
+				setLocation(Locations.WESTFISSURE);
 				output = "You have crawled through a very low wide passage parallel to and north "
 						+ "of the Hall of Mists.\n" + getDescription(currentLocation, brief);
 			}
-			else if(locationResult.equals(Location.SEWER))
+			else if(locationResult.equals(Locations.SEWER))
 			{
 				output = "The stream flows out through a pair of 1-foot-diameter sewer pipes."
 						+ "\n\nIt would be advisable to use the exit.";
 				increaseTurns = false;
 			}
-			else if(locationResult.equals(Location.UPNOUT))
+			else if(locationResult.equals(Locations.UPNOUT))
 			{
 				output = "There is nothing here to climb. Use \"UP\" or \"OUT\" to leave the pit.";
 				increaseTurns = false;
 			}
-			else if(locationResult.equals(Location.DIDIT))
+			else if(locationResult.equals(Locations.DIDIT))
 			{
-				setLocation(Location.WEST2PIT);
+				setLocation(Locations.WEST2PIT);
 				output = "You have climbed up the plant and out of the pit.\n" 
 						+ getDescription(currentLocation, brief);
 			}
-			else if(locationResult.equals(Location.REMARK))
+			else if(locationResult.equals(Locations.REMARK))
 			{
-				if(currentLocation.equals(Location.SLIT)||currentLocation.equals(Location.WET))
+				if(currentLocation.equals(Locations.SLIT)||currentLocation.equals(Locations.WET))
 				{
 					output = "You can't fit through a two-inch slit!";
 					increaseTurns = false;
 				}
-				else if(currentLocation.equals(Location.INSIDE)||currentLocation.equals(Location.OUTSIDE)
-						||currentLocation.equals(Location.DEBRIS)||currentLocation.equals(Location.AWKWARD)||
-						currentLocation.equals(Location.BIRD)||currentLocation.equals(Location.SMALLPIT))
+				else if(currentLocation.equals(Locations.INSIDE)||currentLocation.equals(Locations.OUTSIDE)
+						||currentLocation.equals(Locations.DEBRIS)||currentLocation.equals(Locations.AWKWARD)||
+						currentLocation.equals(Locations.BIRD)||currentLocation.equals(Locations.SMALLPIT))
 				{
 					output = "You can't go through a locked steel grate!";
 					increaseTurns = false;
 				}
-				else if((currentLocation.equals(Location.SWSIDE) || currentLocation.equals(Location.NESIDE)) 
+				else if((currentLocation.equals(Locations.SWSIDE) || currentLocation.equals(Locations.NESIDE)) 
 						&& destination != Movement.JUMP)
 				{
 					increaseTurns = false;
@@ -2541,15 +2529,15 @@ public class AdventControl implements Serializable
 						stateOfTheTroll = 0;
 						voidObject(GameObjects.TROLL2);
 						voidObject(GameObjects.TROLL2_);
-						AdventMain.places.placeObject(GameObjects.TROLL, Location.SWSIDE);
-						AdventMain.places.placeObject(GameObjects.TROLL_, Location.NESIDE);
+						AdventMain.places.placeObject(GameObjects.TROLL, Locations.SWSIDE);
+						AdventMain.places.placeObject(GameObjects.TROLL_, Locations.NESIDE);
 					}
 					else
 					{	output = "There is no longer any way across the chasm.";	}
 				}
-				else if(currentLocation.equals(Location.NESIDE)||currentLocation.equals(Location.SWSIDE)
-						||currentLocation.equals(Location.EASTFISSURE)
-						||currentLocation.equals(Location.WESTFISSURE))
+				else if(currentLocation.equals(Locations.NESIDE)||currentLocation.equals(Locations.SWSIDE)
+						||currentLocation.equals(Locations.EASTFISSURE)
+						||currentLocation.equals(Locations.WESTFISSURE))
 				{
 					increaseTurns = false;
 					if(destination.equals(Movement.JUMP))
@@ -2557,12 +2545,12 @@ public class AdventControl implements Serializable
 					else
 					{	output = "There is no way to cross the fissure.";	}
 				}
-				else if(currentLocation.equals(Location.HALLOFMOUNTAINKING))
+				else if(currentLocation.equals(Locations.HALLOFMOUNTAINKING))
 				{
 					output = "You can't get by the snake.";
 					increaseTurns = false;
 				}
-				else if(currentLocation.equals(Location.SHELL))
+				else if(currentLocation.equals(Locations.SHELL))
 				{
 					increaseTurns = false;
 					if(haveClam)
@@ -2570,33 +2558,33 @@ public class AdventControl implements Serializable
 					else
 					{	output = "You can't fit this five-foot oyster through that little passage!";	}
 				}
-				else if(currentLocation.equals(Location.WITT)&&destination.equals(Movement.WEST))
+				else if(currentLocation.equals(Locations.WITT)&&destination.equals(Movement.WEST))
 				{
 					output = "You have crawled around in some little holes and found your way blocked"
 							+ " by a recent cave-in.\nYou are now back in the main passage.";
 				}
-				else if(currentLocation.equals(Location.WITT)||currentLocation.equals(Location.BEDQUILT)
-						||currentLocation.equals(Location.CHEESE))
+				else if(currentLocation.equals(Locations.WITT)||currentLocation.equals(Locations.BEDQUILT)
+						||currentLocation.equals(Locations.CHEESE))
 				{
 					output = "You have crawled around in some little holes and wound up back in the main "
 							+ "passage.";
 				}
-				else if(currentLocation.equals(Location.IMMENSE))
+				else if(currentLocation.equals(Locations.IMMENSE))
 				{
 					output = "The door is extremely rusty and refuses to open.";
 					increaseTurns = false;
 				}
-				else if(currentLocation.equals(Location.SCAN1)||currentLocation.equals(Location.SCAN3))
+				else if(currentLocation.equals(Locations.SCAN1)||currentLocation.equals(Locations.SCAN3))
 				{
 					output = "That dragon looks rather nasty. You'd best not try to get by.";
 					increaseTurns = false;
 				}
-				else if(currentLocation.equals(Location.VIEW))
+				else if(currentLocation.equals(Locations.VIEW))
 				{
 					output = "Don't be ridiculous!";
 					increaseTurns = false;
 				}
-				else if(currentLocation.equals(Location.PROOM) || currentLocation.equals(Location.DROOM) || currentLocation.equals(Location.ALCOVE))
+				else if(currentLocation.equals(Locations.PROOM) || currentLocation.equals(Locations.DROOM) || currentLocation.equals(Locations.ALCOVE))
 				{
 					output = "Something you are carrying won't fit through the tunnel with you. "
 							+ "You'd best take inventory and drop something.";
@@ -2681,7 +2669,7 @@ public class AdventControl implements Serializable
 						{	output += "\n\tYou are being followed by a very large, tame bear.";	}
 						if(follow)
 						{	AdventMain.places.placeObject(GameObjects.DWARF, currentLocation);	}
-						if(currentLocation.equals(Location.Y2))
+						if(currentLocation.equals(Locations.Y2))
 						{
 							double chance = generate();
 							if(chance > .74)
@@ -2691,7 +2679,7 @@ public class AdventControl implements Serializable
 				}
 				if(relocate)
 				{
-					AdventMain.places.placeObject(GameObjects.EMERALD, Location.PROOM);
+					AdventMain.places.placeObject(GameObjects.EMERALD, Locations.PROOM);
 					itemsInHand--;
 					relocate = false;
 				}
@@ -2721,14 +2709,14 @@ public class AdventControl implements Serializable
 		return output;
 	}
 	
-	private void setLocation(Location newLocation)
+	private void setLocation(Locations newLocation)
 	{
 		eldestLocation = previousLocation;
 		previousLocation = currentLocation;
 		currentLocation = newLocation;
 	}
 
-	private String getDescription(Location here, int brief)
+	private String getDescription(Locations here, int brief)
 	{
 		String output = AdventMain.places.getDescription(here, brief);
 		output = output + listItemsHere(currentLocation);
@@ -2749,7 +2737,7 @@ public class AdventControl implements Serializable
 		return output;
 	}
 
-	private boolean canISee(Location here)
+	private boolean canISee(Locations here)
 	{
 		boolean canSee = false;
 		if((currentLocation.dontNeedLamp(here)) || (lampIsLit && objectIsPresent(GameObjects.LAMP)))
@@ -2760,8 +2748,8 @@ public class AdventControl implements Serializable
 	private int getCurrentScore()
 	{
 		int currentScore = (2 + (2 * (tally)) + (deaths * 10));
-		ArrayList<GameObjects> buildingItems = AdventMain.hash.objectsHere(Location.BUILDING);
-		ArrayList<GameObjects> witItems = AdventMain.hash.objectsHere(Location.WITT);
+		ArrayList<GameObjects> buildingItems = AdventMain.wordTypes.objectsHere(Locations.BUILDING);
+		ArrayList<GameObjects> witItems = AdventMain.wordTypes.objectsHere(Locations.WITT);
 		
 		if(!(buildingItems == null))
 		{
@@ -2822,11 +2810,11 @@ public class AdventControl implements Serializable
 		if(isInHand(GameObjects.LAMP))
 		{
 			lampIsLit = false;
-			AdventMain.places.placeObject(GameObjects.LAMP, Location.ROAD);
+			AdventMain.places.placeObject(GameObjects.LAMP, Locations.ROAD);
 		}
 		attemptAction(ActionWords.DROP, GameObjects.ALL, "");
-		currentLocation = Location.BUILDING;
-		previousLocation = Location.BUILDING;
+		currentLocation = Locations.BUILDING;
+		previousLocation = Locations.BUILDING;
 		fatality = 0;
 		if(caveIsClosing)
 		{
@@ -2838,7 +2826,7 @@ public class AdventControl implements Serializable
 		{
 			seriousQuestion = true;
 			quest = 8;
-			currentLocation = Location.BUILDING;
+			currentLocation = Locations.BUILDING;
 			switch(deaths)
 			{
 				case 3:
@@ -2901,7 +2889,7 @@ public class AdventControl implements Serializable
 	
 	private String lamp(String output)
 	{
-		if(clock2 == 0 || shortcut)
+		if(clock2 == 0)
 		{
 			output = "The sepulchral voice intones, \n\t\"The cave is now closed.\"\nAs the echoes fade, "
 					+ "there is a blinding flash of light (and a small puff of orange smoke)..."
@@ -2910,45 +2898,22 @@ public class AdventControl implements Serializable
 			bonus = 10;
 			attemptAction(ActionWords.DROP, GameObjects.ALL, "");
 			attemptAction(ActionWords.OFF, GameObjects.NOTHING, "");
-			if(shortcut)
-			{
-				/*
-				wellInCave = true;
-				AdventMain.places.placeObject(GameObjects.GOLD, Location.BUILDING);
-				AdventMain.places.placeObject(GameObjects.DIAMONDS, Location.BUILDING);
-				AdventMain.places.placeObject(GameObjects.SILVER, Location.BUILDING);
-				AdventMain.places.placeObject(GameObjects.JEWELS, Location.BUILDING);
-				AdventMain.places.placeObject(GameObjects.COINS, Location.BUILDING);
-				AdventMain.places.placeObject(GameObjects.CHEST, Location.BUILDING);
-				AdventMain.places.placeObject(GameObjects.EGGS, Location.BUILDING);
-				AdventMain.places.placeObject(GameObjects.TRIDENT, Location.BUILDING);
-				AdventMain.places.placeObject(GameObjects.VASE, Location.BUILDING);
-				AdventMain.places.placeObject(GameObjects.EMERALD, Location.BUILDING);
-				AdventMain.places.placeObject(GameObjects.PYRAMID, Location.BUILDING);
-				AdventMain.places.placeObject(GameObjects.PEARL, Location.BUILDING);
-				AdventMain.places.placeObject(GameObjects.RUG, Location.BUILDING);
-				AdventMain.places.placeObject(GameObjects.SPICES, Location.BUILDING);
-				AdventMain.places.placeObject(GameObjects.CHAIN, Location.BUILDING);
-				AdventMain.places.placeObject(GameObjects.MAG, Location.WITT);
-				shortcut = false;
-				*/
-			}
-			AdventMain.places.placeObject(GameObjects.BOTTLE, Location.NEEND);
-			AdventMain.places.placeObject(GameObjects.PLANT, Location.NEEND);
-			AdventMain.places.placeObject(GameObjects.OYSTER, Location.NEEND);
-			AdventMain.places.placeObject(GameObjects.LAMP, Location.NEEND);
-			AdventMain.places.placeObject(GameObjects.ROD, Location.NEEND);
-			AdventMain.places.placeObject(GameObjects.DWARF, Location.NEEND);
-			AdventMain.places.placeObject(GameObjects.MIRROR, Location.NEEND);
-			currentLocation = Location.NEEND;
-			previousLocation = Location.NEEND;
-			AdventMain.places.placeObject(GameObjects.GRATE, Location.SWEND);
-			AdventMain.places.placeObject(GameObjects.SNAKE, Location.SWEND);
-			AdventMain.places.placeObject(GameObjects.BIRD, Location.SWEND);
-			AdventMain.places.placeObject(GameObjects.CAGE, Location.SWEND);
-			AdventMain.places.placeObject(GameObjects.ROD2, Location.SWEND);
-			AdventMain.places.placeObject(GameObjects.PILLOW, Location.SWEND);
-			AdventMain.places.placeObject(GameObjects.MIRROR, Location.SWEND);
+			AdventMain.places.placeObject(GameObjects.BOTTLE, Locations.NEEND);
+			AdventMain.places.placeObject(GameObjects.PLANT, Locations.NEEND);
+			AdventMain.places.placeObject(GameObjects.OYSTER, Locations.NEEND);
+			AdventMain.places.placeObject(GameObjects.LAMP, Locations.NEEND);
+			AdventMain.places.placeObject(GameObjects.ROD, Locations.NEEND);
+			AdventMain.places.placeObject(GameObjects.DWARF, Locations.NEEND);
+			AdventMain.places.placeObject(GameObjects.MIRROR, Locations.NEEND);
+			currentLocation = Locations.NEEND;
+			previousLocation = Locations.NEEND;
+			AdventMain.places.placeObject(GameObjects.GRATE, Locations.SWEND);
+			AdventMain.places.placeObject(GameObjects.SNAKE, Locations.SWEND);
+			AdventMain.places.placeObject(GameObjects.BIRD, Locations.SWEND);
+			AdventMain.places.placeObject(GameObjects.CAGE, Locations.SWEND);
+			AdventMain.places.placeObject(GameObjects.ROD2, Locations.SWEND);
+			AdventMain.places.placeObject(GameObjects.PILLOW, Locations.SWEND);
+			AdventMain.places.placeObject(GameObjects.MIRROR, Locations.SWEND);
 			rod1 = 1;
 			rod2 = 1;
 			endGameBottlesState = 1;
@@ -2974,14 +2939,14 @@ public class AdventControl implements Serializable
 			dwarvesLeft = 0;
 			voidObject(GameObjects.TROLL);
 			voidObject(GameObjects.TROLL_);
-			AdventMain.places.placeObject(GameObjects.TROLL2_, Location.NESIDE);
-			AdventMain.places.placeObject(GameObjects.TROLL2, Location.SWSIDE);
+			AdventMain.places.placeObject(GameObjects.TROLL2_, Locations.NESIDE);
+			AdventMain.places.placeObject(GameObjects.TROLL2, Locations.SWSIDE);
 			if(stateOfTheBear != 3)
 			{	voidObject(GameObjects.BEAR);	}
 			grateIsUnlocked = false;
 			caveIsClosing = true;
 		}
-		else if(tally == 15 && !(currentLocation.outsideCave(currentLocation)) && !(currentLocation == Location.Y2))
+		else if(tally == 15 && !(currentLocation.outsideCave(currentLocation)) && !(currentLocation == Locations.Y2))
 		{	clock1--;	}
 		else if(lampIsLit && !(caveIsClosing || caveIsClosed))
 		{
@@ -3034,7 +2999,7 @@ public class AdventControl implements Serializable
 	}
 
 	private boolean isInHand(GameObjects thing)
-	{	return thing.location == Location.INHAND;	}
+	{	return thing.location == Locations.INHAND;	}
 	
 	private boolean objectIsHere(GameObjects thing)
 	{	return thing.location == currentLocation;	}

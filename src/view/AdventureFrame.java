@@ -5,7 +5,7 @@
 package view;
 
 import javax.swing.JFrame;
-import controller.AdventControl;
+import controller.AdventGame;
 
 public class AdventureFrame extends JFrame 
 {

@@ -6,10 +6,10 @@ package model;
 
 import java.util.ArrayList;
 
-import controller.AdventControl;
+import controller.AdventGame;
 import controller.AdventMain;
 
-public enum Location
+public enum Locations
 {
 	THEVOID(),
 	INHAND(), 
@@ -767,7 +767,7 @@ public enum Location
 	
 	REMARK();
 	
-	public static Location[] locate = Location.values();
+	public static Locations[] locate = Locations.values();
 	
 	public final String title;
 	public final String shortDescription;
@@ -775,7 +775,7 @@ public enum Location
 	public final boolean hasWater;
 	public int visits = 0;
 	
-	private Location()
+	private Locations()
 	{
 		this.title = AdventMain.empty;
 		this.shortDescription = AdventMain.empty;
@@ -783,7 +783,7 @@ public enum Location
 		this.hasWater = false;
 	}
 	
-	private Location(String title, String shortDescription)
+	private Locations(String title, String shortDescription)
 	{
 		this.title = title;
 		this.shortDescription = shortDescription;
@@ -791,7 +791,7 @@ public enum Location
 		this.hasWater = false;
 	}
 	
-	private Location(String title, String shortDescription, String longDescription)
+	private Locations(String title, String shortDescription, String longDescription)
 	{
 		this.title = title;
 		this.shortDescription = shortDescription;
@@ -799,7 +799,7 @@ public enum Location
 		this.hasWater = false;
 	}
 	
-	private Location(boolean hasWater, String title, String shortDescription)
+	private Locations(boolean hasWater, String title, String shortDescription)
 	{
 		this.title = title;
 		this.shortDescription = shortDescription;
@@ -807,7 +807,7 @@ public enum Location
 		this.hasWater = hasWater;
 	}
 	
-	private Location(boolean hasWater, String title, String shortDescription, String longDescription)
+	private Locations(boolean hasWater, String title, String shortDescription, String longDescription)
 	{
 		this.title = title;
 		this.shortDescription = shortDescription;
@@ -821,7 +821,7 @@ public enum Location
 	public int maxLoc()
 	{	return DEAD0.ordinal();	}
 	
-	public boolean critters(Location here)
+	public boolean critters(Locations here)
 	{
 		boolean result = false;
 		if(here.ordinal() > EASTMIST.ordinal() && here.ordinal() < DEAD0.ordinal() && !(here == PROOM) && !(here == DROOM))
@@ -829,7 +829,7 @@ public enum Location
 		return result;
 	}
 	
-	public boolean outside(Location here)
+	public boolean outside(Locations here)
 	{
 		boolean outside = false;
 		if(here.ordinal() > INHAND.ordinal() && here.ordinal() < DEBRIS.ordinal())
@@ -837,7 +837,7 @@ public enum Location
 		return outside;
 	}
 	
-	public boolean outsideCave(Location here)
+	public boolean outsideCave(Locations here)
 	{
 		boolean outside = false;
 		if(here.ordinal() > INHAND.ordinal() && here.ordinal() < INSIDE.ordinal())
@@ -845,7 +845,7 @@ public enum Location
 		return outside;
 	}
 	
-	public boolean upperCave(Location here)
+	public boolean upperCave(Locations here)
 	{
 		boolean upper = false;
 		if(here.ordinal() > OUTSIDE.ordinal() && here.ordinal() < OUTSIDE.ordinal())
@@ -853,10 +853,10 @@ public enum Location
 		return upper;
 	}
 	
-	public int getOrdinal(Location here)
+	public int getOrdinal(Locations here)
 	{	return here.ordinal();	}
 	
-	public boolean dontNeedLamp(Location here)
+	public boolean dontNeedLamp(Locations here)
 	{
 		boolean need = false;
 		if(outside(here)||here == VIEW||here == NEEND||here == SWEND||here == PROOM)
@@ -864,7 +864,7 @@ public enum Location
 		return need;
 	}
 	
-	public String getDescription(Location here, int breif)
+	public String getDescription(Locations here, int breif)
 	{
 		String description = null;
 		if(!(here.longDescription.equals(AdventMain.empty)) && ((breif == 0 && here.visits % 5 == 0) || (breif == 2) 
@@ -880,7 +880,7 @@ public enum Location
 		return description;
 	}
 	
-	public String getLongDescription(Location here)
+	public String getLongDescription(Locations here)
 	{
 		String description = "";
 		if(!(here.longDescription.equals(AdventMain.empty)))
@@ -888,7 +888,7 @@ public enum Location
 		return description;
 	}
 	
-	public boolean beenHere(Location here)
+	public boolean beenHere(Locations here)
 	{
 		boolean result = false;
 		if(here.visits == 0 || here.visits % 5 == 0)
@@ -896,7 +896,7 @@ public enum Location
 		return result;
 	}
 	
-	public void visit(Location here, boolean canSee)
+	public void visit(Locations here, boolean canSee)
 	{
 		if(canSee)
 		{
@@ -928,16 +928,16 @@ public enum Location
 	public void voidObject(GameObjects thing)
 	{	thing.location = THEVOID;	}
 	
-	public void placeObject(GameObjects thing, Location here)
+	public void placeObject(GameObjects thing, Locations here)
 	{	thing.location = here;	}
 	
-	public Location moveTo(Movement destination, Location here, boolean grate,
+	public Locations moveTo(Movement destination, Locations here, boolean grate,
 			boolean gold, boolean crystalBridge, boolean snake, boolean emerald, boolean clam, 
 			boolean oyster, int plant, boolean oilDoor, boolean dragon, int troll,
 			boolean trollHere, int itemsInHand, boolean collapse, int bear)
 	{
-		double chance = AdventControl.generate();
-		Location next = null;
+		double chance = AdventGame.generate();
+		Locations next = null;
 		switch(here)
 		{
 			case ROAD:
@@ -2344,7 +2344,7 @@ public enum Location
 						System.out.println("troll " + troll);
 						if(troll == 1)
 						{
-							ArrayList<GameObjects> currentlyHolding = AdventMain.hash.objectsHere(Location.INHAND);
+							ArrayList<GameObjects> currentlyHolding = AdventMain.wordTypes.objectsHere(Locations.INHAND);
 							if(currentlyHolding != null)
 							{
 								for(GameObjects object : currentlyHolding)
@@ -2494,42 +2494,42 @@ public enum Location
 		return next;
 	}
 	
-	private Location atWittsEnd()
+	private Locations atWittsEnd()
 	{
-		double chance = AdventControl.generate();
-		Location result = REMARK;
+		double chance = AdventGame.generate();
+		Locations result = REMARK;
 		if(chance < .06)
 		{	result = ANTE;	}
 		return result;
 	}
 	
-	private Location eastRemark(boolean bridge)
+	private Locations eastRemark(boolean bridge)
 	{
-		Location result = EASTFISSURE;
+		Locations result = EASTFISSURE;
 		if(!bridge)
 		{	result = REMARK;	}
 		return result;
 	}
 	
-	private Location westRemark(boolean bridge)
+	private Locations westRemark(boolean bridge)
 	{
-		Location result = WESTFISSURE;
+		Locations result = WESTFISSURE;
 		if(!bridge)
 		{	result = REMARK;	}
 		return result;
 	}
 	
-	private Location throughGrate(boolean grate)
+	private Locations throughGrate(boolean grate)
 	{
-		Location result = REMARK;
+		Locations result = REMARK;
 		if(grate)
 		{	result = INSIDE;	}
 		return result;
 	}
 	
-	private Location backThroughGrate(boolean grate)
+	private Locations backThroughGrate(boolean grate)
 	{
-		Location result = REMARK;
+		Locations result = REMARK;
 		if(grate)
 		{	result = OUTSIDE;	}
 		return result;
