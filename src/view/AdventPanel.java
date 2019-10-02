@@ -175,33 +175,30 @@ public class AdventPanel extends JPanel
 	
 	private void setUpListeners() 
 	{
-		saveButton.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent click) 
+		saveButton.addActionListener
+		(
+			(event) ->
 			{
 				displayLog.append("\n\n" + AdventMain.stateHandler.writeData(displayLog.getText()) + "\n");
 				displayLog.setCaretPosition(displayLog.getDocument().getLength());
 				scroll.setViewportView(displayLog);
 			}
-		});
+		);
 		
-		loadButton.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent click) 
+		loadButton.addActionListener
+		(
+			(event) ->
 			{
 				displayLog.setText(AdventMain.stateHandler.loadGame(displayLog.getText()));
 				displayLog.setCaretPosition(displayLog.getDocument().getLength());
 				setLabels();
 				scroll.setViewportView(displayLog);
 			}
-		});
+		);
 		
-		inputField.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e) 
+		inputField.addActionListener
+		(
+			(event) ->
 			{
 				String inputText = inputField.getText().trim();
 				if(inputText.length() > 0)
@@ -247,7 +244,7 @@ public class AdventPanel extends JPanel
 					scroll.setViewportView(displayLog);
 				}
 			}
-		});
+		);
 	}
 	
 }
