@@ -4,56 +4,93 @@
 
 package model;
 
+import controller.AdventGame;
+import controller.AdventMain;
+
 public enum GameObjects 
 {
-	NOTHING, ALL, KEYS(true, Locations.BUILDING), LAMP(true, Locations.BUILDING), 
-	GRATE(Locations.OUTSIDE), GRATE_(Locations.INSIDE), CAGE(true, Locations.COBBLES), 
-	ROD(true, Locations.DEBRIS), ROD2(true, Locations.THEVOID),
-	TREADS(Locations.EASTMIST), TREADS_(Locations.SMALLPIT), 
-	BIRD(true, Locations.BIRD), DOOR(Locations.IMMENSE), PILLOW(true, Locations.SOFT), 
-	SNAKE(Locations.HALLOFMOUNTAINKING), CRYSTAL(Locations.EASTFISSURE), 
-	CRYSTAL_(Locations.WESTFISSURE), TABLET(Locations.DROOM), 
-	CLAM(true, Locations.SHELL), OYSTER(true, Locations.THEVOID), 
-	MAG(true, Locations.ANTE), DWARF, KNIFE, 
-	FOOD(true, Locations.BUILDING), BOTTLE(true, Locations.BUILDING), 
-	WATER, OIL, MIRROR(Locations.MIRROR), MIRROR_, 
-	PLANT(Locations.WESTPIT), PLANT2(Locations.WEST2PIT), PLANT2_(Locations.EAST2PIT), 
-	STALACTITE(Locations.STALACTITE), SHADOW(Locations.EASTWINDOW), SHADOW_(Locations.WESTWINDOW), 
-	AXE(true, Locations.THEVOID), ART(Locations.ORIENTAL), PIRATE, 
-	DRAGON(Locations.SCAN1), DRAGON_(Locations.SCAN3), 
-	BRIDGE(Locations.SWSIDE), BRIDGE_(Locations.NESIDE), 
-	TROLL(Locations.SWSIDE), TROLL_(Locations.NESIDE), 
-	TROLL2(Locations.THEVOID), TROLL2_(Locations.THEVOID), 
-	BEAR(Locations.BARR), MESSAGE, GEYSER(Locations.VIEW), PONY(Locations.PONY), 
-	BATTERIES(Locations.THEVOID), MOSS(Locations.SOFT), 
+	//TODO art string
+	NOTHING, ALL, 	
+	KEYS(true, Locations.BUILDING,			new String[] {"\n\t\tSet of Keys", "\n\tThere are some keys on the ground here."}), 
+	LAMP(true, Locations.BUILDING,			new String[] {"\n\t\tBrass Lantern", "\n\tThere is a lamp shining nearby.", "\n\tThere is a shiny brass lamp nearby."}), 
+	GRATE(Locations.OUTSIDE, 				new String[] {"\n\tThe grate is open.", "\n\tThe grate is locked."}), GRATE_(Locations.INSIDE, null), 
+	CAGE(true, Locations.COBBLES,			new String[] {"\n\t\tWicker Cage", "\n\tThere is a small wicker cage discarded nearby."}), 
+	ROD(true, Locations.DEBRIS,				new String[] {"\n\t\tBlack Rod", "\n\tA three foot black rod with a rusty star on an end lies nearby."}), 
+	ROD2(true, Locations.THEVOID,			new String[] {"\n\t\tBlack Rod", "\n\tA three foot black rod with a rusty mark on an end lies nearby."}),
+	TREADS(Locations.EASTMIST,				new String[] {"\n\tRough stone steps lead up the dome."}), 
+	TREADS_(Locations.SMALLPIT,				new String[] {"\n\tRough stone steps lead down the pit."}), 
+	BIRD(true, Locations.BIRD,				new String[] {"\n\t\tLittle Bird in Cage", "\n\tThere is a little bird in the cage.", "\n\tA cheerful little bird is sitting here singing."}), 
+	DOOR(Locations.IMMENSE,					new String[] {"\n\tThe way north is barred by a massive, rusty, iron door.", "\n\tThe way north leads through a massive, rusty, iron door."}), 
+	PILLOW(true, Locations.SOFT,			new String[] {"\n\t\tVelvet Pillow", "\n\tA small velvet pillow lies on the floor."}), 
+	SNAKE(Locations.HALLOFMOUNTAINKING,		new String[] {"\n\tA huge green fierce snake bars the way!"}), 
+	CRYSTAL(Locations.EASTFISSURE,			new String[] {"\n\tA crystal bridge now spans the fissure."}), CRYSTAL_(Locations.WESTFISSURE, null), 
+	TABLET(Locations.DROOM,					new String[] {"\n\tA massive stone tablet imbedded in the wall reads:\n\t\"CONGRATULATIONS ON BRINGING LIGHT TO THE DARK-ROOM!\""}), 
+	CLAM(true, Locations.SHELL,				new String[] {"\n\t\tGiant Clam >GRUNT!<", "\n\tThere is an enormous clam here with its shell tightly closed."}), 
+	OYSTER(true, Locations.THEVOID,			new String[] {"\n\t\tGiant Oyster >GROAN!<", "\n\tThere is an enormous oyster here with its shell tightly closed."}), 
+	MAG(true, Locations.ANTE,				new String[] {"\n\t\t\"Spelunker Today\"", "\n\tThere are a few recent issues of \"Spelunker Today\" magazine here."}), 
+	DWARF, KNIFE, 
+	FOOD(true, Locations.BUILDING,			new String[] {"\n\t\tTasty Food", "\n\tThere is tasty food here."}), 
+	BOTTLE(true, Locations.BUILDING,		new String[] {"\n\t\tSmall Bottle", "\n\tThere is an empty bottle here.", "\n\t\tBottle of Water", "\n\tThere is a bottle of water here.", "\n\t\tBottle of Oil", "\n\tThere is a bottle of oil here."}), 
+	WATER, OIL, 
+	MIRROR(Locations.MIRROR, null), 
+	MIRROR_, 
+	PLANT(Locations.WESTPIT,				new String[] {"\n\tThere is a tiny little plant in the pit, murmuring \"Water, water, ...\"", "\n\tThere is a 12-foot-tall beanstalk stretching up out of the pit, bellowing \"Water!! Water!!\"", "\n\tThere is a gigantic beanstalk stretching all the way up to the hole.", ""}), 
+	PLANT2(Locations.WEST2PIT,				new String[] {"", "\n\tThe top of a 12-foot-tall beanstalk is poking up out of the west pit.", "\n\tThere is a huge beanstalk growing out of the west pit up to the hole.", ""}), PLANT2_(Locations.EAST2PIT,	null), 
+	STALACTITE(Locations.STALACTITE,		new String[] {}), 
+	SHADOW(Locations.EASTWINDOW,			new String[] {"\n\tThe shadowy figure seems to be trying to attract your attention."}), SHADOW_(Locations.WESTWINDOW, null), 
+	AXE(true, Locations.THEVOID,			new String[] {"\n\t\tDwarf's Axe", "\n\tThere is a little axe lying beside the bear.", "\n\tThere is a little axe here."}), 
+	ART(Locations.ORIENTAL, null), 
+	PIRATE, 
+	DRAGON(Locations.SCAN1,					new String[] {"\n\tA huge green fierce dragon bars the way!", "\n\tThe body of a huge green dead dragon is lying off to one side."}), DRAGON_(Locations.SCAN3, null), 
+	BRIDGE(Locations.SWSIDE,				new String[] {"\n\tA rickety wooden bridge extends across the chasm, vanishing into the mist. \n\tA sign posted on the bridge reads: \n\t\t\"Stop!  Pay Troll!\"", "\n\tThe wreckage of a bridge (and a dead bear) can be seen at the bottom of the chasm."}), BRIDGE_(Locations.NESIDE, null), 
+	TROLL(Locations.SWSIDE,					new String[] {"\n\tA burly troll stands by the bridge and insists you throw him a treasure before you may cross."}), TROLL_(Locations.NESIDE, null), 
+	TROLL2(Locations.THEVOID,				new String[] {"\n\tThe troll is nowhere to be seen."}), TROLL2_(Locations.THEVOID, null), 
+	BEAR(Locations.BARR,					new String[] {"\n\tThere is a ferocious cave bear eyeing you from the far end of the room!", "\n\tThere is a gentle cave bear sitting placidly in one corner.", "\n\nYou are being followed by a very large, tame bear.", "", "\n\tThere is a contented-looking bear wandering about nearby."}), 
+	MESSAGE(Locations.THEVOID,				new String[] {"\n\tThere is a message scrawled in the dust in a flowery script, reading:\n\t\t\"This is not the maze where the pirate leaves his treasure chest.\""}), 
+	GEYSER(Locations.VIEW, null), 
+	PONY(Locations.PONY,					new String[] {"\n\tThere is a massive vending machine here.  \nThe instructions on it read:\n\t\t\"Drop coins here to receive fresh batteries.\""}), 
+	BATTERIES(Locations.THEVOID,			new String[] {"\n\tThere are fresh batteries here.", "\n\tSome worn-out batteries have been discarded nearby."}), 
+	MOSS(Locations.SOFT, null), 
 	
-	GOLD(true, Locations.NUGGET), DIAMONDS(true, Locations.WESTFISSURE), 
-	SILVER(true, Locations.NS), JEWELS(true, Locations.SOUTH), COINS(true, Locations.WEST), 
-	CHEST(true, Locations.THEVOID), EGGS(true, Locations.GIANT), 
-	TRIDENT(true, Locations.FALLS), VASE(true, Locations.ORIENTAL), 
-	EMERALD(true, Locations.PROOM), PYRAMID(true, Locations.DROOM), PEARL(true, Locations.THEVOID), 
-	RUG(true, Locations.SCAN1), RUG_(true, Locations.SCAN3), 
-	SPICES(true, Locations.CHAMBER), CHAIN(true, Locations.BARR);
+	GOLD(true, Locations.NUGGET,			new String[] {"\n\t\tLarge Gold Nugget", "\n\tThere is a large sparkling nugget of gold here!"}), 
+	DIAMONDS(true, Locations.WESTFISSURE,	new String[] {"\n\t\tSeveral Diamonds", "\n\tThere are diamonds here!"}), 
+	SILVER(true, Locations.NS,				new String[] {"\n\t\tBars of Silver", "\n\tThere are bars of silver here!"}), 
+	JEWELS(true, Locations.SOUTH,			new String[] {"\n\t\tPrecious Jewelry", "\n\tThere is precious jewelry here!"}), 
+	COINS(true, Locations.WEST,				new String[] {"\n\t\tRare coins", "\n\tThere are many coins here!"}), 
+	CHEST(true, Locations.THEVOID,			new String[] {"\n\t\tTreasure Chest", "\n\tThe pirate's treasure chest is here!"}), 
+	EGGS(true, Locations.GIANT,				new String[] {"\n\t\tGolden Eggs", "\n\tThere is a large nest here, full of golden eggs!"}), 
+	TRIDENT(true, Locations.FALLS,			new String[] {"\n\t\tJeweled Trident", "\n\tThere is a jewel-encrusted trident here!"}), 
+	VASE(true, Locations.ORIENTAL,			new String[] {"\n\t\tMing Vase", "\n\tThe vase is now resting, delicately, on a velvet pillow.", "\n\tThere is a delicate, precious, Ming vase here!", "\n\tThe floor is littered with worthless shards of pottery."}), 
+	EMERALD(true, Locations.PROOM,			new String[] {"\n\t\tEgg-Sized Emerald", "\n\tThere is an emerald here the size of a plover's egg!"}), 
+	PYRAMID(true, Locations.DROOM,			new String[] {"\n\t\tPlatinum Pyramid", "\n\tThere is a platinum pyramid here, 8 inches on a side!"}), 
+	PEARL(true, Locations.THEVOID,			new String[] {"\n\t\tGlistening Pearl", "\n\tOff to one side lies a glistening pearl!"}), 
+	RUG(true, Locations.SCAN1,				new String[] {"\n\t\tPersian Rug", "\n\tThe dragon is sprawled out on a persian rug!", "\n\tThere is a persian rug spread out on the floor!"}), RUG_(true, Locations.SCAN3,	null), 
+	SPICES(true, Locations.CHAMBER,			new String[] {"\n\t\tRare Spices", "\n\tThere are rare spices here!"}), 
+	CHAIN(true, Locations.BARR,				new String[] {"\n\t\tGolden Chain", "\n\tThe bear is locked to the wall with a golden chain!", "\n\tThere is a golden chain lying in a heap on the floor!", "\n\tThere is a golden chain locked to the wall!"});
 
 	public final boolean mobile;
-	public  Locations location;
+	public Locations location;
+	public String[] descriptions;
 	
 	private GameObjects()
 	{
 		this.mobile = false;
 		this.location = Locations.THEVOID;
+		this.descriptions = null;
 	}
 	
-	private GameObjects(Locations location)
+	private GameObjects(Locations location, String[] descriptions)
 	{
 		this.mobile = false;
 		this.location = location;
+		this.descriptions = descriptions;
 	}
 	
-	private GameObjects(boolean mobile, Locations location)
+	private GameObjects(boolean mobile, Locations location, String[] descriptions)
 	{
 		this.mobile = mobile;
 		this.location = location;
+		this.descriptions = descriptions;
 	}
 	
 	public boolean isTreasure(GameObjects thisThing)
@@ -90,403 +127,75 @@ public enum GameObjects
 		}
 	}
 
-	public String getItemDescription(Locations location, GameObjects object, 
-			boolean light, boolean grate, int plant, int bottle, boolean cage, boolean oilDoor,
-			boolean bearAxe, boolean dragon, int bear, int usedBatteries, boolean broken,
-			int chain, boolean gold, boolean crystalBridge, boolean collapse, int rod1, int rod2,
-			int bottles, int lamps, int oysters, int pillows, int grates, int cages, int birds, 
-			int snakes, boolean pillow)
+	public String getItemDescription(Locations location, GameObjects object)
 	{
-		String output = "";
+		String output = AdventMain.empty;
+		
+		//these local variables make the switch statement significantly less cluttered and more readable
+		boolean inHand = location == Locations.INHAND;
+		AdventGame game = AdventMain.ADVENT;
+		boolean[] endGameObjectStates = game.endGameObjectsStates;
+		String[] descriptions = object.descriptions;
+		
 		switch(object)
 		{
-			case KEYS:
-				if(location == Locations.INHAND)
-				{	output = new String("\n\t\tSet of Keys");	}
-				else
-				{	output = new String("\n\tThere are some keys on the ground here.");	}
-				break;
+			case LAMP: if(!endGameObjectStates[1]) { output = (descriptions[ (inHand ? 0 : ((game.lampIsLit) ? 1 : 2)) ]); } break;
 				
-			case LAMP:
-				if(location == Locations.INHAND)
-				{	output = new String("\n\t\tBrass Lantern");	}
-				else if(lamps == 0)
-				{
-					if(light)
-					{	output = new String("\n\tThere is a lamp shining nearby.");	}
-					else
-					{	output = new String("\n\tThere is a shiny brass lamp nearby.");	}
-				}
-				else
-				{	output = "";	}
-				break;
+			case GRATE: case GRATE_: if(!endGameObjectStates[4]) { output = descriptions[((game.grateIsUnlocked) ? 0 : 1)]; } break;
 				
-			case GRATE: case GRATE_:
-				if(grates == 1)
-				{	output = "";	}
-				else if(grate)
-				{	output = new String("\n\tThe grate is open.");	}
-				else
-				{	output = new String("\n\tThe grate is locked.");	}
-				break;
+			case CAGE: if(!endGameObjectStates[5]) { output = descriptions[((inHand) ? 0 : 1)]; } break;
 				
-			case CAGE:
-				if(cages == 1)
-				{	output = "";	}
-				else if(location == Locations.INHAND)
-				{	output = new String("\n\t\tWicker Cage");	}
-				else
-				{	output = new String("\n\tThere is a small wicker cage discarded nearby.");	}
-				break;
+			case BIRD: if(!endGameObjectStates[6]) { output = (descriptions[ (inHand ? 0 : ((game.birdInCage) ? 1 : 2)) ]); } break;
 				
-			case BIRD:
-				if(birds == 1)
-				{	output = "";	}
-				else if(location == Locations.INHAND)
-				{	output = new String("\n\t\tLittle Bird in Cage");	}
-				else
-				{
-					if(cage)
-					{	output = new String("\n\tThere is a little bird in the cage.");	}
-					else
-					{	output = new String("\n\tA cheerful little bird is sitting here singing.");	}
-				}
-				break;
+			case ROD: if(!endGameObjectStates[8]) { output = descriptions[((inHand) ? 0 : 1)]; } break;				
 				
-			case ROD:
-				if(location == Locations.INHAND)
-				{	output = new String("\n\t\tBlack Rod");	}
-				else if(rod1 == 0)
-				{	output = new String("\n\tA three foot black rod with a rusty star on an end lies nearby.");	}
-				else
-				{	output = "";	}
-				break;				
+			case ROD2: if(!endGameObjectStates[9]) { output = descriptions[((inHand) ? 0 : 1)]; } break;
 				
-			case ROD2:
-				if(location == Locations.INHAND)
-				{	output = new String("\n\t\tBlack Rod");	}
-				else if(rod2 == 0)
-				{	output = new String("\n\tA three foot black rod with a rusty mark on an end lies nearby.");	}
-				else
-				{	output = "";	}
-				break;
+			case DOOR: output = descriptions[((!game.doorHasBeenOiled) ? 0 : 1)]; break;
 				
-			case DOOR:
-				if(!oilDoor)
-				{	output = new String("\n\tThe way north is barred by a massive, rusty, iron door.");	}
-				else
-				{	output = new String("\n\tThe way north leads through a massive, rusty, iron door.");	}
-				break;
+			case PILLOW: if(!endGameObjectStates[2]) { output = descriptions[((inHand) ? 0 : 1)]; } break;			
 				
-			case PILLOW:
-				if(location == Locations.INHAND)
-				{	output = new String("\n\t\tVelvet Pillow");	}
-				else if(pillows == 0)
-				{	output = new String("\n\tA small velvet pillow lies on the floor.");	}
-				else
-				{	output = "";	}
-				break;			
+			case VASE: output = descriptions[((game.vaseIsBroken ? 3 : (inHand ? 0 : (PILLOW.location == location ? 1 : 2))))]; break;		
 				
-			case VASE:
-				if(!broken)
-				{
-					if(location == Locations.INHAND)
-					{	output = new String("\n\t\tMing Vase");}
-					else if(pillow)
-					{
-						output = "\n\tThe vase is now resting, delicately, on a velvet pillow.";
-					}
-					else
-					{	output = new String("\n\tThere is a delicate, precious, Ming vase here!");	}
-				}
-				else
-				{	output = new String("\n\tThe floor is littered with worthless shards of pottery.");	}
-				break;		
+			case SNAKE: if(!endGameObjectStates[7]) { output = descriptions[0]; } break;				
 				
-			case SNAKE:
-				if(snakes == 1)
-				{	output = "";	}
-				else
-				{	output = new String("\n\tA huge green fierce snake bars the way!");	}
-				break;		
+			case OYSTER: if(!endGameObjectStates[3]) { output = descriptions[((inHand) ? 0 : 1)]; } break;		
 				
-			case TABLET:
-				output = new String("\n\tA massive stone tablet imbedded in the wall reads:"
-						+ "\n\t\"CONGRATULATIONS ON BRINGING LIGHT TO THE DARK-ROOM!\"");
-				break;		
+			case MAG: output = descriptions[((inHand) ? 0 : 1)]; break;			
 				
-			case CLAM:
-				if(location == Locations.INHAND)
-				{	output = new String("\n\t\tGiant Clam >GRUNT!<");	}
-				else
-				{	output = new String("\n\tThere is an enormous clam here with its shell tightly closed.");	}
-				break;		
+			case BOTTLE: if(!endGameObjectStates[0]) { output = descriptions[ game.stateOfTheBottle + (inHand ? 0 : 3) ]; } break;
 				
-			case OYSTER:
-				if(location == Locations.INHAND)
-				{	output = new String("\n\t\tGiant Oyster >GROAN!<");	}
-				else if(oysters == 0)
-				{	output = new String("\n\tThere is an enormous oyster here with its shell tightly closed.");	}
-				else
-				{	output = "";	}
-				break;		
+			case PLANT: output = descriptions[game.stateOfThePlant]; break;
+			
+			case PLANT2: case PLANT2_: output = PLANT2.descriptions[game.stateOfThePlant]; break;
 				
-			case MAG:
-				if(location == Locations.INHAND)
-				{	output = new String("\n\t\t\"Spelunker Today\"");	}
-				else
-				{	output = new String("\n\tThere are a few recent issues of \"Spelunker Today\" magazine here.");	}
-				break;		
+			case AXE: output = descriptions[(inHand ? 0 : (game.bearAxe ? 1 : 2))]; break;		
 				
-			case FOOD:
-				if(location == Locations.INHAND)
-				{	output = new String("\n\t\tTasty Food");	}
-				else
-				{	output = new String("\n\tThere is tasty food here.");	}
-				break;		
+			case DRAGON: case DRAGON_: output = DRAGON.descriptions[game.dragonIsAlive ? 0 : 1]; break;		
 				
-			case BOTTLE:
-				if(bottles == 1)
-				{	output = "";	}
-				else if(bottle == 0)
-				{
-					if(location == Locations.INHAND)
-					{	output = new String("\n\t\tSmall Bottle");	}
-					else
-					{	output = new String("\n\tThere is an empty bottle here.");	}
-				}
-				else if(bottle == 1)
-				{
-					if(location == Locations.INHAND)
-					{	output = new String("\n\t\tBottle of Water");	}
-					else
-					{	output = new String("\n\tThere is a bottle of water here.");	}
-				}
-				else if(bottle == 2)
-				{
-					if(location == Locations.INHAND)
-					{	output = new String("\n\t\tBottle of Oil");	}
-					else
-					{	output = new String("\n\tThere is a bottle of oil here.");	}
-				}
-				break;
+			case RUG: case RUG_: output = RUG.descriptions[inHand ? 0 : (game.dragonIsAlive ? 1 : 2)]; break;		
 				
-			case PLANT:
-				if(plant == 0)
-				{	output = new String("\n\tThere is a tiny little plant in the pit, murmuring \"Water, water, ...\"");	}
-				else if(plant == 1)
-				{	output = new String("\n\tThere is a 12-foot-tall beanstalk stretching up out of the pit, bellowing \"Water!! Water!!\"");	}
-				else if(plant == 2)
-				{	output = new String("\n\tThere is a gigantic beanstalk stretching all the way up to the hole.");	}
-				else
-				{	output = "";	}
-				break;
+			case BEAR: output = descriptions[game.stateOfTheBear]; break;
 				
-			case PLANT2: case PLANT2_:
-				if(plant == 1)
-				{	output = new String("\n\tThe top of a 12-foot-tall beanstalk is poking up out of the west pit.");	}
-				else if(plant == 2)
-				{	output = new String("\n\tThere is a huge beanstalk growing out of the west pit up to the hole.");	}
-				else
-				{	output = "";	}
-				break;
+			case BATTERIES: output = descriptions[(game.stateOfSpareBatteries == 1) ? 0 : 1]; break;	
 				
-			case AXE:
-				if(location == Locations.INHAND)
-				{	output = new String("\n\t\tDwarf's Axe");	}
-				else if(bearAxe)
-				{	output = new String("\n\tThere is a little axe lying beside the bear.");	}
-				else
-				{	output = new String("\n\tThere is a little axe here.");	}
-				break;		
+			case CHAIN: output = descriptions[inHand ? 0 : game.stateOfTheChain + 1]; break;		
+				
+			case TREADS: if(!game.goldInInventory){ output = descriptions[0]; } break;	
+				
+			case TREADS_: if(!game.goldInInventory){ output = descriptions[0]; } break;	
+				
+			case CRYSTAL: case CRYSTAL_: if(!game.crystalBridgeIsThere){ output = CRYSTAL.descriptions[0]; } break;		
+				
+			case BRIDGE: case BRIDGE_: output = BRIDGE.descriptions[!game.collapse ? 0 : 1]; break;	
+				
+			case SHADOW: case SHADOW_: output = SHADOW.descriptions[0]; break;	
+				
+			case TROLL: case TROLL_: output = TROLL.descriptions[0]; break;	
+				
+			case TROLL2: case TROLL2_: output = TROLL2.descriptions[0]; break;	
 		
-			case ART:
-				output = new String("");
-				break;
-				
-			case DRAGON: case DRAGON_:
-				if(dragon)
-				{	output = new String("\n\tA huge green fierce dragon bars the way!");	}
-				else
-				{	output = new String("\n\tThe body of a huge green dead dragon is lying off to one side.");	}
-				break;		
-				
-			case RUG: case RUG_:
-				if(dragon)
-				{	output = new String("\n\tThe dragon is sprawled out on a persian rug!");	}
-				else if(location == Locations.INHAND)
-				{	output = new String("\n\t\tPersian Rug");	}
-				else
-				{	output = new String("\n\tThere is a persian rug spread out on the floor!");	}
-				break;		
-				
-			case BEAR:
-				if(bear == 0)
-				{	output = new String("\n\tThere is a ferocious cave bear eyeing you from the far end of the room!");	}
-				else if(bear == 1)
-				{	output = new String("\n\tThere is a gentle cave bear sitting placidly in one corner.");	}
-				else if(bear == 2)
-				{	output = new String("\n\tThere is a contented-looking bear wandering about nearby.");	}
-				else
-				{	output = "";	}
-				break;
-				
-			case MESSAGE:
-				output = new String("\n\tThere is a message scrawled in the dust in a flowery script, reading:"
-						+ "\n\t\t\"This is not the maze where the pirate leaves his treasure chest.\"");
-				break;
-				
-			case PONY:
-				output = new String("\n\tThere is a massive vending machine here.  \nThe instructions on it read:"
-						+ "\n\t\t\"Drop coins here to receive fresh batteries.\"");
-				break;
-				
-			case BATTERIES:
-				if(usedBatteries == 1)
-				{	output = new String("\n\tThere are fresh batteries here.");	}
-				else
-				{	output = new String("\n\tSome worn-out batteries have been discarded nearby.");	}
-				break;	
-				
-			case MOSS:
-				output = new String("");
-				break;
-				
-			case GOLD:
-				if(location == Locations.INHAND)
-				{	output = new String("\n\t\tLarge Gold Nugget");	}
-				else
-				{	output = new String("\n\tThere is a large sparkling nugget of gold here!");	}
-				break;		
-				
-			case DIAMONDS:
-				if(location == Locations.INHAND)
-				{	output = new String("\n\t\tSeveral Diamonds");	}
-				else
-				{	output = new String("\n\tThere are diamonds here!");	}
-				break;		
-				
-			case SILVER:
-				if(location == Locations.INHAND)
-				{	output = new String("\n\t\tBars of Silver");	}
-				else
-				{	output = new String("\n\tThere are bars of silver here!");	}
-				break;		
-				
-			case JEWELS:
-				if(location == Locations.INHAND)
-				{	output = new String("\n\t\tPrecious Jewelry");	}
-				else
-				{	output = new String("\n\tThere is precious jewelry here!");	}
-				break;		
-
-			case COINS:
-				if(location == Locations.INHAND)
-				{	output = new String("\n\t\tRare coins");	}
-				else
-				{	output = new String("\n\tThere are many coins here!");	}
-				break;		
-				
-			case CHEST:
-				if(location == Locations.INHAND)
-				{	output = new String("\n\t\tTreasure Chest");	}
-				else
-				{	output = new String("\n\tThe pirate's treasure chest is here!");	}
-				break;		
-				
-			case EGGS:
-				if(location == Locations.INHAND)
-				{	output = new String("\n\t\tGolden Eggs");	}
-				else
-				{	output = new String("\n\tThere is a large nest here, full of golden eggs!");	}
-				break;		
-				
-			case TRIDENT:
-				if(location == Locations.INHAND)
-				{	output = new String("\n\t\tJeweled Trident");	}
-				else
-				{	output = new String("\n\tThere is a jewel-encrusted trident here!");	}
-				break;			
-				
-			case EMERALD:
-				if(location == Locations.INHAND)
-				{	output = new String("\n\t\tEgg-Sized Emerald");	}
-				else
-				{	output = new String("\n\tThere is an emerald here the size of a plover's egg!");	}
-				break;		
-				
-			case PYRAMID:
-				if(location == Locations.INHAND)
-				{	output = new String("\n\t\tPlatinum Pyramid");	}
-				else
-				{	output = new String("\n\tThere is a platinum pyramid here, 8 inches on a side!");	}
-				break;		
-				
-			case PEARL:
-				if(location == Locations.INHAND)
-				{	output = new String("\n\t\tGlistening Pearl");	}
-				else
-				{	output = new String("\n\tOff to one side lies a glistening pearl!");	}
-				break;		
-				
-			case SPICES:
-				if(location == Locations.INHAND)
-				{	output = new String("\n\t\tRare Spices");	}
-				else
-				{	output = new String("\n\tThere are rare spices here!");	}
-				break;		
-				
-			case CHAIN:
-				if(location == Locations.INHAND)
-				{	output = new String("\n\t\tGolden Chain");	}
-				else
-				{
-					if(chain == 0)
-					{	output = new String("\n\tThe bear is locked to the wall with a golden chain!");	}
-					else if(chain == 1)
-					{	output = new String("\n\tThere is a golden chain lying in a heap on the floor!");	}
-					if(chain == 2)
-					{	output = new String("\n\tThere is a golden chain locked to the wall!");	}
-				}
-				break;		
-				
-			case TREADS:
-				if(!gold)
-				{	output = new String("\n\tRough stone steps lead up the dome.");	}
-				break;	
-				
-			case TREADS_:
-				if(!gold)
-				{	output = new String("\n\tRough stone steps lead down the pit.");	}
-				break;	
-				
-			case CRYSTAL: case CRYSTAL_:
-				if(crystalBridge)
-				{	output = new String("\n\tA crystal bridge now spans the fissure.");	}
-				break;		
-				
-			case BRIDGE: case BRIDGE_:
-				if(!collapse)
-				{	output = new String("\n\tA rickety wooden bridge extends across the chasm, vanishing into the mist. \n\tA sign posted on the bridge reads: \n\t\t\"Stop!  Pay Troll!\"");	}
-				else
-				{	output = new String("\n\tThe wreckage of a bridge (and a dead bear) can be seen at the bottom of the chasm.");	}
-				break;	
-				
-			case SHADOW: case SHADOW_:
-				output = new String("\n\tThe shadowy figure seems to be trying to attract your attention.");
-				break;	
-				
-			case TROLL_: case TROLL:
-				output = new String("\n\tA burly troll stands by the bridge and insists you throw him a treasure before you may cross.");
-				break;	
-				
-			case TROLL2_: case TROLL2:
-				output = new String("\n\tThe troll is nowhere to be seen.");
-				break;
-		
-			default:
-				break;
-				
+			default: if(descriptions != null){ output = descriptions[((inHand || descriptions.length == 1) ? 0 : 1)]; } break;
 		}
 		return output;
 	}
