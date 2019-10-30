@@ -4,7 +4,7 @@
 
 package model;
 
-public enum Movement 
+public enum Movement implements KnownWord
 {
 	ROAD, HILL, ENTER, UPSTREAM, DOWNSTREAM, FOREST, FORWARD, BACK, 
 	VALLEY, STAIRS, OUT, BUILDING, GULLY, STREAM, ROCK, BED, CRAWL, 
@@ -15,5 +15,11 @@ public enum Movement
 	DEBRIS, HOLE, WALL, BROKEN, Y2, CLIMB, FLOOR, ROOM, 
 	SLIT, SLAB, XYZZY, DEPRESSION, ENTRANCE, PLUGH, SECRET, CAVE,
 	CROSS, BEDQUILT, PLOVER, ORIENTAL, CAVERN, SHELL, RESERVOIR,
-	OFFICE, FORK
+	OFFICE, FORK;
+
+	@Override
+	public byte getType() 
+	{
+		return 0;
+	}
 }

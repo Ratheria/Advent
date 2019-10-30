@@ -9,10 +9,11 @@ import model.MessageWords;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.HashMap;
 import model.ActionWords;
 import model.GameObjects;
+import model.KnownWord;
 import model.Movement;
+import model.WordTypeMappings;
 
 public class AdventGame implements Serializable
 {	
@@ -73,7 +74,7 @@ public class AdventGame implements Serializable
 	private int bonus;
 	private int turns;
 	private int lamp;
-	private byte itemsInHand;
+	public byte itemsInHand;
 	private byte deaths;
 	private byte fatality;
 	private int tally;
@@ -200,7 +201,6 @@ public class AdventGame implements Serializable
 		endGameObjectsStates = new boolean[] {false, false, false, false, false, false, false, false, false, false};
 //		fileSlot = 0;
 //		currentFileOperation = 0;
-		AdventMain.wordTypes.setUpHashMaps();
 	}
 
 	/*
@@ -213,14 +213,15 @@ public class AdventGame implements Serializable
 		increaseTurns = true;
 		int answer = askYesNo(input);
 		
-		boolean thisIsAnObject = AdventMain.wordTypes.isObject(input);
-		boolean thisIsAnAction = AdventMain.wordTypes.isAction(input);
-		GameObjects itsAn = null;
-		ActionWords action = null;
-		if(thisIsAnObject)
-		{	itsAn = (AdventMain.wordTypes.whichObject(input));	}
-		if(thisIsAnAction)
-		{	action = (AdventMain.wordTypes.whichAction(input));	}
+		input = AdventMain.truncate(input);
+		
+		KnownWord word = GameObjects.NOTHING;
+		byte wordType = -1;
+		if(WordTypeMappings.KnownWords.containsKey(input))
+		{
+			word = WordTypeMappings.KnownWords.get(input);
+			wordType = word.getType();
+		}
 		
 		if(beginningInstructionsOffer)
 		{
@@ -250,8 +251,8 @@ public class AdventGame implements Serializable
 				increaseTurns = false;
 			}
 		}
-		else if(quest == 1 && (input.toLowerCase().contains("yes") || input.equalsIgnoreCase("y") || 
-				input.toLowerCase().contains("yes")))
+		else if(quest == 1 && (input.contains("yes") || input.equalsIgnoreCase("y") || 
+				input.contains("yes") || input.contains("okay") || input.contains("ok")))
 		{
 			output = "Congratulations! You have just vanquished a dragon with your bare hands! "
 					+ "(Unbelievable, isn't it?)";
@@ -276,17 +277,17 @@ public class AdventGame implements Serializable
 			quit = true;
 			over = true;
 		}
-		else if(actionToAttempt != ActionWords.NOTHING && itsAn != GameObjects.NOTHING)
+		else if(actionToAttempt != ActionWords.NOTHING && wordType == 1)
 		{
 			quest = 0;
-			output = attemptAction(actionToAttempt, AdventMain.wordTypes.whichObject(input), input);
+			output = attemptAction(actionToAttempt, word, input);
 			actionToAttempt = ActionWords.NOTHING;
 		}
-		else if(input.equals("fee") || (quest == 7 && thisIsAnAction && action == ActionWords.FEEFIE))
+		else if((word == ActionWords.FEEFIE) && (quest == 7 || input.equals("fee")))
 		{
 			//attempting magic phrase
 			quest = 0;
-			output = attemptAction(action, GameObjects.NOTHING, input);
+			output = attemptAction((ActionWords) word, GameObjects.NOTHING, input);
 		}
 		else if(quest == 8)
 		{
@@ -311,21 +312,6 @@ public class AdventGame implements Serializable
 				noMore = true;
 				System.exit(0);
 			}
-		}
-		else if(quest == 10 && thisIsAnObject && itsAn != GameObjects.NOTHING)
-		{
-			quest = 0;
-			output = attemptAction(ActionWords.KILL, AdventMain.wordTypes.whichObject(input), input);
-		}
-		else if(quest == 11 && thisIsAnObject && itsAn != GameObjects.NOTHING)
-		{
-			output = attemptAction(ActionWords.FEED, AdventMain.wordTypes.whichObject(input), input);
-			quest = 0;
-		}
-		else if(quest == 12 && thisIsAnObject && itsAn != GameObjects.NOTHING)
-		{
-			output = attemptAction(ActionWords.TOSS, AdventMain.wordTypes.whichObject(input), input);
-			quest = 0;
 		}
 		else if(quest == 20)
 		{
@@ -415,35 +401,27 @@ public class AdventGame implements Serializable
 				quest = 0;
 				fooMagicWordProgression = 0;
 			}
-			if(input.length() > 5)
+			
+			if(wordType == 0)
+			{ output = attemptMovement((Movement) word, input); }
+			else if(wordType == 2)
+			{ output = attemptAction((ActionWords) word, GameObjects.NOTHING, ""); }
+			else if(wordType == 1)
 			{
-				input = input.substring(0, 5);
-			}
-			if(AdventMain.wordTypes.isMovement(input))
-			{				
-				output = attemptMovement(input);
-			}
-			else if(AdventMain.wordTypes.isObject(input) && objectIsPresent(AdventMain.wordTypes.whichObject(input)) 
-					&& AdventMain.wordTypes.whichObject(input) == GameObjects.KNIFE)
-			{
-				output = new String("The dwarves' knives vanish as they strike the walls of the cave.");
-				increaseTurns = false;
-			}
-			else if(AdventMain.wordTypes.isAction(input))
-			{
-				output = attemptAction(AdventMain.wordTypes.whichAction(input), GameObjects.NOTHING, "");
-			}
-			else if(AdventMain.wordTypes.isObject(input))
-			{
-				GameObjects currentObject = AdventMain.wordTypes.whichObject(input);
-				if(objectIsPresent(currentObject))
+				if(objectIsPresent((GameObjects) word))
 				{
-					output = "What would you like to do with the " + input + "?";
-					increaseTurns = false;
-				}
-				else if(currentObject == GameObjects.NOTHING)
-				{
-					output = "Okay.";
+					if(word == GameObjects.KNIFE)
+					{
+						output = "The dwarves' knives vanish as they strike the walls of the cave.";
+						increaseTurns = false;
+					}
+					else
+					{
+						output = "What would you like to do with the " + input + "?";
+						increaseTurns = false;
+						//TODO continuing objects like actions
+						//TODO can do continuting action then object and visa versa
+					}
 				}
 				else
 				{
@@ -451,17 +429,19 @@ public class AdventGame implements Serializable
 					increaseTurns = false;
 				}
 			}
-			else if(AdventMain.wordTypes.isMessage(input))
+			else if(wordType == 3)
 			{
-				MessageWords message = AdventMain.wordTypes.whichMessage(input);
-				output = message.message;
+				output = ((MessageWords) word).message;
 			}
 			else
 			{	output = nonsense();	}
 		}
-		if(input.equalsIgnoreCase("west"))
+		
+		if(input.equals("west"))
 		{	westHintCounter++;	}
+		
 		output = finishAction(output);
+		
 		return output;
 	}
 
@@ -470,7 +450,7 @@ public class AdventGame implements Serializable
 	 */
 	public String determineAction(String input1, String input2) 
 	{
-		System.out.println("\n" + input1 + " " + input2);
+		//System.out.println("\n" + input1 + " " + input2);
 		String output = null;
 		increaseTurns = true;
 		if(!seriousQuestion && quest != 0)
@@ -485,85 +465,77 @@ public class AdventGame implements Serializable
 		}
 		else
 		{
-			String input12 = input1;
-			String input22 = input2;
+			String input12 = AdventMain.truncate(input1);
+			String input22 = AdventMain.truncate(input2);
 			
-			boolean isObject1 = AdventMain.wordTypes.isObject(input12);
-			boolean isObject2 = AdventMain.wordTypes.isObject(input22);
-			GameObjects object1 = GameObjects.NOTHING;
-			GameObjects object2 = GameObjects.NOTHING;
-			if(isObject1) { object1 = AdventMain.wordTypes.whichObject(input12);	}
-			if(isObject2) { object2 = AdventMain.wordTypes.whichObject(input22);	}
+			KnownWord word = GameObjects.NOTHING;
+			KnownWord word2 = GameObjects.NOTHING;
+			byte wordType = -1;
+			byte wordType2 = -1;
 			
-			if(input1.length() > 5)
-			{	input12 = input1.substring(0, 5);	}
-			if(input2.length() > 5)
-			{	input22 = input2.substring(0, 5);	}
-			if(AdventMain.wordTypes.isMessage(input12))
+			if(WordTypeMappings.KnownWords.containsKey(input12))
 			{
-				MessageWords message = AdventMain.wordTypes.whichMessage(input12);
-				output = message.message;
+				word = WordTypeMappings.KnownWords.get(input12);
+				wordType = word.getType();
 			}
-			else if(AdventMain.wordTypes.isMessage(input22))
+			if(WordTypeMappings.KnownWords.containsKey(input22))
 			{
-				MessageWords message = AdventMain.wordTypes.whichMessage(input22);
-				output = message.message;
+				word2 = WordTypeMappings.KnownWords.get(input22);
+				wordType2 = word2.getType();
 			}
-			else if(AdventMain.wordTypes.isMovement(input12))
-			{
-				if(AdventMain.wordTypes.whichMovement(input12) == Movement.ENTER)
-				{
-					if(input22.equalsIgnoreCase("water")||input22.equalsIgnoreCase("strea"))
-					{
-						if(currentLocation == Locations.ROAD || currentLocation == Locations.BUILDING 
-								|| currentLocation == Locations.VALLEY || currentLocation == Locations.SLIT 
-								|| currentLocation == Locations.WET || currentLocation == Locations.FALLS 
-								|| currentLocation == Locations.RESER)
-						{
-							output = "Your feet are now wet.";
-							increaseTurns = true;
-						}
-						else
-						{
-							output = "I don't see any water.";
-							increaseTurns = false;
-						}
-					}
-					else
-					{	output = attemptAction(ActionWords.GO, determineNature(input22), input2);	}
-				}
-				else
-				{	output = attemptMovement(input12);	}
-			}
-			else if(AdventMain.wordTypes.isMovement(input22))
-			{	output = attemptMovement(input22);	}
-			else if(isObject1 && isObject2 
-					&& (object1 == GameObjects.WATER 
-					&& object2 == GameObjects.PLANT 
-					|| object2 == GameObjects.WATER 
-					&& object1 == GameObjects.PLANT))
-			{	output = attemptAction(ActionWords.POUR, GameObjects.WATER, "");	}
-			else if(isObject1 && isObject2
-					&& (object1 == GameObjects.OIL 
-					&& object2 == GameObjects.DOOR 
-					|| object2 == GameObjects.OIL 
-					&& object1 == GameObjects.DOOR))
-			{	output = attemptAction(ActionWords.POUR, GameObjects.OIL, "");	}
-			else if(isObject1 && objectIsPresent(object1) && object1 == GameObjects.KNIFE ||
-					isObject2 && objectIsPresent(object2) && object2 == GameObjects.KNIFE)
+			
+			if(objectIsPresent(GameObjects.KNIFE) && (word == GameObjects.KNIFE || word2 == GameObjects.KNIFE))
 			{
 				//TODO evaluate this
 				output = new String("The dwarves' knives vanish as they strike the walls of the cave.");
 				increaseTurns = false;
 			}
-			else if(AdventMain.wordTypes.isAction(input12))
-			{	output = attemptAction(AdventMain.wordTypes.whichAction(input12), determineNature(input22), input2);	}
-			else if(AdventMain.wordTypes.isAction(input22))
-			{	output = attemptAction(AdventMain.wordTypes.whichAction(input22), determineNature(input12), input1);	}
+			else if(wordType == 3)
+			{
+				output = ((MessageWords) word).message;
+			}
+			else if(wordType == 0)
+			{
+				if(word == Movement.ENTER )
+				{
+					if(input22.equals("water")||input22.equals("strea"))
+					{
+						increaseTurns = currentLocation.hasWater;
+						output = (increaseTurns ? "Your feet are now wet." : "I don't see any water.");
+					}
+					else
+					{	output = attemptAction(ActionWords.GO, word2, input2);	}
+				}
+				else
+				{	output = attemptMovement((Movement) word, input12);	}
+			}
+			else if(word == GameObjects.WATER && wordType2 == 1)
+			{	output = attemptAction(ActionWords.POUR, GameObjects.WATER, "");	}
+			else if(word == GameObjects.OIL && wordType2 == 1)
+			{	output = attemptAction(ActionWords.POUR, GameObjects.OIL, "");	}
+			else if(wordType == 2)
+			{	output = attemptAction((ActionWords) word, word2, input2);	}
+			else if(wordType2 == 0)
+			{
+				if(word2 == Movement.ENTER )
+				{
+					if(input12.equals("water")||input12.equals("strea"))
+					{
+						increaseTurns = currentLocation.hasWater;
+						output = (increaseTurns ? "Your feet are now wet." : "I don't see any water.");
+					}
+					else
+					{	output = attemptAction(ActionWords.GO, word, input1);	}
+				}
+				else
+				{	output = attemptMovement((Movement) word2, input22);	}
+			}
+			else if(wordType2 == 2)
+			{	output = attemptAction((ActionWords) word2, word, input1);	}
 			else
 			{	output = nonsense();	}
 		}
-		if(input1.equalsIgnoreCase("west")||input2.equalsIgnoreCase("west"))
+		if(input1.equals("west")||input2.equals("west"))
 		{	westHintCounter++;	}
 		output = finishAction(output);
 		return output;
@@ -589,7 +561,7 @@ public class AdventGame implements Serializable
 				AdventMain.places.placeObject(GameObjects.MESSAGE, Locations.PONY);
 				AdventMain.places.placeObject(GameObjects.CHEST, Locations.DEAD2);
 				
-				ArrayList<GameObjects> currentlyHolding = AdventMain.wordTypes.objectsHere(Locations.INHAND);
+				ArrayList<GameObjects> currentlyHolding = WordTypeMappings.objectsHere(Locations.INHAND);
 				boolean treasure = false;
 				if(currentlyHolding != null)
 				{
@@ -628,7 +600,7 @@ public class AdventGame implements Serializable
 				{	
 					dwarves = 2;	
 					dwarfPresent = 0;
-					dwarvesLeft -= (Math.floor(generate() * 3));
+					dwarvesLeft -= (Math.floor(AdventMain.generate() * 3));
 					output += "\n\nA little dwarf just walked around a corner, saw you, threw a little axe at you, "
 							+ "cursed, and ran away. (The axe missed.)";
 					AdventMain.places.placeObject(GameObjects.AXE, currentLocation);
@@ -647,7 +619,7 @@ public class AdventGame implements Serializable
 				boolean hit = false;
 				if(dwarves >= 3)
 				{
-					if(generate() * 1000 < 95 * (dwarves - 2))
+					if(AdventMain.generate() * 1000 < 95 * (dwarves - 2))
 					{	hit = true;	}
 				}
 				else
@@ -814,7 +786,7 @@ public class AdventGame implements Serializable
 	private String listItemsHere(Locations here)
 	{
 		String output = "";
-		ArrayList<GameObjects> objects = AdventMain.wordTypes.objectsHere(here);
+		ArrayList<GameObjects> objects = WordTypeMappings.objectsHere(here);
 		if(objects != null)
 		{
 			//output = output + "\n";
@@ -844,23 +816,11 @@ public class AdventGame implements Serializable
 		{	answer = 2;	}
 		return answer;
 	}
-	
-	private Object determineNature(String input)
-	{
-		Object result = GameObjects.NOTHING;
-		if(input.length() > 5)
-		{	input = input.substring(0, 5);	}
-		if(AdventMain.wordTypes.isMovement(input))
-		{	result = AdventMain.wordTypes.whichMovement(input);	}
-		else if(AdventMain.wordTypes.isObject(input))
-		{	result = AdventMain.wordTypes.whichObject(input);	}
-		return result;
-	}
 
 	private String attemptAction(ActionWords verb, Object other, String alt)
 	{
 		String output = "I'm game. Would you care to explain how?";
-		if(!AdventMain.wordTypes.isObject(other))
+		if(other == null)
 		{
 			output = new String("I don't see any " + alt + ".");
 			increaseTurns = false;
@@ -892,7 +852,7 @@ public class AdventGame implements Serializable
 					{	output = attemptAction(ActionWords.TAKE, GameObjects.RUG_, alt);	}
 					else if(object == GameObjects.ALL)
 					{
-						ArrayList<GameObjects> itemsHere = AdventMain.wordTypes.objectsHere(currentLocation);
+						ArrayList<GameObjects> itemsHere = WordTypeMappings.objectsHere(currentLocation);
 						if(!(itemsHere == null))
 						{
 							output = "";
@@ -1100,7 +1060,7 @@ public class AdventGame implements Serializable
 					}
 					else if(object == GameObjects.ALL)
 					{
-						ArrayList<GameObjects> itemsHere = AdventMain.wordTypes.objectsHere(Locations.INHAND);
+						ArrayList<GameObjects> itemsHere = WordTypeMappings.objectsHere(Locations.INHAND);
 						if(!(itemsHere == null))
 						{
 							output = "";
@@ -1695,7 +1655,7 @@ public class AdventGame implements Serializable
 					else if(objectIsHere(GameObjects.DWARF))
 					{
 						battleUpdate = true;
-						if(generate() * 3 > 1)
+						if(AdventMain.generate() * 3 > 1)
 						{
 							deadDwarves++;
 							dwarvesLeft--;
@@ -2110,12 +2070,6 @@ public class AdventGame implements Serializable
 					}
 					break;
 					
-				case PET:
-					//TODO
-					output = "TODO: implement";
-					increaseTurns = false;
-					break;
-					
 				case WAKE:
 					if(caveIsClosed && object == GameObjects.DWARF)
 					{
@@ -2331,349 +2285,348 @@ public class AdventGame implements Serializable
 				increaseTurns = false;
 			}
 		}
+		catch(NullPointerException e)
+		{
+			increaseTurns = false;
+		}
 		return output;
 	}
 	
 	private String attemptMovement(String input)
 	{
+		if(!WordTypeMappings.KnownWords.containsKey(input))
+		{
+			increaseTurns = false;
+			return "You can not do that.";
+		}
+		return attemptMovement((Movement) WordTypeMappings.KnownWords.get(input), input);
+	}
+	
+	private String attemptMovement(Movement destination, String input)
+	{
+		//TODO parameters
 		String output = "";
 		locationChange = true;
-		goldInInventory = (isInHand(GameObjects.GOLD));
-		boolean haveEmerald = (isInHand(GameObjects.EMERALD));
-		boolean haveClam = (isInHand(GameObjects.CLAM));
-		boolean haveOyster = (isInHand(GameObjects.OYSTER));
-		boolean trollIsHere = (GameObjects.TROLL.location == currentLocation 
-				|| GameObjects.TROLL_.location == currentLocation);
-
-		try
+		
+		Locations locationResult = currentLocation.moveTo(destination, currentLocation);
+		
+		if(caveIsClosed && locationResult != Locations.THEVOID && (locationResult.compareTo(Locations.THEVOID) < 10))
 		{
-			Movement destination = AdventMain.wordTypes.whichMovement(input);
-			Locations locationResult = currentLocation.moveTo(destination, currentLocation, grateIsUnlocked,
-					goldInInventory, crystalBridgeIsThere, snakeInHotMK, haveEmerald, haveClam, haveOyster, stateOfThePlant, doorHasBeenOiled,
-					dragonIsAlive, stateOfTheTroll, trollIsHere, itemsInHand, collapse, stateOfTheBear);
-			if(caveIsClosed && locationResult != Locations.THEVOID && (locationResult.compareTo(Locations.THEVOID) < 10))
+			output = "A mysterious recorded voice groans into life and announces: \n\t\"This exit is "
+					+ "closed. Please leave via main office.\"";
+			increaseTurns = false;
+		}
+		else if(justCollapsed)
+		{
+			setLocation(locationResult);
+			output = "Just as you reach the other side, the bridge buckles beneath the weight of the "
+					+ "bear, who was still following you around. You scrabble desperately for support, "
+					+ "but the bridge collapses you stumble back and fall into the chasm.";
+			justCollapsed = false;
+			int neordinal = currentLocation.getOrdinal(Locations.NESIDE);
+			if(currentLocation.getOrdinal(GameObjects.CHAIN.location) >= neordinal)
 			{
-				output = "A mysterious recorded voice groans into life and announces: \n\t\"This exit is "
-						+ "closed. Please leave via main office.\"";
+				lostTreasures++;
+				previousLocation = currentLocation;
+			}
+			if(currentLocation.getOrdinal(GameObjects.SPICES.location) >= neordinal)
+			{
+				lostTreasures++;
+				previousLocation = currentLocation;
+			}
+		}
+		else if(locationResult.equals(Locations.THEVOID))
+		{
+			if(destination.equals(Movement.XYZZY)||destination.equals(Movement.PLOVER)
+					||destination.equals(Movement.PLUGH))
+			{
+				output = AdventMain.nothing;
+				output = output + "\n" + getDescription(currentLocation, brief);
 				increaseTurns = false;
 			}
-			else if(justCollapsed)
+			else if(!canISee(currentLocation))
 			{
-				setLocation(locationResult);
-				output = "Just as you reach the other side, the bridge buckles beneath the weight of the "
-						+ "bear, who was still following you around. You scrabble desperately for support, "
-						+ "but the bridge collapses you stumble back and fall into the chasm.";
-				justCollapsed = false;
-				int neordinal = currentLocation.getOrdinal(Locations.NESIDE);
-				if(currentLocation.getOrdinal(GameObjects.CHAIN.location) >= neordinal)
-				{
-					lostTreasures++;
-					previousLocation = currentLocation;
-				}
-				if(currentLocation.getOrdinal(GameObjects.SPICES.location) >= neordinal)
-				{
-					lostTreasures++;
-					previousLocation = currentLocation;
-				}
-			}
-			else if(locationResult.equals(Locations.THEVOID))
-			{
-				if(destination.equals(Movement.XYZZY)||destination.equals(Movement.PLOVER)
-						||destination.equals(Movement.PLUGH))
-				{
-					output = AdventMain.nothing;
-					output = output + "\n" + getDescription(currentLocation, brief);
-					increaseTurns = false;
-				}
-				else if(!canISee(currentLocation))
-				{
-					output = pitchDark(output);
-					increaseTurns = false;
-				}
-				else if(destination.equals(Movement.NORTH) ||
-						destination.equals(Movement.SOUTH) ||
-						destination.equals(Movement.EAST)  ||
-						destination.equals(Movement.WEST)  ||
-						destination.equals(Movement.NORTHEAST)||
-						destination.equals(Movement.NORTHWEST)||
-						destination.equals(Movement.SOUTHEAST)||
-						destination.equals(Movement.SOUTHWEST))
-				{
-					increaseTurns = false;
-					output = "There are no exits in that direction.\n";
-					output = output + getDescription(currentLocation, brief);
-				}
-				else
-				{
-					output = "I don't know how to apply that word here.\n";
-					output = output + getDescription(currentLocation, brief);
-					increaseTurns = false;
-				}
-			}
-			else if(locationResult.equals(Locations.CRACK))
-			{
-				output = "That crack is far too small for you to follow.";
+				output = pitchDark(output);
 				increaseTurns = false;
 			}
-			else if(locationResult.equals(Locations.NECK))
+			else if(destination.equals(Movement.NORTH) ||
+					destination.equals(Movement.SOUTH) ||
+					destination.equals(Movement.EAST)  ||
+					destination.equals(Movement.WEST)  ||
+					destination.equals(Movement.NORTHEAST)||
+					destination.equals(Movement.NORTHWEST)||
+					destination.equals(Movement.SOUTHEAST)||
+					destination.equals(Movement.SOUTHWEST))
 			{
-				output = "You are at the bottom of the pit with a broken neck.";
 				increaseTurns = false;
-				playerIsDead = true;
-				fatality = 1;
+				output = "There are no exits in that direction.\n";
+				output = output + getDescription(currentLocation, brief);
 			}
-			else if(locationResult.equals(Locations.LOSE))
+			else
 			{
-				output = "You didn't make it.";
-				increaseTurns = false;
-				playerIsDead = true;
-				fatality = 1;
-			}
-			else if(locationResult.equals(Locations.CANT))
-			{
-				output = "The dome is unclimbable.";
-				increaseTurns = false;
-			}
-			else if(locationResult.equals(Locations.CLIMB))
-			{
-				setLocation(Locations.NARROW);
-				output = "You clamber up the plant and scurry through the hole at the top.\n" 
-						+ getDescription(currentLocation, brief);
-			}
-			else if(locationResult.equals(Locations.CHECK))
-			{
-				if(stateOfThePlant == 1)
-				{
-					setLocation(Locations.WEST2PIT);
-					output = "You have climbed up the plant and out of the pit.\n" 
-							+ getDescription(currentLocation, brief);
-				}
-				else
-				{
-					output = "There is nothing here to climb. Use \"UP\" or \"OUT\" to leave the pit.";
-					increaseTurns = false;
-				}
-			}
-			else if(locationResult.equals(Locations.SNAKED))
-			{
-				output = "You can't get by the snake.";
+				output = "I don't know how to apply that word here.\n";
+				output = output + getDescription(currentLocation, brief);
 				increaseTurns = false;
 			}
-			else if(locationResult.equals(Locations.THRU))
-			{
-				setLocation(Locations.WESTMIST);
-				output = "You have crawled through a very low wide passage parallel to and north "
-						+ "of the Hall of Mists.\n" + getDescription(currentLocation, brief);
-			}
-			else if(locationResult.equals(Locations.DUCK))
-			{
-				setLocation(Locations.WESTFISSURE);
-				output = "You have crawled through a very low wide passage parallel to and north "
-						+ "of the Hall of Mists.\n" + getDescription(currentLocation, brief);
-			}
-			else if(locationResult.equals(Locations.SEWER))
-			{
-				output = "The stream flows out through a pair of 1-foot-diameter sewer pipes."
-						+ "\n\nIt would be advisable to use the exit.";
-				increaseTurns = false;
-			}
-			else if(locationResult.equals(Locations.UPNOUT))
-			{
-				output = "There is nothing here to climb. Use \"UP\" or \"OUT\" to leave the pit.";
-				increaseTurns = false;
-			}
-			else if(locationResult.equals(Locations.DIDIT))
+		}
+		else if(locationResult.equals(Locations.CRACK))
+		{
+			output = "That crack is far too small for you to follow.";
+			increaseTurns = false;
+		}
+		else if(locationResult.equals(Locations.NECK))
+		{
+			output = "You are at the bottom of the pit with a broken neck.";
+			increaseTurns = false;
+			playerIsDead = true;
+			fatality = 1;
+		}
+		else if(locationResult.equals(Locations.LOSE))
+		{
+			output = "You didn't make it.";
+			increaseTurns = false;
+			playerIsDead = true;
+			fatality = 1;
+		}
+		else if(locationResult.equals(Locations.CANT))
+		{
+			output = "The dome is unclimbable.";
+			increaseTurns = false;
+		}
+		else if(locationResult.equals(Locations.CLIMB))
+		{
+			setLocation(Locations.NARROW);
+			output = "You clamber up the plant and scurry through the hole at the top.\n" 
+					+ getDescription(currentLocation, brief);
+		}
+		else if(locationResult.equals(Locations.CHECK))
+		{
+			if(stateOfThePlant == 1)
 			{
 				setLocation(Locations.WEST2PIT);
 				output = "You have climbed up the plant and out of the pit.\n" 
 						+ getDescription(currentLocation, brief);
 			}
-			else if(locationResult.equals(Locations.REMARK))
+			else
 			{
-				if(currentLocation.equals(Locations.SLIT)||currentLocation.equals(Locations.WET))
+				output = "There is nothing here to climb. Use \"UP\" or \"OUT\" to leave the pit.";
+				increaseTurns = false;
+			}
+		}
+		else if(locationResult.equals(Locations.SNAKED))
+		{
+			output = "You can't get by the snake.";
+			increaseTurns = false;
+		}
+		else if(locationResult.equals(Locations.THRU))
+		{
+			setLocation(Locations.WESTMIST);
+			output = "You have crawled through a very low wide passage parallel to and north "
+					+ "of the Hall of Mists.\n" + getDescription(currentLocation, brief);
+		}
+		else if(locationResult.equals(Locations.DUCK))
+		{
+			setLocation(Locations.WESTFISSURE);
+			output = "You have crawled through a very low wide passage parallel to and north "
+					+ "of the Hall of Mists.\n" + getDescription(currentLocation, brief);
+		}
+		else if(locationResult.equals(Locations.SEWER))
+		{
+			output = "The stream flows out through a pair of 1-foot-diameter sewer pipes."
+					+ "\n\nIt would be advisable to use the exit.";
+			increaseTurns = false;
+		}
+		else if(locationResult.equals(Locations.UPNOUT))
+		{
+			output = "There is nothing here to climb. Use \"UP\" or \"OUT\" to leave the pit.";
+			increaseTurns = false;
+		}
+		else if(locationResult.equals(Locations.DIDIT))
+		{
+			setLocation(Locations.WEST2PIT);
+			output = "You have climbed up the plant and out of the pit.\n" 
+					+ getDescription(currentLocation, brief);
+		}
+		else if(locationResult.equals(Locations.REMARK))
+		{
+			if(currentLocation.equals(Locations.SLIT)||currentLocation.equals(Locations.WET))
+			{
+				output = "You can't fit through a two-inch slit!";
+				increaseTurns = false;
+			}
+			else if(currentLocation.equals(Locations.INSIDE)||currentLocation.equals(Locations.OUTSIDE)
+					||currentLocation.equals(Locations.DEBRIS)||currentLocation.equals(Locations.AWKWARD)||
+					currentLocation.equals(Locations.BIRD)||currentLocation.equals(Locations.SMALLPIT))
+			{
+				output = "You can't go through a locked steel grate!";
+				increaseTurns = false;
+			}
+			else if((currentLocation.equals(Locations.SWSIDE) || currentLocation.equals(Locations.NESIDE)) 
+					&& destination != Movement.JUMP)
+			{
+				increaseTurns = false;
+				if(stateOfTheTroll == 0)
+				{	output = "The troll refuses to let you cross.";	}
+				else if(stateOfTheTroll == 1)
 				{
-					output = "You can't fit through a two-inch slit!";
-					increaseTurns = false;
-				}
-				else if(currentLocation.equals(Locations.INSIDE)||currentLocation.equals(Locations.OUTSIDE)
-						||currentLocation.equals(Locations.DEBRIS)||currentLocation.equals(Locations.AWKWARD)||
-						currentLocation.equals(Locations.BIRD)||currentLocation.equals(Locations.SMALLPIT))
-				{
-					output = "You can't go through a locked steel grate!";
-					increaseTurns = false;
-				}
-				else if((currentLocation.equals(Locations.SWSIDE) || currentLocation.equals(Locations.NESIDE)) 
-						&& destination != Movement.JUMP)
-				{
-					increaseTurns = false;
-					if(stateOfTheTroll == 0)
-					{	output = "The troll refuses to let you cross.";	}
-					else if(stateOfTheTroll == 1)
-					{
-						output = "The troll steps out from beneath the bridge and blocks your way.";
-						stateOfTheTroll = 0;
-						voidObject(GameObjects.TROLL2);
-						voidObject(GameObjects.TROLL2_);
-						AdventMain.places.placeObject(GameObjects.TROLL, Locations.SWSIDE);
-						AdventMain.places.placeObject(GameObjects.TROLL_, Locations.NESIDE);
-					}
-					else
-					{	output = "There is no longer any way across the chasm.";	}
-				}
-				else if(currentLocation.equals(Locations.NESIDE)||currentLocation.equals(Locations.SWSIDE)
-						||currentLocation.equals(Locations.EASTFISSURE)
-						||currentLocation.equals(Locations.WESTFISSURE))
-				{
-					increaseTurns = false;
-					if(destination.equals(Movement.JUMP))
-					{	output = "I respectfully suggest that you go across the bridge instead of jumping.";	}
-					else
-					{	output = "There is no way to cross the fissure.";	}
-				}
-				else if(currentLocation.equals(Locations.HALLOFMOUNTAINKING))
-				{
-					output = "You can't get by the snake.";
-					increaseTurns = false;
-				}
-				else if(currentLocation.equals(Locations.SHELL))
-				{
-					increaseTurns = false;
-					if(haveClam)
-					{	output = "You can't fit this five-foot clam through that little passage!";	}
-					else
-					{	output = "You can't fit this five-foot oyster through that little passage!";	}
-				}
-				else if(currentLocation.equals(Locations.WITT)&&destination.equals(Movement.WEST))
-				{
-					output = "You have crawled around in some little holes and found your way blocked"
-							+ " by a recent cave-in.\nYou are now back in the main passage.";
-				}
-				else if(currentLocation.equals(Locations.WITT)||currentLocation.equals(Locations.BEDQUILT)
-						||currentLocation.equals(Locations.CHEESE))
-				{
-					output = "You have crawled around in some little holes and wound up back in the main "
-							+ "passage.";
-				}
-				else if(currentLocation.equals(Locations.IMMENSE))
-				{
-					output = "The door is extremely rusty and refuses to open.";
-					increaseTurns = false;
-				}
-				else if(currentLocation.equals(Locations.SCAN1)||currentLocation.equals(Locations.SCAN3))
-				{
-					output = "That dragon looks rather nasty. You'd best not try to get by.";
-					increaseTurns = false;
-				}
-				else if(currentLocation.equals(Locations.VIEW))
-				{
-					output = "Don't be ridiculous!";
-					increaseTurns = false;
-				}
-				else if(currentLocation.equals(Locations.PROOM) || currentLocation.equals(Locations.DROOM) || currentLocation.equals(Locations.ALCOVE))
-				{
-					output = "Something you are carrying won't fit through the tunnel with you. "
-							+ "You'd best take inventory and drop something.";
-					increaseTurns = false;
+					output = "The troll steps out from beneath the bridge and blocks your way.";
+					stateOfTheTroll = 0;
+					voidObject(GameObjects.TROLL2);
+					voidObject(GameObjects.TROLL2_);
+					AdventMain.places.placeObject(GameObjects.TROLL, Locations.SWSIDE);
+					AdventMain.places.placeObject(GameObjects.TROLL_, Locations.NESIDE);
 				}
 				else
-				{
-					output = "You can not do that.";
-					increaseTurns = false;
-				}
+				{	output = "There is no longer any way across the chasm.";	}
+			}
+			else if(currentLocation.equals(Locations.NESIDE)||currentLocation.equals(Locations.SWSIDE)
+					||currentLocation.equals(Locations.EASTFISSURE)
+					||currentLocation.equals(Locations.WESTFISSURE))
+			{
+				increaseTurns = false;
+				if(destination.equals(Movement.JUMP))
+				{	output = "I respectfully suggest that you go across the bridge instead of jumping.";	}
+				else
+				{	output = "There is no way to cross the fissure.";	}
+			}
+			else if(currentLocation.equals(Locations.HALLOFMOUNTAINKING))
+			{
+				output = "You can't get by the snake.";
+				increaseTurns = false;
+			}
+			else if(currentLocation.equals(Locations.SHELL))
+			{
+				increaseTurns = false;
+				if(isInHand(GameObjects.CLAM))
+				{	output = "You can't fit this five-foot clam through that little passage!";	}
+				else
+				{	output = "You can't fit this five-foot oyster through that little passage!";	}
+			}
+			else if(currentLocation.equals(Locations.WITT)&&destination.equals(Movement.WEST))
+			{
+				output = "You have crawled around in some little holes and found your way blocked"
+						+ " by a recent cave-in.\nYou are now back in the main passage.";
+			}
+			else if(currentLocation.equals(Locations.WITT)||currentLocation.equals(Locations.BEDQUILT)
+					||currentLocation.equals(Locations.CHEESE))
+			{
+				output = "You have crawled around in some little holes and wound up back in the main "
+						+ "passage.";
+			}
+			else if(currentLocation.equals(Locations.IMMENSE))
+			{
+				output = "The door is extremely rusty and refuses to open.";
+				increaseTurns = false;
+			}
+			else if(currentLocation.equals(Locations.SCAN1)||currentLocation.equals(Locations.SCAN3))
+			{
+				output = "That dragon looks rather nasty. You'd best not try to get by.";
+				increaseTurns = false;
+			}
+			else if(currentLocation.equals(Locations.VIEW))
+			{
+				output = "Don't be ridiculous!";
+				increaseTurns = false;
+			}
+			else if(currentLocation.equals(Locations.PROOM) || currentLocation.equals(Locations.DROOM) || currentLocation.equals(Locations.ALCOVE))
+			{
+				output = "Something you are carrying won't fit through the tunnel with you. "
+						+ "You'd best take inventory and drop something.";
+				increaseTurns = false;
 			}
 			else
 			{
-				if(caveIsClosing && currentLocation.outsideCave(locationResult))
+				output = "You can not do that.";
+				increaseTurns = false;
+			}
+		}
+		else
+		{
+			if(caveIsClosing && currentLocation.outsideCave(locationResult))
+			{
+				if(!allowExtraMovesForPanic)
 				{
-					if(!allowExtraMovesForPanic)
+					clock2 = 15;
+					allowExtraMovesForPanic = true;
+					output = "A mysterious recorded voice groans into life and announces: "
+							+ "\n\t\"This exit is closed. Please leave via main office.\"";
+				}
+			}
+			boolean follow = false;
+			if(dwarfPresent == 2)
+			{
+				if(justBlocked)
+				{
+					justBlocked = false;
+					if(locationResult.critters(locationResult))
 					{
-						clock2 = 15;
-						allowExtraMovesForPanic = true;
-						output = "A mysterious recorded voice groans into life and announces: "
-								+ "\n\t\"This exit is closed. Please leave via main office.\"";
+						follow = true;
+						dwarfPresent = 1;
 					}
 				}
-				boolean follow = false;
-				if(dwarfPresent == 2)
-				{
-					if(justBlocked)
-					{
-						justBlocked = false;
-						if(locationResult.critters(locationResult))
-						{
-							follow = true;
-							dwarfPresent = 1;
-						}
-					}
-					else
-					{	
-						wayIsBlocked = true;
-					}
+				else
+				{	
+					wayIsBlocked = true;
 				}
+			}
 
-				if(wayIsBlocked)
+			if(wayIsBlocked)
+			{
+				battleUpdate = true;
+				locationChange = false;
+				output = "A little dwarf with a big knife blocks your way.";
+				wayIsBlocked = false;
+				justBlocked = true;
+			}
+			else
+			{
+				setLocation(locationResult);
+				if(!canISee(currentLocation))
 				{
-					battleUpdate = true;
-					locationChange = false;
-					output = "A little dwarf with a big knife blocks your way.";
-					wayIsBlocked = false;
-					justBlocked = true;
+					output = pitchDark(output);
 				}
 				else
 				{
-					setLocation(locationResult);
-					if(!canISee(currentLocation))
+					System.out.println("d " + dwarves);
+					if(currentLocation.critters(currentLocation))
 					{
-						output = pitchDark(output);
-					}
-					else
-					{
-						System.out.println("d " + dwarves);
-						if(currentLocation.critters(currentLocation))
+						double chance = AdventMain.generate();
+						if(pirate == 0)
 						{
-							double chance = generate();
-							if(pirate == 0)
-							{
-								movesWOEncounter++;
-								double likely = (movesWOEncounter * 10 / 8)/8; 
-								if(chance * 100 <= likely)
-								{	pirate = 1;	}
-								System.out.println("likely " + likely + "\npirate " + pirate);
-							}
-							chance = generate();
-							if(dwarvesAllowed && dwarves > 0 && dwarvesLeft > 0 && !follow)
-							{
-								double encounter = (dwarvesLeft * 1000)/50;
-								if(chance * 1000 <= encounter)
-								{	dwarfPresent = 1;	}
-								System.out.println("encounter " + encounter + "\nchance " + chance * 1000);
-							}
+							movesWOEncounter++;
+							double likely = (movesWOEncounter * 10 / 8)/8; 
+							if(chance * 100 <= likely)
+							{	pirate = 1;	}
+							System.out.println("likely " + likely + "\npirate " + pirate);
 						}
-						output = getDescription(currentLocation, brief);
-						if(stateOfTheBear == 2)
-						{	output += "\n\tYou are being followed by a very large, tame bear.";	}
-						if(follow)
-						{	AdventMain.places.placeObject(GameObjects.DWARF, currentLocation);	}
-						if(currentLocation.equals(Locations.Y2))
+						chance = AdventMain.generate();
+						if(dwarvesAllowed && dwarves > 0 && dwarvesLeft > 0 && !follow)
 						{
-							double chance = generate();
-							if(chance > .74)
-							{	output = new String(output + "\n\nA hollow voice says \"PLUGH\"");	}
+							double encounter = (dwarvesLeft * 1000)/50;
+							if(chance * 1000 <= encounter)
+							{	dwarfPresent = 1;	}
+							System.out.println("encounter " + encounter + "\nchance " + chance * 1000);
 						}
 					}
-				}
-				if(relocate)
-				{
-					AdventMain.places.placeObject(GameObjects.EMERALD, Locations.PROOM);
-					itemsInHand--;
-					relocate = false;
+					output = getDescription(currentLocation, brief);
+					if(stateOfTheBear == 2)
+					{	output += "\n\tYou are being followed by a very large, tame bear.";	}
+					if(follow)
+					{	AdventMain.places.placeObject(GameObjects.DWARF, currentLocation);	}
+					if(currentLocation.equals(Locations.Y2))
+					{
+						double chance = AdventMain.generate();
+						if(chance > .74)
+						{	output = new String(output + "\n\nA hollow voice says \"PLUGH\"");	}
+					}
 				}
 			}
-		}
-		catch(NullPointerException e)
-		{
-			output = "You can not do that.";
-			increaseTurns = false;
+			if(relocate)
+			{
+				AdventMain.places.placeObject(GameObjects.EMERALD, Locations.PROOM);
+				itemsInHand--;
+				relocate = false;
+			}
 		}
 		return output;
 	}
@@ -2712,7 +2665,7 @@ public class AdventGame implements Serializable
 	{
 		String output = null;
 		increaseTurns = false;
-		double randomOutput = generate();
+		double randomOutput = AdventMain.generate();
 		if(randomOutput < .34)
 		{	output = "I have no idea what you are talking about!";	}
 		else if(randomOutput < .67)
@@ -2730,8 +2683,8 @@ public class AdventGame implements Serializable
 	private int getCurrentScore()
 	{
 		int currentScore = (2 + (2 * (tally)) + (deaths * 10));
-		ArrayList<GameObjects> buildingItems = AdventMain.wordTypes.objectsHere(Locations.BUILDING);
-		ArrayList<GameObjects> witItems = AdventMain.wordTypes.objectsHere(Locations.WITT);
+		ArrayList<GameObjects> buildingItems = WordTypeMappings.objectsHere(Locations.BUILDING);
+		ArrayList<GameObjects> witItems = WordTypeMappings.objectsHere(Locations.WITT);
 		
 		if(!(buildingItems == null))
 		{
@@ -2769,7 +2722,7 @@ public class AdventGame implements Serializable
 	private boolean fallInPit()
 	{
 		boolean pitifulDeath = false;
-		double chance = generate();
+		double chance = AdventMain.generate();
 		if(chance < .35)
 		{
 			pitifulDeath = true;
@@ -2971,13 +2924,13 @@ public class AdventGame implements Serializable
 		if(thing != GameObjects.BIRD){	itemsInHand++;	}
 	}
 
-	private boolean isInHand(GameObjects thing)
+	public boolean isInHand(GameObjects thing)
 	{	return thing.location == Locations.INHAND;	}
 	
 	private boolean objectIsHere(GameObjects thing)
 	{	return thing.location == currentLocation;	}
 	
-	private boolean objectIsPresent(GameObjects thing)
+	public boolean objectIsPresent(GameObjects thing)
 	{
 		return objectIsHere(thing) || isInHand(thing);
 	}
@@ -3017,9 +2970,6 @@ public class AdventGame implements Serializable
 		stateOfTheBear = 3;
 	}
 	
-	public static double generate()
-	{	return AdventMain.random.nextDouble();	}
-	
 	public void setTroll()
 	{	stateOfTheTroll = 1;	}
 	
@@ -3028,5 +2978,5 @@ public class AdventGame implements Serializable
 	
 	public void wasFound(GameObjects thing)
 	{	found.put(thing, true);	}
-	
+
 }

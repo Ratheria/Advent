@@ -7,7 +7,7 @@ package model;
 import controller.AdventGame;
 import controller.AdventMain;
 
-public enum GameObjects 
+public enum GameObjects implements KnownWord
 {
 	//TODO art string
 	NOTHING, ALL, 	
@@ -30,7 +30,7 @@ public enum GameObjects
 	MAG(true, Locations.ANTE,				new String[] {"\n\t\t\"Spelunker Today\"", "\n\tThere are a few recent issues of \"Spelunker Today\" magazine here."}), 
 	DWARF, KNIFE, 
 	FOOD(true, Locations.BUILDING,			new String[] {"\n\t\tTasty Food", "\n\tThere is tasty food here."}), 
-	BOTTLE(true, Locations.BUILDING,		new String[] {"\n\t\tSmall Bottle", "\n\tThere is an empty bottle here.", "\n\t\tBottle of Water", "\n\tThere is a bottle of water here.", "\n\t\tBottle of Oil", "\n\tThere is a bottle of oil here."}), 
+	BOTTLE(true, Locations.BUILDING,		new String[] {"\n\t\tSmall Bottle", "\n\t\tBottle of Water", "\n\t\tBottle of Oil", "\n\tThere is an empty bottle here.", "\n\tThere is a bottle of water here.", "\n\tThere is a bottle of oil here."}), 
 	WATER, OIL, 
 	MIRROR(Locations.MIRROR, null), 
 	MIRROR_, 
@@ -198,5 +198,11 @@ public enum GameObjects
 			default: if(descriptions != null){ output = descriptions[((inHand || descriptions.length == 1) ? 0 : 1)]; } break;
 		}
 		return output;
+	}
+
+	@Override
+	public byte getType() 
+	{
+		return 1;
 	}
 }

@@ -5,7 +5,7 @@
 
 package model;
 
-public enum MessageWords 
+public enum MessageWords implements KnownWord
 {
 	MAGIC("Good try, but that is an old worn-out magic word."), 
 	HELP("I know of places, actions, and things. "
@@ -64,5 +64,11 @@ public enum MessageWords
 	public final String message;
 	
 	private MessageWords(String message){	this.message = message;		}
+
+	@Override
+	public byte getType() 
+	{
+		return 3;
+	}
 }
 

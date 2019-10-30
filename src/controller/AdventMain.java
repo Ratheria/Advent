@@ -41,17 +41,17 @@ public class AdventMain
 	public static final String[] feeFieFoe = new String[] {"fee", "fie", "foe", "foo", "fum"};
 	public static final int[] scores = new int[] {35, 100, 130, 200, 250, 300, 330, 349, 350};
 	public static final String[] sMessages = new String[] 
-			{	
-				"You are obviously a rank amateur. Better luck next time.",
-				"Your score qualifies you as a novice class adventurer.",
-				"You have now achieved the rating 'Experienced Adventurer'.",
-				"You may now consider yourself a 'Seasoned Adventurer'.",
-				"You have reached 'Junior Master' status.",
-				"Your score puts you in Master Adventurer Class C.",
-				"Your score puts you in Master Adventurer Class B.",
-				"Your score puts you in Master Adventurer Class A.",
-				"All of Adventuredom gives tribute to you, Adventure Grandmaster!"
-			};
+	{	
+		"You are obviously a rank amateur. Better luck next time.",
+		"Your score qualifies you as a novice class adventurer.",
+		"You have now achieved the rating 'Experienced Adventurer'.",
+		"You may now consider yourself a 'Seasoned Adventurer'.",
+		"You have reached 'Junior Master' status.",
+		"Your score puts you in Master Adventurer Class C.",
+		"Your score puts you in Master Adventurer Class B.",
+		"Your score puts you in Master Adventurer Class A.",
+		"All of Adventuredom gives tribute to you, Adventure Grandmaster!"
+	};
 	
 	public static AdventureFrame frame;
 	public static GameStateHandler stateHandler = new GameStateHandler();
@@ -62,6 +62,14 @@ public class AdventMain
 		ADVENT = new AdventGame();
 		frame = new AdventureFrame();
 		frame.setUp();
+	}
+	
+	public static double generate()
+	{	return random.nextDouble();	}
+	
+	public static String truncate(String s)
+	{
+		return s.substring(0, Math.min(s.length(), 5));
 	}
 	
 }

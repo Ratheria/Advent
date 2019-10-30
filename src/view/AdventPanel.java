@@ -224,10 +224,6 @@ public class AdventPanel extends JPanel
 					{
 						if(inputField.isEditable())
 						{
-							if(input.length() > 5)
-							{
-								input = input.substring(0, 5);
-							}
 							displayLog.append("\n\t> " + origin 
 									+ "\n\n" + base.determineAction(input) + "\n");
 							setLabels();

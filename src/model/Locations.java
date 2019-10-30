@@ -931,12 +931,10 @@ public enum Locations
 	public void placeObject(GameObjects thing, Locations here)
 	{	thing.location = here;	}
 	
-	public Locations moveTo(Movement destination, Locations here, boolean grate,
-			boolean gold, boolean crystalBridge, boolean snake, boolean emerald, boolean clam, 
-			boolean oyster, int plant, boolean oilDoor, boolean dragon, int troll,
-			boolean trollHere, int itemsInHand, boolean collapse, int bear)
+	public Locations moveTo(Movement destination, Locations here)
 	{
-		double chance = AdventGame.generate();
+		AdventGame game = AdventMain.ADVENT;
+		double chance = AdventMain.generate();
 		Locations next = null;
 		switch(here)
 		{
@@ -1039,7 +1037,7 @@ public enum Locations
 					case FOREST: case EAST: case WEST: case SOUTH: next = FOREST; break; 
 					case BUILDING: next = ROAD; break;
 					case UPSTREAM: case GULLY: case NORTH: next = SLIT; break;
-					case ENTER: case IN: case DOWN: next = throughGrate(grate); break;
+					case ENTER: case IN: case DOWN: next = throughGrate(game.grateIsUnlocked); break;
 					default: next = THEVOID; break; 
 				}
 				break;
@@ -1050,7 +1048,7 @@ public enum Locations
 					case CRAWL: case COBBLE: case IN: case WEST: next = COBBLES; break;
 					case PIT: next = SMALLPIT; break;
 					case DEBRIS: next = DEBRIS; break;
-					case OUT: case UP: next = backThroughGrate(grate); break;
+					case OUT: case UP: next = backThroughGrate(game.grateIsUnlocked); break;
 					default: next = THEVOID; break;
 				}
 				break;
@@ -1068,7 +1066,7 @@ public enum Locations
 			case DEBRIS:
 				switch(destination)
 				{
-					case DEPRESSION: next = backThroughGrate(grate); break;
+					case DEPRESSION: next = backThroughGrate(game.grateIsUnlocked); break;
 					case ENTRANCE: next = INSIDE; break;
 					case COBBLE: case CRAWL: case PASSAGE: case LOW: case EAST: next = COBBLES; break;
 					case CANYON: case IN: case UP: case WEST: next = AWKWARD; break;
@@ -1081,7 +1079,7 @@ public enum Locations
 			case AWKWARD:
 				switch(destination)
 				{
-					case DEPRESSION: next = backThroughGrate(grate); break;
+					case DEPRESSION: next = backThroughGrate(game.grateIsUnlocked); break;
 					case ENTRANCE: next = INSIDE; break;
 					case DOWN: case EAST: case DEBRIS: next = DEBRIS; break;
 					case IN: case UP: case WEST: next = BIRD; break;
@@ -1093,7 +1091,7 @@ public enum Locations
 			case BIRD:
 				switch(destination)
 				{
-					case DEPRESSION: next = backThroughGrate(grate); break;
+					case DEPRESSION: next = backThroughGrate(game.grateIsUnlocked); break;
 					case ENTRANCE: next = INSIDE; break;
 					case DEBRIS: next = DEBRIS; break;
 					case CANYON: case EAST: next = AWKWARD; break;
@@ -1105,12 +1103,12 @@ public enum Locations
 			case SMALLPIT:
 				switch(destination)
 				{
-					case DEPRESSION: next = backThroughGrate(grate); break;
+					case DEPRESSION: next = backThroughGrate(game.grateIsUnlocked); break;
 					case ENTRANCE: next = INSIDE; break;
 					case DEBRIS: next = DEBRIS; break;
 					case PASSAGE: case EAST: next = BIRD; break;
 					case DOWN: case PIT: case STEPS:
-						if(gold)
+						if(game.goldInInventory)
 						{	next = NECK;	}
 						else
 						{	next = EASTMIST;}
@@ -1127,16 +1125,12 @@ public enum Locations
 					case FORWARD: case HALL: case WEST: next = EASTFISSURE; break;
 					case STAIRS: case DOWN: case NORTH: next = HALLOFMOUNTAINKING; break;
 					case UP: case PIT:
-						if(gold)
-						{	next = CANT;	}
-						else
-						{	next = SMALLPIT;}
+						if(game.goldInInventory){ next = CANT; }
+						else{ next = SMALLPIT; }
 						break;
 					case STEPS: case DOME: case PASSAGE: case EAST:
-						if(gold)
-						{	next = CANT;	}
-						else
-						{	next = THEVOID;	}
+						if(game.goldInInventory){ next = CANT; }
+						else{ next = THEVOID; }
 						break;
 					case Y2: next = JUMBLE; break;
 					default: next = THEVOID; break;
@@ -1156,12 +1150,10 @@ public enum Locations
 				{
 					case HALL: case EAST: next = EASTMIST; break;
 					case JUMP: case FORWARD:
-						if(!crystalBridge)
-						{	next = LOSE;	}
-						else
-						{	next = THEVOID;	}
+						if(!game.crystalBridgeIsThere){ next = LOSE; }
+						else{ next = THEVOID; }
 						break;
-					case OVER: case ACROSS: case WEST: case CROSS: next = westRemark(crystalBridge); break;
+					case OVER: case ACROSS: case WEST: case CROSS: next = westRemark(game.crystalBridgeIsThere); break;
 					default: next = THEVOID; break;
 				}
 				break;
@@ -1172,12 +1164,10 @@ public enum Locations
 					case NORTH: next = THRU; break;
 					case WEST: next = WESTMIST; break;
 					case JUMP:
-						if(crystalBridge)
-						{	next = REMARK;	}
-						else
-						{	next = THEVOID;	}
+						if(game.crystalBridgeIsThere){ next = REMARK; }
+						else{ next = THEVOID; }
 						break;
-					case FORWARD: case OVER: case ACROSS: case EAST: case CROSS: next = eastRemark(crystalBridge); break;
+					case FORWARD: case OVER: case ACROSS: case EAST: case CROSS: next = eastRemark(game.crystalBridgeIsThere); break;
 					default: next = THEVOID; break;
 				}
 				break;
@@ -1585,25 +1575,25 @@ public enum Locations
 				{
 					case STAIRS: case UP: case EAST: next = EASTMIST; break;
 					case NORTH: case LEFT:
-						if(snake)
+						if(game.snakeInHotMK)
 						{	next = REMARK;	}
 						else
 						{	next = NS;	}
 						break;
 					case SOUTH: case RIGHT:
-						if(snake)
+						if(game.snakeInHotMK)
 						{	next = REMARK;	}
 						else
 						{	next = SOUTH;	}
 						break;
 					case WEST: case FORWARD:
-						if(snake)
+						if(game.snakeInHotMK)
 						{	next = REMARK;	}
 						else
 						{	next = WEST;	}
 						break;
 					case SOUTHWEST:
-						if(snake)
+						if(game.snakeInHotMK)
 						{
 							if(Math.random() < .36)
 							{	next = SECRET;	}
@@ -1734,7 +1724,7 @@ public enum Locations
 					case DOWN: next = RAGGED; break;
 					case WEST: next = BEDQUILT; break;
 					case SOUTH:
-						if(clam||oyster)
+						if(game.isInHand(GameObjects.CLAM)||game.isInHand(GameObjects.OYSTER))
 						{	next = REMARK;	}
 						else
 						{	next = COMPLEX;	}
@@ -1891,7 +1881,7 @@ public enum Locations
 				{
 					case UP: case OUT: next = WEST2PIT; break;
 					case CLIMB: 
-						if(!(plant == 2))
+						if(!(game.stateOfThePlant == 2))
 						{	next = CHECK;	}
 						else
 						{	next = CLIMB;	}
@@ -1933,7 +1923,7 @@ public enum Locations
 				{
 					case SOUTH: case GIANT: case PASSAGE: next = GIANT; break;
 					case NORTH: case ENTER: case CAVERN:
-						if(oilDoor)
+						if(game.doorHasBeenOiled)
 						{	next = FALLS;	}
 						else
 						{	next = REMARK;	} 
@@ -2050,7 +2040,7 @@ public enum Locations
 					case NORTHWEST: next = MISTY; break;
 					case CAVERN: next = MISTY; break;
 					case EAST: case PASSAGE: case PLOVER:
-						if(itemsInHand > 1 || (itemsInHand > 0 && !emerald))
+						if(game.itemsInHand > 1 || (game.itemsInHand > 0 && !game.isInHand(GameObjects.EMERALD)))
 						{	next = REMARK;	}
 						else
 						{	next = PROOM;	}
@@ -2063,14 +2053,14 @@ public enum Locations
 				switch(destination)
 				{
 					case WEST: case PASSAGE: case OUT: 
-						if(itemsInHand > 1 || (itemsInHand > 0 && !emerald))
+						if(game.itemsInHand > 1 || (game.itemsInHand > 0 && !game.isInHand(GameObjects.EMERALD)))
 						{	next = REMARK;	}
 						else
 						{	next = ALCOVE;	}
 						break;
 					case PLOVER: 
-						if(emerald)
-						{	AdventMain.ADVENT.relocate();	}
+						if(game.isInHand(GameObjects.EMERALD))
+						{	game.relocate();	}
 						next = Y2;
 						break;
 					case NORTHEAST: case DARK: next = DROOM; break;
@@ -2101,7 +2091,7 @@ public enum Locations
 				{
 					case DOWN: case SLAB: next = SLAB; break;
 					case SOUTH: 
-						if(dragon)
+						if(game.dragonIsAlive)
 						{	next = SCAN1;	}
 						else
 						{	next = SCAN2;	}
@@ -2161,7 +2151,7 @@ public enum Locations
 				{
 					case EAST: next = HALLOFMOUNTAINKING; break;
 					case WEST:
-						if(dragon)
+						if(game.dragonIsAlive)
 						{	next = SCAN3;	}
 						else
 						{	next = SCAN2;	}
@@ -2220,17 +2210,17 @@ public enum Locations
 				{
 					case SOUTHWEST: next = SCORR; break;
 					case OVER: case ACROSS: case CROSS: case NORTHEAST:
-						if(troll < 2 || collapse)
+						if(game.stateOfTheTroll < 2 || game.collapse)
 						{	next = REMARK;	}
 						else
 						{	
 							next = NESIDE;
-							if(troll == 3)
-							{	AdventMain.ADVENT.setTroll();	}
+							if(game.stateOfTheTroll == 3)
+							{	game.setTroll();	}
 						}
 						break;
 					case JUMP:
-						if(collapse)
+						if(game.collapse)
 						{	next = LOSE;	}
 						else
 						{	next = REMARK;	}
@@ -2341,8 +2331,8 @@ public enum Locations
 				{
 					case NORTHEAST: next = CORR; break;
 					case OVER: case ACROSS: case CROSS: case SOUTHWEST:
-						System.out.println("troll " + troll);
-						if(troll == 1)
+						//System.out.println("troll " + game.stateOfTheTroll);
+						if(game.stateOfTheTroll == 1)
 						{
 							ArrayList<GameObjects> currentlyHolding = AdventMain.wordTypes.objectsHere(Locations.INHAND);
 							if(currentlyHolding != null)
@@ -2351,31 +2341,31 @@ public enum Locations
 								{
 									if(object.isTreasure(object))
 									{
-										AdventMain.ADVENT.stateOfTheTroll = 0;
+										game.stateOfTheTroll = 0;
 									}
 								}
 							}
 						}
-						if(troll == 0)
+						if(game.stateOfTheTroll == 0)
 						{
 							next = REMARK;
 						}
 						else
 						{	
-							if(collapse)
+							if(game.collapse)
 							{	next = REMARK;	}
 							else
 							{
-								if(troll == 3)
+								if(game.stateOfTheTroll == 3)
 								{
 									next = SWSIDE;
-									AdventMain.ADVENT.stateOfTheTroll = 1;
+									game.stateOfTheTroll = 1;
 								}
 								else
 								{
 									next = SWSIDE;
-									if(bear == 2)
-									{	AdventMain.ADVENT.collapse();	}
+									if(game.stateOfTheBear == 2)
+									{	game.collapse();	}
 								}
 							}
 						}
@@ -2496,7 +2486,7 @@ public enum Locations
 	
 	private Locations atWittsEnd()
 	{
-		double chance = AdventGame.generate();
+		double chance = AdventMain.generate();
 		Locations result = REMARK;
 		if(chance < .06)
 		{	result = ANTE;	}
