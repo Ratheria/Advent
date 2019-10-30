@@ -6,13 +6,16 @@ package model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import controller.AdventGame;
 import controller.AdventMain;
+import controller.AdventMain.Movement;
+import controller.AdventMain.GameObjects;
+import controller.AdventMain.ActionWords;
+import controller.AdventMain.MessageWords;
 
 public class WordTypeMappings 
 {
 	
+	@SuppressWarnings("serial")
 	public static final HashMap<String, KnownWord> KnownWords = new HashMap<String, KnownWord>()
 	{{
 		put("road", Movement.ROAD);

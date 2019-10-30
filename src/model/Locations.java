@@ -5,9 +5,10 @@
 package model;
 
 import java.util.ArrayList;
-
 import controller.AdventGame;
 import controller.AdventMain;
+import controller.AdventMain.Movement;
+import controller.AdventMain.GameObjects;
 
 public enum Locations
 {
@@ -2334,7 +2335,7 @@ public enum Locations
 						//System.out.println("troll " + game.stateOfTheTroll);
 						if(game.stateOfTheTroll == 1)
 						{
-							ArrayList<GameObjects> currentlyHolding = AdventMain.wordTypes.objectsHere(Locations.INHAND);
+							ArrayList<GameObjects> currentlyHolding = WordTypeMappings.objectsHere(Locations.INHAND);
 							if(currentlyHolding != null)
 							{
 								for(GameObjects object : currentlyHolding)

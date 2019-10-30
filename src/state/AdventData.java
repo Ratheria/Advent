@@ -7,7 +7,7 @@ package state;
 import java.io.Serializable;
 import controller.AdventGame;
 import controller.AdventMain;
-import model.GameObjects;
+import controller.AdventMain.GameObjects;
 import model.Locations;
 
 public class AdventData implements Serializable

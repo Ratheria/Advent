@@ -5,14 +5,14 @@
 package controller;
 
 import model.Locations;
-import model.MessageWords;
+import controller.AdventMain.MessageWords;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.EnumMap;
-import model.ActionWords;
-import model.GameObjects;
+import controller.AdventMain.ActionWords;
+import controller.AdventMain.GameObjects;
 import model.KnownWord;
-import model.Movement;
+import controller.AdventMain.Movement;
 import model.WordTypeMappings;
 
 public class AdventGame implements Serializable

@@ -8,12 +8,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import controller.AdventMain;
-import model.GameObjects;
+import controller.AdventMain.GameObjects;
 import model.Locations;
 
 public class GameStateHandler 
-{
-	
+{	
 	private File dataFile = new File(System.getProperty("user.home") + "/.AdventData");
 	private FileInputStream fileReader;
 	private ObjectInputStream objectReader;
@@ -22,16 +21,8 @@ public class GameStateHandler
 	
 	public String loadGame(String currentLog)
 	{
-		String result = currentLog;
-		if(dataFile.exists())
-		{
-			result = readData() + "\n\nData Successfully Loaded\n";
-		}
-		else
-		{
-			result += "\n\nNo Load Data Available\n";
-		}
-		return result;
+		if(dataFile.exists()) { return readData() + "\n\nData Successfully Loaded\n"; }
+		return currentLog + "\n\nNo Load Data Available\n";
 	}
 	
 	private String readData()
@@ -51,9 +42,7 @@ public class GameStateHandler
 			System.out.println("Data Loaded");
 		} 
 		catch (IOException | ClassNotFoundException e)
-		{
-			e.printStackTrace();
-		}
+		{ e.printStackTrace(); }
 		return result;
 	}
 	
@@ -77,9 +66,7 @@ public class GameStateHandler
 			}
 		}
 		else
-		{
-			result = "You may not save now.";
-		}
+		{ result = "You may not save now."; }
 		return result;
 	}
 	
