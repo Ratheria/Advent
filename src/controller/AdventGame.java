@@ -61,7 +61,6 @@ public class AdventGame implements Serializable
 	public byte itemsInHand;
 	private byte deaths;
 	private byte fatality;
-	public boolean resurrecting;
 	public int tally;
 	private byte lostTreasures;
 	public byte stateOfThePlant;
@@ -152,7 +151,6 @@ public class AdventGame implements Serializable
 		turns = 0;
 		lamp = 330;
 		itemsInHand = 0;
-		resurrecting = false;
 		deaths = 3;
 		fatality = 0;
 		//default, pit, dwarf
@@ -496,13 +494,12 @@ public class AdventGame implements Serializable
 		if(15 - tally == lostTreasures && lamp > 35)
 		{	lamp = 35;	}
 		getCurrentScore();
-		if(playerIsDead && !resurrecting)
+		if(playerIsDead && !over)
 		{	output += death(output); }
 		if(over)
 		{	output = quit(output);	}
 		else
 		{
-			resurrecting = false;
 			output = output + checkForHints();
 			AdventMain.logGameInfo();
 		}
