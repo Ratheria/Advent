@@ -2335,7 +2335,7 @@ public enum Locations
 						//System.out.println("troll " + game.stateOfTheTroll);
 						if(game.stateOfTheTroll == 1)
 						{
-							ArrayList<GameObjects> currentlyHolding = WordTypeMappings.objectsHere(Locations.INHAND);
+							ArrayList<GameObjects> currentlyHolding = AdventMain.objectsHere(Locations.INHAND);
 							if(currentlyHolding != null)
 							{
 								for(GameObjects object : currentlyHolding)

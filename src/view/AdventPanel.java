@@ -4,32 +4,23 @@
 
 package view;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
-
 import controller.AdventGame;
 import controller.AdventMain;
-
 import javax.swing.SpringLayout;
 import javax.swing.UIManager;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import java.awt.Color;
 import java.awt.Font;
-
 import javax.swing.border.LineBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.DefaultCaret;
 import javax.swing.JLabel;
 import javax.swing.JButton;
-import javax.swing.SwingConstants;
 
 public class AdventPanel extends JPanel 
 {
