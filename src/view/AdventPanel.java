@@ -67,7 +67,7 @@ public class AdventPanel extends JPanel
 		add(inputField);
 		add(scroll);
 		add(lblTurns);
-		add(lblScore);
+//		add(lblScore);
 		add(lblTop);
 		add(saveButton);
 		add(loadButton);
@@ -160,7 +160,7 @@ public class AdventPanel extends JPanel
 	
 	private void setLabels()
 	{
-		lblTurns.setText("Turns: " + base.getTurns());
+		lblTurns.setText("Turns: " + base.turns);
 		lblScore.setText("Score: " + base.getScore() + "/350");
 	}
 	
@@ -223,10 +223,7 @@ public class AdventPanel extends JPanel
 					displayCaret = (DefaultCaret)displayLog.getCaret();
 					inputField.setText("");
 					inputField.requestFocusInWindow();
-					if(base.noMore())
-					{
-						inputField.setEditable(false);
-					}
+					inputField.setEditable(!base.noMore);
 					displayLog.setCaretPosition(displayLog.getDocument().getLength());
 					scroll.setViewportView(displayLog);
 				}

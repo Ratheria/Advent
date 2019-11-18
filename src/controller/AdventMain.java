@@ -70,12 +70,25 @@ public class AdventMain
 	public static void logGameInfo()
 	{
 		String toPrint = "";
-		toPrint += "  Previous Location: " + ADVENT.previousLocation;
-		toPrint += "  Current Location: " + ADVENT.currentLocation;
-		toPrint += "  Lamp: " + ADVENT.lamp;
-		toPrint += "  In Hand: " + ADVENT.itemsInHand;
-		toPrint += "  Tally: " + ADVENT.tally;
+		toPrint += " | Turns: " + ADVENT.turns;
+		toPrint += " | Previous: " + ADVENT.previousLocation;
+		toPrint += " | Current: " + ADVENT.currentLocation;
+		toPrint += " | Lamp: " + ADVENT.lamp;
+		toPrint += " | In Hand: " + ADVENT.itemsInHand;
+		toPrint += " | Tally: " + ADVENT.tally;
+		toPrint += " | Score: " + ADVENT.score;
+		toPrint += " | ";
+		toPrint += printHintStatus();
+		toPrint += "\n";
 		System.out.println(toPrint);
+	}
+	
+	public static String printHintStatus()
+	{
+		String toPrint = "\n | ";
+		for(Hints hint : Hints.values())
+		{ toPrint += ( hint != Hints.NONE ? ("" + hint.name + ": " + hint.cost + " " + hint.proc + "/" + hint.threshold + " " + hint.given + " " + " | ") : "" ); }
+		return toPrint;
 	}
 	
 	public static ArrayList<GameObjects> objectsHere(Locations here)
@@ -103,7 +116,7 @@ public class AdventMain
 	
 	public enum Questions 
 	{
-		NONE(false), INSTRUCTIONS(true), DRAGON(false), RESURRECT(true), PLAYAGAIN(true), QUIT(true), READBLASTHINT(true);
+		NONE(false), INSTRUCTIONS(true), DRAGON(false), RESURRECT(true), PLAYAGAIN(true), SCOREQUIT(true), QUIT(true), READBLASTHINT(true);
 		
 		public final boolean serious;
 		
@@ -113,17 +126,18 @@ public class AdventMain
 	
 	public enum Hints 
 	{
-		NONE(0, -1, null, null),
-		INSTRUCTIONS(5, -1, null, "\tSomewhere nearby is Colossal Cave, where others have found great fortunes in treasure and gold, though it is rumored that some who enter are never seen again. Magic is said to work in the cave. I will be your eyes and hands. Direct me with commands of 1 or 2 words. I should warn you that I only look at only the first five letters of each word, so you'll have to enter \"northeast\" as \"ne\" to distinguish it from \"north\" (Should you get stuck, type \"help\" for some general hints. For information on how to end your adventure, etc., type \"info\".)\n\n"),
-/*0*/	BLAST(10, -1, null, "It says, 'There is something strange about this place, such that one of the words I've always known now has a new effect.'"),
-/*1*/	GRATE(2, 4, "\nAre you trying to get into the cave?", "The grate is very solid and has a hardened steel lock. You cannot enter without a key, and there are no keys in sight. I would recommend looking elsewhere for the keys."),
-/*2*/	BIRD(2, 5, "\nAre you trying to catch the bird?", "Something seems to be frightening the bird just now and you cannot catch it no matter what you try. Perhaps you might try later."),
-/*3*/	SNAKE(2, 8, "\nAre you trying to deal somehow with the snake?", "You can't kill the snake, or drive it away, or avoid it, or anything like that. There is a way to get by, but you don't have the necessary resources right now."),
-/*4*/	MAZE(4, 75, "\nDo you need help getting out of the maze?", "You can make the passages look less alike by dropping things."),
-/*5*/	DARK(5, 25, "\nAre you trying to explore beyond the Plover Room?", "There is a way to explore that region without having to worry about falling into a pit."),
-/*6*/	WITT(3, 20, "\nDo you need help getting out of here?", "Don't go west."),
-		WEST(0, 10, null, "\nIf you prefer, simply type W rather than WEST.");
+		NONE("", 0, -1, null, null),
+		INSTRUCTIONS("Instructions", 5, -1, null, "Somewhere nearby is Colossal Cave, where others have found great fortunes in treasure and gold, though it is rumored that some who enter are never seen again. Magic is said to work in the cave. I will be your eyes and hands. Direct me with commands of 1 or 2 words. I should warn you that I only look at only the first five letters of each word, so you'll have to enter \"northeast\" as \"ne\" to distinguish it from \"north\" (Should you get stuck, type \"help\" for some general hints. For information on how to end your adventure, etc., type \"info\".)\n\n"),
+/*0*/	BLAST("Blast", 10, -1, null, "It says, 'There is something strange about this place, such that one of the words I've always known now has a new effect.'"),
+/*1*/	GRATE("Grate", 2, 4, "\n\nAre you trying to get into the cave?", "The grate is very solid and has a hardened steel lock. You cannot enter without a key, and there are no keys in sight. I would recommend looking elsewhere for the keys."),
+/*2*/	BIRD("Bird", 2, 5, "\n\nAre you trying to catch the bird?", "Something seems to be frightening the bird just now and you cannot catch it no matter what you try. Perhaps you might try later."),
+/*3*/	SNAKE("Snake", 2, 8, "\n\nAre you trying to deal somehow with the snake?", "You can't kill the snake, or drive it away, or avoid it, or anything like that. There is a way to get by, but you don't have the necessary resources right now."),
+/*4*/	MAZE("Maze", 4, 75, "\n\nDo you need help getting out of the maze?", "You can make the passages look less alike by dropping things."),
+/*5*/	DARK("Dark", 5, 25, "\n\nAre you trying to explore beyond the Plover Room?", "There is a way to explore that region without having to worry about falling into a pit."),
+/*6*/	WITT("Witt", 3, 20, "\n\nDo you need help getting out of here?", "Don't go west."),
+		WEST("West", 0, 10, null, "\n\nIf you prefer, simply type W rather than WEST.");
 		
+		public final String name;
 		public final int cost;
 		public final int threshold;
 		public final String question;
@@ -131,9 +145,9 @@ public class AdventMain
 		public int proc;
 		public boolean given;
 		
-		private Hints(int cost, int threshold, String question, String hint)
+		private Hints(String name, int cost, int threshold, String question, String hint)
 		{ 
-			this.cost = cost; this.threshold = threshold; this.question = question; this.hint = hint;
+			this.name = name; this.cost = cost; this.threshold = threshold; this.question = question; this.hint = hint;
 			this.given = false;
 			this.proc = 0;
 		}
@@ -370,11 +384,9 @@ public class AdventMain
 			+ " bushes of various sorts. "
 			+ "This time of year visibility is quite restricted by all the leaves, but travel is quite"
 			+ " easy if you detour around the spruce and berry bushes."), 
-		DIG("Digging without a shovel is quite impractical. Even with a shovel progress "
-			+ "is unlikely."), 
+		DIG("Digging without a shovel is quite impractical. Even with a shovel progress is unlikely."), 
 		LOST("I'm as confused as you are."), 
-		MIST("Mist is a white vapor, usually water, seen from time to time in caverns. "
-			+ "It can be found anywhere but is frequently a sign of a deep pit leading down to water."), 
+		MIST("Mist is a white vapor, usually water, seen from time to time in caverns. It can be found anywhere but is frequently a sign of a deep pit leading down to water."), 
 		CUSS("Watch it!"), 
 		STOP("I don't know the word \"stop\". Use \"quit\" if you want to give up."),
 		INFO("If you want to end your adventure early, say \"quit\". "
@@ -400,7 +412,7 @@ public class AdventMain
 		
 		public final String message;
 		
-		private MessageWords(String message){	this.message = message;		}
+		private MessageWords(String message){ this.message = message; }
 
 		@Override
 		public byte getType() { return 3; }

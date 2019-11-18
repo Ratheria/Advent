@@ -36,7 +36,7 @@ public class AdventGame implements Serializable
 	private boolean caveIsClosing, caveIsClosed;
 	private boolean lampLowBatteryWarning;
 	private boolean allowExtraMovesForPanic;
-	private boolean over, noMore;
+	public boolean over, noMore;
 	
 	public boolean grateIsUnlocked, crystalBridgeIsThere, lampIsLit, snakeInHotMK,
 				   doorHasBeenOiled, dragonIsAlive, birdInCage, bearAxe, vaseIsBroken, goldInInventory;
@@ -54,9 +54,9 @@ public class AdventGame implements Serializable
 	private Questions questionAsked;
 	private Hints hintToOffer, offeredHint;
 	public int brief;
-	private int score;
+	public int score;
 	private int bonus;
-	private int turns;
+	public int turns;
 	public int lamp;
 	public byte itemsInHand;
 	private byte deaths;
@@ -231,7 +231,6 @@ public class AdventGame implements Serializable
 					break;
 					
 				case RESURRECT:
-					//TODO resurrection without quest
 					increaseTurns = false;
 					if(answer == 2) {	over = true;	}
 					else { output = resurrection(); }
@@ -247,7 +246,7 @@ public class AdventGame implements Serializable
 					}
 					break;
 					
-				case QUIT:
+				case QUIT: case SCOREQUIT:
 					if(answer == 1)
 					{ 
 						quit = true;
@@ -511,8 +510,7 @@ public class AdventGame implements Serializable
 		String output = new String("");
 		if(!caveIsClosed)
 		{
-			if(!grateIsUnlocked && currentLocation == Locations.OUTSIDE && !(objectIsPresent(GameObjects.KEYS))) 
-			{ Hints.GRATE.proc++; }
+			if(!grateIsUnlocked && currentLocation == Locations.OUTSIDE && !(objectIsPresent(GameObjects.KEYS))) { Hints.GRATE.proc++; }
 
 			if(objectIsPresent(GameObjects.SNAKE) && !(objectIsPresent(GameObjects.BIRD))) 
 			{ Hints.SNAKE.proc++; }
@@ -532,11 +530,7 @@ public class AdventGame implements Serializable
 				{
 					switch(hint)
 					{
-						case WEST:
-							hint.proc++;
-							output += hint.hint;
-							break;
-												
+						case WEST: hint.proc++; hint.given = true; output += hint.hint; break;				
 						default: output += confirmIntentBeforeHint(hint); break; 
 					}
 				}
@@ -550,30 +544,18 @@ public class AdventGame implements Serializable
 	
 	private String resurrection()
 	{
-		String output;
 		switch(deaths)
 		{
 			case 2:
 				playerIsDead = false;
-				output = "All right. But don't blame me if something goes wr......\n\t---POOF!!---"
-						+ "\nYou are engulfed in a cloud of orange smoke. Coughing and gasping, you "
-						+ "emerge from the smoke to find....\n" 
-						+ AdventMain.places.getDescription(currentLocation, brief)
-						+ listItemsHere(currentLocation); 
-				break;
+				return "All right. But don't blame me if something goes wr......\n\t---POOF!!---\nYou are engulfed in a cloud of orange smoke. Coughing and gasping, you emerge from the smoke to find....\n" + AdventMain.places.getDescription(currentLocation, brief) + listItemsHere(currentLocation); 
 			case 1:
 				playerIsDead = false;
-				output = "Okay, now where did I put my resurrection kit?....\n\t>POOF!<"
-						+ "\nEverything disappears in a dense cloud of orange smoke.\n" 
-						+ AdventMain.places.getDescription(currentLocation, brief)
-						+ listItemsHere(currentLocation); 
-				break;
+				return "Okay, now where did I put my resurrection kit?....\n\t>POOF!<\nEverything disappears in a dense cloud of orange smoke.\n" + AdventMain.places.getDescription(currentLocation, brief) + listItemsHere(currentLocation); 
 			default:
-				output = "Okay, if you're so smart, do it yourself! I'm leaving!";
 				over = true;
-				break;
+				return "Okay, if you're so smart, do it yourself! I'm leaving!";
 		}
-		return output;
 	}
 
 	private String confirmIntentBeforeHint(Hints hint)
@@ -669,12 +651,19 @@ public class AdventGame implements Serializable
 						output = "";
 						ArrayList<GameObjects> itemsHere = AdventMain.objectsHere(currentLocation);
 						if(!(itemsHere == null))
-						{ for(GameObjects item : itemsHere) {	output += attemptAction(ActionWords.TAKE, item, "") + "\n";	} }
+						{ 
+							for(GameObjects item : itemsHere) 
+							{	
+								increaseTurns = true;
+								output += attemptAction(ActionWords.TAKE, item, "") + "\n";	
+								if(increaseTurns) { turns++; }
+							} 
+						}
 						else
 						{
 							output = "There is nothing to take.";
-							increaseTurns = false;
 						}
+						increaseTurns = false;
 					}
 					else if(object == GameObjects.WATER)
 					{
@@ -1796,6 +1785,10 @@ public class AdventGame implements Serializable
 					
 				case SCORE:
 					output = "If you were to quit now, you would score " + getCurrentScore() + " out of a possible 350. \nDo you indeed wish to quit now?";
+					questionAsked = Questions.QUIT;
+					increaseTurns = false;
+					break;
+					
 				case QUIT:
 					output = "Do you really wish to quit now?";
 					questionAsked = Questions.QUIT;
@@ -1804,24 +1797,16 @@ public class AdventGame implements Serializable
 					
 				case FEED:
 					output = "There is nothing here it wants to eat (except perhaps you).";
-					if(object == GameObjects.TROLL && (objectIsHere(GameObjects.TROLL) 
-							|| objectIsHere(GameObjects.TROLL_)))
+					if(object == GameObjects.TROLL && (objectIsHere(GameObjects.TROLL) || objectIsHere(GameObjects.TROLL_)))
+					{ output = "Gluttony is not one of the troll's vices. Avarice, however, is."; }
+					else if(object == GameObjects.DRAGON && (objectIsHere(GameObjects.DRAGON) || objectIsHere(GameObjects.DRAGON_)))
 					{
-						output = "Gluttony is not one of the troll's vices. Avarice, however, is.";	
-					}
-					else if(object == GameObjects.DRAGON && (objectIsHere(GameObjects.DRAGON) 
-							|| objectIsHere(GameObjects.DRAGON_)))
-					{
-						if(!dragonIsAlive)
-						{	output = "Don't be ridiculous!";	}
+						if(!dragonIsAlive){ output = "Don't be ridiculous!"; }
 					}
 					else if(objectIsHere(object))
 					{
 						if(object == GameObjects.BIRD)
-						{
-							output = "It's not hungry (it's merely pinin' for the fjords). Besides, you have"
-									+ " no bird seed.";
-						}
+						{ output = "It's not hungry (it's merely pinin' for the fjords). Besides, you have no bird seed."; }
 						else if(object == GameObjects.SNAKE)
 						{
 							if(!caveIsClosed && objectIsPresent(GameObjects.BIRD))
@@ -2100,7 +2085,6 @@ public class AdventGame implements Serializable
 	
 	private String attemptMovement(Movement destination, String input)
 	{
-		//TODO parameters
 		String output = "";
 		locationChange = true;
 		
@@ -2710,6 +2694,7 @@ public class AdventGame implements Serializable
 		return objectIsHere(thing) || isInHand(thing);
 	}
 	
+	//TODO evaluate all getting and dropping stuff
 	private void dropObject(GameObjects thing)
 	{
 		AdventMain.places.placeObject(thing, currentLocation);
@@ -2717,16 +2702,10 @@ public class AdventGame implements Serializable
 	}
 	
 	private void voidObject(GameObjects thing)
-	{	AdventMain.places.voidObject(thing);	}
+	{ AdventMain.places.voidObject(thing); }
 	
 	public void relocate()
-	{	relocate = true;	}
-
-	public boolean noMore()
-	{	return noMore;	}
-	
-	public int getTurns()
-	{	return turns;	}
+	{ relocate = true; }
 	
 	public int getScore()
 	{ return (questionAsked == Questions.INSTRUCTIONS ? 0 : score); }
@@ -2739,12 +2718,12 @@ public class AdventGame implements Serializable
 	}
 	
 	public void setTroll()
-	{	stateOfTheTroll = 1;	}
+	{ stateOfTheTroll = 1; }
 	
 	public boolean haveIFound(GameObjects thing)
-	{	return found.get(thing);	}
+	{ return found.get(thing); }
 	
 	public void wasFound(GameObjects thing)
-	{	found.put(thing, true);	}
+	{ found.put(thing, true); }
 
 }
