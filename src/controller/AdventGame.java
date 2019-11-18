@@ -24,6 +24,7 @@ public class AdventGame implements Serializable
 	
 	public Locations currentLocation;
 	public Locations previousLocation;
+	public Locations locationAtStartOfAction;
 	//private Locations oldestLocation;
 	
 	public boolean textFieldEditable = true;
@@ -50,9 +51,9 @@ public class AdventGame implements Serializable
 	private boolean quit;
 	
 	private byte clock1, clock2;
-	private ActionWords actionToAttempt;
-	private Questions questionAsked;
-	private Hints hintToOffer, offeredHint;
+	public ActionWords actionToAttempt;
+	public Questions questionAsked;
+	public Hints hintToOffer, offeredHint;
 	public int brief;
 	public int score;
 	private int bonus;
@@ -111,6 +112,7 @@ public class AdventGame implements Serializable
 		
 		currentLocation = Locations.ROAD;
 		previousLocation = null;
+		locationAtStartOfAction = Locations.ROAD;
 		//oldestLocation = null;
 		playerIsDead = false;
 		caveIsClosed = false;
@@ -180,9 +182,10 @@ public class AdventGame implements Serializable
 	 */
 	public String determineAction(String input) 
 	{
-//		System.out.println("\n" + input);
+		System.out.println("\n" + input);
 		String output = null;
 		increaseTurns = true;
+		locationAtStartOfAction = currentLocation;
 		int answer = askYesNo(input);
 		
 		input = AdventMain.truncate.apply(input);
@@ -324,9 +327,11 @@ public class AdventGame implements Serializable
 	 */
 	public String determineAction(String input1, String input2) 
 	{
-		//System.out.println("\n" + input1 + " " + input2);
+		System.out.println("\n" + input1 + " " + input2);
 		String output = null;
 		increaseTurns = true;
+		locationAtStartOfAction = currentLocation;
+		
 		if(questionAsked.serious)
 		{
 			output = "Just yes or no, please.";
@@ -500,33 +505,37 @@ public class AdventGame implements Serializable
 		else
 		{
 			output = output + checkForHints();
-			AdventMain.logGameInfo();
 		}
+		AdventMain.logGameInfo();
 		return output;
 	}
 	
 	private String checkForHints()
 	{
 		String output = new String("");
+		boolean justArrived = (locationAtStartOfAction != currentLocation);
 		if(!caveIsClosed)
 		{
-			if(!grateIsUnlocked && currentLocation == Locations.OUTSIDE && !(objectIsPresent(GameObjects.KEYS))) { Hints.GRATE.proc++; }
+			if(actionToAttempt == ActionWords.NOTHING)
+			{
+				if((Hints.GRATE.proc < Hints.GRATE.threshold) && !grateIsUnlocked && currentLocation == Locations.OUTSIDE && !justArrived && !(objectIsPresent(GameObjects.KEYS))) { Hints.GRATE.proc++; }
 
-			if(objectIsPresent(GameObjects.SNAKE) && !(objectIsPresent(GameObjects.BIRD))) 
-			{ Hints.SNAKE.proc++; }
-			
-			if( ((currentLocation.ordinal() >= Locations.ALIKE1.ordinal()) && (currentLocation.ordinal() <= Locations.ALIKE14.ordinal())) || (currentLocation != Locations.DEAD2 && currentLocation != Locations.DEAD8 && (currentLocation.ordinal() >= Locations.DEAD1.ordinal()) && (currentLocation.ordinal() <= Locations.DEAD11.ordinal())))
-			{ Hints.MAZE.proc++; }
-			
-			if(currentLocation == Locations.ALCOVE || (currentLocation == Locations.PROOM && !(objectIsPresent(GameObjects.LAMP))))
-			{ Hints.DARK.proc++; }
-			
-			if(currentLocation == Locations.WITT)
-			{ Hints.WITT.proc++; }		
+				if((Hints.SNAKE.proc < Hints.SNAKE.threshold) && objectIsPresent(GameObjects.SNAKE) && !(objectIsPresent(GameObjects.BIRD)) && !justArrived) 
+				{ Hints.SNAKE.proc++; }
+				
+				if((Hints.MAZE.proc < Hints.MAZE.threshold) &&  ((currentLocation.ordinal() >= Locations.ALIKE1.ordinal()) && (currentLocation.ordinal() <= Locations.ALIKE14.ordinal())) || (currentLocation != Locations.DEAD2 && currentLocation != Locations.DEAD8 && (currentLocation.ordinal() >= Locations.DEAD1.ordinal()) && (currentLocation.ordinal() <= Locations.DEAD11.ordinal())))
+				{ Hints.MAZE.proc++; }
+				
+				if((Hints.DARK.proc < Hints.DARK.threshold) && currentLocation == Locations.ALCOVE || (currentLocation == Locations.PROOM && !(objectIsPresent(GameObjects.LAMP))))
+				{ Hints.DARK.proc++; }
+				
+				if((Hints.WITT.proc < Hints.WITT.threshold) && currentLocation == Locations.WITT)
+				{ Hints.WITT.proc++; }		
+			}	
 			
 			for(Hints hint : Hints.values())
 			{
-				if(hint.proc == hint.threshold)
+				if(hint.proc == hint.threshold && questionAsked == Questions.NONE && hintToOffer == Hints.NONE && offeredHint == Hints.NONE)
 				{
 					switch(hint)
 					{
@@ -561,6 +570,7 @@ public class AdventGame implements Serializable
 	private String confirmIntentBeforeHint(Hints hint)
 	{
 		hint.proc++;
+		hintToOffer = hint;
 		return hint.question;
 	}
 	
@@ -750,7 +760,6 @@ public class AdventGame implements Serializable
 						else if(object == GameObjects.PLANT && objectIsHere(object))
 						{
 							output = new String("The plant has exceptionally deep roots and cannot be pulled free.");
-							increaseTurns = false;
 						}
 						else if(object == GameObjects.BEAR && stateOfTheBear == 3)
 						{
@@ -786,7 +795,7 @@ public class AdventGame implements Serializable
 							if(isInHand(GameObjects.ROD) && !birdInCage)
 							{
 								output = new String("The bird was unafraid when you entered, but as you approach it becomes disturbed and you cannot catch it.");
-								Hints.BIRD.proc++;
+								if(Hints.BIRD.proc < Hints.BIRD.threshold) { Hints.BIRD.proc++; }
 								increaseTurns = false;
 							}
 							else if(!isInHand(GameObjects.CAGE))
@@ -822,7 +831,6 @@ public class AdventGame implements Serializable
 						else if(object == GameObjects.AXE && bearAxe && stateOfTheBear == 0)
 						{
 							output = "There is no way past the bear to get the axe, which is probably just as well.";
-							increaseTurns = false;
 						}
 						else if(object == GameObjects.VASE && vaseIsBroken == true)
 						{
@@ -846,7 +854,7 @@ public class AdventGame implements Serializable
 					if(caveIsClosed && object == GameObjects.OYSTER && endGameObjectsStates[3]) 
 					{
 						endGameObjectsStates[3] = false; 
-						output = "Interesting. There seems to be something written on the under-side of the oyster.";
+						output = "Interesting. There seems to be something written on the under-side of the oyster."; //TODO does this work right?
 					}
 				break;
 					
@@ -988,7 +996,6 @@ public class AdventGame implements Serializable
 						else
 						{
 							output = new String("You don't have any keys!");
-							increaseTurns = false;
 						}
 					}
 					else if(objectIsPresent(object))

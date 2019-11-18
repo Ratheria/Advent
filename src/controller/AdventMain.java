@@ -78,14 +78,18 @@ public class AdventMain
 		toPrint += " | Tally: " + ADVENT.tally;
 		toPrint += " | Score: " + ADVENT.score;
 		toPrint += " | ";
-		toPrint += printHintStatus();
+		toPrint += printQuestionsAndHintsStatus();
 		toPrint += "\n";
 		System.out.println(toPrint);
 	}
 	
-	public static String printHintStatus()
+	public static String printQuestionsAndHintsStatus()
 	{
-		String toPrint = "\n | ";
+		String toPrint = "\n";
+		toPrint += " | Question: " + ADVENT.questionAsked;
+		toPrint += " | To Offer: " + ADVENT.hintToOffer;
+		toPrint += " | Offered: " + ADVENT.offeredHint;
+		toPrint += " |\n | ";
 		for(Hints hint : Hints.values())
 		{ toPrint += ( hint != Hints.NONE ? ("" + hint.name + ": " + hint.cost + " " + hint.proc + "/" + hint.threshold + " " + hint.given + " " + " | ") : "" ); }
 		return toPrint;
@@ -282,7 +286,7 @@ public class AdventMain
 			{
 				case LAMP: if(!endGameObjectStates[1]) { output = (descriptions[ (inHand ? 0 : ((ADVENT.lampIsLit) ? 1 : 2)) ]); } break;
 					
-				case GRATE: case GRATE_: if(!endGameObjectStates[4]) { output = descriptions[((ADVENT.grateIsUnlocked) ? 0 : 1)]; } break;
+				case GRATE: case GRATE_: if(!endGameObjectStates[4]) { output = GRATE.descriptions[((ADVENT.grateIsUnlocked) ? 0 : 1)]; } break;
 					
 				case CAGE: if(!endGameObjectStates[5]) { output = descriptions[((inHand) ? 0 : 1)]; } break;
 					
