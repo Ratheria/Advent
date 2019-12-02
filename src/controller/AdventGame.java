@@ -22,6 +22,7 @@ public class AdventGame implements Serializable
 
 	public EnumMap<GameObjects, Boolean> found = new EnumMap<>(GameObjects.class);
 	
+	public String lastInput;
 	public Locations currentLocation;
 	public Locations previousLocation;
 	public Locations locationAtStartOfAction;
@@ -110,6 +111,7 @@ public class AdventGame implements Serializable
 			{	found.put(object, false);	}
 		}
 		
+		lastInput = "";
 		currentLocation = Locations.ROAD;
 		previousLocation = null;
 		locationAtStartOfAction = Locations.ROAD;
@@ -182,7 +184,7 @@ public class AdventGame implements Serializable
 	 */
 	public String determineAction(String input) 
 	{
-		System.out.println("\n" + input);
+		lastInput = input;
 		String output = null;
 		increaseTurns = true;
 		locationAtStartOfAction = currentLocation;
@@ -270,10 +272,10 @@ public class AdventGame implements Serializable
 			}			
 			resetHintsAndQuestions();
 		}
-		else if(hintToOffer != Hints.NONE && answer == 1)
-		{ output = offerHint(); }
-		else if(offeredHint != Hints.NONE && answer == 1)
-		{ output = giveHint(offeredHint); }
+		else if(hintToOffer != Hints.NONE && answer > 0)
+		{ output = ( answer == 1 ? offerHint() : AdventMain.okay ); }
+		else if(offeredHint != Hints.NONE && answer > 0)
+		{ output = ( answer == 1 ? giveHint(offeredHint) : AdventMain.okay ); }
 		else if((word == ActionWords.FEEFIE) && (fooMagicWordProgression > 0 || input.equals("fee")))
 		{ output = attemptAction((ActionWords) word, GameObjects.NOTHING, input); }
 		else
@@ -327,7 +329,7 @@ public class AdventGame implements Serializable
 	 */
 	public String determineAction(String input1, String input2) 
 	{
-		System.out.println("\n" + input1 + " " + input2);
+		lastInput = input1 + " " + input2;
 		String output = null;
 		increaseTurns = true;
 		locationAtStartOfAction = currentLocation;
@@ -596,7 +598,6 @@ public class AdventGame implements Serializable
 		ArrayList<GameObjects> objects = AdventMain.objectsHere(here);
 		if(objects != null)
 		{
-			//output = output + "\n";
 			for(GameObjects thing : objects)
 			{
 				output = new String(output + AdventMain.things.getItemDescription(here, thing));
@@ -608,21 +609,13 @@ public class AdventGame implements Serializable
 					else if(!(thing == GameObjects.RUG_) && !haveIFound(thing))
 					{	wasFound(thing);	}
 				}
-				System.out.println(thing);
 			}
 		}
 		return output;
 	}
 	
 	private int askYesNo(String input)
-	{
-		int answer = 0;
-		if(input.substring(0, 1).equals("y"))
-		{	answer = 1;	}
-		else if(input.substring(0, 1).equals("n"))
-		{	answer = 2;	}
-		return answer;
-	}
+	{ return ( (input.substring(0, 1).equals("n")) ? 2 : ( (input.substring(0, 1).equals("y")) ? 1 : 0 ) ); }
 
 	private String attemptAction(ActionWords verb, Object other, String alt)
 	{
@@ -2374,7 +2367,7 @@ public class AdventGame implements Serializable
 				}
 				else
 				{
-					System.out.println("d " + dwarves);
+					//System.out.println("d " + dwarves);
 					if(currentLocation.critters(currentLocation))
 					{
 						double chance = AdventMain.generate();
@@ -2384,7 +2377,7 @@ public class AdventGame implements Serializable
 							double likely = (movesWOEncounter * 10 / 8)/8; 
 							if(chance * 100 <= likely)
 							{	pirate = 1;	}
-							System.out.println("likely " + likely + "\npirate " + pirate);
+							//System.out.println("likely " + likely + "\npirate " + pirate);
 						}
 						chance = AdventMain.generate();
 						if(dwarvesAllowed && dwarves > 0 && dwarvesLeft > 0 && !follow)
@@ -2392,7 +2385,7 @@ public class AdventGame implements Serializable
 							double encounter = (dwarvesLeft * 1000)/50;
 							if(chance * 1000 <= encounter)
 							{	dwarfPresent = 1;	}
-							System.out.println("encounter " + encounter + "\nchance " + chance * 1000);
+							//System.out.println("encounter " + encounter + "\nchance " + chance * 1000);
 						}
 					}
 					output = getDescription(currentLocation, brief);

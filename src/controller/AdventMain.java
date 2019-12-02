@@ -70,7 +70,9 @@ public class AdventMain
 	public static void logGameInfo()
 	{
 		String toPrint = "";
+		toPrint += "   " + ADVENT.lastInput + "\n";
 		toPrint += " | Turns: " + ADVENT.turns;
+		toPrint += " | Just Arrived: " + (ADVENT.locationAtStartOfAction != ADVENT.currentLocation);
 		toPrint += " | Previous: " + ADVENT.previousLocation;
 		toPrint += " | Current: " + ADVENT.currentLocation;
 		toPrint += " | Lamp: " + ADVENT.lamp;
@@ -78,14 +80,15 @@ public class AdventMain
 		toPrint += " | Tally: " + ADVENT.tally;
 		toPrint += " | Score: " + ADVENT.score;
 		toPrint += " | ";
-		toPrint += printQuestionsAndHintsStatus();
+		//toPrint += "\n" + printQuestionsAndHintsStatus();
+		toPrint += "\n | Objects Here: " + objectsHere(ADVENT.currentLocation) + " | ";
 		toPrint += "\n";
 		System.out.println(toPrint);
 	}
 	
 	public static String printQuestionsAndHintsStatus()
 	{
-		String toPrint = "\n";
+		String toPrint = "";
 		toPrint += " | Question: " + ADVENT.questionAsked;
 		toPrint += " | To Offer: " + ADVENT.hintToOffer;
 		toPrint += " | Offered: " + ADVENT.offeredHint;
