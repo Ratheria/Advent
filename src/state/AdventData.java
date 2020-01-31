@@ -8,7 +8,7 @@ import java.io.Serializable;
 import controller.AdventGame;
 import controller.AdventMain;
 import controller.AdventMain.GameObjects;
-import model.Locations;
+import controller.AdventMain.Locations;
 
 public class AdventData implements Serializable
 {

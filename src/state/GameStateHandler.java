@@ -9,7 +9,7 @@ import java.io.ObjectOutputStream;
 
 import controller.AdventMain;
 import controller.AdventMain.GameObjects;
-import model.Locations;
+import controller.AdventMain.Locations;
 
 public class GameStateHandler 
 {	
