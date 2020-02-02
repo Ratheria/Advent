@@ -108,22 +108,22 @@ public class AdventMain
 		
 		public final boolean serious;
 		
-		private Questions(boolean serious)
+		Questions(boolean serious)
 		{ this.serious = serious; }
 	}
 	
 	public enum Hints 
 	{
-		NONE("", 0, -1, null, null),
-		INSTRUCTIONS("Instructions", 5, -1, null, "Somewhere nearby is Colossal Cave, where others have found great fortunes in treasure and gold, though it is rumored that some who enter are never seen again. Magic is said to work in the cave. I will be your eyes and hands. Direct me with commands of 1 or 2 words. I should warn you that I only look at only the first five letters of each word, so you'll have to enter \"northeast\" as \"ne\" to distinguish it from \"north\" (Should you get stuck, type \"help\" for some general hints. For information on how to end your adventure, etc., type \"info\".)\n\n"),
-/*0*/	BLAST("Blast", 10, -1, null, "It says, 'There is something strange about this place, such that one of the words I've always known now has a new effect.'"),
-/*1*/	GRATE("Grate", 2, 4, "\n\nAre you trying to get into the cave?", "The grate is very solid and has a hardened steel lock. You cannot enter without a key, and there are no keys in sight. I would recommend looking elsewhere for the keys."),
-/*2*/	BIRD("Bird", 2, 5, "\n\nAre you trying to catch the bird?", "Something seems to be frightening the bird just now and you cannot catch it no matter what you try. Perhaps you might try later."),
-/*3*/	SNAKE("Snake", 2, 8, "\n\nAre you trying to deal somehow with the snake?", "You can't kill the snake, or drive it away, or avoid it, or anything like that. There is a way to get by, but you don't have the necessary resources right now."),
-/*4*/	MAZE("Maze", 4, 75, "\n\nDo you need help getting out of the maze?", "You can make the passages look less alike by dropping things."),
-/*5*/	DARK("Dark", 5, 25, "\n\nAre you trying to explore beyond the Plover Room?", "There is a way to explore that region without having to worry about falling into a pit."),
-/*6*/	WITT("Witt", 3, 20, "\n\nDo you need help getting out of here?", "Don't go west."),
-		WEST("West", 0, 10, null, "\n\nIf you prefer, simply type W rather than WEST.");
+		NONE		("", 			0,  -1, null, null),
+		INSTRUCTIONS("Instructions",	5,  -1, null, "Somewhere nearby is Colossal Cave, where others have found great fortunes in treasure and gold, though it is rumored that some who enter are never seen again. Magic is said to work in the cave. I will be your eyes and hands. Direct me with commands of 1 or 2 words. I should warn you that I only look at only the first five letters of each word, so you'll have to enter \"northeast\" as \"ne\" to distinguish it from \"north\" (Should you get stuck, type \"help\" for some general hints. For information on how to end your adventure, etc., type \"info\".)\n\n"),
+/*0*/	BLAST		("Blast", 		10, -1, null, "It says, 'There is something strange about this place, such that one of the words I've always known now has a new effect.'"),
+/*1*/	GRATE		("Grate", 		2,  4,  "\n\nAre you trying to get into the cave?", "The grate is very solid and has a hardened steel lock. You cannot enter without a key, and there are no keys in sight. I would recommend looking elsewhere for the keys."),
+/*2*/	BIRD		("Bird", 		2,  5,  "\n\nAre you trying to catch the bird?", "Something seems to be frightening the bird just now and you cannot catch it no matter what you try. Perhaps you might try later."),
+/*3*/	SNAKE		("Snake", 		2,  8,  "\n\nAre you trying to deal somehow with the snake?", "You can't kill the snake, or drive it away, or avoid it, or anything like that. There is a way to get by, but you don't have the necessary resources right now."),
+/*4*/	MAZE		("Maze", 		4,  75, "\n\nDo you need help getting out of the maze?", "You can make the passages look less alike by dropping things."),
+/*5*/	DARK		("Dark", 		5,  25, "\n\nAre you trying to explore beyond the Plover Room?", "There is a way to explore that region without having to worry about falling into a pit."),
+/*6*/	WITT		("Witt", 		3,  20, "\n\nDo you need help getting out of here?", "Don't go west."),
+		WEST		("West", 		0,  10, null, "\n\nIf you prefer, simply type W rather than WEST.");
 		
 		public final String name;
 		public final int cost;
@@ -133,7 +133,7 @@ public class AdventMain
 		public int proc;
 		public boolean given;
 		
-		private Hints(String name, int cost, int threshold, String question, String hint)
+		Hints(String name, int cost, int threshold, String question, String hint)
 		{ 
 			this.name = name; this.cost = cost; this.threshold = threshold; this.question = question; this.hint = hint;
 			this.given = false;
@@ -158,7 +158,7 @@ public class AdventMain
 		public byte getType() { return 0; }
 	}
 	
-	public static enum GameObjects implements KnownWord
+	public enum GameObjects implements KnownWord
 	{
 		//TODO art string
 		NOTHING, ALL, 	
@@ -223,13 +223,13 @@ public class AdventMain
 		public Locations location;
 		public String[] descriptions;
 		
-		private GameObjects()
+		GameObjects()
 		{ this.mobile = false; this.location = Locations.THEVOID; this.descriptions = null; }
 		
-		private GameObjects(Locations location, String[] descriptions)
+		GameObjects(Locations location, String[] descriptions)
 		{ this.mobile = false; this.location = location; this.descriptions = descriptions; }
 		
-		private GameObjects(boolean mobile, Locations location, String[] descriptions)
+		GameObjects(boolean mobile, Locations location, String[] descriptions)
 		{ this.mobile = mobile; this.location = location; this.descriptions = descriptions; }
 		
 		public static boolean isTreasure(GameObjects thisThing)
@@ -332,7 +332,7 @@ public class AdventMain
 		public byte getType() { return 2; }
 	}
 	
-	public static enum MessageWords implements KnownWord
+	public enum MessageWords implements KnownWord
 	{
 		MAGIC("Good try, but that is an old worn-out magic word."), 
 		HELP("I know of places, actions, and things. Most of my vocabulary describes places and is used to move you there. To move, try words like forest, building, downstream, enter, east, west, north, south, up, or down. I know about a few special objects, like a black rod hidden in the cave. These objects can be manipulated using some of the action words that I know. Usually you will need to give both the object and the action words (in either order), but sometimes I can infer the object from the verb alone. Some objects also imply verbs; in particular, \"inventory\" implies \"take inventory\", which causes me to give you a list of what you are carrying. The objects have side effects; for instance, the rod scares the bird. Usually people having trouble moving just need to try a few more words. Usually people trying unsuccessfully to manupulate an object are attempting beyond To speed the game you can sometimes move long distances with a single word. For example, \"building\" usually gets you to the building from anywhere above ground except when lost in the forest. Also, note that cave passages turn a lot, and that leaving a room to the north does not guarantee entering the next from the south. \nGood luck!"), 
@@ -681,10 +681,10 @@ public class AdventMain
 		private Locations(String title, String shortDescription, String longDescription)
 		{	this.title = title;	this.shortDescription = shortDescription;	this.longDescription = longDescription;	this.hasWater = false;	}
 		
-		private Locations(boolean hasWater, String title, String shortDescription)
+		Locations(boolean hasWater, String title, String shortDescription)
 		{	this.title = title;	this.shortDescription = shortDescription;	this.longDescription = AdventMain.empty;	this.hasWater = hasWater;	}
 		
-		private Locations(boolean hasWater, String title, String shortDescription, String longDescription)
+		Locations(boolean hasWater, String title, String shortDescription, String longDescription)
 		{	this.title = title;	this.shortDescription = shortDescription;	this.longDescription = longDescription;	this.hasWater = hasWater;	}
 		
 		public int minLoc(){ return EASTMIST.ordinal(); }
@@ -699,7 +699,8 @@ public class AdventMain
 		
 		public boolean outsideCave(Locations here)
 		{	return (here.ordinal() > INHAND.ordinal() && here.ordinal() < INSIDE.ordinal());	}
-		
+
+		//TODO should not be outside.ordinal twice
 		public boolean upperCave(Locations here)
 		{	return (here.ordinal() > OUTSIDE.ordinal() && here.ordinal() < OUTSIDE.ordinal());	}
 		
