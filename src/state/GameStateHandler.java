@@ -21,6 +21,7 @@ public class GameStateHandler
 	
 	public String loadGame(String currentLog)
 	{
+		System.out.println(dataFile.getAbsolutePath());
 		if(dataFile.exists()) { return readData() + "\n\nData Successfully Loaded\n"; }
 		return currentLog + "\n\nNo Load Data Available\n";
 	}
@@ -37,6 +38,7 @@ public class GameStateHandler
 			fileReader.close();
 			result = saveData.log;
 			AdventMain.ADVENT = saveData.game;
+			AdventMain.frame.panel.base = AdventMain.ADVENT;
 			GameObjects.loadLocations(saveData.mobileObjectsLocations);
 			Locations.loadVisits(saveData.visits);
 			System.out.println("Data Loaded");

@@ -601,7 +601,7 @@ public class AdventGame implements Serializable
 		{
 			for(GameObjects thing : objects)
 			{
-				output = output + GameObjects.getItemDescription(here, thing);
+				output += GameObjects.getItemDescription(here, thing);
 				
 				if(GameObjects.isTreasure(thing))
 				{
@@ -1778,7 +1778,7 @@ public class AdventGame implements Serializable
 					else
 					{	output = "\t   -----\n\t\tYou're not carrying anything.\n\t   -----";	}
 					if(stateOfTheBear == 2)
-					{	output = output + GameObjects.BEAR.descriptions[2];	}
+					{	output += GameObjects.BEAR.descriptions[2];	}
 					break;
 					
 				case SCORE:

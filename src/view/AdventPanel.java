@@ -25,7 +25,7 @@ import javax.swing.JButton;
 public class AdventPanel extends JPanel 
 {
 	private static final long serialVersionUID = 1L;
-	private AdventGame base;
+	public AdventGame base;
 	private JTextField inputField;
 	private JTextArea displayLog;
 	private DefaultCaret displayCaret;

@@ -11,7 +11,7 @@ public class AdventureFrame extends JFrame
 {
 
 	private static final long serialVersionUID = 1L;
-	private AdventPanel panel;
+	public AdventPanel panel;
 
 	public AdventureFrame()
 	{
