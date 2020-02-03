@@ -34,7 +34,7 @@ public class AdventGame implements Serializable
 	
 	public boolean relocate, collapse, justCollapsed;
 	
-	public boolean playerIsDead;
+	public boolean playerIsDead, playerJustDied;
 	private boolean caveIsClosing, caveIsClosed;
 	private boolean lampLowBatteryWarning;
 	private boolean allowExtraMovesForPanic;
@@ -61,8 +61,8 @@ public class AdventGame implements Serializable
 	public int turns;
 	public int lamp;
 	public byte itemsInHand;
-	private byte deaths;
-	private byte fatality;
+	public byte deaths;
+	public byte fatality;
 	public int tally;
 	private byte lostTreasures;
 	public byte stateOfThePlant;
@@ -117,6 +117,7 @@ public class AdventGame implements Serializable
 		locationAtStartOfAction = Locations.ROAD;
 		//oldestLocation = null;
 		playerIsDead = false;
+		playerJustDied = false;
 		caveIsClosed = false;
 		grateIsUnlocked = false;
 		crystalBridgeIsThere = false;
@@ -491,6 +492,7 @@ public class AdventGame implements Serializable
 				{	
 					output += "\nIt gets you!";	
 					playerIsDead = true;
+					playerJustDied = true;
 				}
 				else
 				{	output += "\nIt misses!";	}
@@ -500,8 +502,8 @@ public class AdventGame implements Serializable
 		if(15 - tally == lostTreasures && lamp > 35)
 		{	lamp = 35;	}
 		getCurrentScore();
-		if(playerIsDead && !over)
-		{	output += death(output); }
+		if(playerIsDead && playerJustDied && !over)
+		{ output += death(output); playerJustDied = false; }
 		if(over)
 		{	output = quit(output);	}
 		else
@@ -559,10 +561,10 @@ public class AdventGame implements Serializable
 		switch(deaths)
 		{
 			case 2:
-				playerIsDead = false;
+				playerIsDead = false; playerJustDied = false;
 				return "All right. But don't blame me if something goes wr......\n\t---POOF!!---\nYou are engulfed in a cloud of orange smoke. Coughing and gasping, you emerge from the smoke to find....\n" + AdventMain.Locations.getDescription(currentLocation, brief) + listItemsHere(currentLocation); 
 			case 1:
-				playerIsDead = false;
+				playerIsDead = false; playerJustDied = false;
 				return "Okay, now where did I put my resurrection kit?....\n\t>POOF!<\nEverything disappears in a dense cloud of orange smoke.\n" + AdventMain.Locations.getDescription(currentLocation, brief) + listItemsHere(currentLocation); 
 			default:
 				over = true;
@@ -913,6 +915,7 @@ public class AdventGame implements Serializable
 								if(caveIsClosed)
 								{
 									playerIsDead = true;
+									playerJustDied = true;
 									fatality = 2;
 								}
 							}
@@ -1500,6 +1503,7 @@ public class AdventGame implements Serializable
 							output = "You strike the mirror a resounding blow, whereupon it shatters into "
 									+ "a myriad tiny fragments.";
 							playerIsDead = true;
+							playerJustDied = true;
 							fatality = 2;
 						}
 						else if(objectIsHere(GameObjects.MIRROR) || objectIsHere(GameObjects.MIRROR_))
@@ -1574,6 +1578,7 @@ public class AdventGame implements Serializable
 					else if(object == GameObjects.DWARF && caveIsClosed)
 					{
 						playerIsDead = true;
+						playerJustDied = true;
 						fatality = 2;
 					}
 					else if(object == GameObjects.DWARF)
@@ -1845,6 +1850,7 @@ public class AdventGame implements Serializable
 						output = "You wake the nearest dwarf, who wakes up grumpily, takes one look at you, "
 								+ "curses, and grabs for his axe.";
 						playerIsDead = true;
+						playerJustDied = true;
 						fatality = 2;
 					}
 					else
@@ -2084,6 +2090,7 @@ public class AdventGame implements Serializable
 			setLocation(locationResult);
 			output = "Just as you reach the other side, the bridge buckles beneath the weight of the bear, who was still following you around. You scrabble desperately for support, but the bridge collapses you stumble back and fall into the chasm.";
 			playerIsDead = true;
+			playerJustDied = true;
 			justCollapsed = false;
 			int neordinal = currentLocation.getOrdinal(Locations.NESIDE);
 			if(currentLocation.getOrdinal(GameObjects.CHAIN.location) >= neordinal)
@@ -2141,6 +2148,7 @@ public class AdventGame implements Serializable
 			output = "You are at the bottom of the pit with a broken neck.";
 			increaseTurns = false;
 			playerIsDead = true;
+			playerJustDied = true;
 			fatality = 1;
 		}
 		else if(locationResult.equals(Locations.LOSE))
@@ -2148,6 +2156,7 @@ public class AdventGame implements Serializable
 			output = "You didn't make it.";
 			increaseTurns = false;
 			playerIsDead = true;
+			playerJustDied = true;
 			fatality = 1;
 		}
 		else if(locationResult.equals(Locations.CANT))
@@ -2400,6 +2409,7 @@ public class AdventGame implements Serializable
 		if(pitifulDeath && !canISee(previousLocation))
 		{
 			playerIsDead = true;
+			playerJustDied = true;
 			fatality = 1;
 		}
 		else

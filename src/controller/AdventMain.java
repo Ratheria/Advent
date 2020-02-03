@@ -63,9 +63,10 @@ public class AdventMain
 		toPrint += " | In Hand: " + ADVENT.itemsInHand;
 		toPrint += " | Tally: " + ADVENT.tally;
 		toPrint += " | Score: " + ADVENT.score;
+		toPrint += " | Deaths: " + ADVENT.deaths;
 		toPrint += " | ";
-		//toPrint += "\n" + printQuestionsAndHintsStatus();
 		toPrint += "\n | Objects Here: " + objectsHere(ADVENT.currentLocation) + " | ";
+		toPrint += "\n" + printQuestionsAndHintsStatus();
 		toPrint += "\n";
 		System.out.println(toPrint);
 	}
