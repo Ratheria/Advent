@@ -886,22 +886,7 @@ public class AdventGame implements Serializable
 					{
 						if(stateOfTheBear == 2)
 						{
-							if(objectIsHere(GameObjects.TROLL)||objectIsHere(GameObjects.TROLL_))
-							{
-								voidObject(GameObjects.TROLL);
-								voidObject(GameObjects.TROLL_);
-								AdventMain.Locations.placeObject(GameObjects.TROLL2_, Locations.NESIDE);
-								AdventMain.Locations.placeObject(GameObjects.TROLL2, Locations.SWSIDE);
-								stateOfTheBear = 4;
-								stateOfTheTroll = 2;
-								output = "The bear lumbers toward the troll, who lets out a startled shriek and "
-										+ "scurries away. The bear soon gives up pursuit and wanders back.";
-							}
-							else
-							{
-								stateOfTheBear = 4;
-								output = AdventMain.okay;
-							}
+							output = attemptAction(ActionWords.TOSS, GameObjects.BEAR, alt);
 						}
 						else
 						{
@@ -1410,16 +1395,16 @@ public class AdventGame implements Serializable
 								voidObject(GameObjects.TROLL_);
 								AdventMain.Locations.placeObject(GameObjects.TROLL2_, Locations.NESIDE);
 								AdventMain.Locations.placeObject(GameObjects.TROLL2, Locations.SWSIDE);
-								stateOfTheBear = 4;
 								stateOfTheTroll = 2;
 								output = "The bear lumbers toward the troll, who lets out a startled shriek and "
 										+ "scurries away. The bear soon gives up pursuit and wanders back.";
 							}
 							else
 							{
-								stateOfTheBear = 4;
 								output = AdventMain.okay;
 							}
+							stateOfTheBear = 4;
+							GameObjects.BEAR.location = currentLocation;
 						}
 						else
 						{
@@ -2098,6 +2083,7 @@ public class AdventGame implements Serializable
 		{
 			setLocation(locationResult);
 			output = "Just as you reach the other side, the bridge buckles beneath the weight of the bear, who was still following you around. You scrabble desperately for support, but the bridge collapses you stumble back and fall into the chasm.";
+			playerIsDead = true;
 			justCollapsed = false;
 			int neordinal = currentLocation.getOrdinal(Locations.NESIDE);
 			if(currentLocation.getOrdinal(GameObjects.CHAIN.location) >= neordinal)
@@ -2241,6 +2227,7 @@ public class AdventGame implements Serializable
 					&& destination != Movement.JUMP)
 			{
 				increaseTurns = false;
+				System.out.println("\ntroll: " + stateOfTheTroll);
 				if(stateOfTheTroll == 0)
 				{	output = "The troll refuses to let you cross.";	}
 				else if(stateOfTheTroll == 1)

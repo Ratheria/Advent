@@ -11,7 +11,6 @@ import javax.swing.plaf.basic.BasicScrollBarUI;
 
 public class NewScrollBarUI extends BasicScrollBarUI
 {
-
 	@Override
 	public void configureScrollBarColors()
 	{

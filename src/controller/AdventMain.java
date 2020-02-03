@@ -12,6 +12,8 @@ import java.util.function.IntFunction;
 import state.GameStateHandler;
 import view.AdventureFrame;
 
+//TODO closer look at death/resurrection	- 	non y/n answer?
+
 public class AdventMain 
 {
 	public static AdventGame ADVENT;
@@ -66,8 +68,6 @@ public class AdventMain
 		toPrint += "\n | Objects Here: " + objectsHere(ADVENT.currentLocation) + " | ";
 		toPrint += "\n";
 		System.out.println(toPrint);
-		System.out.println(ADVENT.bearAxe + "  " + ADVENT.stateOfTheBear + "  " + ADVENT.stateOfTheChain);
-		System.out.println(ADVENT.stateOfTheBottle + "  " + ADVENT.stateOfThePlant);
 	}
 	
 	public static String printQuestionsAndHintsStatus()
@@ -273,50 +273,48 @@ public class AdventMain
 				case ROD: if(!endGameObjectStates[8]) { output = descriptions[((inHand) ? 0 : 1)]; } break;				
 					
 				case ROD2: if(!endGameObjectStates[9]) { output = descriptions[((inHand) ? 0 : 1)]; } break;
-					
-				case DOOR: output = descriptions[((!ADVENT.doorHasBeenOiled) ? 0 : 1)];
+
+				case DOOR: output = descriptions[((!ADVENT.doorHasBeenOiled) ? 0 : 1)]; break;
 					
 				case PILLOW: if(!endGameObjectStates[2]) { output = descriptions[((inHand) ? 0 : 1)]; } break;			
 					
-				case VASE: output = descriptions[((ADVENT.vaseIsBroken ? 3 : (inHand ? 0 : (PILLOW.location == location ? 1 : 2))))];
+				case VASE: output = descriptions[((ADVENT.vaseIsBroken ? 3 : (inHand ? 0 : (PILLOW.location == location ? 1 : 2))))]; break;
 					
 				case SNAKE: if(!endGameObjectStates[7]) { output = descriptions[0]; } break;				
 					
 				case OYSTER: if(!endGameObjectStates[3]) { output = descriptions[((inHand) ? 0 : 1)]; } break;		
 					
-				case MAG: output = descriptions[((inHand) ? 0 : 1)];
+				case MAG: output = descriptions[((inHand) ? 0 : 1)]; break;
 					
 				case BOTTLE: if(!endGameObjectStates[0]) { output = descriptions[ ADVENT.stateOfTheBottle + (inHand ? 0 : 3) ]; } break;
 					
-				case PLANT: output = descriptions[ADVENT.stateOfThePlant];
+				case PLANT: output = descriptions[ADVENT.stateOfThePlant]; break;
 				
-				case PLANT2: case PLANT2_: output = PLANT2.descriptions[ADVENT.stateOfThePlant];
+				case PLANT2: case PLANT2_: output = PLANT2.descriptions[ADVENT.stateOfThePlant]; break;
 					
-				case AXE: output = descriptions[(inHand ? 0 : (ADVENT.bearAxe ? 1 : 2))];
+				case AXE: output = descriptions[(inHand ? 0 : (ADVENT.bearAxe ? 1 : 2))]; break;
 					
-				case DRAGON: case DRAGON_: output = DRAGON.descriptions[ADVENT.dragonIsAlive ? 0 : 1];
+				case DRAGON: case DRAGON_: output = DRAGON.descriptions[ADVENT.dragonIsAlive ? 0 : 1]; break;
 					
-				case RUG: case RUG_: output = RUG.descriptions[inHand ? 0 : (ADVENT.dragonIsAlive ? 1 : 2)];
+				case RUG: case RUG_: output = RUG.descriptions[inHand ? 0 : (ADVENT.dragonIsAlive ? 1 : 2)]; break;
 					
-				case BEAR: output = descriptions[ADVENT.stateOfTheBear];
+				case BEAR: output = descriptions[ADVENT.stateOfTheBear]; break;
 					
-				case BATTERIES: output = descriptions[(ADVENT.stateOfSpareBatteries == 1) ? 0 : 1];
+				case BATTERIES: output = descriptions[(ADVENT.stateOfSpareBatteries == 1) ? 0 : 1]; break;
 					
-				case CHAIN: output = descriptions[inHand ? 0 : ADVENT.stateOfTheChain + 1];
+				case CHAIN: output = descriptions[inHand ? 0 : ADVENT.stateOfTheChain + 1]; break;
 					
-				case TREADS: if(!ADVENT.goldInInventory){ output = descriptions[0]; } break;	
-					
-				case TREADS_: if(!ADVENT.goldInInventory){ output = descriptions[0]; } break;	
+				case TREADS: case TREADS_: if(!ADVENT.goldInInventory){ output = descriptions[0]; } break;
 					
 				case CRYSTAL: case CRYSTAL_: if(!ADVENT.crystalBridgeIsThere){ output = CRYSTAL.descriptions[0]; } break;
 					
-				case BRIDGE: case BRIDGE_: output = BRIDGE.descriptions[!ADVENT.collapse ? 0 : 1];
+				case BRIDGE: case BRIDGE_: output = BRIDGE.descriptions[!ADVENT.collapse ? 0 : 1]; break;
 					
-				case SHADOW: case SHADOW_: output = SHADOW.descriptions[0];
+				case SHADOW: case SHADOW_: output = SHADOW.descriptions[0]; break;
 					
-				case TROLL: case TROLL_: output = TROLL.descriptions[0];
+				case TROLL: case TROLL_: output = TROLL.descriptions[0]; break;
 					
-				case TROLL2: case TROLL2_: output = TROLL2.descriptions[0];
+				case TROLL2: case TROLL2_: output = TROLL2.descriptions[0]; break;
 			
 				default: if(descriptions != null){ output = descriptions[((inHand || descriptions.length == 1) ? 0 : 1)]; } break;
 			}
@@ -549,7 +547,7 @@ public class AdventMain
 		OUTSIDE	(					"Outside Grate",			"You're outside grate.",					"You are in a 20-foot depression floored with bare dirt. Set into the dirt is a strong steel grate mounted in concrete. A dry streambed leads into the depression."	),
 		
 		INSIDE	(					"Below Grate",				"You're below the grate.",				"You are in a small chamber beneath a 3x3 steel grate to the surface. A low crawl over cobbles leads inward to the west."	),
-		COBBLES	(					"Cobble Crawl",			"You're in cobble crawl.",				"You are crawling over cobbles in a low passage. There is a dim light at the east end of the pasage."	),
+		COBBLES	(					"Cobble Crawl",			"You're in cobble crawl.",				"You are crawling over cobbles in a low passage. There is a dim light at the east end of the passage."	),
 		DEBRIS	(					"Debris Room",				"You're in debris room.",				"You are in a debris room filled with stuff washed in from the surface. A low wide passage with cobbles becomes plugged with mud and debris here, but an awkward canyon leads upward and west. \nA note on the wall says:\n\tMagic Word \"XYZZY\""	),
 		AWKWARD	(					"Awkward Canyon",			"You are in an awkward sloping east/west canyon."	),
 		BIRD	(					"Bird Chamber",			"You're in bird chamber.",				"You are in a splendid chamber thirty feet high. The walls are frozen rivers of orange stone. An awkward canyon and a good passage exit from east and west sides of the chamber."	),
@@ -1759,16 +1757,7 @@ public class AdventMain
 						case NORTHEAST	:	yield CORR;
 						case OVER, ACROSS, CROSS, SOUTHWEST:
 							//System.out.println("troll " + game.stateOfTheTroll);
-							if(game.stateOfTheTroll == 1)
-							{
-								ArrayList<GameObjects> currentlyHolding = AdventMain.objectsHere(Locations.INHAND);
-								if(currentlyHolding != null)
-								{
-									for(GameObjects object : currentlyHolding)
-									{ if(GameObjects.isTreasure(object)) { game.stateOfTheTroll = 0; } }
-								}
-							}
-							if(game.stateOfTheTroll == 0){ yield REMARK; }
+							if(game.stateOfTheTroll == 0 || game.stateOfTheTroll == 1){ yield REMARK; }
 							else
 							{	
 								if(game.collapse){ yield REMARK; }

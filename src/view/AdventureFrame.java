@@ -9,7 +9,6 @@ import controller.AdventGame;
 
 public class AdventureFrame extends JFrame 
 {
-
 	private static final long serialVersionUID = 1L;
 	public AdventPanel panel;
 
@@ -19,15 +18,12 @@ public class AdventureFrame extends JFrame
 		setName("Colossal Cave Adventure");
 		this.setTitle("Adventure!");
 		setContentPane(panel);
-		setSize(750, 700);
+		setSize(800, 750);
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
-
-	
 	public void setUp()
 	{
 		panel.setUpGame();
 	}
-	
 }
