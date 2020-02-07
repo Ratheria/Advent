@@ -178,7 +178,7 @@ public class AdventMain
 		DOOR(					Locations.IMMENSE,				new String[] {"\n\tThe way north is barred by a massive, rusty, iron door.", "\n\tThe way north leads through a massive, rusty, iron door."}),
 		PILLOW(	true, 	Locations.SOFT,					new String[] {"\n\t\tVelvet Pillow", "\n\tA small velvet pillow lies on the floor."}),
 		SNAKE(					Locations.HALLOFMOUNTAINKING,	new String[] {"\n\tA huge green fierce snake bars the way!"}),
-		CRYSTAL(				Locations.EASTFISSURE,			new String[] {"\n\tA crystal bridge now spans the fissure."}), CRYSTAL_(Locations.WESTFISSURE, null),
+		CRYSTAL(				Locations.THEVOID,				new String[] {"\n\tA crystal bridge now spans the fissure."}), CRYSTAL_(Locations.THEVOID, null),
 		TABLET(					Locations.DROOM,				new String[] {"\n\tA massive stone tablet imbedded in the wall reads:\n\t\"CONGRATULATIONS ON BRINGING LIGHT TO THE DARK-ROOM!\""}),
 		CLAM(	true, 	Locations.SHELL,				new String[] {"\n\t\tGiant Clam >GRUNT!<", "\n\tThere is an enormous clam here with its shell tightly closed."}),
 		OYSTER(	true, 	Locations.THEVOID,				new String[] {"\n\t\tGiant Oyster >GROAN!<", "\n\tThere is an enormous oyster here with its shell tightly closed."}),
