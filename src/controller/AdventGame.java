@@ -235,13 +235,13 @@ public class AdventGame implements Serializable
 					
 				case RESURRECT:
 					increaseTurns = false;
-					if(answer == 2) {	over = true;	}
+					if(answer == 2) { over = true; }
 					else { output = resurrection(); }
 					break;
 				
 				case PLAYAGAIN:
 					if(answer == 1)
-					{	setUp();	}
+					{ setUp(); }
 					else
 					{
 						noMore = true;
@@ -309,11 +309,9 @@ public class AdventGame implements Serializable
 				}
 			}
 			else if(wordType == 3)
-			{
-				output = ((MessageWords) word).message;
-			}
+			{ output = ((MessageWords) word).message; }
 			else
-			{	output = nonsense();	}
+			{ output = nonsense(); }
 		}
 		
 		if(input.equals("west"))
@@ -368,9 +366,7 @@ public class AdventGame implements Serializable
 				increaseTurns = false;
 			}
 			else if(wordType == 3)
-			{
-				output = ((MessageWords) word).message;
-			}
+			{ output = ((MessageWords) word).message; }
 			else if(wordType == 0)
 			{
 				if(word == Movement.ENTER )
@@ -384,36 +380,36 @@ public class AdventGame implements Serializable
 					{	output = attemptAction(ActionWords.GO, word2, input2);	}
 				}
 				else
-				{	output = attemptMovement((Movement) word);	}
+				{ output = attemptMovement((Movement) word); }
 			}
 			else if(word == GameObjects.WATER && wordType2 == 1)
-			{	output = attemptAction(ActionWords.POUR, GameObjects.WATER, "");	}
+			{ output = attemptAction(ActionWords.POUR, GameObjects.WATER, ""); }
 			else if(word == GameObjects.OIL && wordType2 == 1)
-			{	output = attemptAction(ActionWords.POUR, GameObjects.OIL, "");	}
+			{ output = attemptAction(ActionWords.POUR, GameObjects.OIL, ""); }
 			else if(wordType == 2)
-			{	output = attemptAction((ActionWords) word, word2, input2);	}
+			{ output = attemptAction((ActionWords) word, word2, input2); }
 			else if(wordType2 == 0)
 			{
 				if(word2 == Movement.ENTER )
 				{
-					if(input12.equals("water")||input12.equals("strea"))
+					if(input12.equals("water") || input12.equals("strea"))
 					{
 						increaseTurns = currentLocation.hasWater;
 						output = (increaseTurns ? "Your feet are now wet." : "I don't see any water.");
 					}
 					else
-					{	output = attemptAction(ActionWords.GO, word, input1);	}
+					{ output = attemptAction(ActionWords.GO, word, input1); }
 				}
 				else
-				{	output = attemptMovement((Movement) word2);	}
+				{ output = attemptMovement((Movement) word2); }
 			}
 			else if(wordType2 == 2)
-			{	output = attemptAction((ActionWords) word2, word, input1);	}
+			{ output = attemptAction((ActionWords) word2, word, input1); }
 			else
-			{	output = nonsense();	}
+			{ output = nonsense(); }
 		}
-		if(input1.equals("west")||input2.equals("west"))
-		{	Hints.WEST.proc++;	}
+		if(input1.equals("west") || input2.equals("west"))
+		{ Hints.WEST.proc++; }
 		return finishAction(output);
 	}
 	
@@ -501,7 +497,8 @@ public class AdventGame implements Serializable
 		{ output += death(output); playerJustDied = false; }
 		if(over)
 		{ output = quit(output); }
-		else{ output = output + checkForHints(); }
+		else
+		{ output = output + checkForHints(); }
 		goldInInventory = isInHand(GameObjects.GOLD);
         if(locationAtStartOfAction != currentLocation){ voidObject(GameObjects.KNIFE); }
 		AdventMain.logGameInfo();
@@ -516,7 +513,8 @@ public class AdventGame implements Serializable
 		{
 			if(actionToAttempt == ActionWords.NOTHING)
 			{
-				if((Hints.GRATE.proc < Hints.GRATE.threshold) && !grateIsUnlocked && currentLocation == Locations.OUTSIDE && !justArrived && !(objectIsPresent(GameObjects.KEYS))) { Hints.GRATE.proc++; }
+				if((Hints.GRATE.proc < Hints.GRATE.threshold) && !grateIsUnlocked && currentLocation == Locations.OUTSIDE && !justArrived && !(objectIsPresent(GameObjects.KEYS)))
+				{ Hints.GRATE.proc++; }
 
 				if((Hints.SNAKE.proc < Hints.SNAKE.threshold) && objectIsPresent(GameObjects.SNAKE) && !(objectIsPresent(GameObjects.BIRD)) && !justArrived) 
 				{ Hints.SNAKE.proc++; }
@@ -568,7 +566,7 @@ public class AdventGame implements Serializable
 		hint.given = true;
 		offeredHint = Hints.NONE;
 		if(lamp > 30)
-		{	lamp += 30 * hint.cost;	}
+		{ lamp += 30 * hint.cost; }
 		return hint.hint + (hint == Hints.DARK ? (objectIsPresent(GameObjects.EMERALD) ? "" : " None of the objects available is immediately useful for discovering the secret.") : "");
 	}
 
@@ -617,9 +615,7 @@ public class AdventGame implements Serializable
 							} 
 						}
 						else
-						{
-							output = "There is nothing to take.";
-						}
+						{ output = "There is nothing to take."; }
 						increaseTurns = false;
 					}
 					else if(object == GameObjects.WATER)
@@ -646,7 +642,7 @@ public class AdventGame implements Serializable
 							}
 						}
 						else if(objectIsHere(GameObjects.BOTTLE) && stateOfTheBottle == 1)
-						{	output = attemptAction(verb, GameObjects.BOTTLE, alt);	}
+						{ output = attemptAction(verb, GameObjects.BOTTLE, alt); }
 						else
 						{
 							output = "You have nothing in which to carry it.";
@@ -677,9 +673,7 @@ public class AdventGame implements Serializable
 							}
 						}
 						else if(objectIsHere(GameObjects.BOTTLE) && stateOfTheBottle == 2)
-						{
-							output = attemptAction(verb, GameObjects.BOTTLE, alt);
-						}
+						{ output = attemptAction(verb, GameObjects.BOTTLE, alt); }
 						else
 						{
 							output = "You have nothing in which to carry it.";
@@ -776,13 +770,9 @@ public class AdventGame implements Serializable
 							}
 						}
 						else if(object == GameObjects.AXE && bearAxe && stateOfTheBear == 0)
-						{
-							output = "There is no way past the bear to get the axe, which is probably just as well.";
-						}
+						{ output = "There is no way past the bear to get the axe, which is probably just as well."; }
 						else if(object == GameObjects.VASE && vaseIsBroken == true)
-						{
-							output = "You can't be serious!";
-						}
+						{ output = "You can't be serious!"; }
 						else if(object.mobile && objectIsHere(object))
 						{
 							takeObject(object);
@@ -793,9 +783,7 @@ public class AdventGame implements Serializable
 					{
 						if(caveIsClosed && object == GameObjects.MIRROR){	}
 						else
-						{
-							output = "I don't see any " + alt + ".";
-						}
+						{ output = "I don't see any " + alt + "."; }
 						increaseTurns = false;
 					}
 					if(caveIsClosed && object == GameObjects.OYSTER && endGameObjectsStates[3]) 
@@ -826,9 +814,7 @@ public class AdventGame implements Serializable
 							}
 						}
 						else
-						{
-							output = "You aren't carrying anything.";
-						}
+						{ output = "You aren't carrying anything."; }
                         increaseTurns = false;
 					}
 					else if(object == GameObjects.NOTHING)
@@ -840,13 +826,9 @@ public class AdventGame implements Serializable
 					else if(object == GameObjects.BEAR)
 					{
 						if(stateOfTheBear == 2)
-						{
-							output = attemptAction(ActionWords.TOSS, GameObjects.BEAR, alt);
-						}
+						{ output = attemptAction(ActionWords.TOSS, GameObjects.BEAR, alt); }
 						else
-						{
-							output = AdventMain.dontHave;
-						}
+						{ output = AdventMain.dontHave; }
 					}
 					else if(isInHand(object))
 					{
@@ -874,8 +856,7 @@ public class AdventGame implements Serializable
 							}
 							else if(objectIsHere(GameObjects.DRAGON) || objectIsHere(GameObjects.DRAGON_))
 							{
-								output = "The little bird attacks the green dragon, and in an astounding "
-										+ "flurry gets burnt to a cinder. The ashes blow away.";
+								output = "The little bird attacks the green dragon, and in an astounding flurry gets burnt to a cinder. The ashes blow away.";
 								birdInCage = false;
 								voidObject(GameObjects.BIRD);
 							}
@@ -893,8 +874,7 @@ public class AdventGame implements Serializable
 							dropObject(GameObjects.BATTERIES);
 							stateOfSpareBatteries = 1;
 						}
-						else if(object == GameObjects.VASE && !(objectIsHere(GameObjects.PILLOW) 
-								|| currentLocation == Locations.SOFT))
+						else if(object == GameObjects.VASE && !(objectIsHere(GameObjects.PILLOW) || currentLocation == Locations.SOFT))
 						{
 							output = "The Ming vase drops with a delicate crash.";
 							dropObject(GameObjects.VASE);
@@ -928,9 +908,7 @@ public class AdventGame implements Serializable
 							grateIsUnlocked = true;
 						}
 						else
-						{
-							output = "You don't have any keys!";
-						}
+						{ output = "You don't have any keys!"; }
 					}
 					else if(objectIsPresent(object))
 					{
@@ -950,9 +928,7 @@ public class AdventGame implements Serializable
 							{
 								voidObject(GameObjects.CLAM);
 								AdventMain.Locations.placeObject(GameObjects.OYSTER, currentLocation);
-								output = "A glistening pearl falls out of the clam and rolls away. "
-										+ "Goodness, this must really be an oyster! (I never was very good at "
-										+ "identifying bivalves.)\nWhatever it is, it has now snapped shut again.";
+								output = "A glistening pearl falls out of the clam and rolls away. Goodness, this must really be an oyster! (I never was very good at identifying bivalves.)\nWhatever it is, it has now snapped shut again.";
 								AdventMain.Locations.placeObject(GameObjects.PEARL, Locations.CULDESAC);
 							}
 						}
@@ -969,17 +945,12 @@ public class AdventGame implements Serializable
 								increaseTurns = false;
 							}
 							else
-							{
-								output = "The oyster creaks open, revealing nothing but oyster inside. "
-										+ "It promptly snaps shut again.";
-							}
+							{ output = "The oyster creaks open, revealing nothing but oyster inside. It promptly snaps shut again."; }
 						}
 						else if(object == GameObjects.DOOR)
 						{
 							if(doorHasBeenOiled)
-							{
-								output = AdventMain.okay;
-							}
+							{ output = AdventMain.okay; }
 							else
 							{
 								output = "The door is extremely rusty and refuses to open.";
@@ -1007,8 +978,7 @@ public class AdventGame implements Serializable
 							{
 								if(stateOfTheBear != 1)
 								{
-									output = "There is no way to get past the bear to unlock the chain, "
-											+ "which is probably just as well.";
+									output = "There is no way to get past the bear to unlock the chain, which is probably just as well.";
 									increaseTurns = false;
 								}
 								else
@@ -1118,14 +1088,9 @@ public class AdventGame implements Serializable
 						if(lamp > 0)
 						{
 							if(canISee(currentLocation))
-							{
-								output = "Your lamp is now on.";
-							}
+							{ output = "Your lamp is now on."; }
 							else
-							{
-								output = "Your lamp is now on.\n\n"
-										+ getDescription(currentLocation, brief);
-							}
+							{ output = "Your lamp is now on.\n\n" + getDescription(currentLocation, brief); }
 							lampIsLit = true;
 						}
 						else
@@ -1152,10 +1117,7 @@ public class AdventGame implements Serializable
 						lampIsLit = false;
 						output = "Your lamp is now off.";
 						if(!canISee(currentLocation))
-						{
-							output = output + "\n\nIt is now pitch dark. If you proceed you will likely fall into a "
-									+ "pit.";
-						}
+						{ output = output + "\n\nIt is now pitch dark. If you proceed you will likely fall into a pit."; }
 					}
 					break;
 					
@@ -1204,28 +1166,26 @@ public class AdventGame implements Serializable
 							 }
 						 }
 						 else
-						 {	output = AdventMain.nothing;	}
+						 { output = AdventMain.nothing; }
 					 }
 					break;
 					
 				case GO:
 					if(alt.equals(""))
-					{	output = "Where?";	increaseTurns = false;	}
+					{ output = "Where?"; increaseTurns = false; }
 					else
-					{	output = attemptMovement(alt);	}
+					{ output = attemptMovement(alt); }
 					break;
 					
 				case POUR:
 					if(object == GameObjects.NOTHING || object == GameObjects.BOTTLE)
 					{
 						if(stateOfTheBottle == 1)
-						{	object = GameObjects.WATER;	}
+						{ object = GameObjects.WATER; }
 						else if(stateOfTheBottle == 2)
-						{	object = GameObjects.OIL;	}
+						{ object = GameObjects.OIL; }
 						else
-						{
-							object = GameObjects.NOTHING;
-						}					
+						{ object = GameObjects.NOTHING; }
 					}
 					if(object == GameObjects.NOTHING)
 					{
@@ -1243,17 +1203,9 @@ public class AdventGame implements Serializable
 						{
 							stateOfThePlant++;
 							if(stateOfThePlant == 1)
-							{
-								output = "The plant spurts into furious growth for a few seconds."
-										+ "\n\n\tThere is a 12-foot-tall beanstalk stretching up out of the pit, "
-										+ "bellowing \"Water!! Water!!\"";
-							}
+							{ output = "The plant spurts into furious growth for a few seconds.\n\n\tThere is a 12-foot-tall beanstalk stretching up out of the pit, bellowing \"Water!! Water!!\""; }
 							else if(stateOfThePlant == 2)
-							{
-								output = "The plant grows explosively, almost filling the bottom of "
-										+ "the pit.\n\n\tThere is a gigantic beanstalk stretching all the way up "
-										+ "to the hole.";
-							}
+							{ output = "The plant grows explosively, almost filling the bottom of the pit.\n\n\tThere is a gigantic beanstalk stretching all the way up to the hole."; }
 							else if(stateOfThePlant == 3)
 							{
 								output = "You've over-watered the plant! It's shriveling up! It's, It's...";
@@ -1262,9 +1214,7 @@ public class AdventGame implements Serializable
 								voidObject(GameObjects.PLANT2_);
 							}
 							else
-							{
-								output = "Your bottle is empty and the ground is wet.";
-							}
+							{ output = "Your bottle is empty and the ground is wet."; }
 						}
 						else if(objectIsPresent(GameObjects.DOOR))
 						{
@@ -1280,23 +1230,17 @@ public class AdventGame implements Serializable
 						if(currentLocation == Locations.WESTPIT)
 						{
 							if(stateOfThePlant == 1)
-							{
-								output = "The plant indignantly shakes the oil off its leaves and asks: "
-										+ "\"Water?\".";
-							}
+							{ output = "The plant indignantly shakes the oil off its leaves and asks: \"Water?\"."; }
 							else
-							{
-								output = "Your bottle is empty and the ground is wet.";
-							}
+							{ output = "Your bottle is empty and the ground is wet."; }
 						}
 						else if(objectIsPresent(GameObjects.DOOR))
 						{
 							doorHasBeenOiled = true;
-							output = "The oil has freed up the hinges so that the door will now move,"
-									+ " although it requires some effort.";
+							output = "The oil has freed up the hinges so that the door will now move, although it requires some effort.";
 						}
 						else
-						{	output = "Your bottle is empty and the ground is wet.";	}
+						{ output = "Your bottle is empty and the ground is wet."; }
 						stateOfTheBottle = 0;
 					}	
 					break;
@@ -1311,30 +1255,29 @@ public class AdventGame implements Serializable
 					else if(object == GameObjects.FOOD)
 					{
 						if(!objectIsPresent(GameObjects.FOOD))
-						{	output = "You don't have any.";	}
+						{ output = "You don't have any."; }
 						else
 						{
 							voidObject(GameObjects.FOOD);
 							if(isInHand(GameObjects.FOOD))
-							{	itemsInHand--;	}
+							{ itemsInHand--; }
 							output = "Thank you, it was delicious!";
 						}
 					}
 					else
-					{	output = "I think I just lost my appetite.";	}
+					{ output = "I think I just lost my appetite."; }
 					break;
 
 				case RUB:
 					if(object == GameObjects.LAMP)
-					{	output = "Rubbing the electric lamp is not particularly rewarding. Anyway, "
-							+ "nothing exciting happens.";	}
+					{ output = "Rubbing the electric lamp is not particularly rewarding. Anyway, nothing exciting happens."; }
 					else
-					{	output = "Peculiar. Nothing unexpected happens.";	}
+					{ output = "Peculiar. Nothing unexpected happens."; }
 					break;
 					
 				case TOSS:
 					if(object == GameObjects.ROD && isInHand(GameObjects.ROD2) && !(isInHand(GameObjects.ROD)))
-					{	output = attemptAction(ActionWords.DROP, GameObjects.ROD, "");	}
+					{ output = attemptAction(ActionWords.DROP, GameObjects.ROD, ""); }
 					else if(object == GameObjects.NOTHING)
 					{
 						output = "What would you like to throw?";
@@ -1352,28 +1295,22 @@ public class AdventGame implements Serializable
 								AdventMain.Locations.placeObject(GameObjects.TROLL2_, Locations.NESIDE);
 								AdventMain.Locations.placeObject(GameObjects.TROLL2, Locations.SWSIDE);
 								stateOfTheTroll = 2;
-								output = "The bear lumbers toward the troll, who lets out a startled shriek and "
-										+ "scurries away. The bear soon gives up pursuit and wanders back.";
+								output = "The bear lumbers toward the troll, who lets out a startled shriek and scurries away. The bear soon gives up pursuit and wanders back.";
 							}
 							else
-							{
-								output = AdventMain.okay;
-							}
+							{ output = AdventMain.okay; }
 							stateOfTheBear = 4;
 							GameObjects.BEAR.location = currentLocation;
 						}
 						else
-						{
-							output = AdventMain.dontHave;
-						}
+						{ output = AdventMain.dontHave; }
 					}
 					else if(!(isInHand(object)))
 					{
 						output = AdventMain.dontHave;
 						increaseTurns = false;
 					}
-					else if((objectIsHere(GameObjects.TROLL_) || objectIsHere(GameObjects.TROLL)) 
-							&& GameObjects.isTreasure(object))
+					else if((objectIsHere(GameObjects.TROLL_) || objectIsHere(GameObjects.TROLL)) && GameObjects.isTreasure(object))
 					{
 						voidObject(object);
 						voidObject(GameObjects.TROLL);
@@ -1384,14 +1321,12 @@ public class AdventGame implements Serializable
 						itemsInHand--;
 						output = "The troll catches your treasure and scurries away out of sight.";
 						if(object != GameObjects.EGGS)
-						{	lostTreasures++;	}
+						{ lostTreasures++; }
 					}
 					else if(object == GameObjects.FOOD && objectIsHere(GameObjects.BEAR))
-					{	output = attemptAction(ActionWords.FEED, GameObjects.BEAR, "");	}
+					{ output = attemptAction(ActionWords.FEED, GameObjects.BEAR, ""); }
 					else if(!(object == GameObjects.AXE))
-					{	
-						output = attemptAction(ActionWords.DROP, object, alt);	
-					}
+					{ output = attemptAction(ActionWords.DROP, object, alt); }
 					else if(objectIsHere(GameObjects.DWARF))
 					{
 						battleUpdate = true;
@@ -1404,10 +1339,10 @@ public class AdventGame implements Serializable
 							dwarfPresent = 0;
 							output = "You killed a little dwarf.";
 							if(deadDwarves == 1)
-							{	output += " The body vanishes in a cloud of greasy black smoke.";	}
+							{ output += " The body vanishes in a cloud of greasy black smoke."; }
 						}
 						else
-						{	output = "You attack a little dwarf, but he dodges out of the way.";	}
+						{ output = "You attack a little dwarf, but he dodges out of the way."; }
 						AdventMain.Locations.placeObject(GameObjects.AXE, currentLocation);
 						itemsInHand--;
 					}
@@ -1418,10 +1353,7 @@ public class AdventGame implements Serializable
 						itemsInHand--;
 					}
 					else if((objectIsHere(GameObjects.TROLL_) || objectIsHere(GameObjects.TROLL)))
-					{
-						output = "The troll deftly catches the axe, examines it carefully, and tosses it back, "
-								+ "declaring, \"Good workmanship, but it's not valuable enough.\"";
-					}
+					{ output = "The troll deftly catches the axe, examines it carefully, and tosses it back, declaring, \"Good workmanship, but it's not valuable enough.\""; }
 					else if(objectIsHere(GameObjects.BEAR) && stateOfTheBear == 0)
 					{
 						bearAxe = true;
@@ -1430,7 +1362,7 @@ public class AdventGame implements Serializable
 						output = "The axe misses and lands near the bear where you can't get at it.";
 					}
 					else
-					{	output = attemptAction(ActionWords.DROP, object, alt);	}
+					{ output = attemptAction(ActionWords.DROP, object, alt); }
 					break;
 
 				case BREAK:
@@ -1453,8 +1385,7 @@ public class AdventGame implements Serializable
 					{
 						if(caveIsClosed)
 						{
-							output = "You strike the mirror a resounding blow, whereupon it shatters into "
-									+ "a myriad tiny fragments.";
+							output = "You strike the mirror a resounding blow, whereupon it shatters into a myriad tiny fragments.";
 							playerIsDead = true;
 							playerJustDied = true;
 							fatality = 2;
@@ -1482,13 +1413,9 @@ public class AdventGame implements Serializable
 					else if(object == GameObjects.BIRD && caveIsClosed)
 					{
 						if(objectIsHere(GameObjects.BIRD))
-						{
-							output = "Oh, leave the poor unhappy bird alone.";
-						}
+						{ output = "Oh, leave the poor unhappy bird alone."; }
 						else
-						{
-							output = "I don't see any bird.";
-						}
+						{ output = "I don't see any bird."; }
 						increaseTurns = false;
 					}
 					else if(object == GameObjects.BIRD)
@@ -1507,25 +1434,17 @@ public class AdventGame implements Serializable
 					else if(object == GameObjects.CLAM || object == GameObjects.OYSTER)
 					{
 						if(objectIsPresent(object))
-						{
-							output = "The shell is very strong and impervious to attack.";
-						}
+						{ output = "The shell is very strong and impervious to attack."; }
 						else
-						{
-							output = "I don't see any " + alt + ".";
-						}
+						{ output = "I don't see any " + alt + "."; }
 						increaseTurns = false;
 					}
 					else if(object == GameObjects.SNAKE)
 					{
 						if(objectIsHere(GameObjects.SNAKE))
-						{
-							output = "Attacking the snake both doesn't work and is very dangerous.";
-						}
+						{ output = "Attacking the snake both doesn't work and is very dangerous."; }
 						else
-						{
-							output = "I don't see any snake.";
-						}
+						{ output = "I don't see any snake."; }
 						increaseTurns = false;
 					}
 					else if(object == GameObjects.DWARF && caveIsClosed)
@@ -1537,26 +1456,17 @@ public class AdventGame implements Serializable
 					else if(object == GameObjects.DWARF)
 					{
 						if(objectIsHere(GameObjects.DWARF))
-						{
-							output = "With what? Your bare hands?";
-						}
+						{ output = "With what? Your bare hands?"; }
 						else
-						{
-							output = "I don't see any dwarf.";
-						}
+						{ output = "I don't see any dwarf."; }
 						increaseTurns = false;
 					}
 					else if(object == GameObjects.TROLL)
 					{
 						if(objectIsHere(GameObjects.TROLL)|| objectIsHere(GameObjects.TROLL_))
-						{
-							output = "Trolls are close relatives with the rocks and have skin as"
-									+ " tough as that of a rhinoceros. The troll fends off your blows effortlessly.";
-						}
+						{ output = "Trolls are close relatives with the rocks and have skin as tough as that of a rhinoceros. The troll fends off your blows effortlessly."; }
 						else
-						{
-							output = "I don't see any troll.";
-						}
+						{ output = "I don't see any troll."; }
 						increaseTurns = false;
 					}
 					else if(object == GameObjects.BEAR)
@@ -1569,9 +1479,7 @@ public class AdventGame implements Serializable
 								increaseTurns = false;
 							}
 							else if(stateOfTheBear != 3)
-							{
-								output = "The bear is confused; he only wants to be your friend.";
-							}
+							{ output = "The bear is confused; he only wants to be your friend."; }
 							else
 							{
 								output = "For crying out loud, the poor thing is already dead!";
@@ -1588,8 +1496,7 @@ public class AdventGame implements Serializable
 					{
 						if(objectIsPresent(GameObjects.DRAGON) || objectIsPresent(GameObjects.DRAGON_))
 						{
-							if(!dragonIsAlive)
-							{ output = "For crying out loud, the poor thing is already dead!"; }
+							if(!dragonIsAlive){ output = "For crying out loud, the poor thing is already dead!"; }
 							else
 							{
 								output = "With what? Your bare hands?";
@@ -1613,15 +1520,15 @@ public class AdventGame implements Serializable
 						else
 						{
 							if(objectIsHere(GameObjects.DWARF))
-							{	attemptAction(ActionWords.TOSS, GameObjects.AXE, "");	}
+							{ attemptAction(ActionWords.TOSS, GameObjects.AXE, "");	}
 							else if(objectIsHere(GameObjects.SNAKE))
-							{	attemptAction(ActionWords.KILL, GameObjects.SNAKE, "");	}
+							{ attemptAction(ActionWords.KILL, GameObjects.SNAKE, ""); }
 							else if(objectIsHere(GameObjects.TROLL) || objectIsHere(GameObjects.TROLL_))
-							{	attemptAction(ActionWords.KILL, GameObjects.TROLL, "");	}
+							{ attemptAction(ActionWords.KILL, GameObjects.TROLL, ""); }
 							else if(objectIsHere(GameObjects.BEAR))
-							{	attemptAction(ActionWords.KILL, GameObjects.BEAR, "");	}
+							{ attemptAction(ActionWords.KILL, GameObjects.BEAR, ""); }
 							else if(objectIsHere(GameObjects.BIRD))
-							{	attemptAction(ActionWords.KILL, GameObjects.BIRD, "");	}
+							{ attemptAction(ActionWords.KILL, GameObjects.BIRD, ""); }
 						}
 					}
 					break;
@@ -1633,9 +1540,9 @@ public class AdventGame implements Serializable
 						increaseTurns = false;
 					}
 					else if(other == MessageWords.CUSS)
-					{	output = MessageWords.CUSS.message;	}
+					{ output = MessageWords.CUSS.message; }
 					else
-					{	output = "Okay, \"" + alt + "\".";	}
+					{ output = "Okay, \"" + alt + "\"."; }
 					break;
 					
 				case READ:
@@ -1664,15 +1571,14 @@ public class AdventGame implements Serializable
 						}
 					}
 					else
-					{	output = "I'm game. Care to explain how?";	}
+					{ output = "I'm game. Care to explain how?"; }
 					break;
 					
 				case BRIEF:
 					if(brief == 0)
 					{
 						brief = 1;
-						output = "Okay, from now on I'll only describe a place in full the first time you come "
-								+ "to it. To get the full description, say \"LOOK\".";
+						output = "Okay, from now on I'll only describe a place in full the first time you come to it. To get the full description, say \"LOOK\".";
 					}
 					else
 					{
@@ -1701,13 +1607,10 @@ public class AdventGame implements Serializable
 						increaseTurns = false;
 					}
 					else if(objectIsPresent(object))
-					{
-						output = "I believe what you want is right here with you.";
-					}
+					{ output = "I believe what you want is right here with you."; }
 					else
 					{
-						output = "I can only tell you what you see as you move about and manipulate things. "
-								+ "I can not tell you where remote things are.";
+						output = "I can only tell you what you see as you move about and manipulate things. I can not tell you where remote things are.";
 						increaseTurns = false;
 					}
 					break;
@@ -1715,13 +1618,11 @@ public class AdventGame implements Serializable
 				case INVENTORY:
 					increaseTurns = false;
 					if(itemsInHand > 0)
-					{
-						output = "\t   -----" + listItemsHere(Locations.INHAND) + "\n\t   -----";
-					}
+					{ output = "\t   -----" + listItemsHere(Locations.INHAND) + "\n\t   -----"; }
 					else
-					{	output = "\t   -----\n\t\tYou're not carrying anything.\n\t   -----";	}
+					{ output = "\t   -----\n\t\tYou're not carrying anything.\n\t   -----"; }
 					if(stateOfTheBear == 2)
-					{	output += GameObjects.BEAR.descriptions[2];	}
+					{ output += GameObjects.BEAR.descriptions[2]; }
 					break;
 					
 				case SCORE:
@@ -1742,7 +1643,8 @@ public class AdventGame implements Serializable
 					{ output = "Gluttony is not one of the troll's vices. Avarice, however, is."; }
 					else if(object == GameObjects.DRAGON && (objectIsHere(GameObjects.DRAGON) || objectIsHere(GameObjects.DRAGON_)))
 					{
-						if(!dragonIsAlive){ output = "Don't be ridiculous!"; }
+						if(!dragonIsAlive)
+						{ output = "Don't be ridiculous!"; }
 					}
 					else if(objectIsHere(object))
 					{
@@ -1765,8 +1667,7 @@ public class AdventGame implements Serializable
 								voidObject(GameObjects.FOOD);
 								stateOfTheBear = 1;
 								bearAxe = false;
-								output = "The bear eagerly wolfs down your food, after which he seems to "
-										+ "calm down considerably and even becomes rather friendly.";
+								output = "The bear eagerly wolfs down your food, after which he seems to calm down considerably and even becomes rather friendly.";
 							}
 						}
 						else if(object == GameObjects.DWARF)
@@ -1779,7 +1680,7 @@ public class AdventGame implements Serializable
 							}
 						}
 						else
-						{	output = "I'm game. Would you care to explain how?";	}
+						{ output = "I'm game. Would you care to explain how?"; }
 					}
 					else
 					{
@@ -1800,8 +1701,7 @@ public class AdventGame implements Serializable
 				case WAKE:
 					if(caveIsClosed && object == GameObjects.DWARF)
 					{
-						output = "You wake the nearest dwarf, who wakes up grumpily, takes one look at you, "
-								+ "curses, and grabs for his axe.";
+						output = "You wake the nearest dwarf, who wakes up grumpily, takes one look at you, curses, and grabs for his axe.";
 						playerIsDead = true;
 						playerJustDied = true;
 						fatality = 2;
@@ -1817,10 +1717,7 @@ public class AdventGame implements Serializable
 					boolean waterIsHere = currentLocation.hasWater;
 					output = "You have nothing to drink.";
 					if(waterIsHere && !(isInHand(GameObjects.BOTTLE) && stateOfTheBottle == 1))
-					{
-						output = "You have taken a drink from the stream. The water tastes strongly of "
-								+ "minerals, but is not unpleasant. It is extremely cold.";
-					}
+					{ output = "You have taken a drink from the stream. The water tastes strongly of minerals, but is not unpleasant. It is extremely cold."; }
 					else if(isInHand(GameObjects.BOTTLE) && stateOfTheBottle == 1)
 					{
 						stateOfTheBottle = 0;
@@ -1836,19 +1733,14 @@ public class AdventGame implements Serializable
 				case LOOK:
 					battleUpdate = true;
 					if(!canISee(currentLocation))
-					{
-						output = "You have no source of light.";
-					}
+					{ output = "You have no source of light."; }
 					else if(object == GameObjects.NOTHING)
 					{
 						output = AdventMain.Locations.getDescription(currentLocation, 2);
 						output += "\n" + listItemsHere(currentLocation);
 					}
 					else
-					{
-						output = "Sorry, but I am not allowed to give more detail. I will repeat the long "
-								+ "description of your location.\n\n" + AdventMain.Locations.getDescription(currentLocation, 2);
-					}
+					{ output = "Sorry, but I am not allowed to give more detail. I will repeat the long description of your location.\n\n" + AdventMain.Locations.getDescription(currentLocation, 2); }
 					break;
 					
 				case CALM:
@@ -1856,8 +1748,7 @@ public class AdventGame implements Serializable
 					break;
 
 				case FILL:
-					boolean liquidHere = (currentLocation.hasWater 
-							|| currentLocation == Locations.EASTPIT);
+					boolean liquidHere = (currentLocation.hasWater || currentLocation == Locations.EASTPIT);
 					if(object == GameObjects.VASE)
 					{
 						if(!liquidHere)
@@ -1887,9 +1778,9 @@ public class AdventGame implements Serializable
 					{
 						increaseTurns = false;
 						if(object == GameObjects.NOTHING)
-						{	output = "You have nothing to fill.";	}
+						{ output = "You have nothing to fill."; }
 						else
-						{	output = "You are not carrying it!";	}
+						{ output = "You are not carrying it!"; }
 					}
 					else if(stateOfTheBottle != 0)
 					{
@@ -1922,24 +1813,19 @@ public class AdventGame implements Serializable
 						switch(bonus)
 						{
 							case 25:
-								output = "There is a loud explosion, and you are suddenly splashed across the "
-										+ "walls of the room.";
-								break;
+							    output = "There is a loud explosion, and you are suddenly splashed across the walls of the room.";
+							    break;
 							case 30:
-								output = "There is a loud explosion, and a twenty-foot hole appears in the far"
-										+ " wall, burying the snakes in the rubble. A river of molten lava pours"
-										+ " in through the hole, destroying everything in its path, including you!";
+								output = "There is a loud explosion, and a twenty-foot hole appears in the far wall, burying the snakes in the rubble. A river of molten lava pours in through the hole, destroying everything in its path, including you!";
 								break;
 							default:
-								output = "There is a loud explosion, and a twenty-foot hole appears in the far "
-										+ "wall, burying the dwarves in the rubble. You march through the hole "
-										+ "and find yourself in the Main Office, where a cheering band of "
-										+ "friendly elves carry the conquering adventurer off into the sunset.";		
+								output = "There is a loud explosion, and a twenty-foot hole appears in the far wall, burying the dwarves in the rubble. You march through the hole and find yourself in the Main Office, where a cheering band of friendly elves carry the conquering adventurer off into the sunset.";
+								break;
 						}
 						over = true;
 					}
 					else
-					{	output = "Blasting requires dynamite.";	}
+					{ output = "Blasting requires dynamite."; }
 					break;
 					
 				case FEEFIE:
@@ -1955,16 +1841,15 @@ public class AdventGame implements Serializable
 						else
 						{
 							fooMagicWordProgression = 0;
-							if(GameObjects.EGGS.location == Locations.GIANT)
-							{ output = AdventMain.nothing; }
+							if(GameObjects.EGGS.location == Locations.GIANT){ output = AdventMain.nothing; }
 							else 
 							{
 								if(currentLocation != Locations.GIANT)
 								{
 									if(objectIsPresent(GameObjects.EGGS))
-									{	output = "The nest of golden eggs disappears!";	}
+									{ output = "The nest of golden eggs disappears!"; }
 									else
-									{	output = "Done!";	}
+									{ output = "Done!"; }
 								}
 								else
 								{ output = "There is a large nest here, full of golden eggs!"; }
@@ -2000,7 +1885,7 @@ public class AdventGame implements Serializable
 					increaseTurns = false;
 				}
 				else
-				{	output = attemptMovement(alt);	}
+				{ output = attemptMovement(alt); }
 			}
 			else
 			{
@@ -2008,10 +1893,7 @@ public class AdventGame implements Serializable
 				increaseTurns = false;
 			}
 		}
-		catch(NullPointerException e)
-		{
-			increaseTurns = false;
-		}
+		catch(NullPointerException e){ increaseTurns = false; }
 		return output;
 	}
 	
@@ -2058,8 +1940,7 @@ public class AdventGame implements Serializable
 		}
 		else if(locationResult.equals(Locations.THEVOID))
 		{
-			if(destination.equals(Movement.XYZZY)||destination.equals(Movement.PLOVER)
-					||destination.equals(Movement.PLUGH))
+			if(destination.equals(Movement.XYZZY) || destination.equals(Movement.PLOVER) || destination.equals(Movement.PLUGH))
 			{
 				output = AdventMain.nothing;
 				output = output + "\n" + getDescription(currentLocation, brief);
@@ -2113,16 +1994,14 @@ public class AdventGame implements Serializable
 		else if(locationResult.equals(Locations.CLIMB))
 		{
 			setLocation(Locations.NARROW);
-			output = "You clamber up the plant and scurry through the hole at the top.\n" 
-					+ getDescription(currentLocation, brief);
+			output = "You clamber up the plant and scurry through the hole at the top.\n" + getDescription(currentLocation, brief);
 		}
 		else if(locationResult.equals(Locations.CHECK))
 		{
 			if(stateOfThePlant == 1)
 			{
 				setLocation(Locations.WEST2PIT);
-				output = "You have climbed up the plant and out of the pit.\n" 
-						+ getDescription(currentLocation, brief);
+				output = "You have climbed up the plant and out of the pit.\n" + getDescription(currentLocation, brief);
 			}
 			else
 			{
@@ -2138,19 +2017,16 @@ public class AdventGame implements Serializable
 		else if(locationResult.equals(Locations.THRU))
 		{
 			setLocation(Locations.WESTMIST);
-			output = "You have crawled through a very low wide passage parallel to and north "
-					+ "of the Hall of Mists.\n" + getDescription(currentLocation, brief);
+			output = "You have crawled through a very low wide passage parallel to and north of the Hall of Mists.\n" + getDescription(currentLocation, brief);
 		}
 		else if(locationResult.equals(Locations.DUCK))
 		{
 			setLocation(Locations.WESTFISSURE);
-			output = "You have crawled through a very low wide passage parallel to and north "
-					+ "of the Hall of Mists.\n" + getDescription(currentLocation, brief);
+			output = "You have crawled through a very low wide passage parallel to and north of the Hall of Mists.\n" + getDescription(currentLocation, brief);
 		}
 		else if(locationResult.equals(Locations.SEWER))
 		{
-			output = "The stream flows out through a pair of 1-foot-diameter sewer pipes."
-					+ "\n\nIt would be advisable to use the exit.";
+			output = "The stream flows out through a pair of 1-foot-diameter sewer pipes.\n\nIt would be advisable to use the exit.";
 			increaseTurns = false;
 		}
 		else if(locationResult.equals(Locations.UPNOUT))
@@ -2161,12 +2037,11 @@ public class AdventGame implements Serializable
 		else if(locationResult.equals(Locations.DIDIT))
 		{
 			setLocation(Locations.WEST2PIT);
-			output = "You have climbed up the plant and out of the pit.\n" 
-					+ getDescription(currentLocation, brief);
+			output = "You have climbed up the plant and out of the pit.\n" + getDescription(currentLocation, brief);
 		}
 		else if(locationResult.equals(Locations.REMARK))
 		{
-			if(currentLocation.equals(Locations.SLIT)||currentLocation.equals(Locations.WET))
+			if(currentLocation.equals(Locations.SLIT) || currentLocation.equals(Locations.WET))
 			{
 				output = "You can't fit through a two-inch slit!";
 				increaseTurns = false;
@@ -2177,13 +2052,11 @@ public class AdventGame implements Serializable
 				output = "You can't go through a locked steel grate!";
 				increaseTurns = false;
 			}
-			else if((currentLocation.equals(Locations.SWSIDE) || currentLocation.equals(Locations.NESIDE)) 
-					&& destination != Movement.JUMP)
+			else if((currentLocation.equals(Locations.SWSIDE) || currentLocation.equals(Locations.NESIDE)) && destination != Movement.JUMP)
 			{
 				increaseTurns = false;
 				System.out.println("\ntroll: " + stateOfTheTroll);
-				if(stateOfTheTroll == 0)
-				{	output = "The troll refuses to let you cross.";	}
+				if(stateOfTheTroll == 0){ output = "The troll refuses to let you cross."; }
 				else if(stateOfTheTroll == 1)
 				{
 					output = "The troll steps out from beneath the bridge and blocks your way.";
@@ -2194,13 +2067,15 @@ public class AdventGame implements Serializable
 					AdventMain.Locations.placeObject(GameObjects.TROLL_, Locations.NESIDE);
 				}
 				else
-				{	output = "There is no longer any way across the chasm.";	}
+				{ output = "There is no longer any way across the chasm."; }
 			}
 			else if(currentLocation.equals(Locations.NESIDE) || currentLocation.equals(Locations.SWSIDE) || currentLocation.equals(Locations.EASTFISSURE) || currentLocation.equals(Locations.WESTFISSURE))
 			{
 				increaseTurns = false;
-				if(destination.equals(Movement.JUMP)){ output = "I respectfully suggest that you go across the bridge instead of jumping."; }
-				else{ output = "There is no way to cross the fissure."; }
+				if(destination.equals(Movement.JUMP))
+				{ output = "I respectfully suggest that you go across the bridge instead of jumping."; }
+				else
+				{ output = "There is no way to cross the fissure."; }
 			}
 			else if(currentLocation.equals(Locations.HALLOFMOUNTAINKING))
 			{
@@ -2211,19 +2086,14 @@ public class AdventGame implements Serializable
 			{
 				increaseTurns = false;
 				if(isInHand(GameObjects.CLAM))
-				{	output = "You can't fit this five-foot clam through that little passage!";	}
+				{ output = "You can't fit this five-foot clam through that little passage!"; }
 				else
-				{	output = "You can't fit this five-foot oyster through that little passage!";	}
+				{ output = "You can't fit this five-foot oyster through that little passage!"; }
 			}
 			else if(currentLocation.equals(Locations.WITT)&&destination.equals(Movement.WEST))
-			{
-				output = "You have crawled around in some little holes and found your way blocked"
-						+ " by a recent cave-in.\nYou are now back in the main passage.";
-			}
+			{ output = "You have crawled around in some little holes and found your way blocked by a recent cave-in.\nYou are now back in the main passage."; }
 			else if(currentLocation.equals(Locations.WITT) || currentLocation.equals(Locations.BEDQUILT) || currentLocation.equals(Locations.CHEESE))
-			{
-				output = "You have crawled around in some little holes and wound up back in the main passage.";
-			}
+			{ output = "You have crawled around in some little holes and wound up back in the main passage."; }
 			else if(currentLocation.equals(Locations.IMMENSE))
 			{
 				output = "The door is extremely rusty and refuses to open.";
@@ -2306,21 +2176,17 @@ public class AdventGame implements Serializable
 						if(dwarvesAllowed && dwarves > 0 && dwarvesLeft > 0 && !follow)
 						{
 							double encounter = (dwarvesLeft * 1000.00)/50.00;
-							if(chance * 1000 <= encounter)
-							{	dwarfPresent = 1;	}
+							if(chance * 1000 <= encounter){ dwarfPresent = 1; }
 							System.out.println("encounter " + encounter + "\nchance " + chance * 1000);
 						}
 					}
 					output = getDescription(currentLocation, brief);
-					if(stateOfTheBear == 2)
-					{	output += "\n\tYou are being followed by a very large, tame bear.";	}
-					if(follow)
-					{	AdventMain.Locations.placeObject(GameObjects.DWARF, currentLocation);	}
+					if(stateOfTheBear == 2){ output += "\n\tYou are being followed by a very large, tame bear."; }
+					if(follow){ AdventMain.Locations.placeObject(GameObjects.DWARF, currentLocation); }
 					if(currentLocation.equals(Locations.Y2))
 					{
 						double chance = AdventMain.generate();
-						if(chance > .74)
-						{	output = output + "\n\nA hollow voice says \"PLUGH\"";	}
+						if(chance > .74){ output = output + "\n\nA hollow voice says \"PLUGH\""; }
 					}
 				}
 			}
@@ -2344,10 +2210,7 @@ public class AdventGame implements Serializable
 			fatality = 1;
 		}
 		else
-		{
-			output = "It is now pitch dark. If you proceed you will likely "
-					+ "fall into a pit.";
-		}
+		{ output = "It is now pitch dark. If you proceed you will likely fall into a pit."; }
 		return output;
 	}
 	
@@ -2371,11 +2234,11 @@ public class AdventGame implements Serializable
 		increaseTurns = false;
 		double randomOutput = AdventMain.generate();
 		if(randomOutput < .34)
-		{	output = "I have no idea what you are talking about!";	}
+		{ output = "I have no idea what you are talking about!"; }
 		else if(randomOutput < .67)
-		{	output = "I don't understand that!";	}
+		{ output = "I don't understand that!"; }
 		else
-		{	output = "You're not making any sense!";	}
+		{ output = "You're not making any sense!"; }
 		return output;
 	}
 
@@ -2394,7 +2257,8 @@ public class AdventGame implements Serializable
 			{ currentScore += ( GameObjects.isLesserTreasure(item) ? 10 : ( item == GameObjects.CHEST ? 12 : 14 ) ); }
 		}
 		if(GameObjects.MAG.location == Locations.WITT){ currentScore++; }
-		for(Hints hint : Hints.values()) { if(hint.given) { currentScore -= hint.cost; } }
+		for(Hints hint : Hints.values())
+		{ if(hint.given) { currentScore -= hint.cost; } }
 		if(wellInCave){	currentScore += 25;	}
 		if(caveIsClosed){ currentScore += 25; }
 		if(!quit){ currentScore += 4; }
@@ -2408,9 +2272,7 @@ public class AdventGame implements Serializable
 		boolean pitifulDeath = false;
 		double chance = AdventMain.generate();
 		if(chance < .35)
-		{
-			pitifulDeath = true;
-		}
+		{ pitifulDeath = true; }
 		return pitifulDeath;
 	}
 	
@@ -2422,10 +2284,7 @@ public class AdventGame implements Serializable
 			previousLocation = currentLocation;
 		}
 		if(fatality == 2)
-		{
-			output = "\nThe resulting ruckus has awakened the Dwarves.\nThere are now several threatening "
-					+ "little Dwarves in the room with you! Most of them throw knives at you! All of them get you!";
-		}
+		{ output = "\nThe resulting ruckus has awakened the Dwarves.\nThere are now several threatening little Dwarves in the room with you! Most of them throw knives at you! All of them get you!"; }
 		if(isInHand(GameObjects.LAMP))
 		{
 			lampIsLit = false;
@@ -2437,8 +2296,7 @@ public class AdventGame implements Serializable
 		fatality = 0;
 		if(caveIsClosing)
 		{
-			output += "\n\nIt looks as though you you're dead. Well, seeing as how it's so close to closing "
-					+ "time anyway, let's just call it a day.";
+			output += "\n\nIt looks as though you you're dead. Well, seeing as how it's so close to closing time anyway, let's just call it a day.";
 			over = true;
 		}
 		else
@@ -2448,17 +2306,13 @@ public class AdventGame implements Serializable
 			switch(deaths)
 			{
 				case 3:
-					output += "\n\nOh dear, you seem to have gotten yourself killed. "
-							+ "I might be able to help you out, but I've never really done this before. "
-							+ "Do you want me to try to reincarnate you?";
+					output += "\n\nOh dear, you seem to have gotten yourself killed. I might be able to help you out, but I've never really done this before. Do you want me to try to reincarnate you?";
 					break;
 				case 2:
-					output += "\n\nYou clumsy oaf, you've done it again! I don't know how long I can keep this"
-							+ " up. Do you want me to try reincarnating you again?";
+					output += "\n\nYou clumsy oaf, you've done it again! I don't know how long I can keep this up. Do you want me to try reincarnating you again?";
 					break;
 				default:
-					output += "\n\nNow you've really done it! I'm out of orange smoke! You don't expect me "
-							+ "to do a decent reincarnation without any orange smoke, do you?";
+					output += "\n\nNow you've really done it! I'm out of orange smoke! You don't expect me to do a decent reincarnation without any orange smoke, do you?";
 					break;	
 			}
 			deaths--;
@@ -2487,12 +2341,12 @@ public class AdventGame implements Serializable
 		textFieldEditable = false;
 		getCurrentScore();
 		if(output == null)
-		{	output = "";	}
+		{ output = ""; }
 		else
-		{	output += "\n\n";	}
+		{ output += "\n\n"; }
 		output += "\tYou scored " + score + " points out of a possible 350, using " + turns + " turn";
 		if(turns > 1)
-		{	output += "s";	}
+		{ output += "s"; }
 		output += ".\n\t";
 		boolean found = false;
 		for(int i = 0; i < 9; i++)
@@ -2506,13 +2360,11 @@ public class AdventGame implements Serializable
 					int next = 1 + AdventMain.scores[i] - score;
 					String s = "s";
 					if(next == 1)
-					{	s = "";	}
+					{ s = ""; }
 					output += ", you need " + next + " more point" + s + ".";
 				}
 				else
-				{
-					output += " would be a neat trick!\n\tCongratulations!!";
-				}
+				{ output += " would be a neat trick!\n\tCongratulations!!"; }
 			}
 		}
 		//output += "\n\n\n\tWould you like to play again?";
@@ -2557,7 +2409,8 @@ public class AdventGame implements Serializable
 			grateIsUnlocked = false;
 			caveIsClosing = true;
 		}
-		else if(tally == 15 && !(currentLocation.outsideCave(currentLocation)) && !(currentLocation == Locations.Y2)){ clock1--; }
+		else if(tally == 15 && !(currentLocation.outsideCave(currentLocation)) && !(currentLocation == Locations.Y2))
+		{ clock1--; }
 		else if(lampIsLit && !(caveIsClosing || caveIsClosed))
 		{
 			if(lamp < 0 && currentLocation.outside(currentLocation))
@@ -2569,11 +2422,10 @@ public class AdventGame implements Serializable
             {
                 output = output + "\nYour lamp has run out of power.";
                 if(!canISee(currentLocation))
-                {	output = output + "\nIt is now pitch dark. If you proceed you will likely fall into a pit.";	}
+                { output = output + "\nIt is now pitch dark. If you proceed you will likely fall into a pit."; }
                 lampIsLit = false;
             }
-			else if(lamp < 31 && stateOfSpareBatteries == 1 && objectIsPresent(GameObjects.BATTERIES) 
-					&& objectIsPresent(GameObjects.LAMP))
+			else if(lamp < 31 && stateOfSpareBatteries == 1 && objectIsPresent(GameObjects.BATTERIES) && objectIsPresent(GameObjects.LAMP))
 			{
 				output += "\n\nYour lamp is getting dim. I'm taking the liberty of replacing the batteries.";
 				AdventMain.Locations.placeObject(GameObjects.BATTERIES, currentLocation);
@@ -2584,17 +2436,15 @@ public class AdventGame implements Serializable
 			{
 				String dim = "\n\nYour lamp is getting dim";
 				if(stateOfSpareBatteries == 2)
-				{	output += dim + ", and you're out of spare batteries. You'd best start wrapping this up.";	}
+				{ output += dim + ", and you're out of spare batteries. You'd best start wrapping this up."; }
 				else if(stateOfSpareBatteries == 1)
-				{	output += dim + ". You'd best go back for those batteries.";	}
+				{ output += dim + ". You'd best go back for those batteries."; }
 				else
-				{	
-					output += dim + ". You'd best start wrapping this up, unless you can find some fresh batteries. I seem to recall that there's a vending machine in the maze. Bring some coins with you.";
-				}
+				{ output += dim + ". You'd best start wrapping this up, unless you can find some fresh batteries. I seem to recall that there's a vending machine in the maze. Bring some coins with you."; }
 				lampLowBatteryWarning = true;
 			}
 			else
-			{	lamp--;	}
+			{ lamp--; }
 		}
 		return output;
 	}
@@ -2608,11 +2458,12 @@ public class AdventGame implements Serializable
             for(GameObjects thing : objects)
             {
                 output += GameObjects.getItemDescription(here, thing);
-
                 if(GameObjects.isTreasure(thing))
                 {
-                    if(!haveIFound(GameObjects.RUG) && thing == GameObjects.RUG_){	wasFound(GameObjects.RUG);	}
-                    else if(!(thing == GameObjects.RUG_) && !haveIFound(thing)){	wasFound(thing);	}
+                    if(!haveIFound(GameObjects.RUG) && thing == GameObjects.RUG_)
+                    { wasFound(GameObjects.RUG); }
+                    else if(!(thing == GameObjects.RUG_) && !haveIFound(thing))
+                    { wasFound(thing); }
                 }
             }
         }
@@ -2635,15 +2486,13 @@ public class AdventGame implements Serializable
 	{ return thing.location == currentLocation; }
 	
 	public boolean objectIsPresent(GameObjects thing)
-	{
-		return objectIsHere(thing) || isInHand(thing);
-	}
+	{ return objectIsHere(thing) || isInHand(thing); }
 	
 	//TODO evaluate all getting and dropping stuff
 	private void dropObject(GameObjects thing)
 	{
 		AdventMain.Locations.placeObject(thing, currentLocation);
-		if(thing != GameObjects.BIRD){	itemsInHand--;	}
+		if(thing != GameObjects.BIRD){ itemsInHand--; }
 	}
 	
 	private void voidObject(GameObjects thing)
