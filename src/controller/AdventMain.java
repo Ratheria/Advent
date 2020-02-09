@@ -12,7 +12,6 @@ import java.util.function.IntFunction;
 import state.GameStateHandler;
 import view.AdventureFrame;
 
-//TODO closer look at death/resurrection	- 	non y/n answer?
 
 public class AdventMain 
 {

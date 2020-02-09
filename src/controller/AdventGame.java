@@ -462,8 +462,7 @@ public class AdventGame implements Serializable
 					dwarves = 2;	
 					dwarfPresent = 0;
 					dwarvesLeft -= (Math.floor(AdventMain.generate() * 3));
-					output += "\n\nA little dwarf just walked around a corner, saw you, threw a little axe at you, "
-							+ "cursed, and ran away. (The axe missed.)";
+					output += "\n\nA little dwarf just walked around a corner, saw you, threw a little axe at you, cursed, and ran away. (The axe missed.)";
 					AdventMain.Locations.placeObject(GameObjects.AXE, currentLocation);
 				}
 				else
@@ -475,13 +474,12 @@ public class AdventGame implements Serializable
 			}
 			else if (dwarfPresent == 2 && battleUpdate)
 			{
-				output += "\n\nThere is a threatening little dwarf in the room with you!\nOne sharp nasty knife is "
-						+ "thrown at you!";
+				output += "\n\nThere is a threatening little dwarf in the room with you!\nOne sharp nasty knife is thrown at you!";
 				boolean hit = false;
+				AdventMain.Locations.placeObject(GameObjects.KNIFE, currentLocation);
 				if(dwarves >= 3)
 				{
-					if(AdventMain.generate() * 1000 < 95 * (dwarves - 2))
-					{	hit = true;	}
+					if(AdventMain.generate() * 1000 < 95 * (dwarves - 2)){ hit = true; }
 				}
 				else
 				{	dwarves++;	}
@@ -502,12 +500,10 @@ public class AdventGame implements Serializable
 		if(playerIsDead && playerJustDied && !over)
 		{ output += death(output); playerJustDied = false; }
 		if(over)
-		{	output = quit(output);	}
-		else
-		{
-			output = output + checkForHints();
-		}
+		{ output = quit(output); }
+		else{ output = output + checkForHints(); }
 		goldInInventory = isInHand(GameObjects.GOLD);
+        if(locationAtStartOfAction != currentLocation){ voidObject(GameObjects.KNIFE); }
 		AdventMain.logGameInfo();
 		return output;
 	}
@@ -2038,8 +2034,7 @@ public class AdventGame implements Serializable
 		
 		if(caveIsClosed && locationResult != Locations.THEVOID && (locationResult.compareTo(Locations.THEVOID) < 10))
 		{
-			output = "A mysterious recorded voice groans into life and announces: \n\t\"This exit is "
-					+ "closed. Please leave via main office.\"";
+			output = "A mysterious recorded voice groans into life and announces: \n\t\"This exit is closed. Please leave via main office.\"";
 			increaseTurns = false;
 		}
 		else if(justCollapsed)
@@ -2075,14 +2070,8 @@ public class AdventGame implements Serializable
 				output = pitchDark(output);
 				increaseTurns = false;
 			}
-			else if(destination.equals(Movement.NORTH) ||
-					destination.equals(Movement.SOUTH) ||
-					destination.equals(Movement.EAST)  ||
-					destination.equals(Movement.WEST)  ||
-					destination.equals(Movement.NORTHEAST)||
-					destination.equals(Movement.NORTHWEST)||
-					destination.equals(Movement.SOUTHEAST)||
-					destination.equals(Movement.SOUTHWEST))
+			else if(destination.equals(Movement.NORTH) || destination.equals(Movement.SOUTH) || destination.equals(Movement.EAST) || destination.equals(Movement.WEST) ||
+					destination.equals(Movement.NORTHEAST) || destination.equals(Movement.NORTHWEST) || destination.equals(Movement.SOUTHEAST) || destination.equals(Movement.SOUTHWEST))
 			{
 				increaseTurns = false;
 				output = "There are no exits in that direction.\n";
@@ -2182,9 +2171,8 @@ public class AdventGame implements Serializable
 				output = "You can't fit through a two-inch slit!";
 				increaseTurns = false;
 			}
-			else if(currentLocation.equals(Locations.INSIDE)||currentLocation.equals(Locations.OUTSIDE)
-					||currentLocation.equals(Locations.DEBRIS)||currentLocation.equals(Locations.AWKWARD)||
-					currentLocation.equals(Locations.BIRD)||currentLocation.equals(Locations.SMALLPIT))
+			else if(currentLocation.equals(Locations.INSIDE) || currentLocation.equals(Locations.OUTSIDE) || currentLocation.equals(Locations.DEBRIS) ||
+                    currentLocation.equals(Locations.AWKWARD) || currentLocation.equals(Locations.BIRD) || currentLocation.equals(Locations.SMALLPIT))
 			{
 				output = "You can't go through a locked steel grate!";
 				increaseTurns = false;
@@ -2208,15 +2196,11 @@ public class AdventGame implements Serializable
 				else
 				{	output = "There is no longer any way across the chasm.";	}
 			}
-			else if(currentLocation.equals(Locations.NESIDE)||currentLocation.equals(Locations.SWSIDE)
-					||currentLocation.equals(Locations.EASTFISSURE)
-					||currentLocation.equals(Locations.WESTFISSURE))
+			else if(currentLocation.equals(Locations.NESIDE) || currentLocation.equals(Locations.SWSIDE) || currentLocation.equals(Locations.EASTFISSURE) || currentLocation.equals(Locations.WESTFISSURE))
 			{
 				increaseTurns = false;
-				if(destination.equals(Movement.JUMP))
-				{	output = "I respectfully suggest that you go across the bridge instead of jumping.";	}
-				else
-				{	output = "There is no way to cross the fissure.";	}
+				if(destination.equals(Movement.JUMP)){ output = "I respectfully suggest that you go across the bridge instead of jumping."; }
+				else{ output = "There is no way to cross the fissure."; }
 			}
 			else if(currentLocation.equals(Locations.HALLOFMOUNTAINKING))
 			{
@@ -2236,11 +2220,9 @@ public class AdventGame implements Serializable
 				output = "You have crawled around in some little holes and found your way blocked"
 						+ " by a recent cave-in.\nYou are now back in the main passage.";
 			}
-			else if(currentLocation.equals(Locations.WITT)||currentLocation.equals(Locations.BEDQUILT)
-					||currentLocation.equals(Locations.CHEESE))
+			else if(currentLocation.equals(Locations.WITT) || currentLocation.equals(Locations.BEDQUILT) || currentLocation.equals(Locations.CHEESE))
 			{
-				output = "You have crawled around in some little holes and wound up back in the main "
-						+ "passage.";
+				output = "You have crawled around in some little holes and wound up back in the main passage.";
 			}
 			else if(currentLocation.equals(Locations.IMMENSE))
 			{
@@ -2259,8 +2241,7 @@ public class AdventGame implements Serializable
 			}
 			else if(currentLocation.equals(Locations.PROOM) || currentLocation.equals(Locations.DROOM) || currentLocation.equals(Locations.ALCOVE))
 			{
-				output = "Something you are carrying won't fit through the tunnel with you. "
-						+ "You'd best take inventory and drop something.";
+				output = "Something you are carrying won't fit through the tunnel with you. You'd best take inventory and drop something.";
 				increaseTurns = false;
 			}
 			else
@@ -2277,8 +2258,7 @@ public class AdventGame implements Serializable
 				{
 					clock2 = 15;
 					allowExtraMovesForPanic = true;
-					output = "A mysterious recorded voice groans into life and announces: "
-							+ "\n\t\"This exit is closed. Please leave via main office.\"";
+					output = "A mysterious recorded voice groans into life and announces: \n\t\"This exit is closed. Please leave via main office.\"";
 				}
 			}
 			boolean follow = false;
@@ -2294,9 +2274,7 @@ public class AdventGame implements Serializable
 					}
 				}
 				else
-				{	
-					wayIsBlocked = true;
-				}
+				{ wayIsBlocked = true; }
 			}
 
 			if(wayIsBlocked)
@@ -2310,10 +2288,7 @@ public class AdventGame implements Serializable
 			else
 			{
 				setLocation(locationResult);
-				if(!canISee(currentLocation))
-				{
-					output = pitchDark(output);
-				}
+				if(!canISee(currentLocation)){ output = pitchDark(output); }
 				else
 				{
 					System.out.println("d " + dwarves);
@@ -2324,8 +2299,7 @@ public class AdventGame implements Serializable
 						{
 							movesWOEncounter++;
 							double likely = (movesWOEncounter * 10 / 8)/8; 
-							if(chance * 100 <= likely)
-							{	pirate = 1;	}
+							if(chance * 100 <= likely){ pirate = 1; }
 							System.out.println("likely " + likely + "\npirate " + pirate);
 						}
 						chance = AdventMain.generate();
