@@ -17,169 +17,85 @@ import controller.AdventMain.Hints;
 import controller.AdventMain.KnownWord;
 
 public class AdventGame implements Serializable
-{	
+{
 	private static final long serialVersionUID = 216265234662749493L;
 
+	public 	boolean 	textFieldEditable = true;
+	private	boolean 	dwarvesAllowed;
+
 	public EnumMap<GameObjects, Boolean> found = new EnumMap<>(GameObjects.class);
-	
-	public String lastInput;
-	public Locations currentLocation;
-	public Locations previousLocation;
-	public Locations locationAtStartOfAction;
-	//private Locations oldestLocation;
-	
-	public boolean textFieldEditable = true;
-	
-	private boolean dwarvesAllowed;
-	
-	public boolean relocate, collapse, justCollapsed;
-	
-	public boolean playerIsDead, playerJustDied;
-	private boolean caveIsClosing, caveIsClosed;
-	private boolean lampLowBatteryWarning;
-	private boolean allowExtraMovesForPanic;
-	public boolean over, noMore;
-	
-	public boolean grateIsUnlocked, crystalBridgeIsThere, lampIsLit, snakeInHotMK,
-				   doorHasBeenOiled, dragonIsAlive, birdInCage, bearAxe, vaseIsBroken, goldInInventory;
 
-	private boolean battleUpdate;
-	private boolean wayIsBlocked, justBlocked;
-	private boolean locationChange, increaseTurns;
+	public 	String 		lastInput;
+	public 	Locations 	currentLocation, previousLocation, locationAtStartOfAction;
 	
-	private boolean wellInCave;
-	private boolean quit;
-	
-	private byte clock1, clock2;
-	public ActionWords actionToAttempt;
-	public Questions questionAsked;
-	public Hints hintToOffer, offeredHint;
-	public int brief;
-	public int score;
-	private int bonus;
-	public int turns;
-	public int lamp;
-	public byte itemsInHand;
-	public byte deaths;
-	public byte fatality;
-	public int tally;
-	private byte lostTreasures;
-	public byte stateOfThePlant;
-	public byte stateOfTheBottle;
-	public byte stateOfSpareBatteries;
-	// default, purchased, used to replace old
-	
-	private byte pirate;
-	private byte movesWOEncounter;
-	private byte dwarves;
-	// nothing, reached hall no dwarf, met dwarf no knives, knife misses, knife hit .095, .190, .285
+	public 	boolean 	over			, noMore		, quit,
+						relocate		, collapse		, justCollapsed			, playerIsDead		, playerJustDied	,
+						grateIsUnlocked	, crystalBridge	, lampIsLit				, snakeInHotMK		, doorHasBeenOiled	,
+						dragonIsAlive	, birdInCage	, bearAxe				, vaseIsBroken		, goldInInventory	,
+					 	caveIsClosing	, caveIsClosed	, extraMovesForPanic	, lowBatteryWarning	,
+						battleUpdate	, wayIsBlocked	, justBlocked			,
+						locationChange	, increaseTurns	, wellInCave			;
 
-	private byte deadDwarves;
-	private byte dwarvesLeft;
-	// certain objects have different behaviours in the end game
-	// bottles, lamps, pillows, and rods - invisible until interacted with
-	public boolean[] endGameObjectsStates;
+	public 	ActionWords	actionToAttempt;
+	public 	Questions 	questionAsked;
+	public 	Hints 		hintToOffer, offeredHint;
 
-	private byte dwarfPresent;
-	// none, new, current, old
+	public 	int 		brief, score, bonus, tally, turns, lamp;
+
+	public 	byte 		clock1					, clock2			, itemsInHand	, deaths		, lostTreasures	,
+						pirate					, movesWOEncounter	, deadDwarves	, dwarvesLeft	,
+						stateOfThePlant			, stateOfTheBottle	,
+
+						fatality				, 		// default, pit, dwarf
+						dwarves					,		// nothing, reached hall no dwarf, met dwarf no knives, knife misses, knife hit .095, .190, .285
+						dwarfPresent			,   	// none, new, current, old
+						stateOfTheTroll			,   	// there, hidden, dead, can pass
+						stateOfTheBear			,   	// default, fed + idle, fed + following, dead, was following idle
+						stateOfTheChain			,   	// locked to bear, unlocked, locked
+						stateOfSpareBatteries	,		// default, purchased, used to replace old
+						fooMagicWordProgression	;
+
+	public	boolean[] 	endGameObjectsStates;	// bottles, lamps, pillows, and rods  -  invisible until interacted with (end game only)
+
+	// TODO More dynamic save load? Multiple 'save slots'?
 	
-	public byte stateOfTheTroll;
-	// there, hidden, dead, can pass;
-	public byte stateOfTheBear;
-	// default, fed + idle, fed + following, dead, was following idle
-	public byte stateOfTheChain;
-	// locked to bear, unlocked, locked
-	private byte fooMagicWordProgression;
-	
-	
-	
-	//private byte fileSlot;
-	// nothing, save, load
-	//private byte currentFileOperation;
-	//public static boolean choosingFileSlot;
-	
-	public AdventGame()
-	{ setUp(); }
-	
+	public AdventGame() { setUp(); }
+
+	//  Setup For New Game  //
 	public void setUp()
 	{
-		//No treasure found yet
 		for(GameObjects object : GameObjects.values())
-		{
-			if(GameObjects.isTreasure(object) && object != GameObjects.RUG_) 
-			{	found.put(object, false);	}
-		}
-		
-		lastInput = "";
-		currentLocation = Locations.ROAD;
-		previousLocation = null;
-		locationAtStartOfAction = Locations.ROAD;
-		//oldestLocation = null;
-		playerIsDead = false;
-		playerJustDied = false;
-		caveIsClosed = false;
-		grateIsUnlocked = false;
-		crystalBridgeIsThere = false;
-		lampIsLit = false;
-		snakeInHotMK = true;
-		doorHasBeenOiled = false;
-		dragonIsAlive = true;
-		birdInCage = false;
-		bearAxe = false;
-		vaseIsBroken = false;
-		goldInInventory = false;
-		relocate = false;
-		justCollapsed = false;
-		collapse = false;
-		lampLowBatteryWarning = false;
-		over = false;
-		dwarvesAllowed = true;
-		battleUpdate = false;
-		allowExtraMovesForPanic = false;
-		wayIsBlocked = false;
-		justBlocked = false;
-		locationChange = false;
-		noMore = false;
-		increaseTurns = false;
-		wellInCave = false;
-		quit = false;
-		clock1 = 15;
-		clock2 = 15;
-		actionToAttempt = ActionWords.NOTHING;
-		questionAsked = Questions.INSTRUCTIONS;
-		hintToOffer = Hints.NONE;
-		offeredHint = Hints.INSTRUCTIONS;
-		brief = 0;
-		score = 0;
-		bonus = 0;
-		turns = 0;
-		lamp = 330;
-		itemsInHand = 0;
-		deaths = 3;
-		fatality = 0;
-		//default, pit, dwarf
-		tally = 0;
-		lostTreasures = 0;
-		stateOfThePlant = 0;
-		stateOfTheBottle = 1;
-		stateOfSpareBatteries = 0;
-		pirate = 0;
-		movesWOEncounter = 1;
-		dwarves = 0;
-		deadDwarves = 0;
-		dwarvesLeft = 5;
-		dwarfPresent = 0;
-		stateOfTheTroll = 0;
-		stateOfTheBear = 0;
-		stateOfTheChain = 0;
+		{ if(GameObjects.isTreasure(object) && object != GameObjects.RUG_){	found.put(object, false);	} }		// No treasure found yet
 
-		fooMagicWordProgression = 0;
+		dwarvesAllowed 	= true;
+
+		currentLocation = Locations.ROAD; previousLocation = null; locationAtStartOfAction = Locations.ROAD;
+
+		lastInput 		= AdventMain.empty;
+
+		over 			= false; 	noMore 					= false; 	quit 					= false;
+		relocate 		= false; 	collapse 				= false; 	justCollapsed 			= false; 	playerIsDead 			= false; 	playerJustDied 		= false;
+		grateIsUnlocked	= false; 	crystalBridge 			= false; 	lampIsLit 				= false; 	snakeInHotMK 			= true; 	doorHasBeenOiled 	= false;
+		dragonIsAlive 	= true; 	birdInCage 				= false; 	bearAxe 				= false; 	vaseIsBroken 			= false; 	goldInInventory 	= false;
+		caveIsClosing 	= false; 	caveIsClosed 			= false; 	extraMovesForPanic		= false; 	lowBatteryWarning 		= false;
+		battleUpdate 	= false; 	wayIsBlocked 			= false; 	justBlocked 			= false;
+		locationChange 	= false; 	increaseTurns 			= false; 	wellInCave 				= false;
+
+		actionToAttempt = ActionWords.NOTHING;
+		questionAsked 	= Questions.INSTRUCTIONS;
+		hintToOffer 	= Hints.NONE; offeredHint = Hints.INSTRUCTIONS;
+
+		brief = 0; score = 0; bonus = 0; tally = 0; turns = 0; lamp = 330;
+
+		clock1 					= 15; clock2 			= 15; itemsInHand		= 0 ; deaths 				= 3 ; lostTreasures 	= 0 ; fatality 			= 0 ;
+		pirate 					= 0 ; movesWOEncounter	= 1 ; deadDwarves		= 0 ; dwarvesLeft 			= 5 ; dwarves 			= 0 ; dwarfPresent 		= 0 ;
+		stateOfTheTroll 		= 0 ; stateOfTheBear 	= 0 ; stateOfTheChain	= 0 ; stateOfSpareBatteries	= 0 ; stateOfThePlant	= 0 ; stateOfTheBottle	= 1 ;
+		fooMagicWordProgression	= 0 ;
+
 		endGameObjectsStates = new boolean[] {false, false, false, false, false, false, false, false, false, false};
-//		fileSlot = 0;
-//		currentFileOperation = 0;
 	}
 
-	// Determine what happens given a single word of input.
+	//  Determine Action Given Single Word Input  //
 	public String determineAction(String input) 
 	{
 		lastInput = input;
@@ -192,11 +108,9 @@ public class AdventGame implements Serializable
 		
 		KnownWord word = GameObjects.NOTHING;
 		byte wordType = -1;
+
 		if(AdventMain.KnownWords.containsKey(input))
-		{
-			word = AdventMain.KnownWords.get(input);
-			wordType = word.getType();
-		}
+		{ word = AdventMain.KnownWords.get(input); wordType = word.getType(); }
 		
 		if(actionToAttempt != ActionWords.NOTHING && wordType == 1)
 		{
@@ -219,42 +133,35 @@ public class AdventGame implements Serializable
 			AdventMain.Locations.placeObject(GameObjects.DRAGON, currentLocation);
 			AdventMain.Locations.placeObject(GameObjects.RUG, currentLocation);
 		}
-		else if(questionAsked != Questions.NONE && answer > 0) //(questionAsked.serious) || (answer == 1)
+		else if(questionAsked != Questions.NONE && answer > 0)
 		{
 			switch(questionAsked)
 			{
 				case INSTRUCTIONS: 
 					output = "";
 					if(answer == 1)
-					{
-						output = giveHint(offeredHint);
-						lamp = 1000;	
-					}
+					{ output = giveHint(offeredHint); lamp = 1000; }
 					output += AdventMain.Locations.getDescription(Locations.ROAD, brief);
 					break;
 					
 				case RESURRECT:
 					increaseTurns = false;
-					if(answer == 2) { over = true; }
-					else { output = resurrection(); }
+					if(answer == 2)
+					{ over = true; }
+					else
+					{ output = resurrection(); }
 					break;
 				
 				case PLAYAGAIN:
 					if(answer == 1)
 					{ setUp(); }
 					else
-					{
-						noMore = true;
-						System.exit(0);
-					}
+					{ noMore = true; System.exit(0); }
 					break;
 					
 				case QUIT: case SCOREQUIT:
 					if(answer == 1)
-					{ 
-						quit = true;
-						over = true;
-					}
+					{ quit = true; over = true; }
 					else 
 					{ output = AdventMain.okay; }
 					break;
@@ -288,65 +195,42 @@ public class AdventGame implements Serializable
 			else if(wordType == 1)
 			{
 				if(objectIsPresent((GameObjects) word))
-				{
-					if(word == GameObjects.KNIFE)
-					{
-						output = "The dwarves' knives vanish as they strike the walls of the cave.";
-						increaseTurns = false;
-					}
-					else
-					{
-						output = "What would you like to do with the " + input + "?";
-						increaseTurns = false;
-						//TODO continuing objects like actions
-						//TODO can do continuing action then object and visa versa
-					}
-				}
+				{ output = word == GameObjects.KNIFE ? "The dwarves' knives vanish as they strike the walls of the cave." : "What would you like to do with the " + input + "?" ; }
 				else
-				{
-					output = "I don't see any " + input + ".";
-					increaseTurns = false;
-				}
+				{ output = "I don't see any " + input + "."; }
+				increaseTurns = false;
 			}
 			else if(wordType == 3)
 			{ output = ((MessageWords) word).message; }
 			else
 			{ output = nonsense(); }
 		}
-		
-		if(input.equals("west"))
-		{ Hints.WEST.proc++; }
-		
+		if(input.equals("west")){ Hints.WEST.proc++; }
 		return finishAction(output);
 	}
 
-	/*
-	 * Determine what happens given two words of input
-	 */
+	//  Determine Action Given Two Word Input  //
 	public String determineAction(String input1, String input2) 
 	{
 		lastInput = input1 + " " + input2;
-		String output;
+		String output = null;
 		increaseTurns = true;
 		locationAtStartOfAction = currentLocation;
 		
 		if(questionAsked.serious)
-		{
-			output = "Just yes or no, please.";
-			increaseTurns = false;
-		}
+		{ output = "Just yes or no, please."; increaseTurns = false; }
 		else
 		{
 			fooMagicWordProgression = 0;
 			resetHintsAndQuestions();
 			
-			String input12 = AdventMain.truncate.apply(input1);
-			String input22 = AdventMain.truncate.apply(input2);
+			String input12  = AdventMain.truncate.apply(input1);
+			String input22  = AdventMain.truncate.apply(input2);
 			
-			KnownWord word = GameObjects.NOTHING;
+			KnownWord word  = GameObjects.NOTHING;
 			KnownWord word2 = GameObjects.NOTHING;
-			byte wordType = -1;
-			byte wordType2 = -1;
+			byte wordType   = -1;
+			byte wordType2  = -1;
 			
 			if(AdventMain.KnownWords.containsKey(input12))
 			{
@@ -360,11 +244,7 @@ public class AdventGame implements Serializable
 			}
 			
 			if(objectIsPresent(GameObjects.KNIFE) && (word == GameObjects.KNIFE || word2 == GameObjects.KNIFE))
-			{
-				//TODO evaluate this
-				output = "The dwarves' knives vanish as they strike the walls of the cave.";
-				increaseTurns = false;
-			}
+			{ output = "The dwarves' knives vanish as they strike the walls of the cave."; increaseTurns = false; }
 			else if(wordType == 3)
 			{ output = ((MessageWords) word).message; }
 			else if(wordType == 0)
@@ -377,7 +257,7 @@ public class AdventGame implements Serializable
 						output = (increaseTurns ? "Your feet are now wet." : "I don't see any water.");
 					}
 					else
-					{	output = attemptAction(ActionWords.GO, word2, input2);	}
+					{ output = attemptAction(ActionWords.GO, word2, input2); }
 				}
 				else
 				{ output = attemptMovement((Movement) word); }
@@ -408,18 +288,16 @@ public class AdventGame implements Serializable
 			else
 			{ output = nonsense(); }
 		}
-		if(input1.equals("west") || input2.equals("west"))
-		{ Hints.WEST.proc++; }
+		if(input1.equals("west") || input2.equals("west")){ Hints.WEST.proc++; }
 		return finishAction(output);
 	}
-	
+
+	//  Finish Any Action Taken  //
 	private String finishAction(String output)
 	{
 		if(!wellInCave && currentLocation.getOrdinal(currentLocation) >= currentLocation.minLoc())
-		{
-			wellInCave = true;
-			dwarves = 1;
-		}
+		{ wellInCave = true; dwarves = 1; }
+
 		if(locationChange && increaseTurns)
 		{
 			output = clocksAndLamp(output);
@@ -427,25 +305,25 @@ public class AdventGame implements Serializable
 			if(pirate == 1)
 			{
 				pirate = 2;
-				AdventMain.Locations.placeObject(GameObjects.MESSAGE, Locations.PONY);
-				AdventMain.Locations.placeObject(GameObjects.CHEST, Locations.DEAD2);
+				AdventMain.Locations.placeObject(GameObjects.MESSAGE, Locations.PONY); AdventMain.Locations.placeObject(GameObjects.CHEST, Locations.DEAD2);
 				
 				ArrayList<GameObjects> currentlyHolding = AdventMain.objectsHere(Locations.INHAND);
-				boolean treasure = false;
+				boolean holdingTreasure = false;
 				if(currentlyHolding != null)
 				{
 					for(GameObjects object : currentlyHolding)
 					{
 						if(GameObjects.isTreasure(object))
 						{
-							treasure = true;
+							holdingTreasure = true;
 							AdventMain.Locations.placeObject(object, Locations.DEAD2);
 							itemsInHand--;
 						}
 					}
 				}
-				output += (treasure ? "\n\nOut from the shadows behind you pounces a bearded pirate!\n\"Har, har,\" he chortles, \"I'll just take all this booty and hide it away with me chest deep in the maze!\"\nHe snatches your treasure and vanishes into the gloom."
-							: "\n\nThere are faint rustling noises from the darkness behind you. As you turn toward them, the beam of your lamp falls across a bearded pirate. He is carrying a large chest.\n\"Shiver me timbers!\" he cries, \"I've been spotted! I'd best hie meself off to the maze to hide me chest!\"\nWith that, he vanishes into the gloom.");
+				output += holdingTreasure ?
+						  "\n\nOut from the shadows behind you pounces a bearded pirate!\n\"Har, har,\" he chortles, \"I'll just take all this booty and hide it away with me chest deep in the maze!\"\nHe snatches your treasure and vanishes into the gloom." :
+						  "\n\nThere are faint rustling noises from the darkness behind you. As you turn toward them, the beam of your lamp falls across a bearded pirate. He is carrying a large chest.\n\"Shiver me timbers!\" he cries, \"I've been spotted! I'd best hie meself off to the maze to hide me chest!\"\nWith that, he vanishes into the gloom." ;
 			}
 		}
 		if(increaseTurns)
@@ -474,31 +352,24 @@ public class AdventGame implements Serializable
 				boolean hit = false;
 				AdventMain.Locations.placeObject(GameObjects.KNIFE, currentLocation);
 				if(dwarves >= 3)
-				{
-					if(AdventMain.generate() * 1000 < 95 * (dwarves - 2)){ hit = true; }
-				}
+				{ if((AdventMain.generate() * 1000) < (95 * (dwarves - 2))){ hit = true; } }
 				else
-				{	dwarves++;	}
+				{ dwarves++; }
+
 				if(hit)
-				{	
-					output += "\nIt gets you!";	
-					playerIsDead = true;
-					playerJustDied = true;
-				}
+				{ output += "\nIt gets you!"; playerIsDead = true; playerJustDied = true; }
 				else
-				{	output += "\nIt misses!";	}
+				{ output += "\nIt misses!"; }
 			}
 		}
 		battleUpdate = false;
-		if(15 - tally == lostTreasures && lamp > 35)
-		{	lamp = 35;	}
+
+		if(15 - tally == lostTreasures && lamp > 35) { lamp = 35; }
 		getCurrentScore();
-		if(playerIsDead && playerJustDied && !over)
-		{ output += death(output); playerJustDied = false; }
-		if(over)
-		{ output = quit(output); }
-		else
-		{ output = output + checkForHints(); }
+
+		if(playerIsDead && playerJustDied && !over) { output += death(output); playerJustDied = false; }
+		output = over ? quit(output) : output + checkForHints() ;
+
 		goldInInventory = isInHand(GameObjects.GOLD);
         if(locationAtStartOfAction != currentLocation){ voidObject(GameObjects.KNIFE); }
 		AdventMain.logGameInfo();
@@ -507,7 +378,7 @@ public class AdventGame implements Serializable
 	
 	private String checkForHints()
 	{
-		String output = "";
+		String output = AdventMain.empty;
 		boolean justArrived = (locationAtStartOfAction != currentLocation);
 		if(!caveIsClosed)
 		{
@@ -533,11 +404,10 @@ public class AdventGame implements Serializable
 			{
 				if(hint.proc == hint.threshold && questionAsked == Questions.NONE && hintToOffer == Hints.NONE && offeredHint == Hints.NONE)
 				{
-					switch(hint)
-					{
-						case WEST: hint.proc++; hint.given = true; output += hint.hint; break;
-						default: output += confirmIntentBeforeHint(hint); break;
-					}
+					if (hint == Hints.WEST)
+					{ hint.proc++; hint.given = true; output += hint.hint; }
+					else
+					{ output += confirmIntentBeforeHint(hint); }
 				}
 			}
 		}
@@ -1150,19 +1020,19 @@ public class AdventGame implements Serializable
 					 {
 						 if(!caveIsClosing)
 						 {
-							 if(!crystalBridgeIsThere)
+							 if(!crystalBridge)
 							 {
 								 output = "A crystal bridge now spans the fissure.";
 								 AdventMain.Locations.placeObject(GameObjects.CRYSTAL, Locations.EASTFISSURE);
 								 AdventMain.Locations.placeObject(GameObjects.CRYSTAL_, Locations.WESTFISSURE);
-								 crystalBridgeIsThere = true;
+								 crystalBridge = true;
 							 }
 							 else
 							 {
 								 output = "The crystal bridge has vanished!";
 								 voidObject(GameObjects.CRYSTAL);
 								 voidObject(GameObjects.CRYSTAL_);
-								 crystalBridgeIsThere = false;
+								 crystalBridge = false;
 							 }
 						 }
 						 else
@@ -2124,10 +1994,10 @@ public class AdventGame implements Serializable
 		{
 			if(caveIsClosing && currentLocation.outsideCave(locationResult))
 			{
-				if(!allowExtraMovesForPanic)
+				if(!extraMovesForPanic)
 				{
 					clock2 = 15;
-					allowExtraMovesForPanic = true;
+					extraMovesForPanic = true;
 					output = "A mysterious recorded voice groans into life and announces: \n\t\"This exit is closed. Please leave via main office.\"";
 				}
 			}
@@ -2432,7 +2302,7 @@ public class AdventGame implements Serializable
 				stateOfSpareBatteries = 2;
 				lamp = 2500;
 			}
-			else if(lamp < 31 && !lampLowBatteryWarning && objectIsPresent(GameObjects.LAMP))
+			else if(lamp < 31 && !lowBatteryWarning && objectIsPresent(GameObjects.LAMP))
 			{
 				String dim = "\n\nYour lamp is getting dim";
 				if(stateOfSpareBatteries == 2)
@@ -2441,7 +2311,7 @@ public class AdventGame implements Serializable
 				{ output += dim + ". You'd best go back for those batteries."; }
 				else
 				{ output += dim + ". You'd best start wrapping this up, unless you can find some fresh batteries. I seem to recall that there's a vending machine in the maze. Bring some coins with you."; }
-				lampLowBatteryWarning = true;
+				lowBatteryWarning = true;
 			}
 			else
 			{ lamp--; }
@@ -2453,18 +2323,12 @@ public class AdventGame implements Serializable
     {
         String output = "";
         ArrayList<GameObjects> objects = AdventMain.objectsHere(here);
-        if(objects != null)
+        if(!objects.isEmpty())
         {
             for(GameObjects thing : objects)
             {
                 output += GameObjects.getItemDescription(here, thing);
-                if(GameObjects.isTreasure(thing))
-                {
-                    if(!haveIFound(GameObjects.RUG) && thing == GameObjects.RUG_)
-                    { wasFound(GameObjects.RUG); }
-                    else if(!(thing == GameObjects.RUG_) && !haveIFound(thing))
-                    { wasFound(thing); }
-                }
+                updateFoundTreasure(thing);
             }
         }
         return output;
@@ -2487,8 +2351,7 @@ public class AdventGame implements Serializable
 	
 	public boolean objectIsPresent(GameObjects thing)
 	{ return objectIsHere(thing) || isInHand(thing); }
-	
-	//TODO evaluate all getting and dropping stuff
+
 	private void dropObject(GameObjects thing)
 	{
 		AdventMain.Locations.placeObject(thing, currentLocation);
@@ -2506,18 +2369,18 @@ public class AdventGame implements Serializable
 	
 	public void collapse()
 	{
-		justCollapsed = true;
-		collapse = true;
+		collapse = true; justCollapsed = true;
 		stateOfTheBear = 3;
 	}
 	
 	public void setTroll()
 	{ stateOfTheTroll = 1; }
-	
-	public boolean haveIFound(GameObjects thing)
-	{ return found.get(thing); }
-	
-	public void wasFound(GameObjects thing)
-	{ found.put(thing, true); }
+
+	public void updateFoundTreasure(GameObjects thing)
+	{
+		if(thing == GameObjects.RUG_){ thing = GameObjects.RUG; }
+		if(GameObjects.isTreasure(thing) && !found.get(thing))
+		{ found.put(thing, true); tally++; }
+	}
 
 }
