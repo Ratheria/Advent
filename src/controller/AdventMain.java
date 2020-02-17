@@ -12,7 +12,6 @@ import java.util.function.IntFunction;
 import state.GameStateHandler;
 import view.AdventureFrame;
 
-
 public class AdventMain 
 {
 	public static AdventGame		ADVENT;
@@ -87,7 +86,7 @@ public class AdventMain
 	}
 	
 	public enum Questions 
-	{
+	{ // TODO: play again option?
 		NONE(false), INSTRUCTIONS(true), DRAGON(false), RESURRECT(true), PLAYAGAIN(true), SCOREQUIT(true), QUIT(true), READBLASTHINT(true);
 		
 		public final boolean 	serious;
@@ -236,43 +235,36 @@ public class AdventMain
 			
 			switch(object)
 			{
+				case BOTTLE		: if(!endGameObjectStates[0]) { output = descriptions[ ADVENT.stateOfTheBottle + (inHand ? 0 : 3) ]; } 						break;
 				case LAMP		: if(!endGameObjectStates[1]) { output = (descriptions[ (inHand ? 0 : ((ADVENT.lampIsLit) ? 1 : 2)) ]); }					break;
+				case PILLOW		: if(!endGameObjectStates[2]) { output = descriptions[((inHand) ? 0 : 1)]; } 												break;
+				case OYSTER		: if(!endGameObjectStates[3]) { output = descriptions[((inHand) ? 0 : 1)]; } 												break;
 				case GRATE_		:
 				case GRATE		: if(!endGameObjectStates[4]) { output = GRATE.descriptions[((ADVENT.grateIsUnlocked) ? 0 : 1)]; } 							break;
 				case CAGE		: if(!endGameObjectStates[5]) { output = descriptions[((inHand) ? 0 : 1)]; }												break;
 				case BIRD		: if(!endGameObjectStates[6]) { output = (descriptions[ (inHand ? 0 : ((ADVENT.birdInCage) ? 1 : 2)) ]); }					break;
+				case SNAKE		: if(!endGameObjectStates[7]) { output = descriptions[0]; } 																break;
 				case ROD		: if(!endGameObjectStates[8]) { output = descriptions[((inHand) ? 0 : 1)]; }												break;
 				case ROD2		: if(!endGameObjectStates[9]) { output = descriptions[((inHand) ? 0 : 1)]; }												break;
 				case DOOR		: 								output = descriptions[((!ADVENT.doorHasBeenOiled) ? 0 : 1)]; 								break;
-				case PILLOW		: if(!endGameObjectStates[2]) { output = descriptions[((inHand) ? 0 : 1)]; } 												break;
 				case VASE		: 								output = descriptions[(ADVENT.vaseIsBroken?3:(inHand?0:(PILLOW.location==location?1:2)))];	break;
-				case SNAKE		: if(!endGameObjectStates[7]) { output = descriptions[0]; } 																break;
-				case OYSTER		: if(!endGameObjectStates[3]) { output = descriptions[((inHand) ? 0 : 1)]; } 												break;
 				case MAG		: 								output = descriptions[((inHand) ? 0 : 1)]; 													break;
-				case BOTTLE		: if(!endGameObjectStates[0]) { output = descriptions[ ADVENT.stateOfTheBottle + (inHand ? 0 : 3) ]; } 						break;
-				case PLANT		: 								output = descriptions[ADVENT.stateOfThePlant]; 												break;
-				case PLANT2_	:
-				case PLANT2		: 								output = PLANT2.descriptions[ADVENT.stateOfThePlant]; 										break;
 				case AXE		:								output = descriptions[(inHand ? 0 : (ADVENT.bearAxe ? 1 : 2))]; 							break;
-				case DRAGON_	:
-				case DRAGON		: 								output = DRAGON.descriptions[ADVENT.dragonIsAlive ? 0 : 1]; 								break;
-				case RUG_		:
-				case RUG		: 								output = RUG.descriptions[inHand ? 0 : (ADVENT.dragonIsAlive ? 1 : 2)]; 					break;
 				case BEAR		: 								output = descriptions[ADVENT.stateOfTheBear]; 												break;
 				case BATTERIES	: 								output = descriptions[(ADVENT.stateOfSpareBatteries == 1) ? 0 : 1]; 						break;
 				case CHAIN		: 								output = descriptions[inHand ? 0 : ADVENT.stateOfTheChain + 1]; 							break;
-				case TREADS_	:
-				case TREADS		: if(!ADVENT.goldInInventory) { output = descriptions[0]; } 																break;
-				case CRYSTAL_	:
-				case CRYSTAL	: if(!ADVENT.crystalBridge)   {	output = CRYSTAL.descriptions[0]; } 														break;
-				case BRIDGE_	:
-				case BRIDGE		: 								output = BRIDGE.descriptions[!ADVENT.collapse ? 0 : 1]; 									break;
-				case SHADOW_	:
-				case SHADOW		:								output = SHADOW.descriptions[0]; 															break;
-				case TROLL_		:
-				case TROLL		: 								output = TROLL.descriptions[0]; 															break;
-				case TROLL2_	:
-				case TROLL2		: 								output = TROLL2.descriptions[0]; 															break;
+				case PLANT		: 								output = descriptions[ADVENT.stateOfThePlant]; 												break;
+
+				case PLANT2_	: case PLANT2	: 								  output = PLANT2.descriptions[ADVENT.stateOfThePlant]; 					break;
+				case DRAGON_	: case DRAGON	: 								  output = DRAGON.descriptions[ADVENT.dragonIsAlive ? 0 : 1]; 				break;
+				case RUG_		: case RUG		:								  output = RUG.descriptions[inHand ? 0 : (ADVENT.dragonIsAlive ? 1 : 2)]; 	break;
+				case TREADS_	: case TREADS	: if(!ADVENT.goldInInventory)	{ output = descriptions[0]; } 												break;
+				case CRYSTAL_	: case CRYSTAL	: if(!ADVENT.crystalBridge)		{ output = CRYSTAL.descriptions[0]; } 										break;
+				case BRIDGE_	: case BRIDGE	: 								  output = BRIDGE.descriptions[!ADVENT.collapse ? 0 : 1]; 					break;
+				case SHADOW_	: case SHADOW	:								  output = SHADOW.descriptions[0]; 											break;
+				case TROLL_		: case TROLL	: 								  output = TROLL.descriptions[0]; 											break;
+				case TROLL2_	: case TROLL2	: 								  output = TROLL2.descriptions[0]; 											break;
+
 				default			: if(descriptions != null)    {	output = descriptions[((inHand || descriptions.length == 1) ? 0 : 1)]; } 					break;
 			}
 			return output;
@@ -281,10 +273,10 @@ public class AdventMain
 		public byte getType() { return 1; }
 	}
 	
-	public static enum ActionWords implements KnownWord
+	public enum ActionWords implements KnownWord
 	{
 		NOTHING, LOOK, ABSTAIN, TAKE, DROP, OPEN, CLOSE, ON, OFF, WAVE, CALM, GO, RELAX, POUR, EAT, DRINK, RUB, TOSS, 
-		WAKE, FEED, FILL, BREAK, BLAST, KILL, SAY, READ, FEEFIE, BRIEF, VERBOSE, FIND, INVENTORY, SCORE, QUIT, SAVE, LOAD;
+		WAKE, FEED, FILL, BREAK, BLAST, KILL, SAY, READ, FEEFIE, BRIEF, VERBOSE, FIND, INVENTORY, SCORE, QUIT /*, SAVE, LOAD*/ ;
 		@Override
 		public byte getType() { return 2; }
 	}
@@ -292,7 +284,7 @@ public class AdventMain
 	public enum MessageWords implements KnownWord
 	{
 		MAGIC("Good try, but that is an old worn-out magic word."), 
-		HELP("I know of places, actions, and things. Most of my vocabulary describes places and is used to move you there. To move, try words like forest, building, downstream, enter, east, west, north, south, up, or down. I know about a few special objects, like a black rod hidden in the cave. These objects can be manipulated using some of the action words that I know. Usually you will need to give both the object and the action words (in either order), but sometimes I can infer the object from the verb alone. Some objects also imply verbs; in particular, \"inventory\" implies \"take inventory\", which causes me to give you a list of what you are carrying. The objects have side effects; for instance, the rod scares the bird. Usually people having trouble moving just need to try a few more words. Usually people trying unsuccessfully to manupulate an object are attempting beyond To speed the game you can sometimes move long distances with a single word. For example, \"building\" usually gets you to the building from anywhere above ground except when lost in the forest. Also, note that cave passages turn a lot, and that leaving a room to the north does not guarantee entering the next from the south. \nGood luck!"), 
+		HELP("I know of places, actions, and things. Most of my vocabulary describes places and is used to move you there. To move, try words like forest, building, downstream, enter, east, west, north, south, up, or down. I know about a few special objects, like a black rod hidden in the cave. These objects can be manipulated using some of the action words that I know. Usually you will need to give both the object and the action words (in either order), but sometimes I can infer the object from the verb alone. Some objects also imply verbs; in particular, \"inventory\" implies \"take inventory\", which causes me to give you a list of what you are carrying. The objects have side effects; for instance, the rod scares the bird. Usually people having trouble moving just need to try a few more words. Usually people trying unsuccessfully to manupulate an object are attempting something beyond their (or my!) capabilities and should try a completely different tack. To speed the game you can sometimes move long distances with a single word. For example, \"building\" usually gets you to the building from anywhere above ground except when lost in the forest. Also, note that cave passages turn a lot, and that leaving a room to the north does not guarantee entering the next from the south. \nGood luck!"),
 		TREE("The trees of the forest are large hardwood oak and maple, with an occasional grove of pine or spruce. There is quite a bit of under-growth, largely birch and ash saplings plus nondescript bushes of various sorts. This time of year visibility is quite restricted by all the leaves, but travel is quite easy if you detour around the spruce and berry bushes."), 
 		DIG("Digging without a shovel is quite impractical. Even with a shovel progress is unlikely."), 
 		LOST("I'm as confused as you are."), 
@@ -485,12 +477,13 @@ public class AdventMain
 		put("lost"  , MessageWords.LOST);
 		put("mist"  , MessageWords.MIST);
 		put("fuck"  , MessageWords.CUSS);       put("shit"  , MessageWords.CUSS);		put("damn"  , MessageWords.CUSS);		put("dick"  , MessageWords.CUSS);
+		put("stop"	, MessageWords.STOP);
 		put("info"  , MessageWords.INFO);       put("infor" , MessageWords.INFO);
 		put("swim"  , MessageWords.SWIM);
 		put("denni" , MessageWords.DENNIS);
 	}};
 	
-	public static enum Locations
+	public enum Locations
 	{
 		THEVOID(), INHAND(),
 		ROAD	(	true,	"End Of Road",				"You're at end of road again.",			"You are standing at the end of a road before a small brick building. Around you is a forest. A small stream flows out of the building and down a gully."	),
@@ -639,9 +632,6 @@ public class AdventMain
 		private Locations(String title, String shortDescription, String longDescription)
 		{ this.title = title;  this.shortDescription = shortDescription;  this.longDescription = longDescription;  this.hasWater = false; }
 		
-		Locations(boolean hasWater, String title, String shortDescription)
-		{ this.title = title;  this.shortDescription = shortDescription;  this.longDescription = AdventMain.empty;  this.hasWater = hasWater; }
-		
 		Locations(boolean hasWater, String title, String shortDescription, String longDescription)
 		{ this.title = title;  this.shortDescription = shortDescription;  this.longDescription = longDescription;  this.hasWater = hasWater; }
 		
@@ -666,9 +656,6 @@ public class AdventMain
 		{
 			return (!(here.longDescription.equals(AdventMain.empty)) && ((brief == 0 && here.visits % 5 == 0) || (brief == 2) || (here.visits == 0))) ? here.longDescription : here.shortDescription;
 		}
-		
-		public String getLongDescription(Locations here)
-		{ return (here.longDescription.equals(AdventMain.empty)) ? "" : here.longDescription; }
 		
 		public static int[] getVisitsArray()
 		{

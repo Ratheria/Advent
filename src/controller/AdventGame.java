@@ -58,7 +58,8 @@ public class AdventGame implements Serializable
 	public	boolean[] 	endGameObjectsStates;	// bottles, lamps, pillows, and rods  -  invisible until interacted with (end game only)
 
 	// TODO More dynamic save load? Multiple 'save slots'?
-	
+
+
 	public AdventGame() { setUp(); }
 
 	//  Setup For New Game  //
@@ -2038,7 +2039,7 @@ public class AdventGame implements Serializable
 						if(pirate == 0)
 						{
 							movesWOEncounter++;
-							double likely = (movesWOEncounter * 10 / 8)/8; 
+							double likely = (movesWOEncounter * 10 / 8.0)/8.0;
 							if(chance * 100 <= likely){ pirate = 1; }
 							System.out.println("likely " + likely + "\npirate " + pirate);
 						}
@@ -2237,9 +2238,7 @@ public class AdventGame implements Serializable
 				{ output += " would be a neat trick!\n\tCongratulations!!"; }
 			}
 		}
-		//output += "\n\n\n\tWould you like to play again?";
-		//quest = 9;
-		//seriousQuestion = true;
+		// TODO: play again option?
 		return output;
 	}
 	
