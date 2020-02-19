@@ -1,5 +1,9 @@
 /**
  * @author Ariana Fairbanks
+ *
+ *	 Instance Data
+ *	 Gameplay
+ *	 Helper Methods
  */
 
 package controller;
@@ -95,6 +99,8 @@ public class AdventGame implements Serializable
 
 		endGameObjectsStates = new boolean[] {false, false, false, false, false, false, false, false, false, false};
 	}
+
+//  - - - -  Interpret and Act On Input  - - - -  //
 
 	//  Determine Action Given Single Word Input  //
 	public String determineAction(String input) 
@@ -306,7 +312,8 @@ public class AdventGame implements Serializable
 			if(pirate == 1)
 			{
 				pirate = 2;
-				AdventMain.Locations.placeObject(GameObjects.MESSAGE, Locations.PONY); AdventMain.Locations.placeObject(GameObjects.CHEST, Locations.DEAD2);
+				AdventMain.Locations.placeObject(GameObjects.MESSAGE, Locations.PONY);
+				AdventMain.Locations.placeObject(GameObjects.CHEST, Locations.DEAD2);
 				
 				ArrayList<GameObjects> currentlyHolding = AdventMain.objectsHere(Locations.INHAND);
 				boolean holdingTreasure = false;
@@ -376,70 +383,9 @@ public class AdventGame implements Serializable
 		AdventMain.logGameInfo();
 		return output;
 	}
-	
-	private String checkForHints()
-	{
-		String output = AdventMain.empty;
-		boolean justArrived = (locationAtStartOfAction != currentLocation);
-		if(!caveIsClosed)
-		{
-			if(actionToAttempt == ActionWords.NOTHING)
-			{
-				if((Hints.GRATE.proc < Hints.GRATE.threshold) && !grateIsUnlocked && currentLocation == Locations.OUTSIDE && !justArrived && !(objectIsPresent(GameObjects.KEYS)))
-				{ Hints.GRATE.proc++; }
 
-				if((Hints.SNAKE.proc < Hints.SNAKE.threshold) && objectIsPresent(GameObjects.SNAKE) && !(objectIsPresent(GameObjects.BIRD)) && !justArrived) 
-				{ Hints.SNAKE.proc++; }
-				
-				if((Hints.MAZE.proc < Hints.MAZE.threshold) &&  ((currentLocation.ordinal() >= Locations.ALIKE1.ordinal()) && (currentLocation.ordinal() <= Locations.ALIKE14.ordinal())) || (currentLocation != Locations.DEAD2 && currentLocation != Locations.DEAD8 && (currentLocation.ordinal() >= Locations.DEAD1.ordinal()) && (currentLocation.ordinal() <= Locations.DEAD11.ordinal())))
-				{ Hints.MAZE.proc++; }
-				
-				if((Hints.DARK.proc < Hints.DARK.threshold) && currentLocation == Locations.ALCOVE || (currentLocation == Locations.PROOM && !(objectIsPresent(GameObjects.LAMP))))
-				{ Hints.DARK.proc++; }
-				
-				if((Hints.WITT.proc < Hints.WITT.threshold) && currentLocation == Locations.WITT)
-				{ Hints.WITT.proc++; }		
-			}	
-			
-			for(Hints hint : Hints.values())
-			{
-				if(hint.proc == hint.threshold && questionAsked == Questions.NONE && hintToOffer == Hints.NONE && offeredHint == Hints.NONE)
-				{
-					if (hint == Hints.WEST)
-					{ hint.proc++; hint.given = true; output += hint.hint; }
-					else
-					{ output += confirmIntentBeforeHint(hint); }
-				}
-			}
-		}
-		return output;
-	}
-	
-	private void resetHintsAndQuestions()
-	{ questionAsked = Questions.NONE; hintToOffer = Hints.NONE; offeredHint = Hints.NONE; }
 
-	private String confirmIntentBeforeHint(Hints hint)
-	{
-		hint.proc++;
-		hintToOffer = hint;
-		return hint.question;
-	}
-	
-	private String offerHint()
-	{
-		offeredHint = hintToOffer;
-		hintToOffer = Hints.NONE;
-		return AdventMain.offerHintMessage.apply(offeredHint.cost);
-	}
-	
-	private String giveHint(Hints hint)
-	{
-		hint.given = true;
-		offeredHint = Hints.NONE;
-		if(lamp > 30)
-		{ lamp += 30 * hint.cost; }
-		return hint.hint + (hint == Hints.DARK ? (objectIsPresent(GameObjects.EMERALD) ? "" : " None of the objects available is immediately useful for discovering the secret.") : "");
-	}
+//  - - - -  Attempt Command Execution  - - - -  //
 
 	private String attemptAction(ActionWords verb, Object other, String alt)
 	{
@@ -455,15 +401,15 @@ public class AdventGame implements Serializable
 			switch(verb)
 			{
 				case RELAX: case NOTHING: case ABSTAIN:
-					output = "Okay.";
+					output = AdventMain.okay;
 					break;
 					
 				case TAKE:
 					output = "You can't be serious!";
-					if(endGameObjectsStates[8] && object == GameObjects.ROD) { endGameObjectsStates[8] = false; }
-					if(endGameObjectsStates[1] && object == GameObjects.LAMP) { endGameObjectsStates[1] = false; }
-					if(endGameObjectsStates[0] && object == GameObjects.BOTTLE) { endGameObjectsStates[0] = false; }
-					if(endGameObjectsStates[2] && object == GameObjects.PILLOW) { endGameObjectsStates[2] = false; }
+					if(endGameObjectsStates[0] && object == GameObjects.BOTTLE	) { endGameObjectsStates[0] = false; }
+					if(endGameObjectsStates[1] && object == GameObjects.LAMP	) { endGameObjectsStates[1] = false; }
+					if(endGameObjectsStates[2] && object == GameObjects.PILLOW	) { endGameObjectsStates[2] = false; }
+					if(endGameObjectsStates[8] && object == GameObjects.ROD		) { endGameObjectsStates[8] = false; }
 					
 					if(object == GameObjects.ROD && !objectIsHere(GameObjects.ROD) && objectIsHere(GameObjects.ROD2))
 					{
@@ -679,7 +625,7 @@ public class AdventGame implements Serializable
 							output = "";
 							for(GameObjects item : itemsHere)
 							{
-							    increaseTurns = (alt != "ENDGAME DROP");
+							    increaseTurns = (!alt.equals("ENDGAME DROP"));
 								output += attemptAction(ActionWords.DROP, item, "") + "\n";
 								if(increaseTurns){ turns++; }
 							}
@@ -1559,13 +1505,10 @@ public class AdventGame implements Serializable
 						{
 							output = "What would you like to feed?";
 							actionToAttempt = verb;
-							increaseTurns = false;
 						}
 						else
-						{
-							output = "I don't see any " + alt + ".";
-							increaseTurns = false;
-						}
+						{ output = "I don't see any " + alt + "."; }
+						increaseTurns = false;
 					}
 					break;
 					
@@ -2070,7 +2013,10 @@ public class AdventGame implements Serializable
 		}
 		return output;
 	}
-	
+
+
+//  - - - -  Movement Helpers  - - - -  //
+
 	private String pitchDark(String output)
 	{
 		boolean pitifulDeath = fallInPit();
@@ -2092,52 +2038,6 @@ public class AdventGame implements Serializable
 		currentLocation = newLocation;
 	}
 
-	private String getDescription(Locations here, int brief)
-	{
-		String output = AdventMain.Locations.getDescription(here, brief);
-		output = output + listItemsHere(currentLocation);
-		return output;
-	}
-	
-	private String nonsense()
-	{
-		String output;
-		increaseTurns = false;
-		double randomOutput = AdventMain.generate();
-		if(randomOutput < .34)
-		{ output = "I have no idea what you are talking about!"; }
-		else if(randomOutput < .67)
-		{ output = "I don't understand that!"; }
-		else
-		{ output = "You're not making any sense!"; }
-		return output;
-	}
-
-	public boolean canISee(Locations here)
-	{
-		return (currentLocation.dontNeedLamp(here)) || (lampIsLit && objectIsPresent(GameObjects.LAMP));
-	}
-	
-	private int getCurrentScore()
-	{
-		int currentScore = (2 + (2 * (tally)) + (deaths * 10));
-		
-		for(GameObjects item : GameObjects.values())
-		{
-			if(item.location == Locations.BUILDING && GameObjects.isTreasure(item) && !(item == GameObjects.VASE && vaseIsBroken))
-			{ currentScore += ( GameObjects.isLesserTreasure(item) ? 10 : ( item == GameObjects.CHEST ? 12 : 14 ) ); }
-		}
-		if(GameObjects.MAG.location == Locations.WITT){ currentScore++; }
-		for(Hints hint : Hints.values())
-		{ if(hint.given) { currentScore -= hint.cost; } }
-		if(wellInCave){	currentScore += 25;	}
-		if(caveIsClosed){ currentScore += 25; }
-		if(!quit){ currentScore += 4; }
-		currentScore += bonus;
-		score = currentScore;
-		return currentScore;
-	}
-
 	private boolean fallInPit()
 	{
 		boolean pitifulDeath = false;
@@ -2146,7 +2046,23 @@ public class AdventGame implements Serializable
 		{ pitifulDeath = true; }
 		return pitifulDeath;
 	}
+
+	private String getDescription(Locations here, int brief)
+	{
+		String output = AdventMain.Locations.getDescription(here, brief);
+		output = output + listItemsHere(currentLocation);
+		return output;
+	}
+
+	public boolean canISee(Locations here)
+	{
+		return (currentLocation.dontNeedLamp(here)) || (lampIsLit && objectIsPresent(GameObjects.LAMP));
+	}
 	
+
+
+//  - - - -  Death, Resurrection, & Quiting  - - - -  //
+
 	private String death(String output)
 	{
 		if(fatality == 1)
@@ -2241,7 +2157,10 @@ public class AdventGame implements Serializable
 		// TODO: play again option?
 		return output;
 	}
-	
+
+
+//  - - - -  Passage of Time & Endgame Trigger  - - - -  //
+
 	private String clocksAndLamp(String output)
 	{
 		if(clock2 == 0)
@@ -2251,12 +2170,20 @@ public class AdventGame implements Serializable
 			bonus = 10;
 			attemptAction(ActionWords.DROP, GameObjects.ALL, "ENDGAME DROP");
 			attemptAction(ActionWords.OFF, GameObjects.NOTHING, "ENDGAME DROP");
-			AdventMain.Locations.placeObject(GameObjects.BOTTLE, Locations.NEEND); AdventMain.Locations.placeObject(GameObjects.PLANT, Locations.NEEND); AdventMain.Locations.placeObject(GameObjects.OYSTER, Locations.NEEND);
-			AdventMain.Locations.placeObject(GameObjects.LAMP, Locations.NEEND); AdventMain.Locations.placeObject(GameObjects.ROD, Locations.NEEND); AdventMain.Locations.placeObject(GameObjects.DWARF, Locations.NEEND);
+			AdventMain.Locations.placeObject(GameObjects.BOTTLE, Locations.NEEND);
+			AdventMain.Locations.placeObject(GameObjects.PLANT, Locations.NEEND);
+			AdventMain.Locations.placeObject(GameObjects.OYSTER, Locations.NEEND);
+			AdventMain.Locations.placeObject(GameObjects.LAMP, Locations.NEEND);
+			AdventMain.Locations.placeObject(GameObjects.ROD, Locations.NEEND);
+			AdventMain.Locations.placeObject(GameObjects.DWARF, Locations.NEEND);
 			AdventMain.Locations.placeObject(GameObjects.MIRROR, Locations.NEEND);
 			currentLocation = Locations.NEEND; previousLocation = Locations.NEEND;
-			AdventMain.Locations.placeObject(GameObjects.GRATE, Locations.SWEND); AdventMain.Locations.placeObject(GameObjects.SNAKE, Locations.SWEND); AdventMain.Locations.placeObject(GameObjects.BIRD, Locations.SWEND);
-			AdventMain.Locations.placeObject(GameObjects.CAGE, Locations.SWEND); AdventMain.Locations.placeObject(GameObjects.ROD2, Locations.SWEND); AdventMain.Locations.placeObject(GameObjects.PILLOW, Locations.SWEND);
+			AdventMain.Locations.placeObject(GameObjects.GRATE, Locations.SWEND);
+			AdventMain.Locations.placeObject(GameObjects.SNAKE, Locations.SWEND);
+			AdventMain.Locations.placeObject(GameObjects.BIRD, Locations.SWEND);
+			AdventMain.Locations.placeObject(GameObjects.CAGE, Locations.SWEND);
+			AdventMain.Locations.placeObject(GameObjects.ROD2, Locations.SWEND);
+			AdventMain.Locations.placeObject(GameObjects.PILLOW, Locations.SWEND);
 			AdventMain.Locations.placeObject(GameObjects.MIRROR, Locations.SWEND);
 			endGameObjectsStates = new boolean[] { true, true, true, true, true, true, true, true, true, true };
 			stateOfThePlant = 3;
@@ -2318,24 +2245,9 @@ public class AdventGame implements Serializable
 		return output;
 	}
 
-    private String listItemsHere(Locations here)
-    {
-        String output = "";
-        ArrayList<GameObjects> objects = AdventMain.objectsHere(here);
-        if(!objects.isEmpty())
-        {
-            for(GameObjects thing : objects)
-            {
-                output += GameObjects.getItemDescription(here, thing);
-                updateFoundTreasure(thing);
-            }
-        }
-        return output;
-    }
 
-    private int askYesNo(String input)
-    { return ( (input.substring(0, 1).equals("n")) ? 2 : ( (input.substring(0, 1).equals("y")) ? 1 : 0 ) ); }
-	
+//  - - - -  Object Helpers  - - - -  //
+
 	private void takeObject(GameObjects thing)
 	{
 		AdventMain.Locations.takeObject(thing);
@@ -2359,13 +2271,143 @@ public class AdventGame implements Serializable
 	
 	private void voidObject(GameObjects thing)
 	{ AdventMain.Locations.voidObject(thing); }
-	
+
+	private String listItemsHere(Locations here)
+	{
+		String output = "";
+		ArrayList<GameObjects> objects = AdventMain.objectsHere(here);
+		if(!objects.isEmpty())
+		{
+			for(GameObjects thing : objects)
+			{
+				output += GameObjects.getItemDescription(here, thing);
+				updateFoundTreasure(thing);
+			}
+		}
+		return output;
+	}
+
+
+//  - - - -  Hint Helpers  - - - -  //
+
+	private String checkForHints()
+	{
+		String output = AdventMain.empty;
+		boolean justArrived = (locationAtStartOfAction != currentLocation);
+		if(!caveIsClosed)
+		{
+			if(actionToAttempt == ActionWords.NOTHING)
+			{
+				if((Hints.GRATE.proc < Hints.GRATE.threshold) && !grateIsUnlocked && currentLocation == Locations.OUTSIDE && !justArrived && !(objectIsPresent(GameObjects.KEYS)))
+				{ Hints.GRATE.proc++; }
+
+				if((Hints.SNAKE.proc < Hints.SNAKE.threshold) && objectIsPresent(GameObjects.SNAKE) && !(objectIsPresent(GameObjects.BIRD)) && !justArrived)
+				{ Hints.SNAKE.proc++; }
+
+				if((Hints.MAZE.proc < Hints.MAZE.threshold) &&  ((currentLocation.ordinal() >= Locations.ALIKE1.ordinal()) && (currentLocation.ordinal() <= Locations.ALIKE14.ordinal())) || (currentLocation != Locations.DEAD2 && currentLocation != Locations.DEAD8 && (currentLocation.ordinal() >= Locations.DEAD1.ordinal()) && (currentLocation.ordinal() <= Locations.DEAD11.ordinal())))
+				{ Hints.MAZE.proc++; }
+
+				if((Hints.DARK.proc < Hints.DARK.threshold) && currentLocation == Locations.ALCOVE || (currentLocation == Locations.PROOM && !(objectIsPresent(GameObjects.LAMP))))
+				{ Hints.DARK.proc++; }
+
+				if((Hints.WITT.proc < Hints.WITT.threshold) && currentLocation == Locations.WITT)
+				{ Hints.WITT.proc++; }
+			}
+
+			for(Hints hint : Hints.values())
+			{
+				if(hint.proc == hint.threshold && questionAsked == Questions.NONE && hintToOffer == Hints.NONE && offeredHint == Hints.NONE)
+				{
+					if (hint == Hints.WEST)
+					{ hint.proc++; hint.given = true; output += hint.hint; }
+					else
+					{ output += confirmIntentBeforeHint(hint); }
+					break;
+				}
+			}
+		}
+		return output;
+	}
+
+	private void resetHintsAndQuestions()
+	{ questionAsked = Questions.NONE; hintToOffer = Hints.NONE; offeredHint = Hints.NONE; }
+
+	private String confirmIntentBeforeHint(Hints hint)
+	{
+		hint.proc++;
+		hintToOffer = hint;
+		return hint.question;
+	}
+
+	private String offerHint()
+	{
+		offeredHint = hintToOffer;
+		hintToOffer = Hints.NONE;
+		return AdventMain.offerHintMessage.apply(offeredHint.cost);
+	}
+
+	private String giveHint(Hints hint)
+	{
+		hint.given = true;
+		offeredHint = Hints.NONE;
+		if(lamp > 30)
+		{ lamp += 30 * hint.cost; }
+		return hint.hint + (hint == Hints.DARK ? (objectIsPresent(GameObjects.EMERALD) ? "" : " None of the objects available is immediately useful for discovering the secret.") : "");
+	}
+
+
+//  - - - -  Various Helpers  - - - -  //
+
 	public void relocate()
 	{ relocate = true; }
 	
 	public int getScore()
 	{ return (questionAsked == Questions.INSTRUCTIONS ? 0 : score); }
-	
+
+	public void updateFoundTreasure(GameObjects thing)
+	{
+		if(thing == GameObjects.RUG_){ thing = GameObjects.RUG; }
+		if(GameObjects.isTreasure(thing) && !found.get(thing))
+		{ found.put(thing, true); tally++; }
+	}
+
+	private int getCurrentScore()
+	{
+		int currentScore = (2 + (2 * (tally)) + (deaths * 10));
+
+		for(GameObjects item : GameObjects.values())
+		{
+			if(item.location == Locations.BUILDING && GameObjects.isTreasure(item) && !(item == GameObjects.VASE && vaseIsBroken))
+			{ currentScore += ( GameObjects.isLesserTreasure(item) ? 10 : ( item == GameObjects.CHEST ? 12 : 14 ) ); }
+		}
+		if(GameObjects.MAG.location == Locations.WITT){ currentScore++; }
+		for(Hints hint : Hints.values())
+		{ if(hint.given) { currentScore -= hint.cost; } }
+		if(wellInCave){	currentScore += 25;	}
+		if(caveIsClosed){ currentScore += 25; }
+		if(!quit){ currentScore += 4; }
+		currentScore += bonus;
+		score = currentScore;
+		return currentScore;
+	}
+
+	private String nonsense()
+	{
+		String output;
+		increaseTurns = false;
+		double randomOutput = AdventMain.generate();
+		if(randomOutput < .34)
+		{ output = "I have no idea what you are talking about!"; }
+		else if(randomOutput < .67)
+		{ output = "I don't understand that!"; }
+		else
+		{ output = "You're not making any sense!"; }
+		return output;
+	}
+
+	private int askYesNo(String input)
+	{ return ( (input.substring(0, 1).equals("n")) ? 2 : ( (input.substring(0, 1).equals("y")) ? 1 : 0 ) ); }
+
 	public void collapse()
 	{
 		collapse = true; justCollapsed = true;
@@ -2374,12 +2416,5 @@ public class AdventGame implements Serializable
 	
 	public void setTroll()
 	{ stateOfTheTroll = 1; }
-
-	public void updateFoundTreasure(GameObjects thing)
-	{
-		if(thing == GameObjects.RUG_){ thing = GameObjects.RUG; }
-		if(GameObjects.isTreasure(thing) && !found.get(thing))
-		{ found.put(thing, true); tally++; }
-	}
 
 }

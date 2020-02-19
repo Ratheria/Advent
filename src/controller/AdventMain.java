@@ -1,5 +1,13 @@
 /**
  * @author Ariana Fairbanks
+ *
+ * 	 Static Fields
+ *   Information Logging
+ *   Question/Hint Enums
+ * 	 Action/Movement/Message Words Enums
+ * 	 Object Enums
+ * 	 Location Enums (Including Movement Resolution Method)
+ *	 Known Words Dictionary
  */
 
 package controller;
@@ -43,6 +51,9 @@ public class AdventMain
 		frame.setUp();
 	}
 
+
+//  - - - -  Information Logging  - - - -  //
+
 	public static void logGameInfo()
 	{
 		String toPrint = "";
@@ -84,9 +95,12 @@ public class AdventMain
 		{ if(object.location == here){ result.add(object); } }
 		return result;
 	}
-	
+
+
+//  - - - -  Questions & Hints  - - - -  //
+
 	public enum Questions 
-	{ // TODO: play again option?
+	{ // TODO: play again?
 		NONE(false), INSTRUCTIONS(true), DRAGON(false), RESURRECT(true), PLAYAGAIN(true), SCOREQUIT(true), QUIT(true), READBLASTHINT(true);
 		
 		public final boolean 	serious;
@@ -119,7 +133,10 @@ public class AdventMain
 			this.given = false; this.proc = 0;
 		}
 	}
-	
+
+
+//  - - - -  Known Word Enums & Map  - - - -  //
+
 	public interface KnownWord 
 	{ public byte getType();	/* 0:movement  1:object  2:action  3:message */ }
 	
@@ -482,7 +499,10 @@ public class AdventMain
 		put("swim"  , MessageWords.SWIM);
 		put("denni" , MessageWords.DENNIS);
 	}};
-	
+
+
+//  - - - -  Location Enums  - - - -  //
+
 	public enum Locations
 	{
 		THEVOID(), INHAND(),
