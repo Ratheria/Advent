@@ -1,3 +1,9 @@
+/**
+ * @author Ariana Fairbanks
+ *
+ * Handle Saving/Loading Game State
+ */
+
 package state;
 
 import java.io.File;
@@ -12,12 +18,12 @@ import controller.AdventMain.GameObjects;
 import controller.AdventMain.Locations;
 
 public class GameStateHandler 
-{	
+{
 	private File dataFile = new File(System.getProperty("user.home") + "/.AdventData");
-	private FileInputStream fileReader;
-	private ObjectInputStream objectReader;
-	private FileOutputStream fileWriter;
-	private ObjectOutputStream objectWriter;
+	private FileInputStream 	fileReader	 ;
+	private ObjectInputStream 	objectReader ;
+	private FileOutputStream 	fileWriter	 ;
+	private ObjectOutputStream 	objectWriter ;
 	
 	public String loadGame(String currentLog)
 	{

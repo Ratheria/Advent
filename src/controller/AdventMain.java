@@ -51,6 +51,7 @@ public class AdventMain
 		frame.setUp();
 	}
 
+	public static double generate(){ return random.nextDouble(); }
 
 //  - - - -  Information Logging  - - - -  //
 
@@ -68,7 +69,7 @@ public class AdventMain
 		toPrint += " | Score: " + ADVENT.score;
 		toPrint += " | Deaths: " + ADVENT.deaths;
 		toPrint += " | ";
-		toPrint += "\n | Objects Here: " + objectsHere(ADVENT.currentLocation) + " | ";
+		toPrint += "\n | Objects Here: " + GameObjects.objectsHere(ADVENT.currentLocation) + " | ";
 		toPrint += "\n" + printQuestionsAndHintsStatus();
 		toPrint += "\n";
 		System.out.println(toPrint);
@@ -84,16 +85,6 @@ public class AdventMain
 		for(Hints hint : Hints.values())
 		{ toPrint += ( hint != Hints.NONE ? ("" + hint.name + ": " + hint.cost + " " + hint.proc + "/" + hint.threshold + " " + hint.given + " " + " | ") : "" ); }
 		return toPrint;
-	}
-	
-	public static double generate(){ return random.nextDouble(); }
-	
-	public static ArrayList<GameObjects> objectsHere(Locations here)
-	{
-		ArrayList<GameObjects> result = new ArrayList<GameObjects>();
-		for(GameObjects object : GameObjects.values())
-		{ if(object.location == here){ result.add(object); } }
-		return result;
 	}
 
 
@@ -245,38 +236,38 @@ public class AdventMain
 		public static String getItemDescription(Locations location, GameObjects object)
 		{
 			String output = empty;
-			//these local variables make the switch statement significantly less cluttered and more readable
+			// these local variables make the switch statement less cluttered and more readable
 			boolean inHand = location == Locations.INHAND;
-			boolean[] endGameObjectStates = ADVENT.endGameObjectsStates;
+			boolean[] endGameStates = ADVENT.endGameObjectsStates;
 			String[] descriptions = object.descriptions;
 			
 			switch(object)
 			{
-				case BOTTLE		: if(!endGameObjectStates[0]) { output = descriptions[ ADVENT.stateOfTheBottle + (inHand ? 0 : 3) ]; } 						break;
-				case LAMP		: if(!endGameObjectStates[1]) { output = (descriptions[ (inHand ? 0 : ((ADVENT.lampIsLit) ? 1 : 2)) ]); }					break;
-				case PILLOW		: if(!endGameObjectStates[2]) { output = descriptions[((inHand) ? 0 : 1)]; } 												break;
-				case OYSTER		: if(!endGameObjectStates[3]) { output = descriptions[((inHand) ? 0 : 1)]; } 												break;
+				case BOTTLE		: if(!endGameStates[0]) { output = descriptions[ ADVENT.stateOfTheBottle + (inHand ? 0 : 3) ];  						}	break;
+				case LAMP		: if(!endGameStates[1]) { output = (descriptions[ (inHand ? 0 : ((ADVENT.lampIsLit) ? 1 : 2)) ]); 						}	break;
+				case PILLOW		: if(!endGameStates[2]) { output = descriptions[((inHand) ? 0 : 1)];  													}	break;
+				case OYSTER		: if(!endGameStates[3]) { output = descriptions[((inHand) ? 0 : 1)];  													}	break;
 				case GRATE_		:
-				case GRATE		: if(!endGameObjectStates[4]) { output = GRATE.descriptions[((ADVENT.grateIsUnlocked) ? 0 : 1)]; } 							break;
-				case CAGE		: if(!endGameObjectStates[5]) { output = descriptions[((inHand) ? 0 : 1)]; }												break;
-				case BIRD		: if(!endGameObjectStates[6]) { output = (descriptions[ (inHand ? 0 : ((ADVENT.birdInCage) ? 1 : 2)) ]); }					break;
-				case SNAKE		: if(!endGameObjectStates[7]) { output = descriptions[0]; } 																break;
-				case ROD		: if(!endGameObjectStates[8]) { output = descriptions[((inHand) ? 0 : 1)]; }												break;
-				case ROD2		: if(!endGameObjectStates[9]) { output = descriptions[((inHand) ? 0 : 1)]; }												break;
-				case DOOR		: 								output = descriptions[((!ADVENT.doorHasBeenOiled) ? 0 : 1)]; 								break;
-				case VASE		: 								output = descriptions[(ADVENT.vaseIsBroken?3:(inHand?0:(PILLOW.location==location?1:2)))];	break;
-				case MAG		: 								output = descriptions[((inHand) ? 0 : 1)]; 													break;
-				case AXE		:								output = descriptions[(inHand ? 0 : (ADVENT.bearAxe ? 1 : 2))]; 							break;
-				case BEAR		: 								output = descriptions[ADVENT.stateOfTheBear]; 												break;
-				case BATTERIES	: 								output = descriptions[(ADVENT.stateOfSpareBatteries == 1) ? 0 : 1]; 						break;
-				case CHAIN		: 								output = descriptions[inHand ? 0 : ADVENT.stateOfTheChain + 1]; 							break;
-				case PLANT		: 								output = descriptions[ADVENT.stateOfThePlant]; 												break;
+				case GRATE		: if(!endGameStates[4]) { output = GRATE.descriptions[((ADVENT.grateIsUnlocked) ? 0 : 1)]; 								}	break;
+				case CAGE		: if(!endGameStates[5]) { output = descriptions[((inHand) ? 0 : 1)]; 													}	break;
+				case BIRD		: if(!endGameStates[6]) { output = (descriptions[ (inHand ? 0 : ((ADVENT.birdInCage) ? 1 : 2)) ]); 						}	break;
+				case SNAKE		: if(!endGameStates[7]) { output = descriptions[0];  																	}	break;
+				case ROD		: if(!endGameStates[8]) { output = descriptions[((inHand) ? 0 : 1)]; 													}	break;
+				case ROD2		: if(!endGameStates[9]) { output = descriptions[((inHand) ? 0 : 1)]; 													}	break;
+				case DOOR		: 						  output = descriptions[((!ADVENT.doorHasBeenOiled) ? 0 : 1)]; 										break;
+				case VASE		:						  output = descriptions[(ADVENT.vaseIsBroken ? 3:(inHand ? 0:(PILLOW.location==location ? 1:2)))];	break;
+				case MAG		: 						  output = descriptions[((inHand) ? 0 : 1)]; 														break;
+				case AXE		:						  output = descriptions[ (inHand ? 0 : (ADVENT.bearAxe ? 1 : 2)) ]; 								break;
+				case BEAR		: 					 	  output = descriptions[ADVENT.stateOfTheBear]; 													break;
+				case BATTERIES	: 						  output = descriptions[(ADVENT.stateOfSpareBatteries == 1) ? 0 : 1]; 								break;
+				case CHAIN		: 						  output = descriptions[  inHand ? 0 : ADVENT.stateOfTheChain + 1  ]; 								break;
+				case PLANT		: 						  output = descriptions[ADVENT.stateOfThePlant]; 													break;
 
 				case PLANT2_	: case PLANT2	: 								  output = PLANT2.descriptions[ADVENT.stateOfThePlant]; 					break;
 				case DRAGON_	: case DRAGON	: 								  output = DRAGON.descriptions[ADVENT.dragonIsAlive ? 0 : 1]; 				break;
 				case RUG_		: case RUG		:								  output = RUG.descriptions[inHand ? 0 : (ADVENT.dragonIsAlive ? 1 : 2)]; 	break;
-				case TREADS_	: case TREADS	: if(!ADVENT.goldInInventory)	{ output = descriptions[0]; } 												break;
-				case CRYSTAL_	: case CRYSTAL	: if(!ADVENT.crystalBridge)		{ output = CRYSTAL.descriptions[0]; } 										break;
+				case TREADS_	: case TREADS	: if(!ADVENT.goldInInventory)	{ output = descriptions[0];  											}	break;
+				case CRYSTAL_	: case CRYSTAL	: if(!ADVENT.crystalBridge)		{ output = CRYSTAL.descriptions[0];  									}	break;
 				case BRIDGE_	: case BRIDGE	: 								  output = BRIDGE.descriptions[!ADVENT.collapse ? 0 : 1]; 					break;
 				case SHADOW_	: case SHADOW	:								  output = SHADOW.descriptions[0]; 											break;
 				case TROLL_		: case TROLL	: 								  output = TROLL.descriptions[0]; 											break;
@@ -286,6 +277,30 @@ public class AdventMain
 			}
 			return output;
 		}
+
+		public static ArrayList<GameObjects> objectsHere(Locations here)
+		{
+			ArrayList<GameObjects> result = new ArrayList<GameObjects>();
+			for(GameObjects object : GameObjects.values())
+			{ if(object.location == here){ result.add(object); } }
+			return result;
+		}
+
+		public static String listItemsHere(Locations here)
+		{
+			String output = "";
+			ArrayList<GameObjects> objects = objectsHere(here);
+			if(!objects.isEmpty())
+			{
+				for(GameObjects thing : objects)
+				{
+					output += getItemDescription(here, thing);
+					ADVENT.updateFoundTreasure(thing);
+				}
+			}
+			return output;
+		}
+
 		@Override
 		public byte getType() { return 1; }
 	}
@@ -691,11 +706,15 @@ public class AdventMain
 			{ locate[i].visits = visits[i]; }
 		}
 		
-		public static void takeObject(GameObjects thing){ thing.location = INHAND; }
-		
-		public static void voidObject(GameObjects thing){ thing.location = THEVOID; }
-		
-		public static void placeObject(GameObjects thing, Locations here){ thing.location = here; }
+		public static void placeObject(GameObjects thing, Locations here)
+		{
+			if(thing != GameObjects.BIRD)
+			{
+				if(here == INHAND){ ADVENT.itemsInHand++; }
+				else if(thing.location == INHAND){ ADVENT.itemsInHand--; }
+			}
+			thing.location = here;
+		}
 		
 		public Locations moveTo(Movement destination, Locations here)
 		{
@@ -1518,7 +1537,7 @@ public class AdventMain
 				case PROOM: switch(destination)
 				{
 					case WEST: case PASSAGE: case OUT	:	next = ((game.itemsInHand > 1 || (game.itemsInHand > 0 && !game.isInHand(AdventMain.GameObjects.EMERALD))) ? REMARK : ALCOVE);    break;
-					case PLOVER:    if(game.isInHand(AdventMain.GameObjects.EMERALD)){ game.relocate(); } next = Y2;    break;
+					case PLOVER:    if(game.isInHand(AdventMain.GameObjects.EMERALD)){ game.relocate = true; } next = Y2;    break;
 					case NORTHEAST: case DARK	:	next = DROOM;    break;
 					default: next = THEVOID;    break;
 				}break;

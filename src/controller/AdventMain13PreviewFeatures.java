@@ -824,7 +824,7 @@ public class AdventMain13PreviewFeatures
                     {
                         case WEST, PASSAGE, OUT	:	yield ((game.itemsInHand > 1 || (game.itemsInHand > 0 && !game.isInHand(GameObjects.EMERALD))) ? REMARK : ALCOVE);
                         case PLOVER:
-                            if(game.isInHand(GameObjects.EMERALD)){ game.relocate(); }
+                            if(game.isInHand(GameObjects.EMERALD)){ game.relocate = true; }
                             yield Y2;
                         case NORTHEAST, DARK	:	yield DROOM;
                         default: yield THEVOID;

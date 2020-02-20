@@ -18,7 +18,7 @@ public class AdventureFrame extends JFrame
 		setName("Colossal Cave Adventure");
 		this.setTitle("Adventure!");
 		setContentPane(panel);
-		setSize(800, 750);
+		setSize(850, 750);
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}

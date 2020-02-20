@@ -13,10 +13,10 @@ import controller.AdventMain.Locations;
 public class AdventData implements Serializable
 {
 	private static final long serialVersionUID = -4962116536507971292L;
-	public AdventGame game;
-	public String log;
-	public Locations[] mobileObjectsLocations;
-	public int[] visits;
+	public AdventGame	game;
+	public String 		log;
+	public Locations[] 	mobileObjectsLocations;
+	public int[] 		visits;
 	
 	public AdventData(String log)
 	{
