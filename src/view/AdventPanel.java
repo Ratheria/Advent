@@ -208,7 +208,7 @@ public class AdventPanel extends JPanel
 						String first = input.substring(0, space).trim();
 						String second = input.substring(space + 1).trim();
 						displayLog.append("\n\t> " + origin 
-								+ "\n\n" + base.determineAction(first, second) + "\n");
+								+ "\n\n" + base.determineAndExecuteCommand(first, second) + "\n");
 						setLabels();
 					}
 					else
@@ -216,7 +216,7 @@ public class AdventPanel extends JPanel
 						if(inputField.isEditable())
 						{
 							displayLog.append("\n\t> " + origin 
-									+ "\n\n" + base.determineAction(input) + "\n");
+									+ "\n\n" + base.determineAndExecuteCommand(input) + "\n");
 							setLabels();
 						}
 					}

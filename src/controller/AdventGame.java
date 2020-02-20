@@ -107,8 +107,8 @@ public class AdventGame implements Serializable
 
 //  - - - -  Interpret and Act On Input  - - - -  //
 
-	//  Determine Action Given Single Word Input  //
-	public String determineAction(String input) 
+	//  Single Word Input  //
+	public String determineAndExecuteCommand(String input)
 	{
 		lastInput = input;
 		String output = null;
@@ -118,13 +118,9 @@ public class AdventGame implements Serializable
 		
 		input = AdventMain.truncate.apply(input);
 		
-		KnownWord word = GameObjects.NOTHING;
-		byte wordType = -1;
-
-		if(AdventMain.KnownWords.containsKey(input))
-		{ word = AdventMain.KnownWords.get(input); wordType = word.getType(); }
+		KnownWord word = AdventMain.KnownWords.getOrDefault(input, GameObjects.NOTHING);
 		
-		if(actionToAttempt != ActionWords.NOTHING && wordType == 1)
+		if(actionToAttempt != ActionWords.NOTHING && word instanceof ActionWords)
 		{
 			output = attemptAction(actionToAttempt, word, input);
 			actionToAttempt = ActionWords.NOTHING;
@@ -149,38 +145,29 @@ public class AdventGame implements Serializable
 			{
 				case INSTRUCTIONS: 
 					output = "";
-					if(answer == 1)
-					{ output = giveHint(offeredHint); lamp = 1000; }
+					if(answer == 1) { output = giveHint(offeredHint); lamp = 1000; }
 					output += AdventMain.Locations.getDescription(Locations.ROAD, brief);
 					break;
 					
 				case RESURRECT:
 					increaseTurns = false;
-					if(answer == 2)
-					{ over = true; }
-					else
-					{ output = resurrection(); }
+					if(answer == 2) { over = true; }
+					else { output = resurrection(); }
 					break;
 				
 				case PLAYAGAIN:
-					if(answer == 1)
-					{ setUp(); }
-					else
-					{ noMore = true; System.exit(0); }
+					if(answer == 1) { setUp(); }
+					else { noMore = true; System.exit(0); }
 					break;
 					
 				case QUIT: case SCOREQUIT:
-					if(answer == 1)
-					{ quit = true; over = true; }
-					else 
-					{ output = AdventMain.okay; }
+					if(answer == 1) { quit = true; over = true; }
+					else { output = AdventMain.okay; }
 					break;
 					
 				case READBLASTHINT:
-					if(answer == 1)
-					{ output = giveHint(offeredHint); Hints.BLAST.proc = 1; }
-					else
-					{ output = AdventMain.okay; }
+					if(answer == 1) { output = giveHint(offeredHint); Hints.BLAST.proc = 1; }
+					else { output = AdventMain.okay; }
 					break;
 					
 				default: System.out.println("reached default in question switch"); break;
@@ -191,18 +178,18 @@ public class AdventGame implements Serializable
 		{ output = ( answer == 1 ? offerHint() : AdventMain.okay ); }
 		else if(offeredHint != Hints.NONE && answer > 0)
 		{ output = ( answer == 1 ? giveHint(offeredHint) : AdventMain.okay ); }
-		else if((word == ActionWords.FEEFIE) && (fooMagicWordProgression > 0 || input.equals("fee")))
+		else if(word == ActionWords.FEEFIE && ((fooMagicWordProgression > 0 || input.equals("fee"))))
 		{ output = attemptAction((ActionWords) word, GameObjects.NOTHING, input); }
 		else
 		{
 			fooMagicWordProgression = 0;
 			resetHintsAndQuestions();
 			
-			if(wordType == 0)
+			if(word instanceof Movement)
 			{ output = attemptMovement((Movement) word); }
-			else if(wordType == 2)
+			else if(word instanceof ActionWords)
 			{ output = attemptAction((ActionWords) word, GameObjects.NOTHING, ""); }
-			else if(wordType == 1)
+			else if(word instanceof GameObjects)
 			{
 				if(objectIsPresent((GameObjects) word))
 				{ output = word == GameObjects.KNIFE ? "The dwarves' knives vanish as they strike the walls of the cave." : "What would you like to do with the " + input + "?" ; }
@@ -210,7 +197,7 @@ public class AdventGame implements Serializable
 				{ output = "I don't see any " + input + "."; }
 				increaseTurns = false;
 			}
-			else if(wordType == 3)
+			else if(word instanceof MessageWords)
 			{ output = ((MessageWords) word).message; }
 			else
 			{ output = nonsense(); }
@@ -219,11 +206,11 @@ public class AdventGame implements Serializable
 		return finishAction(output);
 	}
 
-	//  Determine Action Given Two Word Input  //
-	public String determineAction(String input1, String input2) 
+	//  Double Word Input  //
+	public String determineAndExecuteCommand(String input1, String input2)
 	{
 		lastInput = input1 + " " + input2;
-		String output = null;
+		String output;
 		increaseTurns = true;
 		locationAtStartOfAction = currentLocation;
 		
@@ -234,34 +221,20 @@ public class AdventGame implements Serializable
 			fooMagicWordProgression = 0;
 			resetHintsAndQuestions();
 			
-			String input12  = AdventMain.truncate.apply(input1);
-			String input22  = AdventMain.truncate.apply(input2);
+			String input12  = AdventMain.truncate.apply(input1), input22  = AdventMain.truncate.apply(input2);
 			
-			KnownWord word  = GameObjects.NOTHING;
-			KnownWord word2 = GameObjects.NOTHING;
-			byte wordType   = -1;
-			byte wordType2  = -1;
-			
-			if(AdventMain.KnownWords.containsKey(input12))
-			{
-				word = AdventMain.KnownWords.get(input12);
-				wordType = word.getType();
-			}
-			if(AdventMain.KnownWords.containsKey(input22))
-			{
-				word2 = AdventMain.KnownWords.get(input22);
-				wordType2 = word2.getType();
-			}
+			KnownWord 	word  = AdventMain.KnownWords.getOrDefault(input12, GameObjects.NOTHING),
+						word2 = AdventMain.KnownWords.getOrDefault(input22, GameObjects.NOTHING);
 			
 			if(objectIsPresent(GameObjects.KNIFE) && (word == GameObjects.KNIFE || word2 == GameObjects.KNIFE))
 			{ output = "The dwarves' knives vanish as they strike the walls of the cave."; increaseTurns = false; }
-			else if(wordType == 3)
+			else if(word instanceof MessageWords)
 			{ output = ((MessageWords) word).message; }
-			else if(wordType == 0)
+			else if(word instanceof Movement)
 			{
 				if(word == Movement.ENTER )
 				{
-					if(input22.equals("water")||input22.equals("strea"))
+					if(input22.equals("water") || input22.equals("strea"))
 					{
 						increaseTurns = currentLocation.hasWater;
 						output = (increaseTurns ? "Your feet are now wet." : "I don't see any water.");
@@ -272,13 +245,13 @@ public class AdventGame implements Serializable
 				else
 				{ output = attemptMovement((Movement) word); }
 			}
-			else if(word == GameObjects.WATER && wordType2 == 1)
+			else if(word == GameObjects.WATER && word2 instanceof GameObjects)
 			{ output = attemptAction(ActionWords.POUR, GameObjects.WATER, ""); }
-			else if(word == GameObjects.OIL && wordType2 == 1)
+			else if(word == GameObjects.OIL && word2 instanceof GameObjects)
 			{ output = attemptAction(ActionWords.POUR, GameObjects.OIL, ""); }
-			else if(wordType == 2)
+			else if(word instanceof ActionWords)
 			{ output = attemptAction((ActionWords) word, word2, input2); }
-			else if(wordType2 == 0)
+			else if(word2 instanceof Movement)
 			{
 				if(word2 == Movement.ENTER )
 				{
@@ -293,7 +266,7 @@ public class AdventGame implements Serializable
 				else
 				{ output = attemptMovement((Movement) word2); }
 			}
-			else if(wordType2 == 2)
+			else if(word2 instanceof ActionWords)
 			{ output = attemptAction((ActionWords) word2, word, input1); }
 			else
 			{ output = nonsense(); }
@@ -319,15 +292,12 @@ public class AdventGame implements Serializable
 
 				ArrayList<GameObjects> currentlyHolding = AdventMain.GameObjects.objectsHere(Locations.INHAND);
 				boolean holdingTreasure = false;
-				if(currentlyHolding != null)
+				for(GameObjects object : currentlyHolding)
 				{
-					for(GameObjects object : currentlyHolding)
+					if(GameObjects.isTreasure(object))
 					{
-						if(GameObjects.isTreasure(object))
-						{
-							holdingTreasure = true;
-							place(object, Locations.DEAD2);
-						}
+						holdingTreasure = true;
+						place(object, Locations.DEAD2);
 					}
 				}
 				output += holdingTreasure ?
@@ -388,7 +358,7 @@ public class AdventGame implements Serializable
 
 //  - - - -  Attempt Command Execution  - - - -  //
 
-	private String attemptAction(ActionWords verb, Object other, String alt)
+	private String attemptAction(ActionWords verb, KnownWord other, String alt)
 	{
 		String output = "I'm game. Would you care to explain how?";
 		if(other == null)
@@ -396,7 +366,7 @@ public class AdventGame implements Serializable
 			output = "I don't see any " + alt + ".";
 			increaseTurns = false;
 		}
-		try
+		if(other instanceof GameObjects)
 		{
 			GameObjects object = (GameObjects) other;
 			switch(verb)
@@ -417,23 +387,16 @@ public class AdventGame implements Serializable
 						output = attemptAction(ActionWords.TAKE, GameObjects.ROD2, alt);
 						if(endGameObjectsStates[9]) { endGameObjectsStates[9] = false; }
 					}
-					else if(object == GameObjects.RUG && !objectIsHere(GameObjects.RUG) && objectIsHere(GameObjects.RUG_))
-					{ output = attemptAction(ActionWords.TAKE, GameObjects.RUG_, alt); }
 					else if(object == GameObjects.ALL)
 					{
 						output = "";
 						ArrayList<GameObjects> itemsHere = AdventMain.GameObjects.objectsHere(currentLocation);
-						if(!(itemsHere == null))
-						{ 
-							for(GameObjects item : itemsHere) 
-							{	
-								increaseTurns = true;
-								output += attemptAction(ActionWords.TAKE, item, "") + "\n";	
-								if(increaseTurns) { turns++; }
-							} 
+						for(GameObjects item : itemsHere)
+						{
+							increaseTurns = true;
+							output += attemptAction(ActionWords.TAKE, item, "") + "\n";
+							if(increaseTurns) { turns++; }
 						}
-						else
-						{ output = "There is nothing to take."; }
 						increaseTurns = false;
 					}
 					else if(object == GameObjects.WATER)
@@ -498,7 +461,7 @@ public class AdventGame implements Serializable
 							increaseTurns = false;
 						}
 					}
-					else if(object == GameObjects.NOTHING)
+					else if(object == GameObjects.NOTHING && alt.equals(""))
 					{
 						output = "What would you like to take?";
 						actionToAttempt = verb;
@@ -523,15 +486,18 @@ public class AdventGame implements Serializable
 							output = "You can't be serious!";
 							increaseTurns = false;
 						}
-						else if(object == GameObjects.BEAR && stateOfTheChain == 0)
+						else if(object == GameObjects.BEAR)
 						{
-							output = "The bear is still chained to the wall.";
-							increaseTurns = false;
-						}
-						else if(object == GameObjects.BEAR && stateOfTheChain != 0)
-						{
-							stateOfTheBear = 2;
-							output = "The bear is now following you.";
+							if(stateOfTheChain == 0)
+							{
+								output = "The bear is still chained to the wall.";
+								increaseTurns = false;
+							}
+							else
+							{
+								stateOfTheBear = 2;
+								output = "The bear is now following you.";
+							}
 						}
 						else if(object == GameObjects.CHAIN && stateOfTheChain != 1)
 						{
@@ -558,24 +524,16 @@ public class AdventGame implements Serializable
 								output = "You can catch the bird, but you cannot carry it.";
 								increaseTurns = false;
 							}
-							else if(isInHand(GameObjects.CAGE))
-							{
-								birdInCage = true;
-								take(GameObjects.BIRD);
-								output = AdventMain.okay;
-							}
 							else
 							{
-								if(birdInCage)
-								{
-									take(GameObjects.BIRD); take(GameObjects.CAGE);
-									output = AdventMain.okay;
-								}
+								birdInCage = true;
+								take(GameObjects.BIRD); take(GameObjects.CAGE);
+								output = AdventMain.okay;
 							}
 						}
 						else if(object == GameObjects.RUG || object == GameObjects.RUG_)
 						{
-							if(objectIsHere(GameObjects.RUG) || objectIsHere(GameObjects.RUG_))
+							if(objectIsHere(object))
 							{
 								take(GameObjects.RUG);
 								voidObject(GameObjects.RUG_);
@@ -584,7 +542,7 @@ public class AdventGame implements Serializable
 						}
 						else if(object == GameObjects.AXE && bearAxe && stateOfTheBear == 0)
 						{ output = "There is no way past the bear to get the axe, which is probably just as well."; }
-						else if(object == GameObjects.VASE && vaseIsBroken == true)
+						else if(object == GameObjects.VASE && vaseIsBroken)
 						{ output = "You can't be serious!"; }
 						else if(object.mobile && objectIsHere(object))
 						{
@@ -600,7 +558,7 @@ public class AdventGame implements Serializable
 					}
 					if(caveIsClosed && object == GameObjects.OYSTER && endGameObjectsStates[3]) 
 					{
-						endGameObjectsStates[3] = false; 
+						endGameObjectsStates[3] = false;
 						output = "Interesting. There seems to be something written on the under-side of the oyster."; //TODO does this work right?
 					}
 				break;
@@ -1374,28 +1332,16 @@ public class AdventGame implements Serializable
 					
 				case BRIEF:
 					if(brief == 0)
-					{
-						brief = 1;
-						output = "Okay, from now on I'll only describe a place in full the first time you come to it. To get the full description, say \"LOOK\".";
-					}
+					{ output = "Okay, from now on I'll only describe a place in full the first time you come to it. To get the full description, say \"LOOK\"."; brief = 1; }
 					else
-					{
-						brief = 0;
-						output = "Okay, I'll return to giving descriptions in the original fashion.";
-					}
+					{ output = "Okay, I'll return to giving descriptions in the original fashion."; brief = 0; }
 					break;
 					
 				case VERBOSE:
 					if(brief == 0)
-					{
-						brief = 2;
-						output = "Okay, from now on I'll describe a place in full every time you come to it.";
-					}
+					{ output = "Okay, from now on I'll describe a place in full every time you come to it."; brief = 2; }
 					else
-					{
-						brief = 0;
-						output = "Okay, I'll return to giving descriptions in the original fashion.";
-					}
+					{ output = "Okay, I'll return to giving descriptions in the original fashion."; brief = 0; }
 					break;
 					
 				case FIND:
@@ -1668,25 +1614,23 @@ public class AdventGame implements Serializable
 					break;
 			}
 		}
-		catch(ClassCastException e)
+		else if(verb == ActionWords.GO)
 		{
-			if(verb == ActionWords.GO)
+			if(alt.equals(""))
 			{
-				if(alt.equals(""))
-				{
-					output = "Where?";
-					increaseTurns = false;
-				}
-				else
-				{ output = attemptMovement(alt); }
-			}
-			else
-			{
-				output = "You can not do that.";
+				output = "Where?";
 				increaseTurns = false;
 			}
+			else
+			{ output = attemptMovement(alt); }
 		}
-		catch(NullPointerException e){ increaseTurns = false; }
+		else if(verb == ActionWords.TAKE && other == ActionWords.ABSTAIN)
+		{ output = AdventMain.okay; }
+		else
+		{
+			output = "You can not do that.";
+			increaseTurns = false;
+		}
 		return output;
 	}
 	
@@ -2116,8 +2060,7 @@ public class AdventGame implements Serializable
 				{	
 					int next = 1 + AdventMain.scores[i] - score;
 					String s = "s";
-					if(next == 1)
-					{ s = ""; }
+					if(next == 1){ s = ""; }
 					output += ", you need " + next + " more point" + s + ".";
 				}
 				else
