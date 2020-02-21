@@ -61,13 +61,6 @@ public class AdventGame implements Serializable
 
 	boolean[] 	endGameObjectsStates;	// bottles, lamps, pillows, and rods  -  invisible until interacted with (end game only)
 
-	// TODO More dynamic save load? Multiple 'save slots'?
-
-
-	// TODO review what dying does with your stuff (treasures, axe, key items, etc.)
-	// TODO hint states aren't currently saved
-	// TODO what is    > oil    You are not carrying it!        about?  (door)
-
 	public AdventGame() { setUp(); }
 
 	//  Setup For New Game  //

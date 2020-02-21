@@ -33,11 +33,8 @@ public class AdventPanel extends JPanel
 	private JScrollPane scroll;
 	private Color outline;
 	private JScrollBar scrollBar;
-	private JLabel lblTurns;
-	private JLabel lblScore;
-	private JLabel lblTop;
-	private JButton saveButton;
-	private JButton loadButton;
+	private JLabel lblTurns, lblScore, lblTop;
+	private JButton saveButton, loadButton;
 	
 	public AdventPanel()
 	{
@@ -149,6 +146,16 @@ public class AdventPanel extends JPanel
 				+ " Original development by William Crowther.\n"
 				+ " Major features added by Don Woods.\n"
 				+ " Conversion to Java by Ari.\n\n"
+
+				+ " ~ TODO ~\n"
+				+ " More dynamic save/load\n"
+				+ " Bug testing tools\n"
+				+ " Play again? (handle in panel instead of 'in the game', maybe)\n"
+				+ " Hint proc states are not currently saved w/ everything because I forgot that\n"
+				+ " Single input command  > oil  at door says \"You are not carrying it!\" ?\n"
+				+ " Review dwarves and pirate, allow more than one dwarf to join in combat\n"
+				+ " ~  ~  ~\n\n"
+
 				+ " Would you like instructions? (y/n)\n");
 		inputField.requestFocusInWindow();
 	}
