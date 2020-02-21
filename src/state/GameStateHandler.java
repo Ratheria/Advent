@@ -42,9 +42,9 @@ public class GameStateHandler
 			AdventData saveData = (AdventData) objectReader.readObject();
 			objectReader.close();
 			fileReader.close();
-			result = saveData.log;
-			AdventMain.ADVENT = saveData.game;
-			AdventMain.frame.panel.base = AdventMain.ADVENT;
+			result                      = saveData.log;
+			AdventMain.ADVENT           = saveData.game;
+			AdventMain.FRAME.panel.base = AdventMain.ADVENT;
 			GameObjects.loadLocations(saveData.mobileObjectsLocations);
 			Locations.loadVisits(saveData.visits);
 			System.out.println("Data Loaded");
@@ -57,7 +57,7 @@ public class GameStateHandler
 	public String writeData(String logData)
 	{
 		String result = "Game saved.";
-		if(!AdventMain.ADVENT.playerIsDead)
+		if(!AdventMain.ADVENT.isDead())
 		{
 			try
 			{

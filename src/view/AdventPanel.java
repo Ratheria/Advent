@@ -160,7 +160,7 @@ public class AdventPanel extends JPanel
 	
 	private void setLabels()
 	{
-		lblTurns.setText("Turns: " + base.turns);
+		lblTurns.setText("Turns: " + base.getTurns() );
 		lblScore.setText("Score: " + base.getScore() + "/350");
 	}
 	
@@ -170,7 +170,7 @@ public class AdventPanel extends JPanel
 		(
 			(event) ->
 			{
-				displayLog.append("\n\n" + AdventMain.stateHandler.writeData(displayLog.getText()) + "\n");
+				displayLog.append("\n\n" + AdventMain.STATE_HANDLER.writeData(displayLog.getText()) + "\n");
 				displayLog.setCaretPosition(displayLog.getDocument().getLength());
 				scroll.setViewportView(displayLog);
 			}
@@ -180,7 +180,7 @@ public class AdventPanel extends JPanel
 		(
 			(event) ->
 			{
-				displayLog.setText(AdventMain.stateHandler.loadGame(displayLog.getText()));
+				displayLog.setText(AdventMain.STATE_HANDLER.loadGame(displayLog.getText()));
 				displayLog.setCaretPosition(displayLog.getDocument().getLength());
 				setLabels();
 				scroll.setViewportView(displayLog);
@@ -223,7 +223,7 @@ public class AdventPanel extends JPanel
 					displayCaret = (DefaultCaret)displayLog.getCaret();
 					inputField.setText("");
 					inputField.requestFocusInWindow();
-					inputField.setEditable(!base.noMore);
+					inputField.setEditable(!base.noMore());
 					displayLog.setCaretPosition(displayLog.getDocument().getLength());
 					scroll.setViewportView(displayLog);
 				}
