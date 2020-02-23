@@ -294,8 +294,10 @@ public class AdventGame implements Serializable
 					}
 				}
 				output += holdingTreasure ?
-						  "\n\nOut from the shadows behind you pounces a bearded pirate!\n\"Har, har,\" he chortles, \"I'll just take all this booty and hide it away with me chest deep in the maze!\"\nHe snatches your treasure and vanishes into the gloom." :
-						  "\n\nThere are faint rustling noises from the darkness behind you. As you turn toward them, the beam of your lamp falls across a bearded pirate. He is carrying a large chest.\n\"Shiver me timbers!\" he cries, \"I've been spotted! I'd best hie meself off to the maze to hide me chest!\"\nWith that, he vanishes into the gloom." ;
+						  "\n\nOut from the shadows behind you pounces a bearded pirate!\n\"Har, har,\" he chortles, \"I'll just take all this booty and hide it away with me chest deep in the maze!\""
+                                  + "\nHe snatches your treasure and vanishes into the gloom." :
+						  "\n\nThere are faint rustling noises from the darkness behind you. As you turn toward them, the beam of your lamp falls across a bearded pirate. He is carrying a large chest."
+                                  + "\n\"Shiver me timbers!\" he cries, \"I've been spotted! I'd best hie meself off to the maze to hide me chest!\"\nWith that, he vanishes into the gloom." ;
 			}
 		}
 		if(increaseTurns)
@@ -1552,7 +1554,8 @@ public class AdventGame implements Serializable
 								output = "There is a loud explosion, and a twenty-foot hole appears in the far wall, burying the snakes in the rubble. A river of molten lava pours in through the hole, destroying everything in its path, including you!";
 								break;
 							default:
-								output = "There is a loud explosion, and a twenty-foot hole appears in the far wall, burying the dwarves in the rubble. You march through the hole and find yourself in the Main Office, where a cheering band of friendly elves carry the conquering adventurer off into the sunset.";
+								output = "There is a loud explosion, and a twenty-foot hole appears in the far wall, burying the dwarves in the rubble. " +
+                                        "You march through the hole and find yourself in the Main Office, where a cheering band of friendly elves carry the conquering adventurer off into the sunset.";
 								break;
 						}
 						over = true;
@@ -1652,7 +1655,8 @@ public class AdventGame implements Serializable
 		else if(justCollapsed)
 		{
 			setLocation(locationResult);
-			output = "Just as you reach the other side, the bridge buckles beneath the weight of the bear, who was still following you around. You scrabble desperately for support, but the bridge collapses you stumble back and fall into the chasm.";
+			output = "Just as you reach the other side, the bridge buckles beneath the weight of the bear, who was still following you around. " +
+                    "You scrabble desperately for support, but the bridge collapses you stumble back and fall into the chasm.";
 			playerIsDead = true;
 			playerJustDied = true;
 			justCollapsed = false;
@@ -2022,10 +2026,12 @@ public class AdventGame implements Serializable
         {
             case 2:
                 playerIsDead = false; playerJustDied = false;
-                return "All right. But don't blame me if something goes wr......\n\t---POOF!!---\nYou are engulfed in a cloud of orange smoke. Coughing and gasping, you emerge from the smoke to find....\n" + AdventMain.Locations.getDescription(currentLocation, brief) + AdventMain.GameObjects.listItemsHere(currentLocation);
+                return "All right. But don't blame me if something goes wr......\n\t---POOF!!---\nYou are engulfed in a cloud of orange smoke. Coughing and gasping, you emerge from the smoke to find....\n"
+                        + AdventMain.Locations.getDescription(currentLocation, brief) + AdventMain.GameObjects.listItemsHere(currentLocation);
             case 1:
                 playerIsDead = false; playerJustDied = false;
-                return "Okay, now where did I put my resurrection kit?....\n\t>POOF!<\nEverything disappears in a dense cloud of orange smoke.\n" + AdventMain.Locations.getDescription(currentLocation, brief) + AdventMain.GameObjects.listItemsHere(currentLocation);
+                return "Okay, now where did I put my resurrection kit?....\n\t>POOF!<\nEverything disappears in a dense cloud of orange smoke.\n"
+                        + AdventMain.Locations.getDescription(currentLocation, brief) + AdventMain.GameObjects.listItemsHere(currentLocation);
             default:
                 over = true;
                 return "Okay, if you're so smart, do it yourself! I'm leaving!";
@@ -2165,7 +2171,8 @@ public class AdventGame implements Serializable
 				{ Hints.GRATE.proc++; }
 				if((Hints.SNAKE.proc < Hints.SNAKE.threshold) && objectIsPresent(GameObjects.SNAKE) && !(objectIsPresent(GameObjects.BIRD)) && !justArrived)
 				{ Hints.SNAKE.proc++; }
-				if((Hints.MAZE.proc  < Hints.MAZE.threshold ) && ((currentLocation.ordinal() >= Locations.ALIKE1.ordinal()) && (currentLocation.ordinal() <= Locations.ALIKE14.ordinal())) || (currentLocation != Locations.DEAD2 && currentLocation != Locations.DEAD8 && (currentLocation.ordinal() >= Locations.DEAD1.ordinal()) && (currentLocation.ordinal() <= Locations.DEAD11.ordinal())))
+				if((Hints.MAZE.proc  < Hints.MAZE.threshold ) && ((currentLocation.ordinal() >= Locations.ALIKE1.ordinal()) && (currentLocation.ordinal() <= Locations.ALIKE14.ordinal()))
+                        || (currentLocation != Locations.DEAD2 && currentLocation != Locations.DEAD8 && (currentLocation.ordinal() >= Locations.DEAD1.ordinal()) && (currentLocation.ordinal() <= Locations.DEAD11.ordinal())))
 				{ Hints.MAZE.proc++;  }
 				if((Hints.DARK.proc  < Hints.DARK.threshold ) && currentLocation == Locations.ALCOVE || (currentLocation == Locations.PROOM && !(objectIsPresent(GameObjects.LAMP))))
 				{ Hints.DARK.proc++;  }
