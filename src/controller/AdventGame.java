@@ -113,7 +113,7 @@ public class AdventGame implements Serializable
 		
 		KnownWord word = AdventMain.KnownWords.getOrDefault(input, GameObjects.NOTHING);
 		
-		if(actionToAttempt != ActionWords.NOTHING && word instanceof ActionWords)
+		if(actionToAttempt != ActionWords.NOTHING && word instanceof GameObjects)
 		{
 			output = attemptAction(actionToAttempt, word, input);
 			actionToAttempt = ActionWords.NOTHING;
@@ -182,10 +182,10 @@ public class AdventGame implements Serializable
 			{ output = attemptMovement((Movement) word); }
 			else if(word instanceof ActionWords)
 			{ output = attemptAction((ActionWords) word, GameObjects.NOTHING, ""); }
-			else if(word instanceof GameObjects)
+			else if(word instanceof GameObjects && word != GameObjects.NOTHING)
 			{
 				if(objectIsPresent((GameObjects) word))
-				{ output = word == GameObjects.KNIFE ? "The dwarves' knives vanish as they strike the walls of the cave." : "What would you like to do with the " + input + "?" ; }
+				{ output = word == GameObjects.KNIFE ? "The dwarves' knives vanish as they strike the walls of the cave." : "What would you like to do with the " + lastInput + "?" ; }
 				else
 				{ output = "I don't see any " + input + "."; }
 				increaseTurns = false;
@@ -203,7 +203,7 @@ public class AdventGame implements Serializable
 	public String determineAndExecuteCommand(String input1, String input2)
 	{
 		lastInput = input1 + " " + input2;
-		String output;
+		String output = null;
 		increaseTurns = true;
 		locationAtStartOfAction = currentLocation;
 		
@@ -213,54 +213,59 @@ public class AdventGame implements Serializable
 		{
 			fooMagicWordProgression = 0;
 			resetHintsAndQuestions();
-			
-			String input12  = AdventMain.truncate.apply(input1), input22  = AdventMain.truncate.apply(input2);
-			
-			KnownWord 	word  = AdventMain.KnownWords.getOrDefault(input12, GameObjects.NOTHING),
-						word2 = AdventMain.KnownWords.getOrDefault(input22, GameObjects.NOTHING);
-			
-			if(objectIsPresent(GameObjects.KNIFE) && (word == GameObjects.KNIFE || word2 == GameObjects.KNIFE))
-			{ output = "The dwarves' knives vanish as they strike the walls of the cave."; increaseTurns = false; }
-			else if(word instanceof MessageWords)
-			{ output = ((MessageWords) word).message; }
-			else if(word instanceof Movement)
+
+			String input12 = AdventMain.truncate.apply(input1), input22 = AdventMain.truncate.apply(input2);
+
+			KnownWord word = AdventMain.KnownWords.getOrDefault(input12, GameObjects.NOTHING),
+					word2 = AdventMain.KnownWords.getOrDefault(input22, GameObjects.NOTHING);
+
+			if(word != GameObjects.NOTHING && word2 != GameObjects.NOTHING)
 			{
-				if(word == Movement.ENTER )
+				if (objectIsPresent(GameObjects.KNIFE) && (word == GameObjects.KNIFE || word2 == GameObjects.KNIFE))
+				{ output        = "The dwarves' knives vanish as they strike the walls of the cave.";
+				  increaseTurns = false;
+				}
+				else if (word instanceof MessageWords)
+				{ output = ((MessageWords) word).message; }
+				else if (word instanceof Movement)
 				{
-					if(input22.equals("water") || input22.equals("strea"))
+					if (word == Movement.ENTER)
 					{
-						increaseTurns = currentLocation.hasWater;
-						output = (increaseTurns ? "Your feet are now wet." : "I don't see any water.");
+						if (input22.equals("water") || input22.equals("strea"))
+						{
+							increaseTurns = currentLocation.hasWater;
+							output        = (increaseTurns ? "Your feet are now wet." : "I don't see any water.");
+						}
+						else
+						{ output = attemptAction(ActionWords.GO, word2, input2); }
 					}
 					else
-					{ output = attemptAction(ActionWords.GO, word2, input2); }
+					{ output = attemptMovement((Movement) word); }
 				}
-				else
-				{ output = attemptMovement((Movement) word); }
-			}
-			else if(word == GameObjects.WATER && word2 instanceof GameObjects)
-			{ output = attemptAction(ActionWords.POUR, GameObjects.WATER, ""); }
-			else if(word == GameObjects.OIL && word2 instanceof GameObjects)
-			{ output = attemptAction(ActionWords.POUR, GameObjects.OIL, ""); }
-			else if(word instanceof ActionWords)
-			{ output = attemptAction((ActionWords) word, word2, input2); }
-			else if(word2 instanceof Movement)
-			{
-				if(word2 == Movement.ENTER )
+				else if (word == GameObjects.WATER && word2 instanceof GameObjects)
+				{ output = attemptAction(ActionWords.POUR, GameObjects.WATER, ""); }
+				else if (word == GameObjects.OIL && word2 instanceof GameObjects)
+				{ output = attemptAction(ActionWords.POUR, GameObjects.OIL, ""); }
+				else if (word instanceof ActionWords)
+				{ output = attemptAction((ActionWords) word, word2, input2); }
+				else if (word2 instanceof Movement)
 				{
-					if(input12.equals("water") || input12.equals("strea"))
+					if (word2 == Movement.ENTER)
 					{
-						increaseTurns = currentLocation.hasWater;
-						output = (increaseTurns ? "Your feet are now wet." : "I don't see any water.");
+						if (input12.equals("water") || input12.equals("strea"))
+						{
+							increaseTurns = currentLocation.hasWater;
+							output        = (increaseTurns ? "Your feet are now wet." : "I don't see any water.");
+						}
+						else
+						{ output = attemptAction(ActionWords.GO, word, input1); }
 					}
 					else
-					{ output = attemptAction(ActionWords.GO, word, input1); }
+					{ output = attemptMovement((Movement) word2); }
 				}
-				else
-				{ output = attemptMovement((Movement) word2); }
+				else if (word2 instanceof ActionWords)
+				{ output = attemptAction((ActionWords) word2, word, input1); }
 			}
-			else if(word2 instanceof ActionWords)
-			{ output = attemptAction((ActionWords) word2, word, input1); }
 			else
 			{ output = nonsense(); }
 		}
@@ -1551,11 +1556,12 @@ public class AdventGame implements Serializable
 							    output = "There is a loud explosion, and you are suddenly splashed across the walls of the room.";
 							    break;
 							case 30:
-								output = "There is a loud explosion, and a twenty-foot hole appears in the far wall, burying the snakes in the rubble. A river of molten lava pours in through the hole, destroying everything in its path, including you!";
+								output = "There is a loud explosion, and a twenty-foot hole appears in the far wall, burying the snakes in the rubble. "
+									   + "A river of molten lava pours in through the hole, destroying everything in its path, including you!";
 								break;
 							default:
-								output = "There is a loud explosion, and a twenty-foot hole appears in the far wall, burying the dwarves in the rubble. " +
-                                        "You march through the hole and find yourself in the Main Office, where a cheering band of friendly elves carry the conquering adventurer off into the sunset.";
+								output = "There is a loud explosion, and a twenty-foot hole appears in the far wall, burying the dwarves in the rubble. "
+                                       + "You march through the hole and find yourself in the Main Office, where a cheering band of friendly elves carry the conquering adventurer off into the sunset.";
 								break;
 						}
 						over = true;
@@ -2077,7 +2083,8 @@ public class AdventGame implements Serializable
 	{
 		if(clock2 == 0)
 		{
-			output = "The sepulchral voice intones, \n\t\"The cave is now closed.\"\nAs the echoes fade, there is a blinding flash of light (and a small puff of orange smoke)...\nThen your eyes refocus: you look around and find...\n";
+			output = "The sepulchral voice intones, \n\t\"The cave is now closed.\"\nAs the echoes fade, there is a blinding flash of light (and a small puff of orange smoke)..."
+				   + "\nThen your eyes refocus: you look around and find...\n";
 			caveIsClosed = true;
 			bonus = 10;
 			attemptAction(ActionWords.DROP, GameObjects.ALL, "ENDGAME DROP");

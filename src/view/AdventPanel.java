@@ -148,12 +148,15 @@ public class AdventPanel extends JPanel
 				+ " Conversion to Java by Ari.\n\n"
 
 				+ " ~ TODO ~\n"
-				+ " More dynamic save/load\n"
-				+ " Bug testing tools\n"
-				+ " Play again? (handle in panel instead of 'in the game', maybe)\n"
-				+ " Hint proc states are not currently saved w/ everything because I forgot that\n"
+				+ " More dynamic save/load.\n"
+				+ " Bug testing tools?\n"
+				+ " Play again? (handle in panel instead of 'in the game', maybe).\n"
+				+ " Hint proc states are not currently saved w/ everything because I forgot that.\n"
 				+ " Single input command  > oil  at door says \"You are not carrying it!\" ?\n"
-				+ " Review dwarves and pirate, allow more than one dwarf to join in combat\n"
+					+ "\t- Is now \"I don't see any oil.\". I know what's up.\n"
+				+ " Review dwarves and pirate, allow more than one dwarf to join in combat.\n"
+				+ " Continuing objects that can be used like continuing actions.\n"
+				+ " Scoring got messed up somehow. Probably something dumb I did.\n"
 				+ " ~  ~  ~\n\n"
 
 				+ " Would you like instructions? (y/n)\n");

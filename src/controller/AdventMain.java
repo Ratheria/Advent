@@ -209,9 +209,9 @@ public class AdventMain
 		PONY	(		Locations.PONY,			new String[] {"\n\tThere is a massive vending machine here.  \nThe instructions on it read:\n\t\t\"Drop coins here to receive fresh batteries.\""}),
 		BATTERIES(		Locations.THEVOID,		new String[] {"\n\tThere are fresh batteries here.", "\n\tSome worn-out batteries have been discarded nearby."}),
 		GEYSER	(		Locations.VIEW,  null),
-		MOSS	(		Locations.SOFT,  null),
 		ART		(		Locations.ORIENTAL, null),
 		MIRROR	(		Locations.MIRROR, null), MIRROR_,
+		MOSS	(		Locations.SOFT,  null),
 		
 		GOLD	( true, Locations.NUGGET,		new String[] {"\n\t\tLarge Gold Nugget", 	"\n\tThere is a large sparkling nugget of gold here!"}),
 		DIAMONDS( true, Locations.WESTFISSURE,	new String[] {"\n\t\tSeveral Diamonds", 	"\n\tThere are diamonds here!"}),
