@@ -10,12 +10,17 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import controller.AdventGame;
 import controller.AdventMain;
+import version.Version;
+
 import javax.swing.SpringLayout;
 import javax.swing.UIManager;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import java.awt.Color;
 import java.awt.Font;
+import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
 import javax.swing.border.LineBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.DefaultCaret;
@@ -142,27 +147,30 @@ public class AdventPanel extends JPanel
 	
 	public void setUpGame()
 	{
-		displayLog.setText(" Welcome to ADVENTURE!\n"
+		String displayString = " Welcome to ADVENTURE!\n"
 				+ " Original development by William Crowther.\n"
 				+ " Major features added by Don Woods.\n"
-				+ " Conversion to Java by Ari.\n\n"
+				+ " Conversion to Java by Ari.\n\n";
 
-				+ " ~ TODO ~\n"
+		displayString += " ~ TODO ~\n"
 				+ " More dynamic save/load.\n"
 				+ " Bug testing tools?\n"
 				+ " Play again? (handle in panel instead of 'in the game', maybe).\n"
 				+ " Hint proc states are not currently saved w/ everything because I forgot that.\n"
 				+ " Single input command  > oil  at door says \"You are not carrying it!\" ?\n"
 					+ "\t- Is now \"I don't see any oil.\". I know what's up.\n"
-				+ " Review dwarves and pirate, allow more than one dwarf to join in combat.\n"
+				+ " Review dwarves and pirate. Allow more than one dwarf to join in combat?\n"
 				+ " Continuing objects that can be used like continuing actions.\n"
-				+ " Scoring got messed up somehow. Probably something dumb I did.\n"
-				+ " ~  ~  ~\n\n"
+				+ " ~  ~  ~\n\n";
 
-				+ " Would you like instructions? (y/n)\n");
+		displayString += Version.versionCheck();
+
+		displayString += " Would you like instructions? (y/n)\n";
+
+		displayLog.setText(displayString);
 		inputField.requestFocusInWindow();
 	}
-	
+
 	public void inputFieldEditable(boolean editable)
 	{
 		inputField.setEditable(editable);

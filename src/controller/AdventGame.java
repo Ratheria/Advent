@@ -69,6 +69,7 @@ public class AdventGame implements Serializable
 		for(GameObjects object : GameObjects.values())
 		{ if(GameObjects.isTreasure(object) && object != GameObjects.RUG_){	found.put(object, false);	} }		// No treasure found yet
 
+
 		dwarvesAllowed 	= true;
 
 		currentLocation = Locations.ROAD; previousLocation = null; locationAtStartOfAction = Locations.ROAD;
@@ -89,9 +90,9 @@ public class AdventGame implements Serializable
 
 		brief = 0; score = 0; bonus = 0; tally = 0; turns = 0; lamp = 330;
 
-		clock1                  = 15;clock2 = 15;itemsInHand = 0 ;lives = 3 ;lostTreasures = 0 ;fatality = 0 ;
-		pirate                  = 0 ;movesWOEncounter = 1 ;deadDwarves = 0 ;dwarvesLeft = 5 ;dwarfFlag = 0 ;dwarfPresent = 0 ;
-		stateOfTheTroll         = 0 ;stateOfTheBear = 0 ;stateOfTheChain = 0 ;stateOfSpareBatteries = 0 ;stateOfThePlant = 0 ;stateOfTheBottle = 1 ;
+		clock1                  = 15; clock2            = 15; itemsInHand     = 0; lives                 = 3; lostTreasures   = 0 ; fatality         = 0 ;
+		pirate                  = 0 ; movesWOEncounter  = 1 ; deadDwarves     = 0; dwarvesLeft           = 5; dwarfFlag       = 0 ; dwarfPresent     = 0 ;
+		stateOfTheTroll         = 0 ; stateOfTheBear    = 0 ; stateOfTheChain = 0; stateOfSpareBatteries = 0; stateOfThePlant = 0 ; stateOfTheBottle = 1 ;
 		fooMagicWordProgression = 0 ;
 
 		endGameObjectsStates = new boolean[] {false, false, false, false, false, false, false, false, false, false};
@@ -2083,8 +2084,8 @@ public class AdventGame implements Serializable
 	{
 		if(clock2 == 0)
 		{
-			output = "The sepulchral voice intones, \n\t\"The cave is now closed.\"\nAs the echoes fade, there is a blinding flash of light (and a small puff of orange smoke)..."
-				   + "\nThen your eyes refocus: you look around and find...\n";
+			output = "The sepulchral voice intones, \n\t\"The cave is now closed.\"\n\nAs the echoes fade, there is a blinding flash of light (and a small puff of orange smoke)..."
+				   + "\nThen your eyes refocus: you look around and find...\n\n";
 			caveIsClosed = true;
 			bonus = 10;
 			attemptAction(ActionWords.DROP, GameObjects.ALL, "ENDGAME DROP");
@@ -2238,13 +2239,13 @@ public class AdventGame implements Serializable
 
 	private int getCurrentScore()
 	{
-		int currentScore = (2 + (2 * (tally)) + (lives * 10));
-
+		int currentScore = 2 + (2 * tally) + (lives * 10);
 		for(GameObjects item : GameObjects.values())
 		{
 			if(item.location == Locations.BUILDING && GameObjects.isTreasure(item) && !(item == GameObjects.VASE && vaseIsBroken))
 			{ currentScore += ( GameObjects.isLesserTreasure(item) ? 10 : ( item == GameObjects.CHEST ? 12 : 14 ) ); }
 		}
+
 		if(GameObjects.MAG.location == Locations.WITT){ currentScore++; }
 		for(Hints hint : Hints.values())
 		{ if(hint.given) { currentScore -= hint.cost; } }
@@ -2254,7 +2255,7 @@ public class AdventGame implements Serializable
 		currentScore += bonus;
 		score = currentScore;
 		return currentScore;
-	}
+    }
 
 	private String nonsense()
 	{
