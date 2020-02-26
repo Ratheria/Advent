@@ -277,7 +277,7 @@ public class AdventGame implements Serializable
 	//  Finish Any Action Taken  //
 	private String finishAction(String output)
 	{
-		if(!wellInCave && currentLocation.getOrdinal(currentLocation) >= currentLocation.minLoc())
+		if(!wellInCave && currentLocation.ordinal() >= currentLocation.minLoc())
 		{ wellInCave = true; dwarfFlag = 1; }
 
 		if(locationChange && increaseTurns)
@@ -392,12 +392,17 @@ public class AdventGame implements Serializable
 					{
 						output = "";
 						ArrayList<GameObjects> itemsHere = AdventMain.GameObjects.objectsHere(currentLocation);
-						for(GameObjects item : itemsHere)
+						if(!itemsHere.isEmpty())
 						{
-							increaseTurns = true;
-							output += attemptAction(ActionWords.TAKE, item, "") + "\n";
-							if(increaseTurns) { turns++; }
+							for(GameObjects item : itemsHere)
+							{
+								increaseTurns = true;
+								output += attemptAction(ActionWords.TAKE, item, "") + "\n";
+								if(increaseTurns) { turns++; }
+							}
 						}
+						else
+						{ output = "There is nothing here to take."; }
 						increaseTurns = false;
 					}
 					else if(object == GameObjects.WATER)
@@ -574,7 +579,7 @@ public class AdventGame implements Serializable
 					else if(object == GameObjects.ALL)
 					{
 						ArrayList<GameObjects> itemsHere = AdventMain.GameObjects.objectsHere(Locations.INHAND);
-						if(!(itemsHere == null))
+						if(!itemsHere.isEmpty())
 						{
 							output = "";
 							for(GameObjects item : itemsHere)
@@ -1667,13 +1672,13 @@ public class AdventGame implements Serializable
 			playerIsDead = true;
 			playerJustDied = true;
 			justCollapsed = false;
-			int neordinal = currentLocation.getOrdinal(Locations.NESIDE);
-			if(currentLocation.getOrdinal(GameObjects.CHAIN.location) >= neordinal)
+			int neordinal = Locations.NESIDE.ordinal();
+			if(GameObjects.CHAIN.location.ordinal() >= neordinal)
 			{
 				lostTreasures++;
 				previousLocation = currentLocation;
 			}
-			if(currentLocation.getOrdinal(GameObjects.SPICES.location) >= neordinal)
+			if(GameObjects.SPICES.location.ordinal() >= neordinal)
 			{
 				lostTreasures++;
 				previousLocation = currentLocation;

@@ -15,13 +15,15 @@ public class Version
         {
             BufferedReader fileReader = new BufferedReader(new InputStreamReader(Version.class.getResourceAsStream("update.txt")));
             String lastUpdated = fileReader.readLine();
-            System.out.println(lastUpdated);
+            System.out.println("Last Updated " + lastUpdated + "\n");
             URL            url  = new URL("https://raw.githubusercontent.com/Ratheria/Advent/master/src/version/update.txt");
             URLConnection  connection  = url.openConnection();
             BufferedReader bufferedReader   = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             String mostRecentUpdate = bufferedReader.readLine();
             if(!lastUpdated.equals(mostRecentUpdate))
-            { return " Updated Version Available: " + bufferedReader.readLine() + "\n\n\n"; }
+            { return "\n Updated Version Available: " + bufferedReader.readLine() + "\n\n\n"; }
+            fileReader.close();
+            bufferedReader.close();
         }
         catch (IOException e)
         { e.printStackTrace(); }

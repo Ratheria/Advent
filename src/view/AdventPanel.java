@@ -156,7 +156,6 @@ public class AdventPanel extends JPanel
 				+ " More dynamic save/load.\n"
 				+ " Bug testing tools?\n"
 				+ " Play again? (handle in panel instead of 'in the game', maybe).\n"
-				+ " Hint proc states are not currently saved w/ everything because I forgot that.\n"
 				+ " Single input command  > oil  at door says \"You are not carrying it!\" ?\n"
 					+ "\t- Is now \"I don't see any oil.\". I know what's up.\n"
 				+ " Review dwarves and pirate. Allow more than one dwarf to join in combat?\n"

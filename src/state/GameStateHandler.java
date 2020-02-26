@@ -14,6 +14,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import controller.AdventMain;
+import controller.AdventMain.Hints;
 import controller.AdventMain.GameObjects;
 import controller.AdventMain.Locations;
 
@@ -34,7 +35,8 @@ public class GameStateHandler
 	
 	private String readData()
 	{
-		String result = "Something went wrong.";
+		String result = "Something went wrong. I probably made some internal changes to the save/load system. "
+				+ "Try making a new save and loading that.";
 		try
 		{
 			fileReader = new FileInputStream(dataFile);
@@ -42,10 +44,12 @@ public class GameStateHandler
 			AdventData saveData = (AdventData) objectReader.readObject();
 			objectReader.close();
 			fileReader.close();
+
 			result                      = saveData.log;
 			AdventMain.ADVENT           = saveData.game;
 			AdventMain.FRAME.panel.base = AdventMain.ADVENT;
-			GameObjects.loadLocations(saveData.mobileObjectsLocations);
+			GameObjects.loadLocations(saveData.objectLocations);
+			Hints.loadHints(saveData.hintGiven, saveData.hintProc);
 			Locations.loadVisits(saveData.visits);
 			System.out.println("Data Loaded");
 		} 

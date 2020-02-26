@@ -129,7 +129,7 @@ public class AdventMain
 		Questions(boolean serious){ this.serious = serious; }
 	}
 	
-	enum Hints
+	public enum Hints
 	{
 		NONE		(""		, 	0,  -1, null, 													null),
 		INSTRUCTIONS("Intro", 	5,  -1, null, 													"Somewhere nearby is Colossal Cave, where others have found great fortunes in treasure and gold, though it is rumored that some who enter are never seen again. "
@@ -149,11 +149,38 @@ public class AdventMain
 		final int 		cost, threshold;
 		int 			proc;
 		boolean 		given;
+
+		public static Hints[] currentHintData = Hints.values();
 		
 		Hints(String name, int cost, int threshold, String question, String hint)
 		{ 
 			this.name = name; this.cost = cost; this.threshold = threshold; this.question = question; this.hint = hint;
 			this.given = false; this.proc = 0;
+		}
+
+		public static boolean[] getHintGiven()
+		{
+			boolean[] given = new boolean[currentHintData.length];
+			for(int i = 0; i < currentHintData.length; i++)
+			{ given[i] = currentHintData[i].given; }
+			return given;
+		}
+
+		public static int[] getHintProc()
+		{
+			int[] proc = new int[currentHintData.length];
+			for(int i = 0; i < currentHintData.length; i++)
+			{ proc[i] = currentHintData[i].proc; }
+			return proc;
+		}
+
+		public static void loadHints(boolean[] given, int[] proc)
+		{
+			for(int i = 0; i < currentHintData.length; i++)
+			{
+				currentHintData[i].given = given[i];
+				currentHintData[i].proc = proc[i];
+			}
 		}
 	}
 
@@ -235,6 +262,8 @@ public class AdventMain
 		Locations 		location;
 		String[] 		descriptions;
 
+		public static GameObjects[] objects = GameObjects.values();
+
 		GameObjects()
 		{ this.mobile = false; this.location = Locations.THEVOID; this.descriptions = null; }
 		
@@ -257,9 +286,12 @@ public class AdventMain
 			{ locations[i] = GameObjects.values()[i].location; }
 			return locations;
 		}
-		
+
 		public static void loadLocations(Locations[] locations)
-		{ for(int i = 0; i < GameObjects.values().length; i++) { GameObjects.values()[i].location = locations[i]; } }
+		{
+			for(int i = 0; i < GameObjects.values().length; i++)
+			{ GameObjects.values()[i].location = locations[i]; }
+		}
 
 		static String getItemDescription(Locations location, GameObjects object)
 		{
@@ -697,15 +729,14 @@ public class AdventMain
 
 		CRACK(), NECK(), LOSE(), CANT(), CLIMB(), CHECK(), SNAKED(), THRU(), DUCK(), SEWER(), UPNOUT(), DIDIT(),
 		REMARK();
-		
-		static Locations[] 	locate = Locations.values();
-		
-		final String 		title;
-		final String 		shortDescription;
-		final String 		longDescription;
-		final boolean 		hasWater;
 
-		int 					visits = 0;
+		static Locations[] locate = Locations.values();
+		int visits = 0;
+
+		final String  title;
+		final String  shortDescription;
+		final String  longDescription;
+		final boolean hasWater;
 
 		private Locations()
 		{ this.title = AdventMain.Empty;this.shortDescription = AdventMain.Empty;this.longDescription = AdventMain.Empty;this.hasWater = false; }
@@ -731,8 +762,6 @@ public class AdventMain
 		boolean outsideCave(Locations here)
 		{ return (here.ordinal() > INHAND.ordinal() && here.ordinal() < INSIDE.ordinal()); }
 		
-		int getOrdinal(Locations here){ return here.ordinal(); }
-		
 		boolean dontNeedLamp(Locations here)
 		{ return (outside(here)||here == VIEW||here == NEEND||here == SWEND||here == PROOM); }
 		
@@ -740,7 +769,7 @@ public class AdventMain
 		{
 			return (!(here.longDescription.equals(AdventMain.Empty)) && ((brief == 0 && here.visits % 5 == 0) || (brief == 2) || (here.visits == 0))) ? here.longDescription : here.shortDescription;
 		}
-		
+
 		public static int[] getVisitsArray()
 		{
 			int[] visitsArray = new int[locate.length];
@@ -748,7 +777,7 @@ public class AdventMain
 			{ visitsArray[i] = locate[i].visits; }
 			return visitsArray;
 		}
-		
+
 		public static void loadVisits(int[] visits)
 		{
 			for(int i = 0; i < locate.length; i++)
