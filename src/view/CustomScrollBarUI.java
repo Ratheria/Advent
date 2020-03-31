@@ -9,7 +9,7 @@ import javax.swing.LookAndFeel;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 
 
-public class NewScrollBarUI extends BasicScrollBarUI
+public class CustomScrollBarUI extends BasicScrollBarUI
 {
 	@Override
 	public void configureScrollBarColors()

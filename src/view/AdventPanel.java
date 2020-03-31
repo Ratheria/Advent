@@ -18,9 +18,6 @@ import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import java.awt.Color;
 import java.awt.Font;
-import java.io.*;
-import java.net.URL;
-import java.net.URLConnection;
 import javax.swing.border.LineBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.DefaultCaret;
@@ -67,7 +64,7 @@ public class AdventPanel extends JPanel
 		inputField.requestFocusInWindow();
 		displayCaret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 		UIManager.put("ScrollBarUI", "view.ScrollBarUI");
-		scrollBar.setUI(new NewScrollBarUI());
+		scrollBar.setUI(new CustomScrollBarUI());
 		inputField.requestFocusInWindow();
 	}
 

@@ -7,6 +7,8 @@ package view;
 import javax.swing.JFrame;
 import controller.AdventGame;
 
+import java.awt.*;
+
 public class AdventureFrame extends JFrame 
 {
 	private static final long serialVersionUID = 1L;
@@ -19,6 +21,7 @@ public class AdventureFrame extends JFrame
 		this.setTitle("Adventure!");
 		setContentPane(panel);
 		setSize(850, 750);
+		setMinimumSize(new Dimension(550, 400));
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
