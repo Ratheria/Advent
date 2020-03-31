@@ -49,7 +49,7 @@ public class AdventGame implements Serializable
 			pirate			, movesWOEncounter	, deadDwarves	, dwarvesLeft        	,
 			stateOfThePlant	, stateOfTheBottle	,
 
-			fatality				, 	/* default, pit, dwarf */
+			fatality				, 	/* default, pit, dwarf, collapse */
 			dwarfFlag				,	/* nothing, reached hall no dwarf, met dwarf no knives, knife misses, knife hit .095, .190, .285 */
 			dwarfPresent			,   /* none, new, current, old */
 			stateOfTheTroll			,   /* there, hidden, dead, can pass */
@@ -145,7 +145,7 @@ public class AdventGame implements Serializable
 				case RESURRECT:
 					increaseTurns = false;
 					if(isYesNoAnswer == 2) { over = true; }
-					else { output = resurrection(); }
+					else { output = AdventMain.RES_MESSAGE[lives] + (lives > 0 ? AdventMain.Locations.getDescription(currentLocation, brief) + AdventMain.GameObjects.listItemsHere(currentLocation) : ""); }
 					break;
 					
 				case QUIT: case SCOREQUIT:
@@ -269,11 +269,11 @@ public class AdventGame implements Serializable
 						place(object, Locations.DEAD2);
 					}
 				}
-				output += holdingTreasure ?
-						  "\n\nOut from the shadows behind you pounces a bearded pirate!\n\"Har, har,\" he chortles, \"I'll just take all this booty and hide it away with me chest deep in the maze!\""
-                                  + "\nHe snatches your treasure and vanishes into the gloom." :
-						  "\n\nThere are faint rustling noises from the darkness behind you. As you turn toward them, the beam of your lamp falls across a bearded pirate. He is carrying a large chest."
-                                  + "\n\"Shiver me timbers!\" he cries, \"I've been spotted! I'd best hie meself off to the maze to hide me chest!\"\nWith that, he vanishes into the gloom." ;
+				output += holdingTreasure
+				? "\n\nOut from the shadows behind you pounces a bearded pirate!\n\"Har, har,\" he chortles, \"I'll just take all this booty and hide it away with me chest deep in the maze!"
+				+ "\"\nHe snatches your treasure and vanishes into the gloom."
+				: "\n\nThere are faint rustling noises from the darkness behind you. As you turn toward them, the beam of your lamp falls across a bearded pirate. He is carrying a large chest."
+				+ "\n\"Shiver me timbers!\" he cries, \"I've been spotted! I'd best hie meself off to the maze to hide me chest!\"\nWith that, he vanishes into the gloom." ;
 			}
 		}
 		if(increaseTurns)
@@ -1608,12 +1608,13 @@ public class AdventGame implements Serializable
 	private String attemptMovement(String input)
 	{
 		input = AdventMain.truncate.apply(input);
-		if(!AdventMain.KnownWords.containsKey(input))
+		var word = AdventMain.KnownWords.getOrDefault(input, GameObjects.NOTHING);
+		if(!(word instanceof Movement))
 		{
 			increaseTurns = false;
 			return "You can not do that.";
 		}
-		return attemptMovement((Movement) AdventMain.KnownWords.get(input));
+		return attemptMovement((Movement) word);
 	}
 	
 	private String attemptMovement(Movement destination)
@@ -1621,288 +1622,182 @@ public class AdventGame implements Serializable
 		String output = "";
 		locationChange = true;
 		
-		Locations locationResult = currentLocation.moveTo(destination, currentLocation);
+		Locations locationResult = Locations.moveTo(destination, currentLocation);
 		
-		if(caveIsClosed && locationResult != Locations.THEVOID && (locationResult.compareTo(Locations.THEVOID) < 10))
+		if(justCollapsed)
 		{
-			output = "A mysterious recorded voice groans into life and announces: \n\t\"This exit is closed. Please leave via main office.\"";
-			increaseTurns = false;
-		}
-		else if(justCollapsed)
-		{
-			setLocation(locationResult);
-			output = "Just as you reach the other side, the bridge buckles beneath the weight of the bear, who was still following you around. " +
-                    "You scrabble desperately for support, but the bridge collapses you stumble back and fall into the chasm.";
 			playerIsDead = true;
 			playerJustDied = true;
 			justCollapsed = false;
-			int neordinal = Locations.NESIDE.ordinal();
-			if(GameObjects.CHAIN.location.ordinal() >= neordinal)
-			{
-				lostTreasures++;
-				previousLocation = currentLocation;
-			}
-			if(GameObjects.SPICES.location.ordinal() >= neordinal)
-			{
-				lostTreasures++;
-				previousLocation = currentLocation;
-			}
-		}
-		else if(locationResult.equals(Locations.THEVOID))
-		{
-			if(destination.equals(Movement.XYZZY) || destination.equals(Movement.PLOVER) || destination.equals(Movement.PLUGH))
-			{
-				output = AdventMain.NOTHING;
-				output = output + "\n" + getDescription(currentLocation, brief);
-				increaseTurns = false;
-			}
-			else if(!canISee(currentLocation))
-			{
-				output = pitchDark(output);
-				increaseTurns = false;
-			}
-			else if(destination.equals(Movement.NORTH) || destination.equals(Movement.SOUTH) || destination.equals(Movement.EAST) || destination.equals(Movement.WEST) ||
-					destination.equals(Movement.NORTHEAST) || destination.equals(Movement.NORTHWEST) || destination.equals(Movement.SOUTHEAST) || destination.equals(Movement.SOUTHWEST))
-			{
-				increaseTurns = false;
-				output = "There are no exits in that direction.\n";
-				output = output + getDescription(currentLocation, brief);
-			}
-			else
-			{
-				output = "I don't know how to apply that word here.\n";
-				output = output + getDescription(currentLocation, brief);
-				increaseTurns = false;
-			}
-		}
-		else if(locationResult.equals(Locations.CRACK))
-		{
-			output = "That crack is far too small for you to follow.";
-			increaseTurns = false;
-		}
-		else if(locationResult.equals(Locations.NECK))
-		{
-			output = "You are at the bottom of the pit with a broken neck.";
-			increaseTurns = false;
-			playerIsDead = true;
-			playerJustDied = true;
-			fatality = 1;
-		}
-		else if(locationResult.equals(Locations.LOSE))
-		{
-			output = "You didn't make it.";
-			increaseTurns = false;
-			playerIsDead = true;
-			playerJustDied = true;
-			fatality = 1;
-		}
-		else if(locationResult.equals(Locations.CANT))
-		{
-			output = "The dome is unclimbable.";
-			increaseTurns = false;
-		}
-		else if(locationResult.equals(Locations.CLIMB))
-		{
-			setLocation(Locations.NARROW);
-			output = "You clamber up the plant and scurry through the hole at the top.\n" + getDescription(currentLocation, brief);
-		}
-		else if(locationResult.equals(Locations.CHECK))
-		{
-			if(stateOfThePlant == 1)
-			{
-				setLocation(Locations.WEST2PIT);
-				output = "You have climbed up the plant and out of the pit.\n" + getDescription(currentLocation, brief);
-			}
-			else
-			{
-				output = "There is nothing here to climb. Use \"UP\" or \"OUT\" to leave the pit.";
-				increaseTurns = false;
-			}
-		}
-		else if(locationResult.equals(Locations.SNAKED))
-		{
-			output = "You can't get by the snake.";
-			increaseTurns = false;
-		}
-		else if(locationResult.equals(Locations.THRU))
-		{
-			setLocation(Locations.WESTMIST);
-			output = "You have crawled through a very low wide passage parallel to and north of the Hall of Mists.\n" + getDescription(currentLocation, brief);
-		}
-		else if(locationResult.equals(Locations.DUCK))
-		{
-			setLocation(Locations.WESTFISSURE);
-			output = "You have crawled through a very low wide passage parallel to and north of the Hall of Mists.\n" + getDescription(currentLocation, brief);
-		}
-		else if(locationResult.equals(Locations.SEWER))
-		{
-			output = "The stream flows out through a pair of 1-foot-diameter sewer pipes.\n\nIt would be advisable to use the exit.";
-			increaseTurns = false;
-		}
-		else if(locationResult.equals(Locations.UPNOUT))
-		{
-			output = "There is nothing here to climb. Use \"UP\" or \"OUT\" to leave the pit.";
-			increaseTurns = false;
-		}
-		else if(locationResult.equals(Locations.DIDIT))
-		{
-			setLocation(Locations.WEST2PIT);
-			output = "You have climbed up the plant and out of the pit.\n" + getDescription(currentLocation, brief);
-		}
-		else if(locationResult.equals(Locations.REMARK))
-		{
-			if(currentLocation.equals(Locations.SLIT) || currentLocation.equals(Locations.WET))
-			{
-				output = "You can't fit through a two-inch slit!";
-				increaseTurns = false;
-			}
-			else if(currentLocation.equals(Locations.INSIDE) || currentLocation.equals(Locations.OUTSIDE) || currentLocation.equals(Locations.DEBRIS) ||
-                    currentLocation.equals(Locations.AWKWARD) || currentLocation.equals(Locations.BIRD) || currentLocation.equals(Locations.SMALLPIT))
-			{
-				output = "You can't go through a locked steel grate!";
-				increaseTurns = false;
-			}
-			else if((currentLocation.equals(Locations.SWSIDE) || currentLocation.equals(Locations.NESIDE)) && destination != Movement.JUMP)
-			{
-				increaseTurns = false;
-				//System.out.println("\ntroll: " + stateOfTheTroll);
-				if(stateOfTheTroll == 0){ output = "The troll refuses to let you cross."; }
-				else if(stateOfTheTroll == 1)
-				{
-					output = "The troll steps out from beneath the bridge and blocks your way.";
-					stateOfTheTroll = 0;
-					voidObject(GameObjects.TROLL2);
-					voidObject(GameObjects.TROLL2_);
-					place(GameObjects.TROLL, Locations.SWSIDE);
-					place(GameObjects.TROLL_, Locations.NESIDE);
-				}
-				else
-				{ output = "There is no longer any way across the chasm."; }
-			}
-			else if(currentLocation.equals(Locations.NESIDE) || currentLocation.equals(Locations.SWSIDE) || currentLocation.equals(Locations.EASTFISSURE) || currentLocation.equals(Locations.WESTFISSURE))
-			{
-				increaseTurns = false;
-				if(destination.equals(Movement.JUMP))
-				{ output = "I respectfully suggest that you go across the bridge instead of jumping."; }
-				else
-				{ output = "There is no way to cross the fissure."; }
-			}
-			else if(currentLocation.equals(Locations.HALLOFMOUNTAINKING))
-			{
-				output = "You can't get by the snake.";
-				increaseTurns = false;
-			}
-			else if(currentLocation.equals(Locations.SHELL))
-			{
-				increaseTurns = false;
-				if(isInHand(GameObjects.CLAM))
-				{ output = "You can't fit this five-foot clam through that little passage!"; }
-				else
-				{ output = "You can't fit this five-foot oyster through that little passage!"; }
-			}
-			else if(currentLocation.equals(Locations.WITT)&&destination.equals(Movement.WEST))
-			{ output = "You have crawled around in some little holes and found your way blocked by a recent cave-in.\nYou are now back in the main passage."; }
-			else if(currentLocation.equals(Locations.WITT) || currentLocation.equals(Locations.BEDQUILT) || currentLocation.equals(Locations.CHEESE))
-			{ output = "You have crawled around in some little holes and wound up back in the main passage."; }
-			else if(currentLocation.equals(Locations.IMMENSE))
-			{
-				output = "The door is extremely rusty and refuses to open.";
-				increaseTurns = false;
-			}
-			else if(currentLocation.equals(Locations.SCAN1)||currentLocation.equals(Locations.SCAN3))
-			{
-				output = "That dragon looks rather nasty. You'd best not try to get by.";
-				increaseTurns = false;
-			}
-			else if(currentLocation.equals(Locations.VIEW))
-			{
-				output = "Don't be ridiculous!";
-				increaseTurns = false;
-			}
-			else if(currentLocation.equals(Locations.PROOM) || currentLocation.equals(Locations.DROOM) || currentLocation.equals(Locations.ALCOVE))
-			{
-				output = "Something you are carrying won't fit through the tunnel with you. You'd best take inventory and drop something.";
-				increaseTurns = false;
-			}
-			else
-			{
-				output = "You can not do that.";
-				increaseTurns = false;
-			}
+			fatality = 3;
 		}
 		else
 		{
-			if(caveIsClosing && currentLocation.outsideCave(locationResult))
+			switch (locationResult)
 			{
-				if(!extraMovesForPanic)
-				{
-					clock2 = 15;
-					extraMovesForPanic = true;
-					output = "A mysterious recorded voice groans into life and announces: \n\t\"This exit is closed. Please leave via main office.\"";
-				}
-			}
-			boolean follow = false;
-			if(dwarfPresent == 2)
-			{
-				if(justBlocked)
-				{
-					justBlocked = false;
-					if(locationResult.critters(locationResult))
-					{
-						follow = true;
-						dwarfPresent = 1;
-					}
-				}
-				else
-				{ wayIsBlocked = true; }
-			}
+				case THEVOID:
+					if(destination == Movement.XYZZY || destination == Movement.PLOVER || destination == Movement.PLUGH)
+					{ output = AdventMain.NOTHING; }
+					else if(!canISee(currentLocation))
+					{ output = pitchDark(output); increaseTurns = false; }
+					else if(destination == Movement.UP || destination == Movement.DOWN
+							|| (destination.ordinal() >= Movement.EAST.ordinal() && destination.ordinal() <= Movement.NORTHWEST.ordinal()))
+					{ output = "There are no exits in that direction.\n" + getDescription(currentLocation, brief); increaseTurns = false; }
+					else
+					{ output = "I don't know how to apply that word here.\n"; increaseTurns = false; }
+					break;
 
-			if(wayIsBlocked)
-			{
-				battleUpdate = true;
-				locationChange = false;
-				output = "A little dwarf with a big knife blocks your way.";
-				wayIsBlocked = false;
-				justBlocked = true;
-			}
-			else
-			{
-				setLocation(locationResult);
-				if(!canISee(currentLocation)){ output = pitchDark(output); }
-				else
-				{
-					//System.out.println("d " + dwarves);
-					if(currentLocation.critters(currentLocation))
+				case CLIMB :
+					setLocation(Locations.NARROW);
+					output = "You clamber up the plant and scurry through the hole at the top.\n" + getDescription(currentLocation, brief);
+					break;
+
+				case CHECK :
+					if(stateOfThePlant == 1)
 					{
-						double chance = AdventMain.generate();
-						if(pirate == 0)
+						setLocation(Locations.WEST2PIT);
+						output = "You have climbed up the plant and out of the pit.\n" + getDescription(currentLocation, brief);
+					}
+					else
+					{
+						output = "There is nothing here to climb." + (currentLocation == Locations.WESTPIT ? " Use \"UP\" or \"OUT\" to leave the pit." : "");
+						increaseTurns = false;
+					}
+					break;
+
+				case CRACK : output = "That crack is far too small for you to follow."; increaseTurns = false; break;
+				case NECK  : output = "You are at the bottom of the pit with a broken neck."; increaseTurns = false; playerIsDead = true; playerJustDied = true; break;
+				case LOSE  : output = "You didn't make it."; increaseTurns = false; playerIsDead = true; playerJustDied = true; break;
+				case CANT  : output = "The dome is unclimbable."; increaseTurns = false; break;
+				case THRU  : setLocation(Locations.WESTMIST); output = AdventMain.HOM_PASSAGE + getDescription(currentLocation, brief); break;
+				case DUCK  : setLocation(Locations.WESTFISSURE); output = AdventMain.HOM_PASSAGE + getDescription(currentLocation, brief); break;
+				case SEWER : output = "The stream flows out through a pair of 1-foot-diameter sewer pipes.\n\nIt would be advisable to use the exit."; increaseTurns = false; break;
+
+				case REMARK:
+					switch (currentLocation)
+					{
+						case SHELL:
+							output = "You can't fit this five-foot " + (isInHand(GameObjects.CLAM) ? "clam" : "oyster") + " through that little passage!";
+							increaseTurns = false;
+							break;
+
+						case PROOM: case DROOM: case ALCOVE:
+							output = "Something you are carrying won't fit through the tunnel with you. You'd best take inventory and drop something.";
+							increaseTurns = false;
+							break;
+
+						case NESIDE: case SWSIDE: case EASTFISSURE: case WESTFISSURE:
+							if(destination.equals(Movement.JUMP))
+							{ output = "I respectfully suggest that you go across the bridge instead of jumping."; }
+							else if(currentLocation == Locations.NESIDE || currentLocation == Locations.SWSIDE)
+							{
+								if(stateOfTheTroll == 0){ output = "The troll refuses to let you cross."; }
+								else if(stateOfTheTroll == 1)
+								{
+									output = "The troll steps out from beneath the bridge and blocks your way.";
+									stateOfTheTroll = 0;
+									voidObject(GameObjects.TROLL2);
+									voidObject(GameObjects.TROLL2_);
+									place(GameObjects.TROLL, Locations.SWSIDE);
+									place(GameObjects.TROLL_, Locations.NESIDE);
+								}
+								else
+								{ output = "There is no longer any way across the chasm."; }
+							}
+							else
+							{ output = "There is no way to cross the fissure."; }
+							increaseTurns = false;
+							break;
+
+						case WITT: case BEDQUILT: case CHEESE:
+							output = "You have crawled around in some little holes and "
+							       + (currentLocation == Locations.WITT && destination == Movement.WEST
+							       ? "found your way blocked by a recent cave-in.\nYou are now back in the main passage." : "wound up back in the main passage.");
+							break;
+
+						case SLIT: case WET: output = "You can't fit through a two-inch slit!"; increaseTurns = false; break;
+						case INSIDE: case OUTSIDE: output = "You can't go through a locked steel grate!"; increaseTurns = false; break;
+						case HALLOFMOUNTAINKING: output = "You can't get by the snake."; increaseTurns = false;	break;
+						case IMMENSE: output = "The door is extremely rusty and refuses to open."; increaseTurns = false; break;
+						case SCAN1: case SCAN3: output = "That dragon looks rather nasty. You'd best not try to get by."; increaseTurns = false; break;
+						case VIEW: output = "Don't be ridiculous!"; increaseTurns = false; break;
+						default: output = "You can not do that."; increaseTurns = false; break;
+					}
+
+				default:
+					if(caveIsClosing && Locations.outsideCave(locationResult))
+					{
+						if(!extraMovesForPanic)
+						{ clock2 = 15; extraMovesForPanic = true; }
+						increaseTurns = false;
+						output = "A mysterious recorded voice groans into life and announces: \n\t\"This exit is closed. Please leave via main office.\"";
+					}
+
+					boolean follow = false;
+					if(dwarfPresent == 2)
+					{
+						if(justBlocked)
 						{
-							movesWOEncounter++;
-							double likely = (movesWOEncounter * 10 / 8.0)/8.0;
-							if(chance * 100 <= likely){ pirate = 1; }
-							//System.out.println("likely " + likely + "\npirate " + pirate);
+							justBlocked = false;
+							if(locationResult.critters(locationResult))
+							{
+								follow = true;
+								dwarfPresent = 1;
+							}
 						}
-						chance = AdventMain.generate();
-						if(dwarvesAllowed && dwarfFlag > 0 && dwarvesLeft > 0 && !follow)
+						else
+						{ wayIsBlocked = true; }
+					}
+
+					if(wayIsBlocked)
+					{
+						battleUpdate = true;
+						locationChange = false;
+						output = "A little dwarf with a big knife blocks your way.";
+						wayIsBlocked = false;
+						justBlocked = true;
+					}
+					else
+					{
+						setLocation(locationResult);
+						if(!canISee(currentLocation)){ output = pitchDark(output); }
+						else
 						{
-							double encounter = (dwarvesLeft * 1000.00)/50.00;
-							if(chance * 1000 <= encounter){ dwarfPresent = 1; }
-							System.out.println("encounter " + encounter + "\nchance " + chance * 1000);
+							//System.out.println("d " + dwarves);
+							if(currentLocation.critters(currentLocation))
+							{
+								double chance = AdventMain.generate();
+								if(pirate == 0)
+								{
+									movesWOEncounter++;
+									double likely = (movesWOEncounter * 10 / 8.0)/8.0;
+									if(chance * 100 <= likely){ pirate = 1; }
+									//System.out.println("likely " + likely + "\npirate " + pirate);
+								}
+								chance = AdventMain.generate();
+								if(dwarvesAllowed && dwarfFlag > 0 && dwarvesLeft > 0 && !follow)
+								{
+									double encounter = (dwarvesLeft * 1000.00)/50.00;
+									if(chance * 1000 <= encounter){ dwarfPresent = 1; }
+									System.out.println("encounter " + encounter + "\nchance " + chance * 1000);
+								}
+							}
+							output = getDescription(currentLocation, brief);
+							if(stateOfTheBear == 2){ output += "\n\tYou are being followed by a very large, tame bear."; }
+							if(follow){ drop(GameObjects.DWARF); }
+							if(currentLocation.equals(Locations.Y2))
+							{
+								double chance = AdventMain.generate();
+								if(chance > .74){ output = output + "\n\nA hollow voice says \"PLUGH\""; }
+							}
 						}
 					}
-					output = getDescription(currentLocation, brief);
-					if(stateOfTheBear == 2){ output += "\n\tYou are being followed by a very large, tame bear."; }
-					if(follow){ drop(GameObjects.DWARF); }
-					if(currentLocation.equals(Locations.Y2))
-					{
-						double chance = AdventMain.generate();
-						if(chance > .74){ output = output + "\n\nA hollow voice says \"PLUGH\""; }
-					}
-				}
+					break;
 			}
-			if(relocate)
-			{ place(GameObjects.EMERALD, Locations.PROOM); relocate = false; }
 		}
+
+		if(relocate)
+		{ place(GameObjects.EMERALD, Locations.PROOM); relocate = false; }
 		return output;
 	}
 
@@ -1954,19 +1849,19 @@ public class AdventGame implements Serializable
 
 	private String death(String output)
 	{
-		if(fatality == 1)
-		{
-			output = "\n\nYou fell into a pit and broke every bone in your body!";
-			previousLocation = currentLocation;
-		}
-		if(fatality == 2)
-		{ output = "\nThe resulting ruckus has awakened the Dwarves.\nThere are now several threatening little Dwarves in the room with you! Most of them throw knives at you! All of them get you!"; }
+		if(fatality - 1 > -1)
+		{ output = AdventMain.DEATH_MESSAGES[fatality - 1]; }
 		if(isInHand(GameObjects.LAMP))
-		{
-			lampIsLit = false;
-			place(GameObjects.LAMP, Locations.ROAD);
-		}
+		{ place(GameObjects.LAMP, Locations.BUILDING); lampIsLit = false; }
 		attemptAction(ActionWords.DROP, GameObjects.ALL, "SYSTEM");
+		if(fatality == 3)
+		{
+			for(GameObjects object : GameObjects.values())
+			{
+				if(GameObjects.isTreasure(object) && object.location.ordinal() >= Locations.NESIDE.ordinal() && object != GameObjects.EGGS)
+				{ lostTreasures++; }
+			}
+		}
 		currentLocation = Locations.BUILDING;
 		previousLocation = Locations.BUILDING;
 		fatality = 0;
@@ -1978,30 +1873,11 @@ public class AdventGame implements Serializable
 		else
 		{
 			questionAsked = Questions.RESURRECT;
-			currentLocation = Locations.BUILDING;
 			lives--;
-			output += AdventMain.RES_MESSAGES[lives];
+			output += AdventMain.RES_OFFER[lives];
 		}
 		return output;
 	}
-
-    private String resurrection()
-    {
-        switch(lives)
-        {
-            case 2:
-                playerIsDead = false; playerJustDied = false;
-                return "All right. But don't blame me if something goes wr......\n\t---POOF!!---\nYou are engulfed in a cloud of orange smoke. Coughing and gasping, you emerge from the smoke to find....\n\n"
-                        + AdventMain.Locations.getDescription(currentLocation, brief) + AdventMain.GameObjects.listItemsHere(currentLocation);
-            case 1:
-                playerIsDead = false; playerJustDied = false;
-                return "Okay, now where did I put my resurrection kit?....\n\t>POOF!<\nEverything disappears in a dense cloud of orange smoke.\n\n"
-                        + AdventMain.Locations.getDescription(currentLocation, brief) + AdventMain.GameObjects.listItemsHere(currentLocation);
-            default:
-                over = true;
-                return "Okay, if you're so smart, do it yourself! I'm leaving!\n\n";
-        }
-    }
 	
 	private String quit(String output)
 	{

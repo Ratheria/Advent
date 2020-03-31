@@ -28,33 +28,40 @@ public class AdventMain
 	public static AdventureFrame   FRAME;
 	public static GameStateHandler STATE_HANDLER = new GameStateHandler();
 
-	static final String 	Empty           = "",
-							ALIKE_PASSAGES 	= "You are in a maze of twisty little passages, all alike.",
-							ALIKE_T        	= "Maze All Alike",
-							DIFF_T         	= "Maze All Different",
-							SECRET_CANYON  	= "Secret Canyon",
-							DEAD_END       	= "Dead end.",
-							DEAD_END_T     	= "Dead End",
-							OKAY           	= "Okay.",
-							DONT_HAVE      	= "You are not carrying it!",
-							NOTHING        	= "Nothing happens.";
-	static final String[] 	S_MESSAGES		= new String[] {"You are obviously a rank amateur. Better luck next time.",
-															"Your score qualifies you as a novice class adventurer.",
-															"You have now achieved the rating 'Experienced Adventurer'.",
-															"You may now consider yourself a 'Seasoned Adventurer'.",
-															"You have reached 'Junior Master' status.",
-															"Your score puts you in Master Adventurer Class C.",
-															"Your score puts you in Master Adventurer Class B.",
-															"Your score puts you in Master Adventurer Class A.",
-															"All of Adventuredom gives tribute to you, Adventure Grandmaster!" },
-	                        RES_MESSAGES    = new String[] {"\n\nNow you've really done it! I'm out of orange smoke! You don't expect me to do a decent reincarnation without any orange smoke, do you?",
-									                        "\n\nYou clumsy oaf, you've done it again! I don't know how long I can keep this up. Do you want me to try reincarnating you again?",
-									                        "\n\nOh dear, you seem to have gotten yourself killed. I might be able to help you out, but I've never really done this before. Do you want me to try to reincarnate you?"},
-			   				BATTERY_WARNING = new String[] {". You'd best start wrapping this up, unless you can find some fresh batteries. I seem to recall that there's a vending machine in the maze. Bring some coins with you.",
-															". You'd best go back for those batteries.",
-															", and you're out of spare batteries. You'd best start wrapping this up."},
-	                        FEE_FIE_FOE 	= new String[] {"fee", "fie", "foe", "foo", "fum"};
-	static final int[] 		SCORES 			= new int[] {35, 100, 130, 200, 250, 300, 330, 349, 350};
+	static final String 	Empty           =  "",
+							ALIKE_PASSAGES 	=  "You are in a maze of twisty little passages, all alike.",
+							ALIKE_T        	=  "Maze All Alike",
+							DIFF_T         	=  "Maze All Different",
+							SECRET_CANYON  	=  "Secret Canyon",
+							DEAD_END       	=  "Dead end.",
+							DEAD_END_T     	=  "Dead End",
+							OKAY           	=  "Okay.",
+							DONT_HAVE      	=  "You are not carrying it!",
+							NOTHING        	=  "Nothing happens.",
+							HOM_PASSAGE		=  "You have crawled through a very low wide passage parallel to and north of the Hall of Mists.\n";
+	static final String[] 	S_MESSAGES      = {"You are obviously a rank amateur. Better luck next time.",
+											   "Your score qualifies you as a novice class adventurer.",
+											   "You have now achieved the rating 'Experienced Adventurer'.",
+											   "You may now consider yourself a 'Seasoned Adventurer'.",
+											   "You have reached 'Junior Master' status.",
+											   "Your score puts you in Master Adventurer Class C.",
+											   "Your score puts you in Master Adventurer Class B.",
+											   "Your score puts you in Master Adventurer Class A.",
+											   "All of Adventuredom gives tribute to you, Adventure Grandmaster!" },
+	                        RES_OFFER       = {"\n\nNow you've really done it! I'm out of orange smoke! You don't expect me to do a decent reincarnation without any orange smoke, do you?",
+											   "\n\nYou clumsy oaf, you've done it again! I don't know how long I can keep this up. Do you want me to try reincarnating you again?",
+											   "\n\nOh dear, you seem to have gotten yourself killed. I might be able to help you out, but I've never really done this before. Do you want me to try to reincarnate you?"},
+			                RES_MESSAGE     = {"Okay, if you're so smart, do it yourself! I'm leaving!\n\n",
+											   "Okay, now where did I put my resurrection kit?....\n\t>POOF!<\nEverything disappears in a dense cloud of orange smoke.\n\n",
+											   "All right. But don't blame me if something goes wr......\n\t---POOF!!---\nYou are engulfed in a cloud of orange smoke. Coughing and gasping, you emerge from the smoke to find....\n\n"},
+			   				DEATH_MESSAGES  = {"\n\nYou fell into a pit and broke every bone in your body!",
+											   "\nThe resulting ruckus has awakened the Dwarves.\nThere are now several threatening little Dwarves in the room with you! Most of them throw knives at you! All of them get you!",
+											   "Just as you reach the other side, the bridge buckles beneath the weight of the bear, who was still following you around. You scrabble desperately for support, but the bridge collapses you stumble back and fall into the chasm."},
+	                        BATTERY_WARNING = {". You'd best start wrapping this up, unless you can find some fresh batteries. I seem to recall that there's a vending machine in the maze. Bring some coins with you.",
+											   ". You'd best go back for those batteries.",
+											   ", and you're out of spare batteries. You'd best start wrapping this up."},
+	                        FEE_FIE_FOE     = {"fee", "fie", "foe", "foo", "fum"};
+	static final int[] 		SCORES 			= {35, 100, 130, 200, 250, 300, 330, 349, 350};
 
 	static IntFunction<String> 		offerHintMessage	= cost	->	"\nI am prepared to give you a hint, but it will cost you " + cost + " points.\nDo you want the hint?";
 	static Function<String, String>	truncate 			= s		->	s.substring(0, Math.min(s.length(), 5));
@@ -200,7 +207,7 @@ public class AdventMain
 	{
 		ROAD, HILL, ENTER, UPSTREAM, DOWNSTREAM, FOREST, FORWARD, BACK, VALLEY, STAIRS, OUT, BUILDING, GULLY, STREAM, ROCK, BED, CRAWL, 
 		COBBLE, IN, SURFACE, NOWHERE, DARK, PASSAGE, LOW, CANYON, AWKWARD, GIANT, VIEW, UP, DOWN, PIT, OUTDOORS, CRACK, STEPS, DOME, 
-		LEFT, RIGHT, HALL, JUMP, BARREN, OVER, ACROSS, EAST, WEST, NORTH, SOUTH, NORTHEAST, SOUTHEAST, SOUTHWEST,NORTHWEST, 
+		LEFT, RIGHT, HALL, JUMP, BARREN, OVER, ACROSS, EAST, WEST, NORTH, SOUTH, NORTHEAST, SOUTHEAST, SOUTHWEST, NORTHWEST,
 		DEBRIS, HOLE, WALL, BROKEN, Y2, CLIMB, FLOOR, ROOM, SLIT, SLAB, XYZZY, DEPRESSION, ENTRANCE, PLUGH, SECRET, CAVE, 
 		CROSS, BEDQUILT, PLOVER, ORIENTAL, CAVERN, SHELL, RESERVOIR, OFFICE, FORK;
 	}
@@ -734,7 +741,7 @@ public class AdventMain
 		SWEND	(	"South West End",			"You're at SW end.",					"You are at the southwest end of the repository. To one side is a pit full of fierce green snakes. On the other side is a row of small wicker cages, each of which contains a little sulking bird. In one corner is a bundle of black rods with rusty marks on their ends. "
 																						+ "A large number of velvet pillows are scattered about on the floor. A vast mirror stretches off to the northeast. At your feet is a large steel grate, next to which is a sign that reads, \n\t\"TREASURE VAULT. KEYS IN MAIN OFFICE.\""	),
 
-		CRACK(), NECK(), LOSE(), CANT(), CLIMB(), CHECK(), SNAKED(), THRU(), DUCK(), SEWER(), UPNOUT(), DIDIT(),
+		CRACK(), NECK(), LOSE(), CANT(), CLIMB(), CHECK(), SNAKED(), THRU(), DUCK(), SEWER(),
 		REMARK();
 
 		static Locations[] locate = Locations.values();
@@ -766,7 +773,7 @@ public class AdventMain
 		boolean outside(Locations here)
 		{ return (here.ordinal() > INHAND.ordinal() && here.ordinal() < DEBRIS.ordinal()); }
 		
-		boolean outsideCave(Locations here)
+		static boolean outsideCave(Locations here)
 		{ return (here.ordinal() > INHAND.ordinal() && here.ordinal() < INSIDE.ordinal()); }
 		
 		boolean dontNeedLamp(Locations here)
@@ -801,7 +808,7 @@ public class AdventMain
 			thing.location = here;
 		}
 		
-		Locations moveTo(Movement destination, Locations here)
+		static Locations moveTo(Movement destination, Locations here)
 		{
 			AdventGame game = AdventMain.ADVENT;
 			double chance = AdventMain.generate();
@@ -1924,13 +1931,13 @@ public class AdventMain
 			return next;
 		}
 
-		private Locations atWittsEnd()
+		private static Locations atWittsEnd()
 		{ return ( AdventMain.generate() < .06 ? ANTE : REMARK ); }
 		
-		private Locations bridgeRemark(boolean onEastSide)
+		private static Locations bridgeRemark(boolean onEastSide)
 		{ return ( AdventMain.ADVENT.crystalBridge ? ( onEastSide ? WESTFISSURE : EASTFISSURE ) : REMARK ); }
 		
-		private Locations throughGrate(boolean goingIn)
+		private static Locations throughGrate(boolean goingIn)
 		{ return ( AdventMain.ADVENT.grateIsUnlocked ? ( goingIn ? INSIDE : OUTSIDE ) : REMARK ) ; }
 	}
 }
