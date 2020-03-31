@@ -24,15 +24,14 @@ public class AdventGame implements Serializable
 {
 	private static final long serialVersionUID = 216265234662749493L;
 
-	private	boolean 	textFieldEditable = true,
-					 	dwarvesAllowed;
+	private	boolean dwarvesAllowed = true;
 
 	EnumMap<GameObjects, Boolean> found = new EnumMap<>(GameObjects.class);
 
 	String 		lastInput;
 	Locations 	currentLocation, previousLocation, locationAtStartOfAction;
 	
-	boolean	over			, noMore		, quit,
+	boolean	over			, quit,
 			relocate		, collapse		, justCollapsed			, playerIsDead		, playerJustDied	,
 			grateIsUnlocked	, crystalBridge	, lampIsLit				, snakeInHotMK		, doorHasBeenOiled	,
 			dragonIsAlive	, birdInCage	, bearAxe				, vaseIsBroken		, goldInInventory	,
@@ -47,7 +46,7 @@ public class AdventGame implements Serializable
 	int 	brief, score, bonus, tally, turns, lamp;
 
 	byte 	clock1			, clock2			, itemsInHand	, lives, lostTreasures	,
-			pirate			, movesWOEncounter	, deadDwarves	, dwarvesLeft	,
+			pirate			, movesWOEncounter	, deadDwarves	, dwarvesLeft        	,
 			stateOfThePlant	, stateOfTheBottle	,
 
 			fatality				, 	/* default, pit, dwarf */
@@ -76,13 +75,13 @@ public class AdventGame implements Serializable
 
 		lastInput 		= AdventMain.Empty;
 
-		over 			= false; 	noMore 					= false; 	quit 					= false;
-		relocate 		= false; 	collapse 				= false; 	justCollapsed 			= false; 	playerIsDead 			= false; 	playerJustDied 		= false;
-		grateIsUnlocked	= false; 	crystalBridge 			= false; 	lampIsLit 				= false; 	snakeInHotMK 			= true; 	doorHasBeenOiled 	= false;
-		dragonIsAlive 	= true; 	birdInCage 				= false; 	bearAxe 				= false; 	vaseIsBroken 			= false; 	goldInInventory 	= false;
-		caveIsClosing 	= false; 	caveIsClosed 			= false; 	extraMovesForPanic		= false; 	lowBatteryWarning 		= false;
-		battleUpdate 	= false; 	wayIsBlocked 			= false; 	justBlocked 			= false;
-		locationChange 	= false; 	increaseTurns 			= false; 	wellInCave 				= false;
+		over 			= false; 	quit 			= false;
+		relocate 		= false; 	collapse 		= false; 	justCollapsed 		= false; 	playerIsDead 		= false; 	playerJustDied 		= false;
+		grateIsUnlocked	= false; 	crystalBridge 	= false; 	lampIsLit 			= false; 	snakeInHotMK 		= true; 	doorHasBeenOiled 	= false;
+		dragonIsAlive 	= true; 	birdInCage 		= false; 	bearAxe 			= false; 	vaseIsBroken 		= false; 	goldInInventory 	= false;
+		caveIsClosing 	= false; 	caveIsClosed 	= false; 	extraMovesForPanic	= false; 	lowBatteryWarning 	= false;
+		battleUpdate 	= false; 	wayIsBlocked 	= false; 	justBlocked 		= false;
+		locationChange 	= false; 	increaseTurns	= false; 	wellInCave 			= false;
 
 		actionToAttempt = ActionWords.NOTHING;
 		questionAsked 	= Questions.INSTRUCTIONS;
@@ -108,7 +107,7 @@ public class AdventGame implements Serializable
 		String output = null;
 		increaseTurns = true;
 		locationAtStartOfAction = currentLocation;
-		int answer = askYesNo(input);
+		int isYesNoAnswer = askYesNo(input);
 		
 		input = AdventMain.truncate.apply(input);
 		
@@ -119,7 +118,7 @@ public class AdventGame implements Serializable
 			output = attemptAction(actionToAttempt, word, input);
 			actionToAttempt = ActionWords.NOTHING;
 		}
-		else if(questionAsked.serious && answer == 0)
+		else if(questionAsked.serious && isYesNoAnswer == 0)
 		{
 			output = "Just yes or no, please.";
 			increaseTurns = false;
@@ -133,34 +132,29 @@ public class AdventGame implements Serializable
 			voidObject(GameObjects.DRAGON_); voidObject(GameObjects.RUG_);
 			drop(GameObjects.DRAGON); drop(GameObjects.RUG);
 		}
-		else if(questionAsked != Questions.NONE && answer > 0)
+		else if(questionAsked != Questions.NONE && isYesNoAnswer > 0)
 		{
 			switch(questionAsked)
 			{
 				case INSTRUCTIONS: 
 					output = "";
-					if(answer == 1) { output = giveHint(offeredHint); lamp = 1000; }
+					if(isYesNoAnswer == 1) { output = giveHint(offeredHint); lamp = 1000; }
 					output += AdventMain.Locations.getDescription(Locations.ROAD, brief);
 					break;
 					
 				case RESURRECT:
 					increaseTurns = false;
-					if(answer == 2) { over = true; }
+					if(isYesNoAnswer == 2) { over = true; }
 					else { output = resurrection(); }
-					break;
-				
-				case PLAYAGAIN:
-					if(answer == 1) { setUp(); }
-					else { noMore = true; System.exit(0); }
 					break;
 					
 				case QUIT: case SCOREQUIT:
-					if(answer == 1) { quit = true; over = true; }
+					if(isYesNoAnswer == 1) { quit = true; over = true; }
 					else { output = AdventMain.OKAY; }
 					break;
 					
 				case READBLASTHINT:
-					if(answer == 1) { output = giveHint(offeredHint); Hints.BLAST.proc = 1; }
+					if(isYesNoAnswer == 1) { output = giveHint(offeredHint); Hints.BLAST.proc = 1; }
 					else { output = AdventMain.OKAY; }
 					break;
 					
@@ -168,10 +162,10 @@ public class AdventGame implements Serializable
 			}			
 			resetHintsAndQuestions();
 		}
-		else if(hintToOffer != Hints.NONE && answer > 0)
-		{ output = ( answer == 1 ? offerHint() : AdventMain.OKAY); }
-		else if(offeredHint != Hints.NONE && answer > 0)
-		{ output = ( answer == 1 ? giveHint(offeredHint) : AdventMain.OKAY); }
+		else if(hintToOffer != Hints.NONE && isYesNoAnswer > 0)
+		{ output = ( isYesNoAnswer == 1 ? offerHint() : AdventMain.OKAY); }
+		else if(offeredHint != Hints.NONE && isYesNoAnswer > 0)
+		{ output = ( isYesNoAnswer == 1 ? giveHint(offeredHint) : AdventMain.OKAY); }
 		else if(word == ActionWords.FEEFIE && ((fooMagicWordProgression > 0 || input.equals("fee"))))
 		{ output = attemptAction((ActionWords) word, GameObjects.NOTHING, input); }
 		else
@@ -187,6 +181,8 @@ public class AdventGame implements Serializable
 			{
 				if(objectIsPresent((GameObjects) word))
 				{ output = word == GameObjects.KNIFE ? "The dwarves' knives vanish as they strike the walls of the cave." : "What would you like to do with the " + lastInput + "?" ; }
+				else if (word == GameObjects.WATER || word == GameObjects.OIL)
+				{ output = attemptAction(ActionWords.POUR, word, ""); }
 				else
 				{ output = "I don't see any " + input + "."; }
 				increaseTurns = false;
@@ -215,55 +211,29 @@ public class AdventGame implements Serializable
 			fooMagicWordProgression = 0;
 			resetHintsAndQuestions();
 
-			String input12 = AdventMain.truncate.apply(input1), input22 = AdventMain.truncate.apply(input2);
+			String input1Truncated = AdventMain.truncate.apply(input1), input2Truncated = AdventMain.truncate.apply(input2);
 
-			KnownWord word = AdventMain.KnownWords.getOrDefault(input12, GameObjects.NOTHING),
-					word2 = AdventMain.KnownWords.getOrDefault(input22, GameObjects.NOTHING);
+			KnownWord word  = AdventMain.KnownWords.getOrDefault(input1Truncated, GameObjects.NOTHING),
+					  word2 = AdventMain.KnownWords.getOrDefault(input2Truncated, GameObjects.NOTHING);
 
 			if(word != GameObjects.NOTHING && word2 != GameObjects.NOTHING)
 			{
 				if (objectIsPresent(GameObjects.KNIFE) && (word == GameObjects.KNIFE || word2 == GameObjects.KNIFE))
-				{ output        = "The dwarves' knives vanish as they strike the walls of the cave.";
-				  increaseTurns = false;
-				}
+				{ output = "The dwarves' knives vanish as they strike the walls of the cave."; increaseTurns = false; }
 				else if (word instanceof MessageWords)
 				{ output = ((MessageWords) word).message; }
+				else if (word == Movement.ENTER )
+				{ output = attemptAction(ActionWords.GO, word2, word2 == Movement.STREAM ? "enter stream" : input2Truncated); }
 				else if (word instanceof Movement)
-				{
-					if (word == Movement.ENTER)
-					{
-						if (input22.equals("water") || input22.equals("strea"))
-						{
-							increaseTurns = currentLocation.hasWater;
-							output        = (increaseTurns ? "Your feet are now wet." : "I don't see any water.");
-						}
-						else
-						{ output = attemptAction(ActionWords.GO, word2, input2); }
-					}
-					else
-					{ output = attemptMovement((Movement) word); }
-				}
-				else if (word == GameObjects.WATER && word2 instanceof GameObjects)
-				{ output = attemptAction(ActionWords.POUR, GameObjects.WATER, ""); }
-				else if (word == GameObjects.OIL && word2 instanceof GameObjects)
-				{ output = attemptAction(ActionWords.POUR, GameObjects.OIL, ""); }
+				{ output = attemptMovement((Movement) word); }
+				else if ((word == GameObjects.WATER || word == GameObjects.OIL) && word2 instanceof GameObjects)
+				{ output = attemptAction(ActionWords.POUR, word, ""); }
 				else if (word instanceof ActionWords)
 				{ output = attemptAction((ActionWords) word, word2, input2); }
+				else if (word2 == Movement.ENTER )
+				{ output = attemptAction(ActionWords.GO, word, word == Movement.STREAM ? "enter stream" : input1Truncated); }
 				else if (word2 instanceof Movement)
-				{
-					if (word2 == Movement.ENTER)
-					{
-						if (input12.equals("water") || input12.equals("strea"))
-						{
-							increaseTurns = currentLocation.hasWater;
-							output        = (increaseTurns ? "Your feet are now wet." : "I don't see any water.");
-						}
-						else
-						{ output = attemptAction(ActionWords.GO, word, input1); }
-					}
-					else
-					{ output = attemptMovement((Movement) word2); }
-				}
+				{ output = attemptMovement((Movement) word2); }
 				else if (word2 instanceof ActionWords)
 				{ output = attemptAction((ActionWords) word2, word, input1); }
 			}
@@ -344,10 +314,12 @@ public class AdventGame implements Serializable
 		}
 		battleUpdate = false;
 
-		if(15 - tally == lostTreasures && lamp > 35) { lamp = 35; }
+		if(15 - tally == lostTreasures && lamp > 35)
+		{ lamp = 35; }
 		getCurrentScore();
 
-		if(playerIsDead && playerJustDied && !over) { output += death(output); playerJustDied = false; }
+		if(playerIsDead && playerJustDied && !over)
+		{ output += death(output); playerJustDied = false; }
 		output = over ? quit(output) : output + checkForHints() ;
 
 		goldInInventory = isInHand(GameObjects.GOLD);
@@ -367,7 +339,19 @@ public class AdventGame implements Serializable
 			output = "I don't see any " + alt + ".";
 			increaseTurns = false;
 		}
-		if(other instanceof GameObjects)
+		if(verb == ActionWords.GO)
+		{
+			if(alt.equals(""))
+			{ output = "Where?"; increaseTurns = false; }
+			else if(other == GameObjects.WATER || (other == Movement.STREAM && alt.equals("enter stream")) )
+			{
+				increaseTurns = currentLocation.hasWater;
+				output = (increaseTurns ? "Your feet are now wet." : "I don't see any water.");
+			}
+			else
+			{ output = attemptMovement(alt); }
+		}
+		else if(other instanceof GameObjects)
 		{
 			GameObjects object = (GameObjects) other;
 			switch(verb)
@@ -396,7 +380,7 @@ public class AdventGame implements Serializable
 						{
 							for(GameObjects item : itemsHere)
 							{
-								increaseTurns = true;
+								increaseTurns = !alt.equals("SYSTEM");
 								output += attemptAction(ActionWords.TAKE, item, "") + "\n";
 								if(increaseTurns) { turns++; }
 							}
@@ -584,7 +568,7 @@ public class AdventGame implements Serializable
 							output = "";
 							for(GameObjects item : itemsHere)
 							{
-							    increaseTurns = (!alt.equals("ENDGAME DROP"));
+							    increaseTurns = (!alt.equals("SYSTEM"));
 								output += attemptAction(ActionWords.DROP, item, "") + "\n";
 								if(increaseTurns){ turns++; }
 							}
@@ -836,7 +820,7 @@ public class AdventGame implements Serializable
 								output = "It was already locked.";
 								increaseTurns = false;
 							}
-							else if(stateOfTheChain == 1)
+							else
 							{
 								if(!(currentLocation == Locations.BARR))
 								{
@@ -943,14 +927,6 @@ public class AdventGame implements Serializable
 						 { output = AdventMain.NOTHING; }
 					 }
 					break;
-					
-				case GO:
-					if(alt.equals(""))
-					{ output = "Where?"; increaseTurns = false; }
-					else
-					{ output = attemptMovement(alt); }
-					break;
-					
 				case POUR:
 					if(object == GameObjects.NOTHING || object == GameObjects.BOTTLE)
 					{
@@ -1264,17 +1240,14 @@ public class AdventGame implements Serializable
 								output = "With what? Your bare hands?";
 								questionAsked = Questions.DRAGON;
 							}
-							increaseTurns = false;
 						}
 						else
-						{
-							output = "I don't see any dragon.";
-							increaseTurns = false;
-						}
+						{ output = "I don't see any dragon."; }
+						increaseTurns = false;
 					}
 					else 
 					{
-						if(!objectIsPresent(object) && !(object == GameObjects.NOTHING))
+						if(!objectIsPresent(object))
 						{
 							output = "I don't see any " + alt + ".";
 							increaseTurns = false;
@@ -1622,16 +1595,6 @@ public class AdventGame implements Serializable
 					break;
 			}
 		}
-		else if(verb == ActionWords.GO)
-		{
-			if(alt.equals(""))
-			{
-				output = "Where?";
-				increaseTurns = false;
-			}
-			else
-			{ output = attemptMovement(alt); }
-		}
 		else if(verb == ActionWords.TAKE && other == ActionWords.ABSTAIN)
 		{ output = AdventMain.OKAY; }
 		else
@@ -1644,6 +1607,7 @@ public class AdventGame implements Serializable
 	
 	private String attemptMovement(String input)
 	{
+		input = AdventMain.truncate.apply(input);
 		if(!AdventMain.KnownWords.containsKey(input))
 		{
 			increaseTurns = false;
@@ -2002,7 +1966,7 @@ public class AdventGame implements Serializable
 			lampIsLit = false;
 			place(GameObjects.LAMP, Locations.ROAD);
 		}
-		attemptAction(ActionWords.DROP, GameObjects.ALL, "");
+		attemptAction(ActionWords.DROP, GameObjects.ALL, "SYSTEM");
 		currentLocation = Locations.BUILDING;
 		previousLocation = Locations.BUILDING;
 		fatality = 0;
@@ -2015,19 +1979,8 @@ public class AdventGame implements Serializable
 		{
 			questionAsked = Questions.RESURRECT;
 			currentLocation = Locations.BUILDING;
-			switch(lives)
-			{
-				case 3:
-					output += "\n\nOh dear, you seem to have gotten yourself killed. I might be able to help you out, but I've never really done this before. Do you want me to try to reincarnate you?";
-					break;
-				case 2:
-					output += "\n\nYou clumsy oaf, you've done it again! I don't know how long I can keep this up. Do you want me to try reincarnating you again?";
-					break;
-				default:
-					output += "\n\nNow you've really done it! I'm out of orange smoke! You don't expect me to do a decent reincarnation without any orange smoke, do you?";
-					break;	
-			}
 			lives--;
+			output += AdventMain.RES_MESSAGES[lives];
 		}
 		return output;
 	}
@@ -2038,21 +1991,20 @@ public class AdventGame implements Serializable
         {
             case 2:
                 playerIsDead = false; playerJustDied = false;
-                return "All right. But don't blame me if something goes wr......\n\t---POOF!!---\nYou are engulfed in a cloud of orange smoke. Coughing and gasping, you emerge from the smoke to find....\n"
+                return "All right. But don't blame me if something goes wr......\n\t---POOF!!---\nYou are engulfed in a cloud of orange smoke. Coughing and gasping, you emerge from the smoke to find....\n\n"
                         + AdventMain.Locations.getDescription(currentLocation, brief) + AdventMain.GameObjects.listItemsHere(currentLocation);
             case 1:
                 playerIsDead = false; playerJustDied = false;
-                return "Okay, now where did I put my resurrection kit?....\n\t>POOF!<\nEverything disappears in a dense cloud of orange smoke.\n"
+                return "Okay, now where did I put my resurrection kit?....\n\t>POOF!<\nEverything disappears in a dense cloud of orange smoke.\n\n"
                         + AdventMain.Locations.getDescription(currentLocation, brief) + AdventMain.GameObjects.listItemsHere(currentLocation);
             default:
                 over = true;
-                return "Okay, if you're so smart, do it yourself! I'm leaving!";
+                return "Okay, if you're so smart, do it yourself! I'm leaving!\n\n";
         }
     }
 	
 	private String quit(String output)
 	{
-		textFieldEditable = false;
 		getCurrentScore();
 		if(output == null) { output = ""; }
 		else { output += "\n\n"; }
@@ -2078,8 +2030,8 @@ public class AdventGame implements Serializable
 				{ output += " would be a neat trick!\n\tCongratulations!!"; }
 			}
 		}
-		// TODO: play again option
-		return output;
+
+		return output + "\n\n\n> Press Enter to Play Again <";
 	}
 
 
@@ -2093,8 +2045,8 @@ public class AdventGame implements Serializable
 				   + "\nThen your eyes refocus: you look around and find...\n\n";
 			caveIsClosed = true;
 			bonus = 10;
-			attemptAction(ActionWords.DROP, GameObjects.ALL, "ENDGAME DROP");
-			attemptAction(ActionWords.OFF, GameObjects.NOTHING, "ENDGAME DROP");
+			attemptAction(ActionWords.DROP, GameObjects.ALL, "SYSTEM");
+			attemptAction(ActionWords.OFF, GameObjects.NOTHING, "SYSTEM");
 			currentLocation = Locations.SWEND;
 			drop(GameObjects.GRATE);	drop(GameObjects.SNAKE);	drop(GameObjects.BIRD);		drop(GameObjects.CAGE);
 			drop(GameObjects.ROD2);		drop(GameObjects.PILLOW);	drop(GameObjects.MIRROR);
@@ -2141,15 +2093,9 @@ public class AdventGame implements Serializable
 				stateOfSpareBatteries = 2;
 				lamp = 2500;
 			}
-			else if(lamp < 31 && !lowBatteryWarning && objectIsPresent(GameObjects.LAMP))
+			else if(lamp < 31 && !lowBatteryWarning)
 			{
-				output += "\n\nYour lamp is getting dim";
-				if(stateOfSpareBatteries == 2)
-				{ output += ", and you're out of spare batteries. You'd best start wrapping this up."; }
-				else if(stateOfSpareBatteries == 1)
-				{ output += ". You'd best go back for those batteries."; }
-				else
-				{ output += ". You'd best start wrapping this up, unless you can find some fresh batteries. I seem to recall that there's a vending machine in the maze. Bring some coins with you."; }
+				output += "\n\nYour lamp is getting dim" + AdventMain.BATTERY_WARNING[stateOfSpareBatteries];
 				lowBatteryWarning = true;
 			}
 			else
@@ -2254,7 +2200,7 @@ public class AdventGame implements Serializable
 		if(GameObjects.MAG.location == Locations.WITT){ currentScore++; }
 		for(Hints hint : Hints.values())
 		{ if(hint.given) { currentScore -= hint.cost; } }
-		if(wellInCave){	currentScore += 25;	}
+		if(wellInCave){ currentScore += 25;	}
 		if(caveIsClosed){ currentScore += 25; }
 		if(!quit){ currentScore += 4; }
 		currentScore += bonus;
@@ -2292,7 +2238,7 @@ public class AdventGame implements Serializable
 //  - - - -  Getters  - - - -  //
 
 	public boolean isDead() { return playerIsDead; }
-	public boolean noMore() { return noMore		 ; }
+	public boolean isOver() { return over		 ; }
 	public int getTurns()	{ return turns		 ; }
 	public int getScore() 	{ return (questionAsked == Questions.INSTRUCTIONS ? 0 : score); }
 

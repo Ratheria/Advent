@@ -21,11 +21,7 @@ import controller.AdventMain.Locations;
 public class GameStateHandler 
 {
 	private File dataFile = new File(System.getProperty("user.home") + "/.AdventData");
-	private FileInputStream 	fileReader	 ;
-	private ObjectInputStream 	objectReader ;
-	private FileOutputStream 	fileWriter	 ;
-	private ObjectOutputStream 	objectWriter ;
-	
+
 	public String loadGame(String currentLog)
 	{
 		System.out.println(dataFile.getAbsolutePath());
@@ -39,15 +35,14 @@ public class GameStateHandler
 				+ "Try making a new save and loading that.";
 		try
 		{
-			fileReader = new FileInputStream(dataFile);
-			objectReader = new ObjectInputStream(fileReader);
+			FileInputStream   fileReader   = new FileInputStream(dataFile);
+			ObjectInputStream objectReader = new ObjectInputStream(fileReader);
 			AdventData saveData = (AdventData) objectReader.readObject();
 			objectReader.close();
 			fileReader.close();
 
 			result                      = saveData.log;
 			AdventMain.ADVENT           = saveData.game;
-			AdventMain.FRAME.panel.base = AdventMain.ADVENT;
 			GameObjects.loadLocations(saveData.objectLocations);
 			Hints.loadHints(saveData.hintGiven, saveData.hintProc);
 			Locations.loadVisits(saveData.visits);
@@ -65,8 +60,8 @@ public class GameStateHandler
 		{
 			try
 			{
-			    fileWriter = new FileOutputStream(dataFile);
-			    objectWriter = new ObjectOutputStream(fileWriter);
+				FileOutputStream fileWriter = new FileOutputStream(dataFile);
+				ObjectOutputStream objectWriter = new ObjectOutputStream(fileWriter);
 			    objectWriter.writeObject(new AdventData(logData));
 			    objectWriter.close();
 			    fileWriter.close();

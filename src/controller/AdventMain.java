@@ -47,7 +47,13 @@ public class AdventMain
 															"Your score puts you in Master Adventurer Class B.",
 															"Your score puts you in Master Adventurer Class A.",
 															"All of Adventuredom gives tribute to you, Adventure Grandmaster!" },
-			   				FEE_FIE_FOE 	= new String[] {"fee", "fie", "foe", "foo", "fum"};
+	                        RES_MESSAGES    = new String[] {"\n\nNow you've really done it! I'm out of orange smoke! You don't expect me to do a decent reincarnation without any orange smoke, do you?",
+									                        "\n\nYou clumsy oaf, you've done it again! I don't know how long I can keep this up. Do you want me to try reincarnating you again?",
+									                        "\n\nOh dear, you seem to have gotten yourself killed. I might be able to help you out, but I've never really done this before. Do you want me to try to reincarnate you?"},
+			   				BATTERY_WARNING = new String[] {". You'd best start wrapping this up, unless you can find some fresh batteries. I seem to recall that there's a vending machine in the maze. Bring some coins with you.",
+															". You'd best go back for those batteries.",
+															", and you're out of spare batteries. You'd best start wrapping this up."},
+	                        FEE_FIE_FOE 	= new String[] {"fee", "fie", "foe", "foo", "fum"};
 	static final int[] 		SCORES 			= new int[] {35, 100, 130, 200, 250, 300, 330, 349, 350};
 
 	static IntFunction<String> 		offerHintMessage	= cost	->	"\nI am prepared to give you a hint, but it will cost you " + cost + " points.\nDo you want the hint?";
@@ -74,6 +80,7 @@ public class AdventMain
 				+  norm(" | New Loc : " + (ADVENT.locationAtStartOfAction != ADVENT.currentLocation))
 				+  norm(" | At : " 		+ ADVENT.currentLocation)
 				+  norm(" | Last : " 	+ ADVENT.previousLocation)
+				+  norm(" | Water : " 	+ ADVENT.currentLocation.hasWater)
 				+  norm(" | Lamp : " 	+ ADVENT.lamp)
 				+  norm(" | Tally : " 	+ ADVENT.tally)
 				+  norm(" | Score : " 	+ ADVENT.score)
@@ -122,8 +129,8 @@ public class AdventMain
 //  - - - -  Questions & Hints  - - - -  //
 
 	enum Questions
-	{ // TODO: play again?
-		NONE(false), INSTRUCTIONS(true), DRAGON(false), RESURRECT(true), PLAYAGAIN(true), SCOREQUIT(true), QUIT(true), READBLASTHINT(true);
+	{
+		NONE(false), INSTRUCTIONS(true), DRAGON(false), RESURRECT(true), SCOREQUIT(true), QUIT(true), READBLASTHINT(true);
 		
 		final boolean 	serious;
 		Questions(boolean serious){ this.serious = serious; }
@@ -789,7 +796,7 @@ public class AdventMain
 			if(thing != GameObjects.BIRD)
 			{
 				if(here == INHAND){ ADVENT.itemsInHand++; }
-				if(thing.location == INHAND){ ADVENT.itemsInHand--; } // not an if/else in case the current and future locations are both INHAND
+				if(thing.location == INHAND){ ADVENT.itemsInHand--; } // current and future locations could both be INHAND
 			}
 			thing.location = here;
 		}

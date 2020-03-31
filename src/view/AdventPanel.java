@@ -30,34 +30,24 @@ import javax.swing.JButton;
 public class AdventPanel extends JPanel 
 {
 	private static final long serialVersionUID = 1L;
-	public AdventGame base;
-	private JTextField inputField;
-	private JTextArea displayLog;
-	private DefaultCaret displayCaret;
-	private SpringLayout springLayout;
-	private JScrollPane scroll;
-	private Color outline;
-	private JScrollBar scrollBar;
-	private JLabel lblTurns, lblScore, lblTop;
-	private JButton saveButton, loadButton;
+	private SpringLayout springLayout = new SpringLayout();
+	private JTextArea    displayLog   = new JTextArea();
+	private DefaultCaret displayCaret = (DefaultCaret)displayLog.getCaret();
+	private JScrollPane  scroll       = new JScrollPane(displayLog);
+	private JScrollBar   scrollBar    = scroll.getVerticalScrollBar();
+	private JTextField   inputField   = new JTextField();
+	private JLabel       lblTurns     = new JLabel(),
+			             lblScore     = new JLabel(),
+			             lblTop       = new JLabel("Colossal Cave Adventure");
+	private JButton      saveButton   = new JButton(" Save "),
+			             loadButton   = new JButton(" Load ");
+
+	private Color outline      = new Color(0, 255, 0);
+	private Color consoleGreen = new Color(59, 255, 48);
 	
 	public AdventPanel()
 	{
 		setBorder(null);
-		base = AdventMain.ADVENT;
-		springLayout = new SpringLayout();
-		displayLog = new JTextArea();
-		displayCaret = (DefaultCaret)displayLog.getCaret();
-		inputField = new JTextField();
-		scroll = new JScrollPane(displayLog);
-		outline = new Color(0, 255, 0);
-		scrollBar = scroll.getVerticalScrollBar();
-		lblTurns = new JLabel("Turns: -");
-		lblScore = new JLabel("Score: 0/350");
-		lblTop = new JLabel("Colossal Cave Adventure");
-		saveButton = new JButton(" Save ");
-		loadButton = new JButton(" Load ");
-		
 		setUpPanel();
 		setUpLayout();
 		setUpListeners();
@@ -83,7 +73,7 @@ public class AdventPanel extends JPanel
 
 	private void setUpLayout() 
 	{
-		setBackground(new Color(0, 0, 0));
+		setBackground(Color.black);
 		displayLog.setEditable(false);
 		displayLog.setWrapStyleWord(true);
 		displayLog.setTabSize(4);
@@ -94,16 +84,16 @@ public class AdventPanel extends JPanel
 		saveButton.setContentAreaFilled(false);
 		loadButton.setFocusPainted(false);
 		loadButton.setContentAreaFilled(false);
-		lblTop.setForeground(Color.GREEN);
-		lblTurns.setForeground(Color.GREEN);
-		lblScore.setForeground(Color.GREEN);
-		displayLog.setForeground(Color.GREEN);
+		lblTop.setForeground(consoleGreen);
+		lblTurns.setForeground(consoleGreen);
+		lblScore.setForeground(consoleGreen);
+		displayLog.setForeground(consoleGreen);
 		displayLog.setBackground(Color.BLACK);
 		saveButton.setBackground(Color.BLACK);
-		saveButton.setForeground(Color.GREEN);
+		saveButton.setForeground(consoleGreen);
 		loadButton.setBackground(Color.BLACK);
-		loadButton.setForeground(Color.GREEN);
-		inputField.setForeground(Color.GREEN);
+		loadButton.setForeground(consoleGreen);
+		inputField.setForeground(consoleGreen);
 		inputField.setBackground(Color.BLACK);
 		lblTop.setFont(new Font("Monospaced", Font.PLAIN, 20));
 		lblTurns.setFont(new Font("Monospaced", Font.PLAIN, 12));
@@ -137,9 +127,9 @@ public class AdventPanel extends JPanel
 		springLayout.putConstraint(SpringLayout.SOUTH, loadButton, -15, SpringLayout.SOUTH, this);
 		springLayout.putConstraint(SpringLayout.WEST, loadButton, 10, SpringLayout.EAST, saveButton);
 		displayLog.setBorder(new EmptyBorder(5, 15, 5, 15));
-		scroll.setBorder(new LineBorder(new Color(0, 255, 0)));
-		saveButton.setBorder(BorderFactory.createLineBorder(Color.GREEN));
-		loadButton.setBorder(BorderFactory.createLineBorder(Color.GREEN));
+		scroll.setBorder(new LineBorder(consoleGreen));
+		saveButton.setBorder(BorderFactory.createLineBorder(consoleGreen));
+		loadButton.setBorder(BorderFactory.createLineBorder(consoleGreen));
 		inputField.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(outline),
                 BorderFactory.createEmptyBorder(0, 55, 0, 0)));
 		inputField.requestFocusInWindow();
@@ -147,19 +137,16 @@ public class AdventPanel extends JPanel
 	
 	public void setUpGame()
 	{
+		setLabels();
+
 		String displayString = " Welcome to ADVENTURE!\n"
 				+ " Original development by William Crowther.\n"
 				+ " Major features added by Don Woods.\n"
-				+ " Conversion to Java by Ari.\n\n";
+				+ " Java version by Ari.\n\n";
 
 		displayString += " ~ TODO ~\n"
+				+ " Allow more than one dwarf to join in combat\n"
 				+ " More dynamic save/load.\n"
-				+ " Bug testing tools?\n"
-				+ " Play again? (handle in panel instead of 'in the game', maybe).\n"
-				+ " Single input command  > oil  at door says \"You are not carrying it!\" ?\n"
-					+ "\t- Is now \"I don't see any oil.\". I know what's up.\n"
-				+ " Review dwarves and pirate. Allow more than one dwarf to join in combat?\n"
-				+ " Continuing objects that can be used like continuing actions.\n"
 				+ " ~  ~  ~\n\n";
 
 		displayString += Version.versionCheck();
@@ -169,16 +156,11 @@ public class AdventPanel extends JPanel
 		displayLog.setText(displayString);
 		inputField.requestFocusInWindow();
 	}
-
-	public void inputFieldEditable(boolean editable)
-	{
-		inputField.setEditable(editable);
-	}
 	
 	private void setLabels()
 	{
-		lblTurns.setText("Turns: " + base.getTurns() );
-		lblScore.setText("Score: " + base.getScore() + "/350");
+		lblTurns.setText("Turns: " + AdventMain.ADVENT.getTurns() );
+		lblScore.setText("Score: " + AdventMain.ADVENT.getScore() + "/350");
 	}
 	
 	private void setUpListeners() 
@@ -208,42 +190,38 @@ public class AdventPanel extends JPanel
 		(
 			(event) ->
 			{
-				String inputText = inputField.getText().trim();
-				if(inputText.length() > 0)
+				if(AdventMain.ADVENT.isOver())
 				{
-					//String log = displayLog.getText();
-					String origin = "" + inputText;
-					String input = "" + inputText.toLowerCase();
-					if(input.contains("exception"))
-					{
-						displayLog.append("\n\nI beg your pardon?\n");
-						setLabels();
-					}
-					else if(input.contains(" "))
-					{
-						int space = input.indexOf(' ');
-						String first = input.substring(0, space).trim();
-						String second = input.substring(space + 1).trim();
-						displayLog.append("\n\t> " + origin 
-								+ "\n\n" + base.determineAndExecuteCommand(first, second) + "\n");
-						setLabels();
-					}
-					else
-					{
-						if(inputField.isEditable())
-						{
-							displayLog.append("\n\t> " + origin 
-									+ "\n\n" + base.determineAndExecuteCommand(input) + "\n");
-							setLabels();
-						}
-					}
-					displayCaret = (DefaultCaret)displayLog.getCaret();
-					inputField.setText("");
-					inputField.requestFocusInWindow();
-					inputField.setEditable(!base.noMore());
-					displayLog.setCaretPosition(displayLog.getDocument().getLength());
-					scroll.setViewportView(displayLog);
+					AdventMain.ADVENT = new AdventGame();
+					setUpGame();
 				}
+				else
+				{
+					String inputText = inputField.getText().trim();
+					if(inputText.length() > 0)
+					{
+						//String log = displayLog.getText();
+						String origin = "" + inputText;
+						String input = "" + inputText.toLowerCase();
+						if(input.contains("exception"))
+						{ displayLog.append("\n\nI beg your pardon?\n"); }
+						else if(input.contains(" "))
+						{
+							int space = input.indexOf(' ');
+							String first = input.substring(0, space).trim();
+							String second = input.substring(space + 1).trim();
+							displayLog.append("\n\t> " + origin + "\n\n" + AdventMain.ADVENT.determineAndExecuteCommand(first, second) + "\n");
+						}
+						else
+						{ displayLog.append("\n\t> " + origin + "\n\n" + AdventMain.ADVENT.determineAndExecuteCommand(input) + "\n"); }
+						setLabels();
+					}
+				}
+				displayCaret = (DefaultCaret)displayLog.getCaret();
+				inputField.setText("");
+				inputField.requestFocusInWindow();
+				displayLog.setCaretPosition(displayLog.getDocument().getLength());
+				scroll.setViewportView(displayLog);
 			}
 		);
 	}
