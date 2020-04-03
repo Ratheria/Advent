@@ -276,52 +276,58 @@ public class AdventGame implements Serializable
 		}
 		if(increaseTurns)
 		{	
-			turns++;	
+			turns++;
 			if(dwarfPresent > 0)
 			{
-				if(dwarfFlag == 1)
+				if(GameObjects.DWARF.location == previousLocation && Locations.critters(currentLocation))
+				{ drop(GameObjects.DWARF); }
+				if(GameObjects.DWARF.location == currentLocation)
 				{
-					dwarfFlag    = 2;
-					dwarfPresent = 0;
-					dwarvesLeft -= (Math.floor(AdventMain.generate() * 3));
-					output += "\n\nA little dwarf just walked around a corner, saw you, threw a little axe at you, cursed, and ran away. (The axe missed.)";
-					drop(GameObjects.AXE);
-				}
-				else
-				{
-					output += "\n\nThere ";
-					output += (dwarfPresent == 1 ? "is a threatening little dwarf" : "are " + dwarfPresent + " threatening little dwarves");
-					output += " in the room with you!";
-					drop(GameObjects.DWARF);
-					if(battleUpdate || !locationChange)
+					if(dwarfFlag == 1)
 					{
-						var thrown = dwarfPresent - (newDwarf ? 1 : 0);
-						if(thrown > 0)
+						dwarfFlag    = 2;
+						dwarfPresent = 0;
+						dwarvesLeft -= (Math.floor(AdventMain.generate() * 3));
+						output += "\n\nA little dwarf just walked around a corner, saw you, threw a little axe at you, cursed, and ran away. (The axe missed.)";
+						drop(GameObjects.AXE);
+						voidObject(GameObjects.DWARF);
+					}
+					else
+					{
+						output += "\n\nThere ";
+						output += (dwarfPresent == 1 ? "is a threatening little dwarf" : "are " + dwarfPresent + " threatening little dwarves");
+						output += " in the room with you!";
+						drop(GameObjects.DWARF);
+						if(battleUpdate || !locationChange)
 						{
-							output += "\n";
-							output += (thrown == 1 ? "One sharp nasty knife is thrown" : (thrown == dwarfPresent ? "All" : thrown) + " of them throw knives");
-							output += " at you!";
-							int hit = 0;
-							drop(GameObjects.KNIFE);
-							if(dwarfFlag >= 3)
+							var thrown = dwarfPresent - (newDwarf ? 1 : 0);
+							if(thrown > 0)
 							{
-								for(var d = 0 ; d < dwarfPresent ; d++)
-								{ if((AdventMain.generate() * 1000) < (95 * (dwarfFlag - 2))){ hit++; } }
-							}
-							else
-							{ dwarfFlag++; }
+								output += "\n";
+								output += (thrown == 1 ? "One sharp nasty knife is thrown" : (thrown == dwarfPresent ? "All" : thrown) + " of them throw knives");
+								output += " at you!";
+								int hit = 0;
+								drop(GameObjects.KNIFE);
+								if(dwarfFlag >= 3)
+								{
+									for(var d = 0 ; d < dwarfPresent ; d++)
+									{ if((AdventMain.generate() * 1000) < (95 * (dwarfFlag - 2))){ hit++; } }
+								}
+								else
+								{ dwarfFlag++; }
 
-							if(hit > 0)
-							{ playerIsDead = true; playerJustDied = true; }
+								if(hit > 0)
+								{ playerIsDead = true; playerJustDied = true; }
 
-							output += "\n";
+								output += "\n";
 
-							if(dwarfPresent == 1)
-							{ output += (hit > 0 ? "It gets you!" : "It misses!"); }
-							else
-							{
-								output += (hit > 0 ? (hit == 1 ? "One of them gets" : dwarfPresent + " of them get") : "None of them hit");
-								output +=  " you!";
+								if(dwarfPresent == 1)
+								{ output += (hit > 0 ? "It gets you!" : "It misses!"); }
+								else
+								{
+									output += (hit > 0 ? (hit == 1 ? "One of them gets" : dwarfPresent + " of them get") : "None of them hit");
+									output +=  " you!";
+								}
 							}
 						}
 					}
@@ -881,7 +887,6 @@ public class AdventGame implements Serializable
 						if(AdventMain.generate() * 3 > 1)
 						{
 							deadDwarves++;
-							dwarvesLeft--;
 							dwarfFlag++;
 							dwarfPresent--;
 							if (dwarfPresent == 0)
@@ -1438,9 +1443,7 @@ public class AdventGame implements Serializable
 						output = "A mysterious recorded voice groans into life and announces: \n\t\"This exit is closed. Please leave via main office.\"";
 					}
 
-					boolean follow = false;
-
-					if(dwarfPresent > 0 && AdventMain.generate() < .30)
+					if(dwarfPresent > 0 && Locations.critters(locationResult) && AdventMain.generate() < .20)
 					{
 						battleUpdate = true;
 						locationChange = false;
@@ -1461,27 +1464,30 @@ public class AdventGame implements Serializable
 									movesWOEncounter++;
 									double likely = (movesWOEncounter * 10 / 8.0)/8.0;
 									if(chance * 100 <= likely){ pirate = 1; }
-									//System.out.println("likely " + likely + "\npirate " + pirate);
 								}
 								if(pirate != 1 && dwarvesAllowed && dwarfFlag > 0 && dwarvesLeft > dwarfPresent)
 								{
-									chance = AdventMain.generate();
+									chance = AdventMain.generate() * 1000;
 									double encounter = ((dwarvesLeft - dwarfPresent) * 1000.00)/50.00;
-									//if(chance * 1000 <= encounter){ dwarfPresent++; } //TODO
-									if(chance < .9){ dwarfPresent++; }
+									System.out.println("left " + dwarvesLeft + " present " + dwarfPresent);
+									if(chance <= encounter)
+									{
+										if(GameObjects.DWARF.location != Locations.THEVOID && GameObjects.DWARF.location != currentLocation)
+										{
+											dwarvesLeft += dwarfPresent;
+											dwarfPresent = 0;
+										}
+										dwarvesLeft -= dwarfFlag == 1 ? 0 : 1;
+										dwarfPresent++;
+										drop(GameObjects.DWARF);
+									}
 									newDwarf = true;
-									System.out.println("encounter " + encounter + "\nchance " + chance * 1000);
+									System.out.println("left " + dwarvesLeft + " present " + dwarfPresent);
+									System.out.println("encounter " + encounter + "\nchance " + chance);
 								}
 							}
 							output = getDescription(currentLocation, brief);
 							if(stateOfTheBear == 2){ output += "\n\tYou are being followed by a very large, tame bear."; }
-							if(follow)
-							{
-								if(dwarvesAllowed)
-								{ drop(GameObjects.DWARF); }
-								else
-								{ follow = false; }
-							}
 							if(currentLocation.equals(Locations.Y2))
 							{
 								double chance = AdventMain.generate();
