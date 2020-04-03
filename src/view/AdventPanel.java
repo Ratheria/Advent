@@ -141,10 +141,9 @@ public class AdventPanel extends JPanel
 				+ " Major features added by Don Woods.\n"
 				+ " Java version by Ari.\n\n";
 
-		displayString += " ~ TODO ~\n"
-				+ " Allow more than one dwarf to join in combat\n"
-				+ " More dynamic save/load.\n"
-				+ " ~  ~  ~\n\n";
+//		displayString += " ~ TODO ~\n"
+//				+ " More dynamic save/load.\n"
+//				+ " ~  ~  ~\n\n";
 
 		displayString += Version.versionCheck();
 
