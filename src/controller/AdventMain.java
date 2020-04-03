@@ -764,10 +764,10 @@ public class AdventMain
 		Locations(boolean hasWater, String title, String shortDescription, String longDescription)
 		{ this.title = title;  this.shortDescription = shortDescription;  this.longDescription = longDescription;  this.hasWater = hasWater; }
 		
-		int minLoc(){ return EASTMIST.ordinal(); }
-		int maxLoc(){ return DEAD0.ordinal(); }
+		static int minLoc() { return EASTMIST.ordinal(); }
+		int maxLoc()        { return DEAD0.ordinal(); }
 		
-		boolean critters(Locations here)
+		static boolean critters(Locations here)
 		{ return (here.ordinal() > EASTMIST.ordinal() && here.ordinal() < DEAD0.ordinal() && !(here == PROOM) && !(here == DROOM)); }
 		
 		boolean outside(Locations here)
