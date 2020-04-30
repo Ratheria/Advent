@@ -28,6 +28,9 @@ public class AdventMain
 	public static AdventureFrame   FRAME;
 	public static GameStateHandler STATE_HANDLER = new GameStateHandler();
 
+	public static Locations[] defaultLocations;
+	public static int[]       defaultHintProc ;
+
 	static final String 	Empty           =  "",
 							ALIKE_PASSAGES 	=  "You are in a maze of twisty little passages, all alike.",
 							ALIKE_T        	=  "Maze All Alike",
@@ -73,6 +76,8 @@ public class AdventMain
 		ADVENT = new AdventGame();
 		FRAME  = new AdventureFrame();
 		FRAME.setUp();
+		defaultLocations = GameObjects.getLocations();
+		defaultHintProc  = Hints.getHintProc();
 	}
 
 	static double generate(){ return random.nextDouble(); }
@@ -214,7 +219,6 @@ public class AdventMain
 	
 	public enum GameObjects implements KnownWord
 	{
-		// TODO art string?
 		NOTHING, ALL, 	
 		KEYS	( true, Locations.BUILDING,		new String[] {"\n\t\tSet of Keys", 			"\n\tThere are some keys on the ground here."}),
 		LAMP	( true, Locations.BUILDING,		new String[] {"\n\t\tBrass Lantern", 		"\n\tThere is a lamp shining nearby.", "\n\tThere is a shiny brass lamp nearby."}),

@@ -189,6 +189,9 @@ public class AdventPanel extends JPanel
 				if(AdventMain.ADVENT.isOver())
 				{
 					AdventMain.ADVENT = new AdventGame();
+					AdventMain.GameObjects.loadLocations(AdventMain.defaultLocations);
+					AdventMain.Locations.loadVisits(new int[AdventMain.Locations.getVisitsArray().length]);
+					AdventMain.Hints.loadHints(new boolean[AdventMain.Hints.getHintGiven().length], AdventMain.defaultHintProc);
 					setUpGame();
 				}
 				else
