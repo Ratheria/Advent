@@ -25,14 +25,13 @@ public class GameStateHandler
 	public String loadGame(String currentLog)
 	{
 		System.out.println(dataFile.getAbsolutePath());
-		if(dataFile.exists()) { return readData() + "\n\nData Successfully Loaded\n"; }
-		return currentLog + "\n\nNo Load Data Available\n";
+		if(dataFile.exists()) { return readData(); }
+		return currentLog + "\n\nNo Save Data Available\n";
 	}
 	
 	private String readData()
 	{
-		String result = "Something went wrong. I probably made some internal changes to the save/load system. "
-				+ "Try making a new save and loading that.";
+		String result = "Exception Encountered: Failed To Read Save Data";
 		try
 		{
 			FileInputStream   fileReader   = new FileInputStream(dataFile);
@@ -41,12 +40,12 @@ public class GameStateHandler
 			objectReader.close();
 			fileReader.close();
 
-			result                      = saveData.log;
+			result                      = saveData.log + "\n\nGame Loaded\n";
 			AdventMain.ADVENT           = saveData.game;
 			GameObjects.loadLocations(saveData.objectLocations);
 			Hints.loadHints(saveData.hintGiven, saveData.hintProc);
 			Locations.loadVisits(saveData.visits);
-			System.out.println("Data Loaded");
+			System.out.println("Game Data Loaded");
 		} 
 		catch (IOException | ClassNotFoundException e)
 		{ e.printStackTrace(); }
@@ -55,7 +54,7 @@ public class GameStateHandler
 	
 	public String writeData(String logData)
 	{
-		String result = "Game saved.";
+		String result = "Game Saved";
 		if(!AdventMain.ADVENT.isDead())
 		{
 			try
@@ -68,12 +67,12 @@ public class GameStateHandler
 			} 
 			catch (IOException e)
 			{
-				result = "Exception encountered. Game not saved.";
+				result = "Exception Encountered: Failed To Save";
 				e.printStackTrace();
 			}
 		}
 		else
-		{ result = "You may not save now."; }
+		{ result = "You May Not Save Now"; }
 		return result;
 	}
 	

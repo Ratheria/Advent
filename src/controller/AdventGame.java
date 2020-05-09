@@ -31,12 +31,12 @@ public class AdventGame implements Serializable
 	String 		lastInput;
 	Locations 	currentLocation, previousLocation, locationAtStartOfAction;
 	
-	boolean	over			, quit,
-			relocate		, collapse		, justCollapsed			, playerIsDead		, playerJustDied	,
-			grateIsUnlocked	, crystalBridge	, lampIsLit				, snakeInHotMK		, doorHasBeenOiled	,
-			dragonIsAlive	, birdInCage	, bearAxe				, vaseIsBroken		, goldInInventory	,
-			caveIsClosing	, caveIsClosed	, extraMovesForPanic	, lowBatteryWarning	,
-			battleUpdate	, locationChange, increaseTurns	        , wellInCave	    , newDwarf          ;
+	boolean	over			, quit           ,
+			relocate		, collapse		 , justCollapsed	  , playerIsDead	  , playerJustDied	 ,
+			grateIsUnlocked	, crystalBridge	 , lampIsLit		  , snakeInHotMK	  , doorHasBeenOiled ,
+			dragonIsAlive	, birdInCage	 , bearAxe			  , vaseIsBroken	  , goldInInventory	 ,
+			caveIsClosing	, caveIsClosed	 , extraMovesForPanic , lowBatteryWarning ,
+			battleUpdate	, locationChange , increaseTurns      , wellInCave	      , newDwarf         ;
 
 	ActionWords	actionToAttempt;
 	Questions 	questionAsked;
@@ -67,11 +67,8 @@ public class AdventGame implements Serializable
 		for(GameObjects object : GameObjects.values())
 		{ if(GameObjects.isTreasure(object) && object != GameObjects.RUG_){	found.put(object, false);	} }		// No treasure found yet
 
-
 		dwarvesAllowed 	= true;
-
 		currentLocation = Locations.ROAD; previousLocation = null; locationAtStartOfAction = Locations.ROAD;
-
 		lastInput 		= AdventMain.Empty;
 
 		over 			= false; 	quit 			= false;
