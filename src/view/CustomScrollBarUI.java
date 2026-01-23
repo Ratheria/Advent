@@ -5,7 +5,7 @@
 package view;
 
 import java.awt.Color;
-import javax.swing.LookAndFeel;
+import javax.swing.*;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 
 
@@ -26,25 +26,25 @@ public class CustomScrollBarUI extends BasicScrollBarUI
 	@Override
 	public void installComponents()
 	{
-		switch (scrollbar.getOrientation())
-		{
-		case 1: 
-			incrButton = createIncreaseButton(5);
-			decrButton = createDecreaseButton(1);
-			break;
-		case 0: 
-			if (scrollbar.getComponentOrientation().isLeftToRight())
-			{
-				incrButton = createIncreaseButton(3);
-				decrButton = createDecreaseButton(7);
-			}
-			else
-			{
-				incrButton = createIncreaseButton(7);
-				decrButton = createDecreaseButton(3);
-			}
-			break;
-		}
+        if (scrollbar.getOrientation() == 1)
+        {
+            incrButton = createIncreaseButton(SwingConstants.SOUTH);
+            decrButton = createDecreaseButton(SwingConstants.NORTH);
+        }
+        else if (scrollbar.getOrientation() == 0)
+        {
+            if (scrollbar.getComponentOrientation().isLeftToRight())
+            {
+                incrButton = createIncreaseButton(SwingConstants.EAST);
+                decrButton = createDecreaseButton(SwingConstants.WEST);
+            }
+            else
+            {
+                incrButton = createIncreaseButton(SwingConstants.WEST);
+                decrButton = createDecreaseButton(SwingConstants.EAST);
+            }
+        }
+
 		incrButton.setBackground(Color.BLACK);
 		incrButton.setForeground(Color.BLACK);
 		incrButton.setOpaque(true);

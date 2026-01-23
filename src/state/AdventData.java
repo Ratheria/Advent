@@ -4,30 +4,30 @@
 
 package state;
 
-import java.io.Serializable;
+import java.io.*;
+
 import controller.AdventGame;
 import controller.AdventMain;
-import controller.AdventMain.GameObjects;
-import controller.AdventMain.Hints;
-import controller.AdventMain.Locations;
+import data.*;
 
 public class AdventData implements Serializable
 {
-	private static final long serialVersionUID = -4962116536507971292L;
-	public AdventGame  game;
-	public String      log;
+	@Serial private static final long serialVersionUID = -4962116536507971292L;
+
+	public AdventGame game;
+	public String log;
 	public Locations[] objectLocations;
-	public int[]       visits;
-	public boolean[]   hintGiven;
-	public int[]       hintProc;
+	public int[] visits;
+	public boolean[] hintGiven;
+	public int[] hintProc;
 
 	public AdventData(String log)
 	{
-		this.game            = AdventMain.ADVENT;
-		this.log             = log;
-		this.objectLocations = GameObjects.getLocations();
-		this.visits          = Locations.getVisitsArray();
-		this.hintGiven       = Hints.getHintGiven();
-		this.hintProc        = Hints.getHintProc();
+		this.game = AdventMain.advent;
+		this.log = log;
+		this.objectLocations = GameObjects.getObjectLocations();
+		this.visits = Locations.getVisitsArray();
+		this.hintGiven = Hints.getHintGivenStatus();
+		this.hintProc = Hints.getHintProcValues();
 	}
 }

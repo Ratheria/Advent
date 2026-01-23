@@ -8,7 +8,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
-import controller.AdventGame;
 import controller.AdventMain;
 import version.Version;
 
@@ -18,6 +17,7 @@ import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import java.awt.Color;
 import java.awt.Font;
+import java.io.*;
 import javax.swing.border.LineBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.DefaultCaret;
@@ -26,10 +26,11 @@ import javax.swing.JButton;
 
 public class AdventPanel extends JPanel 
 {
-	private static final long serialVersionUID = 1L;
+	@Serial private static final long serialVersionUID = 1L;
+
 	private SpringLayout springLayout = new SpringLayout();
 	private JTextArea    displayLog   = new JTextArea();
-	private DefaultCaret displayCaret = (DefaultCaret)displayLog.getCaret();
+	private DefaultCaret displayCaret = (DefaultCaret) displayLog.getCaret();
 	private JScrollPane  scroll       = new JScrollPane(displayLog);
 	private JScrollBar   scrollBar    = scroll.getVerticalScrollBar();
 	private JTextField   inputField   = new JTextField();
@@ -39,8 +40,14 @@ public class AdventPanel extends JPanel
 	private JButton      saveButton   = new JButton(" Save "),
 			             loadButton   = new JButton(" Load ");
 
-	private Color outline      = new Color(0, 255, 0);
-	private Color consoleGreen = new Color(59, 255, 48);
+	// private Color outline      = new Color(22, 222, 22);
+	// private Color consoleGreen = new Color(110, 245, 95);
+
+	private Color outline      = new Color(30, 200, 30);
+	private Color consoleGreen = new Color(100, 225, 90);
+
+	// private Color outline      = new Color(22, 222, 22);
+	// private Color consoleGreen = new Color(110, 245, 95);
 	
 	public AdventPanel()
 	{
@@ -136,14 +143,10 @@ public class AdventPanel extends JPanel
 	{
 		setLabels();
 
-		String displayString = " Welcome to ADVENTURE!\n"
+		String displayString = "\n Welcome to ADVENTURE!\n"
 				+ " Original development by William Crowther.\n"
 				+ " Major features added by Don Woods.\n"
 				+ " Java version by Ari.\n\n";
-
-//		displayString += " ~ TODO ~\n"
-//				+ " More dynamic save/load.\n"
-//				+ " ~  ~  ~\n\n";
 
 		displayString += Version.versionCheck();
 
@@ -155,15 +158,15 @@ public class AdventPanel extends JPanel
 	
 	private void setLabels()
 	{
-		lblTurns.setText("Turns: " + AdventMain.ADVENT.getTurns() );
-		lblScore.setText("Score: " + AdventMain.ADVENT.getScore() + "/350");
+		lblTurns.setText("Turns: " + AdventMain.advent.getTurns() );
+		lblScore.setText("Score: " + AdventMain.advent.getScore() + "/350");
 	}
 	
 	private void setUpListeners() 
 	{
 		saveButton.addActionListener
 		(
-			(event) ->
+			event ->
 			{
 				displayLog.append("\n\n" + AdventMain.STATE_HANDLER.writeData(displayLog.getText()) + "\n");
 				displayLog.setCaretPosition(displayLog.getDocument().getLength());
@@ -173,7 +176,7 @@ public class AdventPanel extends JPanel
 		
 		loadButton.addActionListener
 		(
-			(event) ->
+			event ->
 			{
 				displayLog.setText(AdventMain.STATE_HANDLER.loadGame(displayLog.getText()));
 				displayLog.setCaretPosition(displayLog.getDocument().getLength());
@@ -184,20 +187,17 @@ public class AdventPanel extends JPanel
 		
 		inputField.addActionListener
 		(
-			(event) ->
+			event ->
 			{
-				if(AdventMain.ADVENT.isOver())
+				if (AdventMain.advent.isOver())
 				{
-					AdventMain.ADVENT = new AdventGame();
-					AdventMain.GameObjects.loadLocations(AdventMain.defaultLocations);
-					AdventMain.Locations.loadVisits(new int[AdventMain.Locations.getVisitsArray().length]);
-					AdventMain.Hints.loadHints(new boolean[AdventMain.Hints.getHintGiven().length], AdventMain.defaultHintProc);
+					AdventMain.newGame();
 					setUpGame();
 				}
 				else
 				{
 					String inputText = inputField.getText().trim();
-					if(inputText.length() > 0)
+					if (!inputText.isEmpty())
 					{
 						//String log = displayLog.getText();
 						String origin = "" + inputText;
@@ -209,10 +209,10 @@ public class AdventPanel extends JPanel
 							int space = input.indexOf(' ');
 							String first = input.substring(0, space).trim();
 							String second = input.substring(space + 1).trim();
-							displayLog.append("\n\t> " + origin + "\n\n" + AdventMain.ADVENT.determineAndExecuteCommand(first, second) + "\n");
+							displayLog.append("\n\t> " + origin + "\n\n" + AdventMain.advent.determineAndExecuteCommand(first, second) + "\n");
 						}
 						else
-						{ displayLog.append("\n\t> " + origin + "\n\n" + AdventMain.ADVENT.determineAndExecuteCommand(input) + "\n"); }
+						{ displayLog.append("\n\t> " + origin + "\n\n" + AdventMain.advent.determineAndExecuteCommand(input) + "\n"); }
 						setLabels();
 					}
 				}

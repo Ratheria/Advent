@@ -4,27 +4,27 @@
 
 package view;
 
-import javax.swing.JFrame;
-import controller.AdventGame;
-
+import javax.swing.*;
 import java.awt.*;
 
 public class AdventureFrame extends JFrame 
 {
 	private static final long serialVersionUID = 1L;
-	public AdventPanel panel;
+
+	private final AdventPanel panel;
 
 	public AdventureFrame()
 	{
 		panel = new AdventPanel();
 		setName("Colossal Cave Adventure");
-		this.setTitle("Adventure!");
+		setTitle("Adventure!");
 		setContentPane(panel);
 		setSize(850, 750);
 		setMinimumSize(new Dimension(550, 400));
 		setVisible(true);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 	}
+
 	public void setUp()
 	{
 		panel.setUpGame();

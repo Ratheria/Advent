@@ -1,7 +1,5 @@
 /**
  * @author Ariana Fairbanks
- *
- * Handle Saving/Loading Game State
  */
 
 package state;
@@ -14,13 +12,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import controller.AdventMain;
-import controller.AdventMain.Hints;
-import controller.AdventMain.GameObjects;
-import controller.AdventMain.Locations;
+import data.*;
 
 public class GameStateHandler 
 {
-	private File dataFile = new File(System.getProperty("user.home") + "/.AdventData");
+	private final File dataFile = new File(System.getProperty("user.home") + "/.AdventData");
 
 	public String loadGame(String currentLog)
 	{
@@ -32,30 +28,37 @@ public class GameStateHandler
 	private String readData()
 	{
 		String result = "Exception Encountered: Failed To Read Save Data";
+
 		try
 		{
-			FileInputStream   fileReader   = new FileInputStream(dataFile);
+			FileInputStream fileReader  = new FileInputStream(dataFile);
 			ObjectInputStream objectReader = new ObjectInputStream(fileReader);
 			AdventData saveData = (AdventData) objectReader.readObject();
 			objectReader.close();
 			fileReader.close();
 
-			result                      = saveData.log + "\n\nGame Loaded\n";
-			AdventMain.ADVENT           = saveData.game;
-			GameObjects.loadLocations(saveData.objectLocations);
-			Hints.loadHints(saveData.hintGiven, saveData.hintProc);
+			// TODO: Close resources.
+
+			result = saveData.log + "\n\nGame Loaded\n";
+			AdventMain.advent = saveData.game;
+			GameObjects.loadObjectLocations(saveData.objectLocations);
+			Hints.loadHintStates(saveData.hintGiven, saveData.hintProc);
 			Locations.loadVisits(saveData.visits);
 			System.out.println("Game Data Loaded");
 		} 
 		catch (IOException | ClassNotFoundException e)
-		{ e.printStackTrace(); }
+		{
+			e.printStackTrace();
+		}
+
 		return result;
 	}
 	
 	public String writeData(String logData)
 	{
 		String result = "Game Saved";
-		if(!AdventMain.ADVENT.isDead())
+
+		if (!AdventMain.advent.isDead())
 		{
 			try
 			{
@@ -72,7 +75,10 @@ public class GameStateHandler
 			}
 		}
 		else
-		{ result = "You May Not Save Now"; }
+		{
+			result = "You May Not Save Now";
+		}
+
 		return result;
 	}
 	
