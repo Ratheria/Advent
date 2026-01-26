@@ -16,34 +16,38 @@ import data.*;
 
 public class GameStateHandler 
 {
-	private final File dataFile = new File(System.getProperty("user.home") + "/.AdventData");
+	private static final File dataFile = new File(System.getProperty("user.home") + "/.AdventData");
 
-	public String loadGame(String currentLog)
+	private GameStateHandler()
+	{ }
+
+	public static String loadGame(String currentLog)
 	{
 		System.out.println(dataFile.getAbsolutePath());
-		if(dataFile.exists()) { return readData(); }
+
+		if (dataFile.exists())
+		{
+			// If we manage to read data we will replace the current log with the log in the save file. This
+			// way the player can go back through all actions taken previously in the save they loaded.
+			return readData(currentLog);
+		}
+
 		return currentLog + "\n\nNo Save Data Available\n";
 	}
 	
-	private String readData()
+	private static String readData(String currentLog)
 	{
-		String result = "Exception Encountered: Failed To Read Save Data";
+		String result = currentLog + "\n\nException Encountered: Failed To Read Save Data";
 
-		try
+		try (ObjectInputStream objectReader = new ObjectInputStream(new FileInputStream(dataFile)))
 		{
-			FileInputStream fileReader  = new FileInputStream(dataFile);
-			ObjectInputStream objectReader = new ObjectInputStream(fileReader);
 			AdventData saveData = (AdventData) objectReader.readObject();
-			objectReader.close();
-			fileReader.close();
 
-			// TODO: Close resources.
-
-			result = saveData.log + "\n\nGame Loaded\n";
-			AdventMain.advent = saveData.game;
-			GameObjects.loadObjectLocations(saveData.objectLocations);
-			Hints.loadHintStates(saveData.hintGiven, saveData.hintProc);
-			Locations.loadVisits(saveData.visits);
+			result = saveData.getLog() + "\n\nGame Loaded\n";
+			AdventMain.advent = saveData.getGame();
+			GameObjects.loadObjectLocations(saveData.getObjectLocations());
+			Hints.loadHintStates(saveData.getHintGiven(), saveData.getHintProc());
+			Locations.loadVisits(saveData.getVisits());
 			System.out.println("Game Data Loaded");
 		} 
 		catch (IOException | ClassNotFoundException e)
@@ -54,20 +58,16 @@ public class GameStateHandler
 		return result;
 	}
 	
-	public String writeData(String logData)
+	public static String writeData(String logData)
 	{
 		String result = "Game Saved";
 
 		if (!AdventMain.advent.isDead())
 		{
-			try
+			try (ObjectOutputStream objectWriter = new ObjectOutputStream(new FileOutputStream(dataFile)))
 			{
-				FileOutputStream fileWriter = new FileOutputStream(dataFile);
-				ObjectOutputStream objectWriter = new ObjectOutputStream(fileWriter);
-			    objectWriter.writeObject(new AdventData(logData));
-			    objectWriter.close();
-			    fileWriter.close();
-			} 
+				objectWriter.writeObject(new AdventData(logData));
+			}
 			catch (IOException e)
 			{
 				result = "Exception Encountered: Failed To Save";

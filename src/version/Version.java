@@ -1,5 +1,7 @@
 package version;
 
+import controller.*;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,13 +11,20 @@ import java.net.URLConnection;
 public class Version
 {
     private static final String VERSION_URL = "https://raw.githubusercontent.com/Ratheria/Advent/master/src/version/update.txt";
+	private static final String RELEASES_URL = "https://github.com/Ratheria/Advent/releases";
 
     private Version() { }
 
     public static String versionCheck()
     {
         String result = "";
-        try
+
+		if (!AdventMain.DO_VERSION_CHECK)
+		{
+			return result;
+		}
+
+		try
         {
             URL url = new URL(VERSION_URL);
             URLConnection connection = url.openConnection();
@@ -29,7 +38,7 @@ public class Version
             String mostRecentUpdate = bufferedReader.readLine();
             if (!lastUpdated.equals(mostRecentUpdate))
             {
-                result = "\n Updated Version Available: " + bufferedReader.readLine() + "\n\n\n";
+                result = "\n Updated Version Available: " + RELEASES_URL + "\n\n\n";
             }
             bufferedReader.close();
         }

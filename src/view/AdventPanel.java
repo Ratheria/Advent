@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import controller.AdventMain;
+import state.*;
 import version.Version;
 
 import javax.swing.SpringLayout;
@@ -168,7 +169,7 @@ public class AdventPanel extends JPanel
 		(
 			event ->
 			{
-				displayLog.append("\n\n" + AdventMain.STATE_HANDLER.writeData(displayLog.getText()) + "\n");
+				displayLog.append("\n\n" + GameStateHandler.writeData(displayLog.getText()) + "\n");
 				displayLog.setCaretPosition(displayLog.getDocument().getLength());
 				scroll.setViewportView(displayLog);
 			}
@@ -178,7 +179,7 @@ public class AdventPanel extends JPanel
 		(
 			event ->
 			{
-				displayLog.setText(AdventMain.STATE_HANDLER.loadGame(displayLog.getText()));
+				displayLog.setText(GameStateHandler.loadGame(displayLog.getText()));
 				displayLog.setCaretPosition(displayLog.getDocument().getLength());
 				setLabels();
 				scroll.setViewportView(displayLog);

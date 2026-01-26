@@ -25,6 +25,9 @@ public class AdventMain
 	// The chance of encountering a dwarf is this modifier x the number of remaining dwarves.
 	public static final double DWARF_ENCOUNTER_MODIFIER = 50;
 
+	// The version check feature was added so people testing my senior project would know about updates immediately.
+	public static final boolean DO_VERSION_CHECK = true;
+
 
 	// TODO: forward. back, critters, validate death
 
@@ -32,7 +35,6 @@ public class AdventMain
 	public static AdventGame advent;
 
 	public static final AdventureFrame FRAME = new AdventureFrame();
-	public static final GameStateHandler STATE_HANDLER = new GameStateHandler();
 
 	protected static Locations[] defaultLocations;
 	protected static int[] defaultHintProc ;
