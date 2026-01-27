@@ -150,7 +150,113 @@ public enum Locations
 
     REMARK();
 
-    static final Locations[] locate = Locations.values();
+
+	public static final Map<Locations, Locations[]> POSSIBLE_SIMPLE_EXITS = new EnumMap<>(Locations.class)
+	{{
+		put(ROAD, new Locations[]{HILL, BUILDING, VALLEY, FOREST, OUTSIDE});
+		put(HILL, new Locations[]{ROAD, FOREST});
+		put(BUILDING, new Locations[]{ROAD});
+		put(VALLEY, new Locations[]{ROAD, FOREST, SLIT, OUTSIDE});
+		put(FOREST, new Locations[]{WOODS, VALLEY});
+		put(WOODS, new Locations[]{ROAD, VALLEY, FOREST});
+		put(SLIT, new Locations[]{ROAD, VALLEY, FOREST, OUTSIDE});
+		put(OUTSIDE, new Locations[]{FOREST, ROAD, SLIT});
+		put(INSIDE, new Locations[]{COBBLES, SMALLPIT, DEBRIS});
+		put(COBBLES, new Locations[]{INSIDE, DEBRIS, SMALLPIT});
+		put(DEBRIS, new Locations[]{INSIDE, COBBLES, AWKWARD, SMALLPIT});
+		put(AWKWARD, new Locations[]{INSIDE, DEBRIS, BIRD, SMALLPIT});
+		put(BIRD, new Locations[]{INSIDE, DEBRIS, AWKWARD, SMALLPIT});
+		put(SMALLPIT, new Locations[]{INSIDE, DEBRIS});
+		put(EASTMIST, new Locations[]{NUGGET, EASTFISSURE, MTKHALL, JUMBLE});
+		put(NUGGET, new Locations[]{EASTMIST});
+		put(EASTFISSURE, new Locations[]{EASTMIST});
+		put(WESTFISSURE, new Locations[]{WESTMIST});
+		put(WESTMIST, new Locations[]{WESTFISSURE, EASTLONG});
+		put(EASTLONG, new Locations[]{WESTMIST, WESTLONG, CROSS});
+		put(WESTLONG, new Locations[]{CROSS, EASTLONG});
+		put(PONY, new Locations[]{DIFF10});
+		put(CROSS, new Locations[]{EASTLONG, DEAD0, WEST, WESTLONG});
+		put(MTKHALL, new Locations[]{EASTMIST, SECRET});
+		put(WEST, new Locations[]{MTKHALL, CROSS});
+		put(SOUTH, new Locations[]{MTKHALL});
+		put(NS, new Locations[]{MTKHALL, Y2, DIRTY});
+		put(Y2, new Locations[]{NS, JUMBLE, EWINDOW});
+		put(JUMBLE, new Locations[]{Y2, EASTMIST});
+		put(EWINDOW, new Locations[]{Y2});
+		put(DIRTY, new Locations[]{CLEAN, NS, DUSTY, BEDQUILT});
+		put(CLEAN, new Locations[]{DIRTY, WET});
+		put(DUSTY, new Locations[]{DIRTY, COMPLEX, BEDQUILT});
+		put(COMPLEX, new Locations[]{DUSTY, BEDQUILT, SHELL, ANTE});
+		put(SHELL, new Locations[]{ARCH, RAGGED, BEDQUILT});
+		put(ARCH, new Locations[]{SHELL});
+		put(RAGGED, new Locations[]{SHELL, CULDESAC});
+		put(CULDESAC, new Locations[]{RAGGED, SHELL});
+		put(ANTE, new Locations[]{COMPLEX, BEDQUILT});
+		put(BEDQUILT, new Locations[]{COMPLEX, CHEESE, SLAB});
+		put(CHEESE, new Locations[]{BEDQUILT, EAST2PIT, TALL, SOFT, ORIENTAL});
+		put(SOFT, new Locations[]{CHEESE});
+		put(EAST2PIT, new Locations[]{CHEESE, WEST2PIT, EASTPIT});
+		put(WEST2PIT, new Locations[]{EAST2PIT, SLAB, WESTPIT});
+		put(EASTPIT, new Locations[]{EAST2PIT});
+		put(WESTPIT, new Locations[]{WEST2PIT});
+		put(NARROW, new Locations[]{WESTPIT, GIANT});
+		put(GIANT, new Locations[]{NARROW, BLOCK, IMMENSE});
+		put(BLOCK, new Locations[]{GIANT});
+		put(IMMENSE, new Locations[]{GIANT});
+		put(FALLS, new Locations[]{IMMENSE, GIANT, STEEP});
+		put(STEEP, new Locations[]{FALLS, LOW});
+		put(ABOVEP, new Locations[]{SJUNC, BEDQUILT, STALACTITE});
+		put(SJUNC, new Locations[]{BEDQUILT, ABOVEP, WWINDOW});
+		put(STALACTITE, new Locations[]{ABOVEP});
+		put(LOW, new Locations[]{BEDQUILT, SCORR, CRAWL, ORIENTAL});
+		put(CRAWL, new Locations[]{LOW});
+		put(WWINDOW, new Locations[]{SJUNC});
+		put(ORIENTAL, new Locations[]{CHEESE, LOW, MISTY});
+		put(MISTY, new Locations[]{ORIENTAL, ALCOVE});
+		put(ALCOVE, new Locations[]{MISTY});
+		put(PROOM, new Locations[]{DROOM});
+		put(DROOM, new Locations[]{PROOM});
+		put(SLAB, new Locations[]{WEST2PIT, ABOVER, BEDQUILT});
+		put(ABOVER, new Locations[]{SLAB, MIRROR, RESER});
+		put(MIRROR, new Locations[]{ABOVER, RESER});
+		put(RESER, new Locations[]{MIRROR});
+		put(SCAN1, new Locations[]{ABOVER});
+		put(SCAN2, new Locations[]{ABOVER, SECRET});
+		put(SCAN3, new Locations[]{SECRET});
+		put(SECRET, new Locations[]{MTKHALL, WIDE});
+		put(WIDE, new Locations[]{TIGHT, TALL});
+		put(TIGHT, new Locations[]{WIDE});
+		put(TALL, new Locations[]{WIDE, BOULDERS, CHEESE});
+		put(BOULDERS, new Locations[]{TALL});
+		put(SCORR, new Locations[]{LOW, SWSIDE});
+		put(SWSIDE, new Locations[]{SCORR});
+		put(DEAD0, new Locations[]{CROSS});
+		put(DEAD1, new Locations[]{ALIKE11});
+		put(DEAD2, new Locations[]{ALIKE13});
+		put(DEAD3, new Locations[]{ALIKE4});
+		put(DEAD4, new Locations[]{ALIKE4});
+		put(DEAD5, new Locations[]{ALIKE3});
+		put(DEAD6, new Locations[]{ALIKE9});
+		put(DEAD7, new Locations[]{ALIKE10});
+		put(DEAD8, new Locations[]{BRINK});
+		put(DEAD9, new Locations[]{ALIKE3});
+		put(DEAD10, new Locations[]{ALIKE12});
+		put(DEAD11, new Locations[]{ALIKE8});
+		put(NESIDE, new Locations[]{CORR, FORK, VIEW, FBARR});
+		put(CORR, new Locations[]{NESIDE, FORK, VIEW, FBARR});
+		put(FORK, new Locations[]{CORR, WARM, LIME, VIEW, FBARR});
+		put(WARM, new Locations[]{FORK, VIEW, CHAMBER});
+		put(VIEW, new Locations[]{WARM, FORK});
+		put(CHAMBER, new Locations[]{WARM, FORK, VIEW});
+		put(LIME, new Locations[]{FORK, FBARR, VIEW});
+		put(FBARR, new Locations[]{LIME, FORK, BARR, VIEW});
+		put(BARR, new Locations[]{FBARR, FOREST, VIEW});
+		put(NEEND, new Locations[]{SWEND});
+		put(SWEND, new Locations[]{NEEND});
+	}};
+
+
+    static final Locations[] locationArray = Locations.values(); // TODO
     int visits = 0;
 
     public final String title;
@@ -202,7 +308,7 @@ public enum Locations
 
     public static boolean crittersAllowed(Locations here)
     {
-        return (here.ordinal() > EASTMIST.ordinal() && here.ordinal() < DEAD0.ordinal() && here != PROOM && here != DROOM);
+        return (here.ordinal() > SMALLPIT.ordinal() && here.ordinal() < DEAD0.ordinal() && here != PROOM && here != DROOM);
     }
 
     public boolean outside(Locations here)
@@ -227,11 +333,11 @@ public enum Locations
 
     public static int[] getVisitsArray()
     {
-        int[] visitsArray = new int[locate.length];
+        int[] visitsArray = new int[locationArray.length];
 
-        for (int i = 0; i < locate.length; i++)
+        for (int i = 0; i < locationArray.length; i++)
         {
-            visitsArray[i] = locate[i].visits;
+            visitsArray[i] = locationArray[i].visits;
         }
 
         return visitsArray;
@@ -239,9 +345,9 @@ public enum Locations
 
     public static void loadVisits(int[] visits)
     {
-        for (int i = 0; i < locate.length; i++)
+        for (int i = 0; i < locationArray.length; i++)
         {
-            locate[i].visits = visits[i];
+			locationArray[i].visits = visits[i];
         }
     }
 
