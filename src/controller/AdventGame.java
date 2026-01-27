@@ -559,6 +559,8 @@ public class AdventGame implements Serializable
 
 		if (GameObjects.DWARF.location == currentLocation)
 		{
+			// TODO: dwarf flag should have a 5% chance of increasing to "2" for every movement above min loc
+
 			if (dwarfFlag == 1)
 			{
 				// This was the first dwarf encountered. He will always drop the "AXE" and run away.
@@ -2370,10 +2372,33 @@ public class AdventGame implements Serializable
 
 	private String attemptMovement(Movement destination)
 	{
+		if (destination == Movement.NOWHERE)
+		{
+			return OKAY;
+		}
+		else if (destination == Movement.CAVE)
+		{
+			increaseTurns = false;
+
+			if (Locations.outsideCave(currentLocation))
+			{
+				return "I can't see where the cave is, but hereabouts no stream can run on the surface for long. I would try the stream.";
+			}
+
+			return "I need more detailed instructions to do that.";
+		}
+
 		String output = "";
+		Locations locationResult;
 		locationChange = true;
 
-		Locations locationResult = Locations.moveTo(destination, currentLocation);
+		if (destination == Movement.BACK)
+		{
+			// TODO: can we go back if it's dark?
+			return returnToLastLocation();
+		}
+
+		locationResult = Locations.moveTo(destination, currentLocation);
 
 		if (justCollapsed)
 		{
@@ -2385,28 +2410,50 @@ public class AdventGame implements Serializable
 		}
 		else
 		{
-			switch (locationResult)
+			output = switch (locationResult)
 			{
-				case VOID:
-					output = resolveVoidedMovement(destination, output);
-					break;
-
-				case REMARK:
-					output = resolveMovementRemark(destination);
-					break;
-
-				default:
-					output = resolveRegularMovement(locationResult);
-					break;
-			}
+				case VOID -> resolveVoidedMovement(destination, output);
+				case REMARK -> resolveMovementRemark(destination);
+				default -> resolveRegularMovement(locationResult);
+			};
 		}
 
 		if (relocate)
 		{
+			// TODO: Possible to remove this flag and drop emerald during movement resolution?
 			place(GameObjects.EMERALD, Locations.PROOM);
 			setRelocate(false);
 		}
 
+		return output;
+	}
+
+	private String returnToLastLocation()
+	{
+		String output = "You can't get there from here.";
+
+		// TODO: can we go back if it's dark?
+		if (previousLocation == currentLocation)
+		{
+			// The player got to their current location by irregular means, such as forced movement.
+			output = "Sorry, but I no longer seem to remember how you got here.";
+		}
+		else
+		{
+			Locations[] possibleExits = Locations.POSSIBLE_SIMPLE_EXITS.get(currentLocation);
+
+			for (Locations exit : possibleExits)
+			{
+				if (exit == previousLocation)
+				{
+					// The player's previous location can be reached from here. Move there normally.
+					return resolveRegularMovement(exit);
+				}
+			}
+		}
+
+		increaseTurns = false;
+		locationChange = false;
 		return output;
 	}
 
