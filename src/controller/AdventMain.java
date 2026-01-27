@@ -23,7 +23,7 @@ public class AdventMain
 	public static final double PIRATE_ENCOUNTER_MODIFIER = .1;
 
 	// The chance of encountering a dwarf is this modifier x the number of remaining dwarves.
-	public static final double DWARF_ENCOUNTER_MODIFIER = 50;
+	public static final double DWARF_ENCOUNTER_MODIFIER = 2.5;
 
 	// The version check feature was added so people testing my senior project would know about updates immediately.
 	public static final boolean DO_VERSION_CHECK = true;
@@ -147,7 +147,7 @@ public class AdventMain
 	static String norm(String input)
 	{
         StringBuilder inputBuilder = new StringBuilder(input);
-        while(inputBuilder.length() % LOG_SEGMENT_LENGTH != 0)
+        while (inputBuilder.length() % LOG_SEGMENT_LENGTH != 0)
 		{
 			inputBuilder.append(" ");
 		}
