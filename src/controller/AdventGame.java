@@ -577,14 +577,14 @@ public class AdventGame implements Serializable
 				dwarvesLeft -= (byte) Math.floor(AdventMain.generate() * 3);
 				dwarfFlag = 2;
 				dwarfPresent = 0;
-				outputString.append("\n\nA little dwarf just walked around a corner, saw you, threw a little axe at you, cursed, and ran away. (The axe missed.)");
+				outputString.append("\n\n - - - A little dwarf just walked around a corner, saw you, threw a little axe at you, cursed, and ran away. (The axe missed.)");
 				drop(GameObjects.AXE);
 				voidObject(GameObjects.DWARF);
 			}
 			else
 			{
 				// There is at least one dwarf at the player's location
-				outputString.append("\n\nThere ");
+				outputString.append("\n\n - - - There ");
 				outputString.append(dwarfPresent == 1 ? "is a threatening little dwarf" : "are " + dwarfPresent + " threatening little dwarves");
 				outputString.append(" in the room with you!");
 				drop(GameObjects.DWARF);
@@ -598,7 +598,7 @@ public class AdventGame implements Serializable
 					var thrown = dwarfPresent - (newDwarf ? 1 : 0);
 					if (thrown > 0)
 					{
-						outputString.append("\n");
+						outputString.append("\n - - - ");
 						outputString.append(thrown == 1 ? "One sharp nasty knife is thrown" : (thrown == dwarfPresent ? "All" : thrown) + " of them throw knives");
 						outputString.append(" at you!\n");
 						int hit = 0;
@@ -627,6 +627,7 @@ public class AdventGame implements Serializable
 							playerJustDied = true;
 						}
 
+						outputString.append(" - - - ");
 						if (dwarfPresent == 1)
 						{
 							outputString.append(hit > 0 ? "It gets you!" : "It misses!");
