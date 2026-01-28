@@ -135,7 +135,7 @@ public class AdventGame implements Serializable
 		locationAtStartOfAction = currentLocation;
 		increaseTurns = true;
 
-		String output = null;
+		String output;
 		int isYesNoAnswer = responseYesNo(input);
 
 		input = AdventMain.truncate.apply(input);
@@ -179,51 +179,7 @@ public class AdventGame implements Serializable
 			fooMagicWordProgression = 0;
 			resetHintAndQuestionStatus();
 
-			// Attempt to follow through with the command associated with the given input.
-			if (word instanceof Movement)
-			{
-				// The input is a movement word. Try to move accordingly.
-				output = attemptMovement((Movement) word);
-			}
-			else if (word instanceof ActionWords)
-			{
-				// The input is an action word. Try to act accordingly.
-				output = attemptAction((ActionWords) word, GameObjects.NOTHING, "");
-			}
-			else if (word instanceof GameObjects && word != GameObjects.NOTHING)
-			{
-				// The user is trying to interact with an object.
-				if (objectIsPresent((GameObjects) word))
-				{
-					// The player can't interact with the knives thrown by the dwarves.
-					// For any other object, we will ask for an action to perform.
-					output = word == GameObjects.KNIFE ? KNIVES_VANISH :
-                             "What would you like to do with the " + lastInput + "?" ;
-				}
-				else if (word == GameObjects.WATER || word == GameObjects.OIL)
-				{
-					// We will attempt to pour water or oil from a container in the inventory if
-					// none is present at the location and no action is specified.
-					output = attemptAction(ActionWords.POUR, word, "");
-				}
-				else
-				{
-					// We can't interact with something that isn't present.
-					output = DONT_SEE_ANY + input + ".";
-				}
-
-				increaseTurns = false;
-			}
-			else if (word instanceof MessageWords)
-			{
-				// The user input is something that always triggers a static message.
-				output = ((MessageWords) word).message;
-			}
-			else
-			{
-				// We don't understand the input.
-				output = nonsense();
-			}
+			output = resolveSingleWordCommand(word, input);
 		}
 
 		if (input.equals(WEST_STRING))
@@ -324,6 +280,57 @@ public class AdventGame implements Serializable
 		return output;
 	}
 
+	private String resolveSingleWordCommand(KnownWord word, String input)
+	{
+		// Attempt to follow through with the command associated with the given input.
+		if (word instanceof Movement)
+		{
+			// The input is a movement word. Try to move accordingly.
+			return attemptMovement((Movement) word);
+		}
+		else if (word instanceof ActionWords)
+		{
+			// The input is an action word. Try to act accordingly.
+			return attemptAction((ActionWords) word, GameObjects.NOTHING, "");
+		}
+		else if (word instanceof GameObjects && word != GameObjects.NOTHING)
+		{
+			boolean objectPresent = objectIsPresent((GameObjects) word);
+
+			if (!objectPresent && (word == GameObjects.WATER || word == GameObjects.OIL))
+			{
+				// We will attempt to pour water or oil from a container in the inventory if none is
+				// present at the current location and no action is specified.
+				return attemptAction(ActionWords.POUR, word, "");
+			}
+
+			increaseTurns = false;
+
+			// The player is trying to interact with an object.
+			if (objectPresent)
+			{
+				// The player can't interact with the knives thrown by the dwarves.
+				// For any other object, we will ask for an action to perform.
+				return word == GameObjects.KNIFE ? KNIVES_VANISH : "What would you like to do with the " + lastInput + "?" ;
+			}
+			else
+			{
+				// We can't interact with something that isn't present.
+				return DONT_SEE_ANY + input + ".";
+			}
+		}
+		else if (word instanceof MessageWords)
+		{
+			// The user input is something that always triggers a static message.
+			return ((MessageWords) word).message;
+		}
+		else
+		{
+			// We don't understand the input.
+			return nonsense();
+		}
+	}
+
 	/**
 	 * Resolve and attempt to act upon double word input.
 	 */
@@ -333,7 +340,7 @@ public class AdventGame implements Serializable
 		locationAtStartOfAction = currentLocation;
 		increaseTurns = true;
 
-		String output = null;
+		String output;
 
 		if (questionAsked.serious)
 		{
@@ -346,79 +353,7 @@ public class AdventGame implements Serializable
 			fooMagicWordProgression = 0;
 			resetHintAndQuestionStatus();
 
-			String input1Truncated = AdventMain.truncate.apply(input1);
-			String input2Truncated = AdventMain.truncate.apply(input2);
-
-			KnownWord word1 = knownWords.getOrDefault(input1Truncated, GameObjects.NOTHING);
-			KnownWord word2 = knownWords.getOrDefault(input2Truncated, GameObjects.NOTHING);
-
-			if (word1 != GameObjects.NOTHING && word2 != GameObjects.NOTHING)
-			{
-				if (objectIsPresent(GameObjects.KNIFE) && (word1 == GameObjects.KNIFE || word2 == GameObjects.KNIFE))
-				{
-					// The player can't interact with the knives thrown by the dwarves.
-					output = KNIVES_VANISH;
-					increaseTurns = false;
-				}
-				else if (word1 instanceof MessageWords)
-				{
-					// The user input is something that always triggers a static message.
-					output = ((MessageWords) word1).message;
-				}
-				else if (word1 == Movement.ENTER)
-				{
-					// The first word indicates the "GO" action, so we will attempt to "GO" somewhere.
-					// "STREAM" is actually recognized as a location or movement word, so a special indicator is
-					// given if the user is trying to enter the "STREAM" so it isn't treated as nonsense.
-					String alt = word2 == Movement.STREAM ? ENTER_STREAM : input2Truncated;
-					output = attemptAction(ActionWords.GO, word2, alt);
-				}
-				else if (word1 == Movement.STREAM && word2 == Movement.ENTER)
-				{
-					// TODO: does the original handle this edge case?
-					// "STREAM" is actually recognized as a location or movement word, so a special indicator is
-					// given if the user is trying to enter the "STREAM" so it isn't treated as nonsense.
-					output = attemptAction(ActionWords.GO, word1, ENTER_STREAM);
-				}
-				else if (word1 instanceof Movement)
-				{
-					// The first word resolves to indicate movement.
-					output = attemptMovement((Movement) word1);
-				}
-				else if ((word1 == GameObjects.WATER || word1 == GameObjects.OIL) && word2 instanceof GameObjects)
-				{
-					// TODO: should we handle the reverse case?
-					// "WATER" and "OIL" are game objects that can also be used as verbs. If both words resolve to
-					// objects and the first is "WATER" or "OIL" then we will assume the former is actually an action.
-					output = attemptAction(ActionWords.POUR, word1, "");
-				}
-				else if (word1 instanceof ActionWords)
-				{
-					// The first word resolves to an action.
-					output = attemptAction((ActionWords) word1, word2, input2);
-				}
-				else if (word2 == Movement.ENTER)
-				{
-					// The second word indicates the "GO" action and the first word wasn't resolved as action or
-					// movement. So, we will attempt to "GO" somewhere.
-					output = attemptAction(ActionWords.GO, word1, input1Truncated);
-				}
-				else if (word2 instanceof Movement)
-				{
-					// The first word didn't trigger any handled scenarios and the second resolves to indicate movement.
-					output = attemptMovement((Movement) word2);
-				}
-				else if (word2 instanceof ActionWords)
-				{
-					// The first word didn't trigger any handled scenarios and the second resolves to an action.
-					output = attemptAction((ActionWords) word2, word1, input1);
-				}
-			}
-			else
-			{
-				// We didn't understand the input.
-				output = nonsense();
-			}
+			output = resolveDoubleWordCommand(input1, input2);
 		}
 
 		if (input1.equals(WEST_STRING) || input2.equals(WEST_STRING))
@@ -427,6 +362,80 @@ public class AdventGame implements Serializable
 		}
 
 		return finishInputProcessing(output);
+	}
+
+	private String resolveDoubleWordCommand(String input1, String input2)
+	{
+		String input1Truncated = AdventMain.truncate.apply(input1);
+		String input2Truncated = AdventMain.truncate.apply(input2);
+		KnownWord word1 = knownWords.getOrDefault(input1Truncated, GameObjects.NOTHING);
+		KnownWord word2 = knownWords.getOrDefault(input2Truncated, GameObjects.NOTHING);
+
+		if (word1 != GameObjects.NOTHING && word2 != GameObjects.NOTHING)
+		{
+			if (objectIsPresent(GameObjects.KNIFE) && (word1 == GameObjects.KNIFE || word2 == GameObjects.KNIFE))
+			{
+				// The player can't interact with the knives thrown by the dwarves.
+				increaseTurns = false;
+				return KNIVES_VANISH;
+			}
+			else if (word1 instanceof MessageWords)
+			{
+				// The user input is something that always triggers a static message.
+				return ((MessageWords) word1).message;
+			}
+			else if (word1 == Movement.ENTER)
+			{
+				// The first word indicates the "GO" action, so we will attempt to "GO" somewhere.
+				// "STREAM" is actually recognized as a location or movement word, so a special indicator is
+				// given if the user is trying to enter the "STREAM" so it isn't treated as nonsense.
+				String alt = word2 == Movement.STREAM ? ENTER_STREAM : input2Truncated;
+				return attemptAction(ActionWords.GO, word2, alt);
+			}
+			else if (word1 == Movement.STREAM && word2 == Movement.ENTER)
+			{
+				// TODO: does the original handle this edge case?
+				// "STREAM" is actually recognized as a location or movement word, so a special indicator is
+				// given if the user is trying to enter the "STREAM" so it isn't treated as nonsense.
+				return attemptAction(ActionWords.GO, word1, ENTER_STREAM);
+			}
+			else if (word1 instanceof Movement)
+			{
+				// The first word resolves to indicate movement.
+				return attemptMovement((Movement) word1);
+			}
+			else if ((word1 == GameObjects.WATER || word1 == GameObjects.OIL) && word2 instanceof GameObjects)
+			{
+				// TODO: should we handle the reverse case?
+				// "WATER" and "OIL" are game objects that can also be used as verbs. If both words resolve to
+				// objects and the first is "WATER" or "OIL" then we will assume the former is actually an action.
+				return attemptAction(ActionWords.POUR, word1, "");
+			}
+			else if (word1 instanceof ActionWords)
+			{
+				// The first word resolves to an action.
+				return attemptAction((ActionWords) word1, word2, input2);
+			}
+			else if (word2 == Movement.ENTER)
+			{
+				// The second word indicates the "GO" action and the first word wasn't resolved as action or
+				// movement. So, we will attempt to "GO" somewhere.
+				return attemptAction(ActionWords.GO, word1, input1Truncated);
+			}
+			else if (word2 instanceof Movement)
+			{
+				// The first word didn't trigger any handled scenarios and the second resolves to indicate movement.
+				return attemptMovement((Movement) word2);
+			}
+			else if (word2 instanceof ActionWords)
+			{
+				// The first word didn't trigger any handled scenarios and the second resolves to an action.
+				return attemptAction((ActionWords) word2, word1, input1);
+			}
+		}
+
+		// We didn't understand the input.
+		return nonsense();
 	}
 
 	/**
